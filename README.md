@@ -18,7 +18,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ### Install RDFPortal-MCP server
 ```bash
 # Clone the repository
-git clone https://github.com/arkinjo/togo-mcp.git
+git clone https://github.com/dbcls/togo-mcp.git
 cd togo-mcp
 
 # Install dependencies
