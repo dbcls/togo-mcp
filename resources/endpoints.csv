@@ -1,8 +1,8 @@
 database,SPARQL Endpoint,keyword search API
 uniprot,https://rdfportal.org/sib/sparql,search_uniprot_entity
-pubchem,https://rdfportal.org/pubchem/sparql,get_pubchem_compound_id
+pubchem,https://rdfportal.org/pubchem/sparql,search_pubchem_(compound|substance|assay)_entity
 pdb,https://rdfportal.org/pdb/sparql,search_pdb_entity
-chembl,https://rdfportal.org/ebi/sparql,search_chembl_molecule;search_chembl_target
+chembl,https://rdfportal.org/ebi/sparql,search_chembl_(molecule|target)
 chebi,https://rdfportal.org/ebi/sparql,OLS4:searchClasses
 reactome,https://rdfportal.org/ebi/sparql,search_reactome_entity
 rhea,https://rdfportal.org/sib/sparql,search_rhea_entity
@@ -15,9 +15,9 @@ bacdive,https://rdfportal.org/primary/sparql,sparql
 mediadive,https://rdfportal.org/primary/sparql,sparql
 ddbj,https://rdfportal.org/ddbj/sparql,sparql
 glycosmos,https://ts.glycosmos.org/sparql,sparql
-clinvar,https://rdfportal.org/ncbi/sparql,sparql
+clinvar,https://rdfportal.org/ncbi/sparql,ncbi_search_clinvar_entity
 ensembl,https://rdfportal.org/ebi/sparql,sparql
 pubmed,https://rdfportal.org/ncbi/sparql,PubMed:search_articles
 pubtator,https://rdfportal.org/ncbi/sparql,PubMed:search_articles
-ncbigene,https://rdfportal.org/ncbi/sparql,sparql
-medgen,https://rdfportal.org/ncbi/sparql,sparql
+ncbigene,https://rdfportal.org/ncbi/sparql,ncbi_search_ncbigene_entity
+medgen,https://rdfportal.org/ncbi/sparql,ncbi_search_medgen_entity
