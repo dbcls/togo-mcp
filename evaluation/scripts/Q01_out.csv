@@ -206,3 +206,124 @@ Here are the complete details for this entry:
 - **MONDO cross-reference**: MONDO_0005180 (linking to the international MONDO Disease Ontology)
 
 This entry represents Parkinson's disease as classified in the Japanese NANDO (Nanbyou Data Ontology) system, which is maintained by the Japanese government for tracking intractable (rare) diseases. The notification number ""6"" indicates that Parkinson's disease is one of the officially designated intractable diseases that qualify for special healthcare support programs in Japan.",,52.392455101013184,"mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\n\nSELECT ?disease ?label\nWHERE {\n  ?disease rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(?label), \""parkinson\""))\n}\nLIMIT 20""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\nSELECT ?disease ?label ?altLabel\nWHERE {\n  ?disease rdfs:label ?label .\n  OPTIONAL { ?disease skos:altLabel ?altLabel }\n  FILTER(CONTAINS(LCASE(?label), \""\u30d1\u30fc\u30ad\u30f3\u30bd\u30f3\"") || CONTAINS(LCASE(?altLabel), \""\u30d1\u30fc\u30ad\u30f3\u30bd\u30f3\"") || CONTAINS(LCASE(?label), \""parkinson\"") || CONTAINS(LCASE(?altLabel), \""parkinson\""))\n  FILTER(CONTAINS(str(?disease), \""nando\""))\n}\nLIMIT 20""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT ?disease ?identifier ?label\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           rdfs:label ?label ;\n           dct:identifier ?identifier .\n  ?label bif:contains \""'Parkinson*'\"" option (score ?sc) .\n  FILTER(LANG(?label) = \""en\"")\n}\nORDER BY DESC(?sc)\nLIMIT 10""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dct: <http://purl.org/dc/terms/>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?disease ?identifier ?en_label ?ja_label ?notif_num ?mondo\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           dct:identifier \""NANDO:1200010\"" .\n  \n  OPTIONAL { ?disease rdfs:label ?en_label . FILTER(LANG(?en_label) = \""en\"") }\n  OPTIONAL { ?disease rdfs:label ?ja_label . FILTER(LANG(?ja_label) = \""ja\"" && !REGEX(STR(?ja_label), \""^[\u3072-\u309f]+$\"")) }\n  OPTIONAL { ?disease nando:hasNotificationNumber ?notif_num }\n  OPTIONAL { ?disease skos:closeMatch ?mondo . FILTER(STRSTARTS(STR(?mondo), \""http://purl.obolibrary.org/obo/MONDO_\"")) }\n}""}}]",CRITICAL,NANDO:1200010,"Uses NANDO database. Verified in nando_exploration.md where keyword search for 'Parkinson*' returned NANDO:1200010 as Parkinson's disease (パーキンソン病), along with related conditions like rapid-onset dystonia-parkinsonism and multiple system atrophy, Parkinsonian type. This tests access to Japanese rare disease terminology and demonstrates specificity in a specialized national database."
+11,2025-12-17,Structured Query,Find ChEMBL molecules with IC50 values less than 100 nM against kinase targets.,True,False,True,0.5,"I don't have the ability to query the ChEMBL database directly or access external databases in real-time. To find ChEMBL molecules with IC50 values less than 100 nM against kinase targets, you would need to:
+
+1. **Access ChEMBL directly** through:
+   - ChEMBL web interface (https://www.ebi.ac.uk/chembl/)
+   - ChEMBL API
+   - Downloaded ChEMBL database files
+
+2. **Use search criteria like**:
+   - Target type: Protein kinase
+   - Activity type: IC50
+   - Activity value: < 100 nM (or < 0.1 μM)
+   - Standard relation: ""="" or ""<""
+
+3. **Alternative approaches**:
+   - Use the ChEMBL Python client (chembl_webresource_client)
+   - Query through RDKit or other cheminformatics tools that interface with ChEMBL
+   - Use specialized kinase databases like PKIDB or KinMap
+
+From my training knowledge, I know that there are thousands of compounds in ChEMBL that meet these criteria, including well-known kinase inhibitors like imatinib, dasatinib, and many others, but I cannot provide you with a current, comprehensive list without direct database access.
+
+Would you like guidance on how to set up a query to retrieve this information yourself?",,8.089854001998901,61,331,True,True,0.5,"Based on my analysis of the ChEMBL database, I found numerous ChEMBL molecules with IC50 values less than 100 nM against kinase targets. Here's a comprehensive summary of the findings:
+
+## Key Findings:
+
+### Most Potent Compounds:
+The most potent kinase inhibitors identified include:
+
+1. **CHEMBL3666724** - IC50: 0.008 nM against Rho-associated protein kinase 2 (ROCK2)
+2. **CHEMBL1968705** - IC50: 0.01 nM against ROCK2
+3. **CHEMBL3666728** - IC50: 0.01 nM against ROCK2
+4. **CHEMBL1997433** - IC50: 0.011 nM against ROCK2
+5. **CHEMBL3666722** - IC50: 0.012 nM against ROCK2
+
+### Target Analysis:
+The kinase targets with the most potent inhibitors (< 100 nM) include:
+
+1. **Rho-associated protein kinase 2 (ROCK2)** - 1,637 activities, minimum IC50: 0.008 nM
+2. **Leucine-rich repeat serine/threonine-protein kinase 2 (LRRK2)** - 1,503 activities, minimum IC50: 0.001 nM  
+3. **Tyrosine-protein kinase JAK3** - 1,955 activities, minimum IC50: 0.001155 nM
+4. **Tyrosine-protein kinase JAK1** - 3,726 activities, minimum IC50: 0.00125 nM
+5. **MAP kinase ERK2** - 2,678 activities, minimum IC50: 0.00431 nM
+
+### Notable Kinase Classes:
+- **Serine/threonine kinases**: ROCK2, LRRK2, PIM1/2/3, CDK4/9, Aurora-A
+- **Tyrosine kinases**: JAK1/2/3, SYK, LCK
+- **Dual specificity kinases**: DYRK1B, MEK1
+- **MAP kinases**: ERK2, MAP4K1
+
+### Data Quality Observations:
+Many compounds showed IC50 values of exactly 0.0 nM, which may indicate:
+- Extremely potent compounds below the detection limit of the assay
+- Data quality issues or missing precision in the original measurements
+- Compounds that require more sensitive assay methods for accurate measurement
+
+The results represent a comprehensive dataset from ChEMBL version 34, containing bioactivity measurements from peer-reviewed literature. These highly potent kinase inhibitors represent valuable chemical starting points for drug discovery and development programs targeting various kinase-mediated diseases.",,60.30748224258423,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT ?molecule ?moleculeLabel ?target ?targetLabel ?ic50Value ?chemblId\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?activity a cco:Activity ;\n            cco:standardType \""IC50\"" ;\n            cco:standardValue ?ic50Value ;\n            cco:standardUnits \""nM\"" ;\n            cco:hasMolecule ?molecule ;\n            cco:hasAssay/cco:hasTarget ?target .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:chemblId ?chemblId .\n  \n  ?target rdfs:label ?targetLabel ;\n          a cco:SingleProtein ;\n          cco:organismName \""Homo sapiens\"" .\n  \n  # Find kinase targets using text search\n  ?targetLabel bif:contains \""'kinase'\"" option (score ?sc)\n  \n  # Filter for IC50 < 100 nM\n  FILTER(xsd:decimal(?ic50Value) < 100)\n}\nORDER BY ASC(xsd:decimal(?ic50Value)) DESC(?sc)\nLIMIT 100""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT ?molecule ?moleculeLabel ?target ?targetLabel ?ic50Value ?chemblId\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?activity a cco:Activity ;\n            cco:standardType \""IC50\"" ;\n            cco:standardValue ?ic50Value ;\n            cco:standardUnits \""nM\"" ;\n            cco:hasMolecule ?molecule ;\n            cco:hasAssay/cco:hasTarget ?target .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:chemblId ?chemblId .\n  \n  ?target rdfs:label ?targetLabel ;\n          a cco:SingleProtein ;\n          cco:organismName \""Homo sapiens\"" .\n  \n  # Find kinase targets using text search\n  ?targetLabel bif:contains \""'kinase'\"" option (score ?sc)\n  \n  # Filter for IC50 between 0.1 and 100 nM\n  FILTER(xsd:decimal(?ic50Value) > 0.0 && xsd:decimal(?ic50Value) < 100.0)\n}\nORDER BY ASC(xsd:decimal(?ic50Value)) DESC(?sc)\nLIMIT 50""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?targetLabel (COUNT(?activity) AS ?activity_count) (MIN(xsd:decimal(?ic50Value)) AS ?min_ic50) (AVG(xsd:decimal(?ic50Value)) AS ?avg_ic50)\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?activity a cco:Activity ;\n            cco:standardType \""IC50\"" ;\n            cco:standardValue ?ic50Value ;\n            cco:standardUnits \""nM\"" ;\n            cco:hasAssay/cco:hasTarget ?target .\n  \n  ?target rdfs:label ?targetLabel ;\n          a cco:SingleProtein ;\n          cco:organismName \""Homo sapiens\"" .\n  \n  # Find kinase targets using text search\n  ?targetLabel bif:contains \""'kinase'\"" option (score ?sc)\n  \n  # Filter for IC50 < 100 nM\n  FILTER(xsd:decimal(?ic50Value) > 0.0 && xsd:decimal(?ic50Value) < 100.0)\n}\nGROUP BY ?targetLabel\nORDER BY ?min_ic50\nLIMIT 20""}}]",CRITICAL,Multiple potent kinase inhibitors meeting the criteria,"Uses ChEMBL database. Verified in chembl_exploration.md where a structured query filtering by standardType='IC50', standardUnits='nM', and value<100 against targets with 'kinase' in label was tested. The exploration documented 20M bioactivity measurements and demonstrated filtering by activity type and numeric thresholds. This tests complex structured queries with multiple filter conditions."
+12,2025-12-17,Structured Query,Search for Gene Ontology terms in the biological_process namespace that contain 'DNA repair'.,True,False,False,0.1,"I cannot perform database searches or access external resources like the Gene Ontology database directly. However, I can share some knowledge about common Gene Ontology (GO) terms in the biological_process namespace that are related to DNA repair:
+
+Some well-known DNA repair-related GO biological process terms include:
+
+1. **DNA repair** (GO:0006281) - The broad parent term for DNA repair processes
+2. **Base-excision repair** (GO:0006284) - Repair of damaged bases
+3. **Nucleotide-excision repair** (GO:0006289) - Repair of bulky DNA lesions
+4. **Mismatch repair** (GO:0006298) - Correction of base-base mismatches
+5. **Double-strand break repair** (GO:0006302) - Repair of chromosome breaks
+6. **Homologous recombination** (GO:0035825) - One pathway for DSB repair
+7. **Non-homologous end joining** (GO:0006303) - Another DSB repair pathway
+8. **DNA damage response** (GO:0006974) - Cellular response to DNA damage
+
+To get the complete and current list of GO terms containing ""DNA repair"", you would need to:
+- Search the official Gene Ontology database at geneontology.org
+- Use tools like AmiGO, QuickGO, or programmatic access via APIs
+- Filter results to the biological_process namespace
+
+These tools would provide the most up-to-date and comprehensive results for your search query.",,8.395402908325195,57,353,True,False,0.3,"Perfect! Based on my search results, here are the key Gene Ontology terms in the **biological_process** namespace that contain 'DNA repair':
+
+## Main DNA Repair Terms:
+
+1. **GO:0006281 - DNA repair** (Main term)
+   - The process of restoring DNA after damage, including various repair pathways like base excision repair, nucleotide excision repair, double-strand break repair, and mismatch repair.
+
+2. **GO:0006289 - nucleotide-excision repair**
+   - A DNA repair process that removes damaged DNA regions as oligonucleotides and fills the gap.
+
+3. **GO:0000724 - double-strand break repair via homologous recombination**
+   - Error-free repair using homologous sequences as templates.
+
+4. **GO:0006302 - double-strand break repair**
+   - Repair of breaks affecting both DNA strands.
+
+## DNA Repair-Related Processes:
+
+5. **GO:0140861 - DNA repair-dependent chromatin remodeling**
+   - Chromatin remodeling that allows DNA repair enzymes to access genomic DNA.
+
+6. **GO:0090735 - DNA repair complex assembly**
+   - Assembly of protein complexes involved in DNA repair.
+
+7. **GO:0000731 - DNA synthesis involved in DNA repair**
+   - DNA synthesis that occurs during repair processes.
+
+8. **GO:0036297 - interstrand cross-link repair**
+   - Repair of covalent attachments between DNA strands.
+
+## Regulatory Terms:
+
+9. **GO:0006282 - regulation of DNA repair**
+10. **GO:0045739 - positive regulation of DNA repair**
+11. **GO:0045738 - negative regulation of DNA repair**
+
+## Specialized Repair Processes:
+
+12. **GO:0000720 - pyrimidine dimer repair by nucleotide-excision repair**
+    - Repair of UV-induced DNA damage.
+
+13. **GO:0042276 - error-prone translesion synthesis**
+    - DNA synthesis across lesions that increases mutation rates.
+
+14. **GO:0019985 - translesion synthesis**
+    - DNA synthesis that bypasses replication-blocking lesions.
+
+All of these terms are confirmed to be in the biological_process namespace, as they all have ""biological_process"" (GO:0008150) as an ancestor in their hierarchical classification. The search returned 1,811 total terms related to DNA repair, indicating the extensive ontology coverage of DNA repair processes and their regulation.",,28.651679039001465,"mcp__ols__searchClasses, mcp__ols__fetch","[{""name"": ""mcp__ols__searchClasses"", ""input"": {""query"": ""DNA repair"", ""ontologyId"": ""go""}}, {""name"": ""mcp__ols__fetch"", ""input"": {""id"": ""go+http://purl.obolibrary.org/obo/GO_0006281""}}]",CRITICAL,"Multiple terms including GO:0006281 (DNA repair), GO:0045739 (positive regulation of DNA repair), GO:0042275 (error-free postreplication DNA repair), GO:0006282 (regulation of DNA repair), GO:0043504 (mitochondrial DNA repair)","Uses GO database. Verified in go_exploration.md where bif:contains search for 'DNA repair' with namespace filter biological_process returned multiple terms. The exploration documented that GO has 30,804 biological_process terms and demonstrated fast keyword search with namespace filtering. This tests structured ontology search with category constraints."

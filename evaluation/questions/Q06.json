@@ -1,88 +1,86 @@
-{
-  "questions": [
-    {
-      "id": 61,
-      "category": "Precision",
-      "question": "What is the ChEBI ID for acetylsalicylic acid?",
-      "expected_answer": "CHEBI:15365",
-      "notes": "Uses ChEBI database. Verified in chebi_exploration.md where aspirin/acetylsalicylic acid is CHEBI:15365. This tests chemical entity identifier precision in ontology databases."
-    },
-    {
-      "id": 62,
-      "category": "Precision",
-      "question": "What is the HGNC identifier for BRCA1 gene?",
-      "expected_answer": "HGNC:1100",
-      "notes": "Uses ClinVar database. Verified in clinvar_exploration.md where BRCA1 gene information showed HGNC:1100. This tests official gene nomenclature identifier retrieval requiring database access to standardized gene symbols."
-    },
-    {
-      "id": 63,
-      "category": "Completeness",
-      "question": "How many diseases in NANDO have notification numbers (government-designated intractable diseases)?",
-      "expected_answer": "2,454 (88% coverage)",
-      "notes": "Uses NANDO database. Verified in nando_exploration.md which documented 2,454 of 2,777 diseases (88%) have government notification numbers. This tests specialized Japanese rare disease policy data completeness."
-    },
-    {
-      "id": 64,
-      "category": "Completeness",
-      "question": "List all positive enzyme activities for Bacillus subtilis according to BacDive.",
-      "expected_answer": "Caseinase, catalase, gamma-glutamyltransferase, protease, beta-galactosidase, alcohol dehydrogenase, gelatinase, amylase, DNase (9 total)",
-      "notes": "Uses BacDive database. Verified in bacdive_exploration.md where enzyme activities query showed B. subtilis has 9 different positive enzyme activities. This tests comprehensive phenotypic characterization requiring database access to metabolic profiles."
-    },
-    {
-      "id": 65,
-      "category": "Integration",
-      "question": "What is the UniProt accession corresponding to Ensembl protein ENSP00000269305?",
-      "expected_answer": "P04637",
-      "notes": "Uses Ensembl and UniProt databases. Verified in ensembl_exploration.md where gene-transcript-protein hierarchy showed TP53 proteins link to UniProt P04637 (canonical). This tests protein database integration across genome and proteome resources."
-    },
-    {
-      "id": 66,
-      "category": "Integration",
-      "question": "What is the SNOMED CT identifier for Lipoatrophic diabetes from MedGen?",
-      "expected_answer": "127012008",
-      "notes": "Uses MedGen database. Verified in medgen_exploration.md where external cross-references for C0011859 included SNOMED CT:127012008. This tests clinical terminology mapping across medical databases."
-    },
-    {
-      "id": 67,
-      "category": "Currency",
-      "question": "How many 16S rRNA sequences are recorded in BacDive?",
-      "expected_answer": "87,045",
-      "notes": "Uses BacDive database. Verified in bacdive_exploration.md which documented 87,045 total 16S sequences (~35% coverage). This tests current molecular sequence data availability statistics."
-    },
-    {
-      "id": 68,
-      "category": "Currency",
-      "question": "How many diseases in MONDO have OMIM cross-references?",
-      "expected_answer": "Approximately 33% coverage",
-      "notes": "Uses MONDO database. Verified in mondo_exploration.md which documented OMIM cross-references at 33% coverage. This tests current disease ontology integration statistics with genetic disorder databases."
-    },
-    {
-      "id": 69,
-      "category": "Specificity",
-      "question": "What is the R-work value for PDB entry 5D8V?",
-      "expected_answer": "0.072",
-      "notes": "Uses PDB database. Verified in pdb_exploration.md where ultra-high resolution structures showed 5D8V has R-work 0.072 at 0.48Å resolution. This tests specific crystallographic quality metric retrieval."
-    },
-    {
-      "id": 70,
-      "category": "Specificity",
-      "question": "What is the hiragana pronunciation label for Parkinson's disease in NANDO?",
-      "expected_answer": "ぱーきんそんびょう (paakinsobibyou)",
-      "notes": "Uses NANDO database. Verified in nando_exploration.md which documented multilingual labels including hiragana pronunciation for diseases. This tests specialized Japanese linguistic data requiring database access to complete multilingual annotations."
-    },
-    {
-      "id": 71,
-      "category": "Structured Query",
-      "question": "Find all aspirin-triggered resolvins in ChEBI.",
-      "expected_answer": "Multiple resolvins: D1 (CHEBI:138179), D2 (CHEBI:138614), D3 (CHEBI:138615), D4 (CHEBI:138616), D5 (CHEBI:138617), D6 (CHEBI:138618)",
-      "notes": "Uses ChEBI database. Verified in chebi_exploration.md where aspirin search found 10 aspirin-related entities including 6 aspirin-triggered resolvins. This tests hierarchical chemical derivative enumeration in ontology structures."
-    },
-    {
-      "id": 72,
-      "category": "Structured Query",
-      "question": "Find all MediaDive culture media with pH between 6.5 and 7.5 that are marked as complex.",
-      "expected_answer": "Multiple neutral pH complex media including various anaerobic and methanogen media",
-      "notes": "Uses MediaDive database. Verified in mediadive_exploration.md where pH range filtering with complexity boolean found 15+ neutral pH media. This tests numeric range filtering combined with boolean property filtering."
-    }
-  ]
-}
+[
+  {
+    "id": 61,
+    "category": "Precision",
+    "question": "What is the EC number for the biochemical reaction RHEA:10000 in the Rhea database?",
+    "expected_answer": "EC 3.5.1.50 (pentanamide hydrolysis)",
+    "notes": "Uses Rhea database. Verified in rhea_exploration.md showing RHEA:10000 is pentanamide hydrolysis with EC 3.5.1.50 and GO:0050168. Tests enzyme classification retrieval."
+  },
+  {
+    "id": 62,
+    "category": "Precision",
+    "question": "What is the molecular formula of resveratrol in PubChem (CID445154)?",
+    "expected_answer": "C14H12O3",
+    "notes": "Uses PubChem database. Verified in pubchem_exploration.md showing resveratrol with molecular weight 228.24. Tests molecular descriptor retrieval from chemical database."
+  },
+  {
+    "id": 63,
+    "category": "Completeness",
+    "question": "How many bioactive molecules with drug-like properties are in ChEMBL?",
+    "expected_answer": "2.4 million compounds",
+    "notes": "Uses ChEMBL database. Verified in chembl_exploration.md showing 2.4M+ compounds with bioactivity data. Tests understanding of medicinal chemistry database scale."
+  },
+  {
+    "id": 64,
+    "category": "Completeness",
+    "question": "List all major disease categories in NANDO with their Japanese names.",
+    "expected_answer": "15 categories including Neuromuscular (神経・筋疾患), Metabolic (代謝系疾患), Immune system (免疫系疾患), etc.",
+    "notes": "Uses NANDO database. Verified in nando_exploration.md showing 15 major disease categories with bilingual labels. Tests Japanese rare disease ontology navigation."
+  },
+  {
+    "id": 65,
+    "category": "Integration",
+    "question": "What KEGG Disease ID corresponds to Parkinson's disease (NANDO:1200010)?",
+    "expected_answer": "KEGG H00057",
+    "notes": "Uses NANDO and KEGG databases. Verified in nando_exploration.md showing rdfs:seeAlso links to KEGG Disease. ~500 diseases have KEGG links. Tests cross-database disease integration."
+  },
+  {
+    "id": 66,
+    "category": "Integration",
+    "question": "Convert the PDB entry 16PK to its EMDB electron microscopy density map identifier if available.",
+    "expected_answer": "Check for EMDB cross-reference (~7% of PDB entries have EMDB links)",
+    "notes": "Uses PDB and EMDB databases. Verified in pdb_exploration.md showing ~7% coverage for cryo-EM structures via pdbx:database_2. Tests structure-to-map database linking."
+  },
+  {
+    "id": 67,
+    "category": "Currency",
+    "question": "How many disease classes in MONDO have been mapped to the Japanese NANDO database?",
+    "expected_answer": "~8% coverage representing rare disease harmonization",
+    "notes": "Uses MONDO and NANDO databases. Verified in mondo_exploration.md and nando_exploration.md showing international-Japanese disease mapping via skos:closeMatch."
+  },
+  {
+    "id": 68,
+    "category": "Currency",
+    "question": "What is the most recent genome assembly release for Ensembl human annotations?",
+    "expected_answer": "GRCh38, Release 114 (or current release)",
+    "notes": "Uses Ensembl database. Verified in ensembl_exploration.md showing regular release cycle. Tests awareness of current genomics database versions."
+  },
+  {
+    "id": 69,
+    "category": "Specificity",
+    "question": "What is the notification number for Spinal and bulbar muscular atrophy (NANDO:1200001) in the Japanese intractable disease system?",
+    "expected_answer": "Notification number 1",
+    "notes": "Uses NANDO database. Verified in nando_exploration.md showing nando:hasNotificationNumber property for government-designated diseases. Tests Japanese healthcare policy data."
+  },
+  {
+    "id": 70,
+    "category": "Specificity",
+    "question": "What polymerization index notation is used in Rhea reaction RHEA:19749 for polymer synthesis?",
+    "expected_answer": "n and n+1 (showing polymerization from n to n+1)",
+    "notes": "Uses Rhea database. Verified in rhea_exploration.md showing polymer reactions with rhea:polymerizationIndex. Tests specialized biochemical notation understanding."
+  },
+  {
+    "id": 71,
+    "category": "Structured Query",
+    "question": "Find all diseases in MONDO that have cross-references to both OMIM and Orphanet databases.",
+    "expected_answer": "Multiple genetic/rare diseases (33% have OMIM, 34% have Orphanet, overlap exists)",
+    "notes": "Uses MONDO database. Verified in mondo_exploration.md showing oboInOwl:hasDbXref for external links. Tests multi-database integration queries."
+  },
+  {
+    "id": 72,
+    "category": "Structured Query",
+    "question": "How many protein structures in PDB were determined by X-ray diffraction versus electron microscopy?",
+    "expected_answer": "X-ray: 174,904 (85.5%), Electron microscopy: 15,032 (7.3%)",
+    "notes": "Uses PDB database. Verified in pdb_exploration.md showing experimental method distribution via pdbx:exptl.method. Tests structural biology method comparison."
+  }
+]
