@@ -26,6 +26,13 @@ uv sync
 
 ```
 
+### Set NCBI API KEY
+Part of TogoMCP tools require NCBI API keys.
+Obtain your NCBI API KEY. See [here](https://www.ncbi.nlm.nih.gov/datasets/docs/v2/api/api-keys/).
+```sh
+export NCBI_API_KEY="your-key-here"
+```
+
 ## Configuration
 ### Claude Desktop Configuration
 Change the file paths as appropriate.
