@@ -1,5 +1,5 @@
 {
-  "model": "claude-sonnet-4-20250514",
+  "model": "claude-sonnet-4-5-20250929",
   "max_tokens": 4000,
   "temperature": 1.0,
   "baseline_system_prompt": "Answer using only your training knowledge. Do not use any database tools or external resources. If you don't know something with certainty, say so.",

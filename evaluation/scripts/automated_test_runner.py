@@ -218,7 +218,7 @@ class EvaluationRunner:
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or use defaults."""
         default_config = {
-            "model": "claude-sonnet-4-20250514",
+            "model": "claude-sonnet-4-5-20250929",
             "max_tokens": 4000,
             "temperature": 1.0,
             "baseline_system_prompt": (
