@@ -52,6 +52,13 @@ class PricingInfo:
 # https://www.anthropic.com/pricing
 # Cache pricing: creation +25%, read -90%
 DEFAULT_PRICING = {
+    "claude-sonnet-4-5-20250929": PricingInfo(
+        model_name="Claude Sonnet 4.5",
+        input_price_per_mtok=3.0,
+        output_price_per_mtok=15.0,
+        cache_creation_price_per_mtok=3.75,
+        cache_read_price_per_mtok=0.30
+    ),
     "claude-sonnet-4-20250514": PricingInfo(
         model_name="Claude Sonnet 4",
         input_price_per_mtok=3.0,
@@ -65,6 +72,13 @@ DEFAULT_PRICING = {
         output_price_per_mtok=75.0,
         cache_creation_price_per_mtok=18.75,
         cache_read_price_per_mtok=1.50
+    ),
+    "claude-haiku-4-5-20251001": PricingInfo(
+        model_name="Claude Haiku 4.5",
+        input_price_per_mtok=0.8,
+        output_price_per_mtok=4.0,
+        cache_creation_price_per_mtok=1.0,
+        cache_read_price_per_mtok=0.08
     ),
     "claude-haiku-4-20250110": PricingInfo(
         model_name="Claude Haiku 4",
@@ -557,7 +571,7 @@ Examples:
     parser.add_argument(
         "-m", "--model",
         help="Model identifier for pricing lookup",
-        default="claude-sonnet-4-20250514"
+        default="claude-sonnet-4-5-20250929"
     )
     parser.add_argument(
         "-p", "--pricing",

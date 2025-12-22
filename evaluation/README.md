@@ -87,7 +87,7 @@ This evaluation framework systematically tests how well TogoMCP (Model Context P
 | **Questions Evaluated** | 24 (20%) |
 | **Questions Pending** | 96 (80%) |
 | **Documentation Size** | 279 KB |
-| **Estimated Full Cost** | ~$6.50 (Claude Sonnet 4) |
+| **Estimated Full Cost** | ~$6.50 (Claude Sonnet 4.5) |
 
 ---
 
@@ -318,7 +318,7 @@ python generate_dashboard.py ../results/Q03_out.csv --open
 ```
 
 **Time**: ~30 minutes for 12 questions  
-**Cost**: ~$0.65 (Claude Sonnet 4)
+**Cost**: ~$0.65 (Claude Sonnet 4.5)
 
 ### Create New Questions
 
@@ -476,7 +476,7 @@ Q3: CREATE cache (system + tools) + READ cache → Answer  ← Fresh session
 - ~46% cheaper than conversation accumulation
 - Each question independent
 
-### Cost Breakdown (Claude Sonnet 4)
+### Cost Breakdown (Claude Sonnet 4.5)
 
 **Per Question**:
 - Baseline: ~$0.002 (no caching)
@@ -512,9 +512,9 @@ python compute_costs.py results.csv --export cost_report.json
 
 | Model | Input | Output | Cache Create | Cache Read |
 |-------|-------|--------|--------------|------------|
-| Sonnet 4 (default) | $3.00/MTok | $15.00/MTok | $3.75/MTok | $0.30/MTok |
+| Sonnet 4.5 (default) | $3.00/MTok | $15.00/MTok | $3.75/MTok | $0.30/MTok |
 | Opus 4 | $15.00/MTok | $75.00/MTok | $18.75/MTok | $1.50/MTok |
-| Haiku 4 | $0.80/MTok | $4.00/MTok | $1.00/MTok | $0.08/MTok |
+| Haiku 4.5 | $0.80/MTok | $4.00/MTok | $1.00/MTok | $0.08/MTok |
 | Sonnet 3.5 | $3.00/MTok | $15.00/MTok | $3.75/MTok | $0.30/MTok |
 
 ### Example Output
@@ -523,7 +523,7 @@ python compute_costs.py results.csv --export cost_report.json
 ================================================================================
 COST ANALYSIS FOR TOGOMCP EVALUATION
 ================================================================================
-Model: Claude Sonnet 4
+Model: Claude Sonnet 4.5
 Total questions evaluated: 12
 
 BASELINE COSTS (No Tools)
@@ -671,7 +671,7 @@ python results_analyzer.py evaluation_results.csv --export report.md
 
 ### How much does a full evaluation cost?
 
-**Claude Sonnet 4** (default):
+**Claude Sonnet 4.5** (default):
 - 12 questions: ~$0.65
 - 24 questions: ~$1.30
 - 120 questions: ~$6.50
@@ -706,10 +706,11 @@ We completed Q01-Q02 as validation. Q03-Q10 are ready to run.
 ### Can I use different Claude models?
 
 Yes! Supported models:
-- `claude-sonnet-4-20250514` (default)
-- `claude-opus-4-20250514`
-- `claude-haiku-4-20250110`
-- `claude-sonnet-3-5-20241022`
+- `claude-sonnet-4-5-20250929` (default, Sonnet 4.5)
+- `claude-sonnet-4-20250514` (Sonnet 4)
+- `claude-opus-4-20250514` (Opus 4)
+- `claude-haiku-4-5-20251001` (Haiku 4.5)
+- `claude-sonnet-3-5-20241022` (Sonnet 3.5)
 
 Specify with: `--model claude-opus-4-20250514`
 
