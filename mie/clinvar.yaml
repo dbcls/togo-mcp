@@ -6,9 +6,12 @@ schema_info:
   base_uri: http://ncbi.nlm.nih.gov/clinvar/
   graphs:
     - http://rdfportal.org/dataset/clinvar
+  kw_search_tools:
+    - ncbi_esearch
   version:
     mie_version: "1.1"
     mie_created: "2024-12-08"
+    mie_updated: "2024-12-23"
     data_version: "Release 2025.01"
     update_frequency: "Monthly"
   license:
@@ -80,7 +83,7 @@ sample_rdf_entries:
         cvo:date_created "2022-05-16"^^xsd:date ;
         cvo:number_of_submitters 1 ;
         med2rdf:disease _:disease1 .
-
+  
   - title: "Gene with Genomic Location"
     description: "SLCO1B1 gene on chromosome 12p12.1 with HGNC and OMIM identifiers."
     rdf: |
@@ -93,7 +96,7 @@ sample_rdf_entries:
         cvo:omim 604843 ;
         cvo:cytogenetic_location "12p12.1" ;
         faldo:location _:loc1 .
-
+  
   - title: "Single Nucleotide Variant"
     description: "Missense variant in SLC9A4 with clinical significance classification."
     rdf: |
@@ -105,7 +108,7 @@ sample_rdf_entries:
         cvo:species "Homo sapiens" ;
         cvo:record_status "current" ;
         cvo:classified_record _:classrec1 .
-
+  
   - title: "Disease Association"
     description: "Clinical trait representing disease condition with MedGen cross-reference."
     rdf: |
@@ -114,7 +117,7 @@ sample_rdf_entries:
         cvo:type "Disease" ;
         cvo:id 16789 ;
         dct:references <http://ncbi.nlm.nih.gov/medgen/C3150901> .
-
+  
   - title: "Classified Record"
     description: "Clinical classification with germline significance assessment."
     rdf: |
@@ -130,7 +133,7 @@ sparql_query_examples:
   - title: "Search Variants by Gene with bif:contains"
     description: "Find all variants for BRCA1 gene using full-text search."
     question: "What variants are recorded for BRCA1?"
-    complexity: "basic"
+    complexity: basic
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -144,11 +147,11 @@ sparql_query_examples:
         ?label bif:contains "'BRCA1'" .
       }
       LIMIT 100
-
+  
   - title: "Get Variant by Accession"
     description: "Retrieve variant details using ClinVar accession number."
     question: "What are details of variant VCV000856461?"
-    complexity: "basic"
+    complexity: basic
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -158,11 +161,11 @@ sparql_query_examples:
         ?variant cvo:accession "VCV000856461" ;
                  ?property ?value .
       }
-
+  
   - title: "Find Variants with Clinical Significance"
     description: "Retrieve variants with their clinical significance classifications."
     question: "Which variants have clinical significance classifications?"
-    complexity: "intermediate"
+    complexity: intermediate
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -175,11 +178,11 @@ sparql_query_examples:
         ?classrec cvo:classifications/cvo:germline_classification/cvo:description ?significance .
       }
       LIMIT 100
-
+  
   - title: "Count Variants by Type"
     description: "Group and count variants by their variation types."
     question: "What types of variations exist and how many?"
-    complexity: "intermediate"
+    complexity: intermediate
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -193,11 +196,11 @@ sparql_query_examples:
       GROUP BY ?variation_type
       ORDER BY DESC(?count)
       LIMIT 50
-
+  
   - title: "Gene-Disease Associations via Variants"
     description: "Find gene-disease associations through variant annotations using keyword search."
     question: "What diseases are associated with TP53 variants?"
-    complexity: "intermediate"
+    complexity: intermediate
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       PREFIX med2rdf: <http://med2rdf.org/ontology/med2rdf#>
@@ -215,11 +218,11 @@ sparql_query_examples:
         ?label bif:contains "'TP53'" .
       }
       LIMIT 100
-
+  
   - title: "Well-Studied Recent Variants"
     description: "Identify variants with multiple submitters and recent updates."
     question: "Which variants have multiple submissions and were recently updated?"
-    complexity: "advanced"
+    complexity: advanced
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -237,11 +240,11 @@ sparql_query_examples:
       }
       ORDER BY DESC(?num_submitters) DESC(?last_updated)
       LIMIT 100
-
+  
   - title: "Genes with Chromosomal Locations"
     description: "Retrieve genes with cytogenetic locations and external identifiers."
     question: "What genes have chromosomal locations and HGNC identifiers?"
-    complexity: "advanced"
+    complexity: advanced
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -261,9 +264,12 @@ sparql_query_examples:
 
 cross_references:
   - pattern: "rdfs:seeAlso"
-    description: "Variants and genes link to ClinVar web interface and HGNC."
+    description: |
+      Variants and genes link to ClinVar web interface and HGNC.
     databases:
-      primary: ["ClinVar Web (variants)", "HGNC (genes)"]
+      primary:
+        - "ClinVar Web (variants)"
+        - "HGNC (genes)"
     sparql: |
       SELECT ?variant ?accession ?url
       FROM <http://rdfportal.org/dataset/clinvar>
@@ -272,11 +278,15 @@ cross_references:
                  cvo:accession ?accession ;
                  rdfs:seeAlso ?url .
       } LIMIT 10
-
+  
   - pattern: "dct:references"
-    description: "Disease/trait annotations reference MedGen, OMIM, and MeSH."
+    description: |
+      Disease/trait annotations reference MedGen, OMIM, and MeSH.
     databases:
-      biomedical: ["MedGen (~95%)", "OMIM (~40%)", "MeSH (~30%)"]
+      biomedical:
+        - "MedGen (~95%)"
+        - "OMIM (~40%)"
+        - "MeSH (~30%)"
     sparql: |
       SELECT DISTINCT ?disease ?ref
       FROM <http://rdfportal.org/dataset/clinvar>
@@ -285,11 +295,13 @@ cross_references:
                  dct:references ?ref .
         FILTER(CONTAINS(STR(?ref), "medgen") || CONTAINS(STR(?ref), "omim"))
       } LIMIT 50
-
+  
   - pattern: "cvo:hgnc_id"
-    description: "Gene entities have HGNC identifiers for official gene symbols."
+    description: |
+      Gene entities have HGNC identifiers for official gene symbols.
     databases:
-      genomics: ["HGNC (~100% human genes)"]
+      genomics:
+        - "HGNC (~100% human genes)"
     sparql: |
       SELECT ?gene ?symbol ?hgnc_id
       FROM <http://rdfportal.org/dataset/clinvar>
@@ -298,11 +310,13 @@ cross_references:
               cvo:symbol ?symbol ;
               cvo:hgnc_id ?hgnc_id .
       } LIMIT 20
-
+  
   - pattern: "cvo:omim"
-    description: "Direct OMIM identifiers on Gene entities linking to disease entries."
+    description: |
+      Direct OMIM identifiers on Gene entities linking to disease entries.
     databases:
-      genetics: ["OMIM (~4,000 genes)"]
+      genetics:
+        - "OMIM (~4,000 genes)"
     sparql: |
       SELECT ?gene ?symbol ?omim_id
       FROM <http://rdfportal.org/dataset/clinvar>
@@ -313,8 +327,10 @@ cross_references:
       } LIMIT 50
 
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
+  keyword_search:
+    - "Use ncbi_esearch for finding variants by gene symbol, disease, or accession"
+    - "For SPARQL-based searches, use bif:contains on rdfs:label for gene symbols"
+    - "Keyword search syntax: bif:contains \"'term1' AND 'term2'\" for multiple terms"
   schema_design:
     - "VariationArchiveType central entity with VCV accessions"
     - "Classified records contain clinical assertions and interpretations"
@@ -340,7 +356,7 @@ architectural_notes:
 
 data_statistics:
   total_variations: 3588969
-  total_genes: 20000
+  total_genes: "~20,000"
   coverage:
     clinical_significance: "~90%"
     disease_associations: "~75%"
@@ -355,6 +371,10 @@ data_statistics:
     - "bif:contains searches: 1-3s"
     - "Complex blank node joins: 3-10s"
     - "Aggregation queries: 5-15s"
+  data_quality_notes:
+    - "90% of variants have clinical significance"
+    - "Most variants from single submitter (70%)"
+    - "Current records: ~3.2M, deprecated: ~400K"
 
 anti_patterns:
   - title: "Missing Graph Specification"
@@ -373,7 +393,7 @@ anti_patterns:
         ?s ?p ?o .
       } LIMIT 10
     explanation: "Always specify FROM <http://rdfportal.org/dataset/clinvar>."
-
+  
   - title: "FILTER CONTAINS vs bif:contains"
     problem: "FILTER CONTAINS is slower than bif:contains."
     wrong_sparql: |
@@ -391,7 +411,7 @@ anti_patterns:
         ?label bif:contains "'BRCA1'" .
       }
     explanation: "Use bif:contains with single-quoted keywords for better performance."
-
+  
   - title: "Blank Node Chains Without OPTIONAL"
     problem: "Inner joins through blank nodes filter out variants lacking annotations."
     wrong_sparql: |
@@ -421,7 +441,7 @@ common_errors:
       - "Add filters (variation_type, record_status, dates)"
       - "Use LIMIT even on COUNT queries"
       - "Break complex queries into smaller steps"
-
+  
   - error: "Empty results for cross-references"
     causes:
       - "Querying external URIs not in graph as subjects"
@@ -430,7 +450,7 @@ common_errors:
       - "Use disease/trait blank nodes to find dct:references"
       - "Check rdfs:seeAlso on main entities"
       - "Sample data first to understand URI patterns"
-
+  
   - error: "Inconsistent date filtering"
     causes:
       - "Mixed xsd:date and xsd:string datatypes"

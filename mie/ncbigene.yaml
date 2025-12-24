@@ -1,22 +1,27 @@
 schema_info:
   title: NCBI Gene Database
   description: |
-    Gene database with 57M+ entries covering protein-coding genes, ncRNAs, pseudogenes across all organisms. Includes gene symbols, descriptions, chromosomal locations, types, synonyms, and cross-references to Ensembl, HGNC, OMIM. Supports comparative genomics via orthology relationships and taxonomic classification.
-  endpoint: https://rdfportal.org/ncbigene/sparql
+    Gene database with 57M+ entries covering protein-coding genes, ncRNAs, pseudogenes across all organisms. 
+    Includes gene symbols, descriptions, chromosomal locations, types, synonyms, and cross-references to Ensembl, HGNC, OMIM. 
+    Supports comparative genomics via orthology relationships and taxonomic classification.
+  endpoint: https://rdfportal.org/ncbi/sparql
   base_uri: http://identifiers.org/ncbigene/
   graphs:
     - http://rdfportal.org/dataset/ncbigene
+  kw_search_tools:
+    - ncbi_esearch
   version:
-    mie_version: "1.2"
+    mie_version: "1.4"
     mie_created: "2025-01-10"
+    mie_updated: "2025-12-23"
     data_version: "November 2024"
     update_frequency: "Regular"
   license:
     data_license: "NCBI Public Domain"
-    license_url: https://www.ncbi.nlm.nih.gov/home/about/policies/
+    license_url: "https://www.ncbi.nlm.nih.gov/home/about/policies/"
   access:
     rate_limiting: "Standard SPARQL limits"
-    max_query_timeout: "60s"
+    max_query_timeout: "60 seconds"
 
 shape_expressions: |
   PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
@@ -62,7 +67,7 @@ sample_rdf_entries:
         insdc:dblink <http://identifiers.org/ensembl/ENSG00000121410>,
                      <http://identifiers.org/hgnc/5> ;
         ncbio:taxid <http://identifiers.org/taxonomy/9606> .
-
+  
   - title: "Non-Coding RNA (LINC00165)"
     description: "Long intergenic ncRNA with alternative names."
     rdf: |
@@ -77,7 +82,7 @@ sample_rdf_entries:
         insdc:chromosome "21" ;
         dct:alternative "narcolepsy candidate-region 1 gene B" ;
         ncbio:taxid <http://identifiers.org/taxonomy/9606> .
-
+  
   - title: "Gene with Orthologs (INS)"
     description: "Insulin gene with cross-species relationships."
     rdf: |
@@ -91,7 +96,7 @@ sample_rdf_entries:
         dct:description "insulin" ;
         orth:hasOrtholog <http://identifiers.org/ncbigene/16334>,
                          <http://identifiers.org/ncbigene/24506> .
-
+  
   - title: "Pseudogene (ACTG1P14)"
     description: "Non-functional gene copy."
     rdf: |
@@ -103,7 +108,7 @@ sample_rdf_entries:
         rdfs:label "ACTG1P14" ;
         ncbio:typeOfGene "pseudo" ;
         insdc:chromosome "9" .
-
+  
   - title: "Multi-Chromosome Gene (SHOX)"
     description: "Gene on X and Y with multiple OMIM links."
     rdf: |
@@ -120,7 +125,7 @@ sparql_query_examples:
   - title: "Basic Gene Info"
     description: "Get gene metadata by ID"
     question: "What is gene 1?"
-    complexity: basic
+    complexity: "basic"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -134,11 +139,11 @@ sparql_query_examples:
           ncbio:typeOfGene ?type .
         OPTIONAL { <http://identifiers.org/ncbigene/1> dct:description ?description }
       }
-
+  
   - title: "List Genes by Type"
     description: "Filter genes by biological type"
     question: "Find protein-coding genes in human"
-    complexity: basic
+    complexity: "basic"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -153,11 +158,11 @@ sparql_query_examples:
               ncbio:taxid <http://identifiers.org/taxonomy/9606> .
       }
       LIMIT 10
-
+  
   - title: "Search Gene Symbols"
     description: "Full-text search on gene symbols with relevance scoring"
     question: "Find INS, BRCA1, or TP53"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -172,11 +177,11 @@ sparql_query_examples:
         ?label bif:contains "'INS' OR 'BRCA1' OR 'TP53'" option (score ?sc) .
       }
       ORDER BY DESC(?sc)
-
+  
   - title: "Search Full Gene Names"
     description: "Keyword search in gene descriptions with biological context"
     question: "Find insulin-related genes"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -194,11 +199,11 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - title: "Boolean Keyword Search"
     description: "Complex text search with AND/OR/NOT for biological annotations"
     question: "Cancer genes but not suppressors"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -217,11 +222,11 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - title: "Orthology Analysis"
     description: "Find orthologous genes across species"
     question: "What are INS orthologs?"
-    complexity: advanced
+    complexity: "advanced"
     sparql: |
       PREFIX orth: <http://purl.org/net/orth#>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -235,11 +240,11 @@ sparql_query_examples:
                   ncbio:taxid ?taxid .
       }
       LIMIT 100
-
+  
   - title: "Comprehensive Gene Annotation"
     description: "Aggregate all metadata with biological context"
     question: "Get complete gene profile"
-    complexity: advanced
+    complexity: "advanced"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
@@ -265,14 +270,14 @@ sparql_query_examples:
       GROUP BY ?label ?description ?type ?chromosome ?map
 
 cross_references:
-  - pattern: insdc:dblink (IRI links)
+  - pattern: "insdc:dblink (IRI links)"
     description: |
       Primary external links via identifiers.org URIs to Ensembl, HGNC, OMIM.
     databases:
       Genomics:
-        - Ensembl: gene annotations
-        - HGNC: human nomenclature
-        - OMIM: disease associations
+        - "Ensembl: gene annotations"
+        - "HGNC: human nomenclature"
+        - "OMIM: disease associations"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       
@@ -283,13 +288,13 @@ cross_references:
         FILTER(STRSTARTS(STR(?external), "http://identifiers.org/ensembl/"))
       }
       LIMIT 10
-
-  - pattern: insdc:db_xref (string refs)
+  
+  - pattern: "insdc:db_xref (string refs)"
     description: |
       String-based references like "Database:ID".
     databases:
       Various:
-        - AllianceGenome: integrated resources
+        - "AllianceGenome: integrated resources"
     sparql: |
       PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       
@@ -300,13 +305,13 @@ cross_references:
         FILTER(CONTAINS(?xref, "AllianceGenome"))
       }
       LIMIT 10
-
-  - pattern: orth:hasOrtholog
+  
+  - pattern: "orth:hasOrtholog"
     description: |
       Bidirectional orthology for comparative genomics.
     databases:
       Internal:
-        - NCBI Gene: within-database orthology
+        - "NCBI Gene: within-database orthology"
     sparql: |
       PREFIX orth: <http://purl.org/net/orth#>
       
@@ -316,13 +321,13 @@ cross_references:
         ?gene1 orth:hasOrtholog ?gene2 .
       }
       LIMIT 10
-
-  - pattern: ncbio:taxid
+  
+  - pattern: "ncbio:taxid"
     description: |
       Taxonomic classification via NCBI Taxonomy.
     databases:
       Taxonomy:
-        - NCBI Taxonomy: organism classification
+        - "NCBI Taxonomy: organism classification"
     sparql: |
       PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
       
@@ -335,30 +340,41 @@ cross_references:
 
 architectural_notes:
   search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
+    - "RECOMMENDED WORKFLOW: Use ncbi_esearch BEFORE SPARQL for efficient gene discovery"
+    - "ncbi_esearch(database='gene', query='BRCA1 AND human[organism]') returns Gene IDs directly"
+    - "ncbi_esearch supports Entrez syntax: field tags [Gene Name], [Symbol], boolean operators (AND, OR, NOT)"
+    - "Use ncbi_esearch for: gene symbol lookup, organism-specific queries, broad discovery"
+    - "Use SPARQL for: detailed metadata retrieval, property aggregation, cross-database linking, complex filters"
+    - "Optimal pattern: ncbi_esearch to find IDs → SPARQL to get full RDF data"
+    - "Example: ncbi_esearch('insulin receptor', max_results=20) then query each ID via SPARQL"
+    - "For general keyword search strategies across databases, call the TogoMCP_Usage_Guide tool"
+  
   schema_design:
-    - Single Gene entity with comprehensive properties
-    - identifiers.org URIs for cross-database consistency
-    - Label=symbols (INS), description=full names (insulin)
-    - IRI-based (dblink) vs string-based (db_xref) references
-    - Bidirectional orthology enables comparative analysis
+    - "Single Gene entity with comprehensive properties"
+    - "identifiers.org URIs for cross-database consistency"
+    - "Label=symbols (INS), description=full names (insulin)"
+    - "IRI-based (dblink) vs string-based (db_xref) references"
+    - "Bidirectional orthology enables comparative analysis"
+  
   performance:
-    - Use bif:contains for text search (not REGEX/FILTER)
-    - Filter by taxid early to reduce search space
-    - Gene ID lookups fast (<1s)
-    - Always add LIMIT to orthology queries
-    - Include FROM clause for graph targeting
+    - "Use bif:contains for text search (not REGEX/FILTER)"
+    - "Filter by taxid early to reduce search space"
+    - "Gene ID lookups fast (<1s)"
+    - "Always add LIMIT to orthology queries"
+    - "Include FROM clause for graph targeting"
+  
   data_integration:
-    - identifiers.org enables seamless cross-database linking
-    - HGNC for official nomenclature
-    - Ensembl for detailed annotations
-    - OMIM for disease associations
-    - Taxonomy for phylogenetic context
+    - "identifiers.org enables seamless cross-database linking"
+    - "HGNC for official nomenclature"
+    - "Ensembl for detailed annotations"
+    - "OMIM for disease associations"
+    - "Taxonomy for phylogenetic context"
+  
   data_quality:
-    - Official status via nomenclatureStatus
-    - Synonyms capture historical names
-    - Optional properties vary by curation level
-    - Best coverage for model organisms
+    - "Official status via nomenclatureStatus"
+    - "Synonyms capture historical names"
+    - "Optional properties vary by curation level"
+    - "Best coverage for model organisms"
 
 data_statistics:
   total_genes: 57768578
@@ -378,15 +394,15 @@ data_statistics:
     tRNA: 3030346
     pseudo: 2731789
     rRNA: 993602
-  performance:
+  performance_characteristics:
     - "Gene ID lookup: <1s"
     - "Type filtering: 1-5s"
     - "bif:contains search: 1-3s"
     - "Orthology queries: 10-30s"
-  data_quality:
-    - Best curated for human, mouse, rat
-    - Coverage decreases for non-model organisms
-    - Orthology most complete between close species
+  data_quality_notes:
+    - "Best curated for human, mouse, rat"
+    - "Coverage decreases for non-model organisms"
+    - "Orthology most complete between close species"
 
 anti_patterns:
   - title: "Searching without organism filter"
@@ -411,7 +427,7 @@ anti_patterns:
       ORDER BY DESC(?sc)
       LIMIT 100
     explanation: "Filter by taxid first; use bif:contains not FILTER"
-
+  
   - title: "Searching full names in label"
     problem: "No results when searching 'insulin' in label"
     wrong_sparql: |
@@ -435,7 +451,7 @@ anti_patterns:
       }
       ORDER BY DESC(?sc)
     explanation: "Label=symbols (INS), description=full names (insulin)"
-
+  
   - title: "Unbounded orthology queries"
     problem: "Millions of results cause timeout"
     wrong_sparql: |
@@ -469,10 +485,11 @@ common_errors:
       - "Include FROM <http://rdfportal.org/dataset/ncbigene>"
       - "Add LIMIT (10-1000)"
       - "Start with specific gene IDs"
+      - "Consider using ncbi_esearch for initial discovery"
     example_fix: |
       # Wrong: FILTER(CONTAINS(?desc, "insulin"))
       # Right: ?desc bif:contains "'insulin'" option (score ?sc)
-
+  
   - error: "Empty results for valid IDs"
     causes:
       - "Wrong identifier format"
@@ -481,13 +498,13 @@ common_errors:
       - "Discontinued gene ID"
     solutions:
       - "Use full URI: <http://identifiers.org/ncbigene/ID>"
-      - "Verify ID exists in NCBI Gene"
+      - "Verify ID exists in NCBI Gene via ncbi_esearch"
       - "Include FROM clause"
       - "Check dct:modified for currency"
     example_fix: |
       # Wrong: ?gene dct:identifier 1
       # Right: <http://identifiers.org/ncbigene/1> ?p ?o
-
+  
   - error: "Missing external links"
     causes:
       - "Using only dblink, not db_xref"

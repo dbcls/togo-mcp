@@ -1,527 +1,580 @@
 schema_info:
   title: BacDive - The Bacterial Diversity Metadatabase
   description: |
-    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,000+ strain records with phenotypic and genotypic characterizations. Major entities include Strains (core records), Phenotypes (morphology, Gram staining, enzyme activities, oxygen tolerance), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), and GeographicOrigin. Cross-referenced to culture collections and sequence databases.
+    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,000+ strain records with phenotypic and genotypic characterizations. Major entities include Strains (core records), Enzymes (enzyme activities), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), CultureCollectionNumbers (strain repository links), and GeographicOrigin (isolation locations). Cross-referenced to NCBI Taxonomy, culture collections (DSMZ, JCM, KCTC), and sequence databases (ENA, GenBank).
   endpoint: https://rdfportal.org/primary/sparql
   base_uri: https://purl.dsmz.de/
   graphs:
-  - http://rdfportal.org/dataset/bacdive
+    - http://rdfportal.org/dataset/bacdive
+  kw_search_tools:
+    - sparql
   version:
-    mie_version: '1.2'
-    mie_created: '2024-12-08'
-    data_version: BacDive 2024
-    update_frequency: Quarterly
+    mie_version: "1.3"
+    mie_created: "2024-12-23"
+    data_version: "BacDive 2024"
+    update_frequency: "Quarterly"
   license:
-    data_license: CC BY 4.0
-    license_url: https://bacdive.dsmz.de/about
+    data_license: "CC BY 4.0"
+    license_url: "https://bacdive.dsmz.de/about"
   access:
-    rate_limiting: 100 queries/min
-    max_query_timeout: 60 seconds
-    backend: Virtuoso (supports bif:contains)
+    rate_limiting: "100 queries/min"
+    max_query_timeout: "60 seconds"
+    backend: "Virtuoso (supports bif:contains)"
+
 shape_expressions: |
   PREFIX schema: <https://purl.dsmz.de/schema/>
-
+  PREFIX dct: <http://purl.org/dc/terms/>
+  
   <StrainShape> {
     a [ schema:Strain ] ;
     rdfs:label xsd:string ;
-    rdfs:hasScientificName xsd:string ;
+    rdfs:hasScientificName xsd:string ? ;
     schema:hasBacDiveID xsd:integer ;
     schema:hasTaxID xsd:integer ;
     schema:hasGenus xsd:string ;
     schema:hasSpecies xsd:string ;
-    schema:hasFamily xsd:string ? ;
-    schema:hasDomain xsd:string ? ;
+    schema:hasFamily xsd:string ;
+    schema:hasOrder xsd:string ;
+    schema:hasClass xsd:string ;
+    schema:hasPhylum xsd:string ;
+    schema:hasDomain xsd:string ;
     schema:hasDesignation xsd:string ? ;
-    schema:isTypeStrain xsd:boolean ? ;
-    dct:description xsd:string ?
+    schema:isTypeStrain xsd:boolean ;
+    dct:description xsd:string
   }
-
+  
   <EnzymeShape> {
-    a [ schema:Enzyme ] ;
+    a [ schema:Enzyme schema:Protein schema:GeneProduct ] ;
     rdfs:label xsd:string ;
     schema:describesStrain @<StrainShape> ;
     schema:hasActivity xsd:string ;
     schema:hasECNumber xsd:string ?
   }
-
+  
   <GramStainShape> {
-    a [ schema:GramStain ] ;
+    a [ schema:GramStain schema:MicrobialPhenotype schema:Phenotype ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasGramStain xsd:string
   }
-
+  
   <CellMotilityShape> {
-    a [ schema:CellMotility ] ;
+    a [ schema:CellMotility schema:MicrobialPhenotype schema:Phenotype ] ;
     schema:describesStrain @<StrainShape> ;
     schema:isMotile xsd:boolean
   }
-
+  
   <OxygenToleranceShape> {
-    a [ schema:OxygenTolerance ] ;
+    a [ schema:OxygenTolerance schema:MicrobialPhenotype schema:Phenotype ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasOxygenTolerance xsd:string
   }
-
+  
   <CultureMediumShape> {
-    a [ schema:CultureMedium ] ;
+    a [ schema:CultureMedium schema:CultureCondition ] ;
     rdfs:label xsd:string ;
     schema:describesStrain @<StrainShape> ;
     schema:hasMediaLink IRI ?
   }
-
+  
   <CultureTemperatureShape> {
-    a [ schema:CultureTemperature ] ;
+    a [ schema:CultureTemperature schema:CultureCondition ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasTemperatureRangeStart xsd:float ? ;
     schema:hasTemperatureRangeEnd xsd:float ?
   }
-
+  
   <CulturePHShape> {
-    a [ schema:CulturePH ] ;
+    a [ schema:CulturePH schema:CultureCondition ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasPHRangeStart xsd:float ? ;
     schema:hasPHRangeEnd xsd:float ?
   }
-
+  
   <Sequence16SShape> {
-    a [ schema:16SSequence ] ;
+    a [ schema:16SSequence schema:NucleotideSequence ] ;
     rdfs:label xsd:string ;
     schema:describesStrain @<StrainShape> ;
     schema:hasSequenceAccession xsd:string ;
     schema:fromSequenceDB xsd:string ;
     schema:hasTaxID xsd:integer
   }
-
+  
   <GenomeSequenceShape> {
-    a [ schema:GenomeSequence ] ;
+    a [ schema:GenomeSequence schema:NucleotideSequence ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasSequenceAccession xsd:string ;
     schema:fromSequenceDB xsd:string
   }
-
+  
   <CultureCollectionNumberShape> {
-    a [ schema:CultureCollectionNumber ] ;
+    a [ schema:CultureCollectionNumber schema:StrainNumber schema:Identifier schema:OrganismIdentifier ] ;
     rdfs:label xsd:string ;
     schema:describesStrain @<StrainShape> ;
     schema:hasLink IRI ?
   }
-
+  
   <LocationShape> {
-    a [ schema:LocationOfOrigin ] ;
+    a [ schema:LocationOfOrigin schema:IsolationSource schema:IsolationInformation schema:Origin ] ;
     rdfs:label xsd:string ;
     schema:describesStrain @<StrainShape> ;
     schema:hasCountry xsd:string ? ;
     schema:hasLatitude xsd:float ? ;
     schema:hasLongitude xsd:float ?
   }
+  
+  <ReferenceShape> {
+    a [ schema:Reference ] ;
+    schema:describesStrain @<StrainShape> ;
+    schema:hasPubMedID xsd:string ? ;
+    schema:hasDOI xsd:string ?
+  }
+
 sample_rdf_entries:
-- title: Strain with Taxonomic Hierarchy
-  description: Core strain entry with complete taxonomic classification and identifiers.
-  rdf: |
-    strain:1 a schema:Strain ;
-      rdfs:label "Acetobacter aceti 1" ;
-      rdfs:hasScientificName "Acetobacter aceti (Pasteur 1864) Beijerinck 1898" ;
-      schema:hasBacDiveID 1 ;
-      schema:hasTaxID 435 ;
-      schema:hasGenus "Acetobacter" ;
-      schema:hasSpecies "Acetobacter aceti" ;
-      schema:hasDomain "Bacteria" .
-- title: Enzyme Activity
-  description: Enzyme phenotype with activity status linked to strain.
-  rdf: |
-    enzyme:10 a schema:Enzyme ;
-      rdfs:label "gelatinase" ;
-      schema:describesStrain strain:1290 ;
-      schema:hasActivity "+" .
-- title: 16S Sequence with Accession
-  description: Ribosomal RNA sequence with external database accession.
-  rdf: |
-    sequence_16S:JN000316 a schema:16SSequence ;
-      rdfs:label "Compostimonas suwonensis 16S rRNA gene" ;
-      schema:describesStrain strain:7514 ;
-      schema:fromSequenceDB "ena" ;
-      schema:hasSequenceAccession "JN000316" ;
-      schema:hasSequenceLength 1422 .
-- title: Culture Collection Link
-  description: External culture collection identifier with institutional URL.
-  rdf: |
-    culture_collection_number:2749 a schema:CultureCollectionNumber ;
-      rdfs:label "DSM 30652" ;
-      schema:describesStrain strain:XXX ;
-      schema:hasLink <https://www.dsmz.de/collection/catalogue/details/culture/DSM-30652> .
-- title: Geographic Location
-  description: Isolation location with country and coordinates.
-  rdf: |
-    location:12345 a schema:LocationOfOrigin ;
-      rdfs:label "Japan" ;
-      schema:describesStrain strain:7514 ;
-      schema:hasCountry "Japan" ;
-      schema:hasLatitude 37.5665 ;
-      schema:hasLongitude 126.9780 .
+  - title: "Strain with Complete Taxonomic Hierarchy"
+    description: "Core strain entry with full taxonomic classification from domain to species."
+    rdf: |
+      strain:1 a schema:Strain ;
+        rdfs:label "Acetobacter aceti 1" ;
+        rdfs:hasScientificName "Acetobacter aceti (Pasteur 1864) Beijerinck 1898" ;
+        schema:hasBacDiveID 1 ;
+        schema:hasTaxID 435 ;
+        schema:hasGenus "Acetobacter" ;
+        schema:hasSpecies "Acetobacter aceti" ;
+        schema:hasFamily "Acetobacteraceae" ;
+        schema:hasOrder "Rhodospirillales" ;
+        schema:hasClass "Alphaproteobacteria" ;
+        schema:hasPhylum "Proteobacteria" ;
+        schema:hasDomain "Bacteria" ;
+        schema:isTypeStrain true .
+
+  - title: "Enzyme Activity Phenotype"
+    description: "Enzyme with positive activity linked to strain record."
+    rdf: |
+      enzyme:10 a schema:Enzyme, schema:Protein, schema:GeneProduct ;
+        rdfs:label "gelatinase" ;
+        schema:describesStrain strain:1290 ;
+        schema:hasActivity "+" .
+
+  - title: "16S rRNA Sequence with External Accession"
+    description: "Ribosomal RNA sequence with ENA database accession."
+    rdf: |
+      sequence_16S:JN000316 a schema:16SSequence, schema:NucleotideSequence ;
+        rdfs:label "Compostimonas suwonensis 16S rRNA gene" ;
+        schema:describesStrain strain:7514 ;
+        schema:fromSequenceDB "ena" ;
+        schema:hasSequenceAccession "JN000316" ;
+        schema:hasSequenceLength 1422 .
+
+  - title: "Culture Collection with Institutional Link"
+    description: "External culture collection identifier with DSMZ URL."
+    rdf: |
+      culture_collection_number:2749 a schema:CultureCollectionNumber, schema:StrainNumber ;
+        rdfs:label "DSM 30652" ;
+        schema:describesStrain strain:XXX ;
+        schema:hasLink <https://www.dsmz.de/collection/catalogue/details/culture/DSM-30652> .
+
+  - title: "Geographic Isolation Location"
+    description: "Origin location with country name and GPS coordinates."
+    rdf: |
+      location:12345 a schema:LocationOfOrigin, schema:IsolationSource ;
+        rdfs:label "Japan" ;
+        schema:describesStrain strain:7514 ;
+        schema:hasCountry "Japan" ;
+        schema:hasLatitude 37.5665 ;
+        schema:hasLongitude 126.9780 .
+
 sparql_query_examples:
-- title: Search Strains with bif:contains
-  description: Find strains using full-text search with boolean operators and relevance scoring.
-  question: Find Escherichia coli strains.
-  complexity: basic
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strain ?label ?sc
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              rdfs:label ?label .
-      ?label bif:contains "'escherichia' AND 'coli'" option (score ?sc) .
-    }
-    ORDER BY DESC(?sc)
-    LIMIT 100
-- title: Search Descriptions with Boolean Logic
-  description: Complex keyword search in descriptions with AND/NOT operators.
-  question: Find aerobic Gram-negative bacteria excluding plant pathogens.
-  complexity: basic
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-    PREFIX dct: <http://purl.org/dc/terms/>
-
-    SELECT ?strain ?description ?sc
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              dct:description ?description .
-      ?description bif:contains "'aerobic' AND 'gram-negative' AND NOT 'plant'" option (score ?sc) .
-    }
-    ORDER BY DESC(?sc)
-    LIMIT 50
-- title: Strains with 16S Sequences
-  description: Find strains with 16S rRNA data and accessions.
-  question: Which strains have 16S sequences?
-  complexity: intermediate
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strain ?strainLabel ?accession ?length
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              rdfs:label ?strainLabel .
-      ?seq a schema:16SSequence ;
-           schema:describesStrain ?strain ;
-           schema:hasSequenceAccession ?accession ;
-           schema:hasSequenceLength ?length .
-    }
-    LIMIT 100
-- title: Enzyme Activities by Strain
-  description: Retrieve positive enzyme activities for strains.
-  question: What enzymes show positive activity?
-  complexity: intermediate
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strainLabel ?enzymeLabel ?activity
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              rdfs:label ?strainLabel .
-      ?enzyme a schema:Enzyme ;
-              schema:describesStrain ?strain ;
-              rdfs:label ?enzymeLabel ;
-              schema:hasActivity ?activity .
-      FILTER(?activity = "+")
-    }
-    LIMIT 100
-- title: Keyword Search with Phenotypes
-  description: Combine bif:contains with structured phenotype queries.
-  question: Find thermophilic bacteria with Gram stain and temperature data.
-  complexity: intermediate
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-    PREFIX dct: <http://purl.org/dc/terms/>
-
-    SELECT ?strain ?description ?gramStain ?tempStart ?tempEnd ?sc
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              dct:description ?description .
-      ?description bif:contains "'thermophilic'" option (score ?sc) .
+  - title: "Search Strains with bif:contains"
+    description: "Demonstrate full-text keyword search using bif:contains with boolean operators."
+    question: "Find Escherichia coli strains."
+    complexity: basic
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
       
-      OPTIONAL {
-        ?gs a schema:GramStain ;
-            schema:describesStrain ?strain ;
-            schema:hasGramStain ?gramStain .
+      SELECT ?strain ?label ?sc
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?label .
+        ?label bif:contains "'escherichia' AND 'coli'" option (score ?sc) .
       }
-      OPTIONAL {
-        ?temp a schema:CultureTemperature ;
-              schema:describesStrain ?strain ;
-              schema:hasTemperatureRangeStart ?tempStart ;
-              schema:hasTemperatureRangeEnd ?tempEnd .
-      }
-    }
-    ORDER BY DESC(?sc)
-    LIMIT 50
-- title: Growth Conditions Profile
-  description: Query culture medium, temperature, and pH together.
-  question: What are growth conditions for Bacillus?
-  complexity: advanced
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
+      ORDER BY DESC(?sc)
+      LIMIT 100
 
-    SELECT ?label ?medium ?tempStart ?tempEnd ?phStart ?phEnd
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              rdfs:label ?label ;
-              schema:hasGenus ?genus .
-      FILTER(CONTAINS(LCASE(?genus), "bacillus"))
+  - title: "Complex Boolean Keyword Search"
+    description: "Search descriptions using AND/NOT operators for precise filtering."
+    question: "Find aerobic Gram-negative bacteria excluding plant pathogens."
+    complexity: basic
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      PREFIX dct: <http://purl.org/dc/terms/>
       
-      OPTIONAL {
-        ?m a schema:CultureMedium ;
-           schema:describesStrain ?strain ;
-           rdfs:label ?medium .
+      SELECT ?strain ?description ?sc
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                dct:description ?description .
+        ?description bif:contains "'aerobic' AND 'gram-negative' AND NOT 'plant'" option (score ?sc) .
       }
-      OPTIONAL {
-        ?temp a schema:CultureTemperature ;
-              schema:describesStrain ?strain ;
-              schema:hasTemperatureRangeStart ?tempStart ;
-              schema:hasTemperatureRangeEnd ?tempEnd .
-      }
-      OPTIONAL {
-        ?ph a schema:CulturePH ;
-            schema:describesStrain ?strain ;
-            schema:hasPHRangeStart ?phStart ;
-            schema:hasPHRangeEnd ?phEnd .
-      }
-    }
-    LIMIT 50
-- title: Multi-Phenotype with Complex Keywords
-  description: Combine complex boolean keyword search with multiple phenotypes.
-  question: Find human pathogens with complete phenotypic profiles.
-  complexity: advanced
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-    PREFIX dct: <http://purl.org/dc/terms/>
+      ORDER BY DESC(?sc)
+      LIMIT 50
 
-    SELECT ?label ?description ?gramStain ?isMotile ?sc
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              rdfs:label ?label ;
-              dct:description ?description .
-      ?description bif:contains "('pathogen' OR 'pathogenic') AND NOT 'plant'" option (score ?sc) .
+  - title: "Strains with 16S Sequences"
+    description: "Retrieve strains having 16S rRNA sequence data with accessions."
+    question: "Which strains have 16S sequences available?"
+    complexity: intermediate
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
       
-      OPTIONAL {
-        ?gs a schema:GramStain ;
-            schema:describesStrain ?strain ;
-            schema:hasGramStain ?gramStain .
-      }
-      OPTIONAL {
-        ?cm a schema:CellMotility ;
-            schema:describesStrain ?strain ;
-            schema:isMotile ?isMotile .
-      }
-    }
-    ORDER BY DESC(?sc)
-    LIMIT 50
-cross_references:
-- pattern: schema:hasLink
-  description: Culture collection links through CultureCollectionNumber entities to institutional databases.
-  databases:
-    collections:
-    - DSMZ (>90%)
-    - JCM (~40%)
-    - KCTC (~30%)
-    - CCUG (~25%)
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strain ?collectionLabel ?link
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain .
-      ?ccn a schema:CultureCollectionNumber ;
-           schema:describesStrain ?strain ;
-           rdfs:label ?collectionLabel ;
-           schema:hasLink ?link .
-    } LIMIT 50
-- pattern: schema:hasTaxID
-  description: NCBI Taxonomy IDs on all strains and sequences for standardized classification.
-  databases:
-    taxonomy:
-    - NCBI Taxonomy (100%)
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strain ?taxID ?genus ?species
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain ;
-              schema:hasTaxID ?taxID ;
-              schema:hasGenus ?genus ;
-              schema:hasSpecies ?species .
-    } LIMIT 50
-- pattern: schema:hasSequenceAccession
-  description: Sequence accessions from ENA/NCBI with database source indicator.
-  databases:
-    sequence:
-    - ENA (~60% 16S)
-    - NCBI GenBank (~40% genomes)
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
-
-    SELECT ?strain ?accession ?seqDB ?seqType
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      {
+      SELECT ?strain ?strainLabel ?accession ?length
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel .
         ?seq a schema:16SSequence ;
              schema:describesStrain ?strain ;
              schema:hasSequenceAccession ?accession ;
-             schema:fromSequenceDB ?seqDB .
-        BIND("16S" as ?seqType)
-      } UNION {
-        ?seq a schema:GenomeSequence ;
-             schema:describesStrain ?strain ;
-             schema:hasSequenceAccession ?accession ;
-             schema:fromSequenceDB ?seqDB .
-        BIND("Genome" as ?seqType)
+             schema:hasSequenceLength ?length .
       }
-    } LIMIT 50
-- pattern: schema:hasMediaLink
-  description: Links to MediaDive for detailed culture medium recipes.
-  databases:
-    media:
-    - MediaDive (~20%)
-    - CIP Media (~10%)
-  sparql: |
-    PREFIX schema: <https://purl.dsmz.de/schema/>
+      LIMIT 100
 
-    SELECT ?strain ?mediumLabel ?mediaLink
-    FROM <http://rdfportal.org/dataset/bacdive>
-    WHERE {
-      ?strain a schema:Strain .
-      ?medium a schema:CultureMedium ;
+  - title: "Positive Enzyme Activities"
+    description: "Query strains showing positive enzyme test results."
+    question: "What enzymes show positive activity in strains?"
+    complexity: intermediate
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strainLabel ?enzymeLabel ?activity
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel .
+        ?enzyme a schema:Enzyme ;
+                schema:describesStrain ?strain ;
+                rdfs:label ?enzymeLabel ;
+                schema:hasActivity ?activity .
+        FILTER(?activity = "+")
+      }
+      LIMIT 100
+
+  - title: "Keyword Search with Phenotypes"
+    description: "Combine full-text search with structured phenotype data retrieval."
+    question: "Find thermophilic bacteria with Gram stain and temperature data."
+    complexity: intermediate
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      PREFIX dct: <http://purl.org/dc/terms/>
+      
+      SELECT ?strain ?description ?gramStain ?tempStart ?tempEnd ?sc
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                dct:description ?description .
+        ?description bif:contains "'thermophilic'" option (score ?sc) .
+        
+        OPTIONAL {
+          ?gs a schema:GramStain ;
               schema:describesStrain ?strain ;
-              rdfs:label ?mediumLabel ;
-              schema:hasMediaLink ?mediaLink .
-    } LIMIT 50
+              schema:hasGramStain ?gramStain .
+        }
+        OPTIONAL {
+          ?temp a schema:CultureTemperature ;
+                schema:describesStrain ?strain ;
+                schema:hasTemperatureRangeStart ?tempStart ;
+                schema:hasTemperatureRangeEnd ?tempEnd .
+        }
+      }
+      ORDER BY DESC(?sc)
+      LIMIT 50
+
+  - title: "Complete Growth Conditions Profile"
+    description: "Aggregate culture medium, temperature, and pH requirements."
+    question: "What are the complete growth conditions for Bacillus strains?"
+    complexity: advanced
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?label ?medium ?tempStart ?tempEnd ?phStart ?phEnd
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?label ;
+                schema:hasGenus ?genus .
+        FILTER(CONTAINS(LCASE(?genus), "bacillus"))
+        
+        OPTIONAL {
+          ?m a schema:CultureMedium ;
+             schema:describesStrain ?strain ;
+             rdfs:label ?medium .
+        }
+        OPTIONAL {
+          ?temp a schema:CultureTemperature ;
+                schema:describesStrain ?strain ;
+                schema:hasTemperatureRangeStart ?tempStart ;
+                schema:hasTemperatureRangeEnd ?tempEnd .
+        }
+        OPTIONAL {
+          ?ph a schema:CulturePH ;
+              schema:describesStrain ?strain ;
+              schema:hasPHRangeStart ?phStart ;
+              schema:hasPHRangeEnd ?phEnd .
+        }
+      }
+      LIMIT 50
+
+  - title: "Multi-Phenotype with Complex Keywords"
+    description: "Advanced boolean search combined with multiple phenotypic attributes."
+    question: "Find human pathogens with complete phenotypic profiles."
+    complexity: advanced
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      PREFIX dct: <http://purl.org/dc/terms/>
+      
+      SELECT ?label ?description ?gramStain ?isMotile ?sc
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?label ;
+                dct:description ?description .
+        ?description bif:contains "('pathogen' OR 'pathogenic') AND NOT 'plant'" option (score ?sc) .
+        
+        OPTIONAL {
+          ?gs a schema:GramStain ;
+              schema:describesStrain ?strain ;
+              schema:hasGramStain ?gramStain .
+        }
+        OPTIONAL {
+          ?cm a schema:CellMotility ;
+              schema:describesStrain ?strain ;
+              schema:isMotile ?isMotile .
+        }
+      }
+      ORDER BY DESC(?sc)
+      LIMIT 50
+
+cross_references:
+  - pattern: schema:hasLink
+    description: |
+      Culture collection links through CultureCollectionNumber entities connecting to institutional databases like DSMZ, JCM, KCTC, and CCUG.
+    databases:
+      collections:
+        - "DSMZ (>90%)"
+        - "JCM (~40%)"
+        - "KCTC (~30%)"
+        - "CCUG (~25%)"
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strain ?collectionLabel ?link
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain .
+        ?ccn a schema:CultureCollectionNumber ;
+             schema:describesStrain ?strain ;
+             rdfs:label ?collectionLabel ;
+             schema:hasLink ?link .
+      } LIMIT 50
+
+  - pattern: schema:hasTaxID
+    description: |
+      NCBI Taxonomy IDs on all strain and sequence entities enabling standardized taxonomic classification and cross-database integration.
+    databases:
+      taxonomy:
+        - "NCBI Taxonomy (100% of strains)"
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strain ?taxID ?genus ?species
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                schema:hasTaxID ?taxID ;
+                schema:hasGenus ?genus ;
+                schema:hasSpecies ?species .
+      } LIMIT 50
+
+  - pattern: schema:hasSequenceAccession
+    description: |
+      Sequence accessions from ENA/NCBI databases with source indicator, covering 16S rRNA and genome sequences.
+    databases:
+      sequence:
+        - "ENA (~60% of 16S sequences)"
+        - "NCBI GenBank (~40% of genomes)"
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strain ?accession ?seqDB ?seqType
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        {
+          ?seq a schema:16SSequence ;
+               schema:describesStrain ?strain ;
+               schema:hasSequenceAccession ?accession ;
+               schema:fromSequenceDB ?seqDB .
+          BIND("16S" as ?seqType)
+        } UNION {
+          ?seq a schema:GenomeSequence ;
+               schema:describesStrain ?strain ;
+               schema:hasSequenceAccession ?accession ;
+               schema:fromSequenceDB ?seqDB .
+          BIND("Genome" as ?seqType)
+        }
+      } LIMIT 50
+
+  - pattern: schema:hasMediaLink
+    description: |
+      Links to MediaDive and other media databases for detailed culture medium recipes and preparation protocols.
+    databases:
+      media:
+        - "MediaDive (~20%)"
+        - "CIP Media (~10%)"
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strain ?mediumLabel ?mediaLink
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain .
+        ?medium a schema:CultureMedium ;
+                schema:describesStrain ?strain ;
+                rdfs:label ?mediumLabel ;
+                schema:hasMediaLink ?mediaLink .
+      } LIMIT 50
+
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
   schema_design:
-  - Hub-and-spoke with Strain as central entity
-  - Phenotypes connect via schema:describesStrain
-  - Multiple inheritance for entity types
-  - Full taxonomic lineage in Strain entities
+    - "Hub-and-spoke architecture with Strain as central entity"
+    - "Phenotypes and conditions connect via schema:describesStrain property"
+    - "Multiple inheritance for entity types (e.g., Enzyme is also Protein and GeneProduct)"
+    - "Full taxonomic lineage embedded in Strain entities from domain to species"
   performance:
-  - Use bif:contains for keywords with boolean operators (AND, OR, NOT, parentheses)
-  - bif:contains as triple pattern with option (score ?var) for relevance
-  - Genus/species filters are efficient
-  - Use OPTIONAL for phenotypes (incomplete coverage)
-  - Always use LIMIT to prevent timeouts
+    - "Use bif:contains for keyword search with boolean operators (AND, OR, NOT, parentheses)"
+    - "bif:contains must be triple pattern with option (score ?var) for relevance scoring"
+    - "Genus/species text filters using CONTAINS or FILTER are efficient"
+    - "Use OPTIONAL blocks for phenotypes since coverage is incomplete (~40%)"
+    - "Always include LIMIT to prevent query timeouts on large result sets"
   data_integration:
-  - NCBI Taxonomy IDs for cross-database joins
-  - Culture collection numbers for strain repositories
-  - Sequence accessions (ENA/NCBI) for sequence databases
+    - "NCBI Taxonomy IDs (schema:hasTaxID) enable joins to taxonomy databases"
+    - "Culture collection numbers link to strain repositories (DSMZ, JCM, KCTC)"
+    - "Sequence accessions (schema:hasSequenceAccession) connect to ENA/GenBank"
   data_quality:
-  - Not all strains have complete phenotypes - use OPTIONAL
-  - 16S coverage (~35%) higher than genomes
-  - Type strains have more complete data
+    - "Phenotype coverage varies: ~40% Gram stain, ~35% 16S sequences, ~55% enzyme data"
+    - "Type strains generally have more complete phenotypic characterization"
+    - "Use OPTIONAL clauses for all phenotypes to avoid excluding strains with missing data"
+
 data_statistics:
   total_strains: 97334
   total_enzymes: 573112
   total_16s_sequences: 87045
+  total_culture_collections: 149377
+  total_references: 123819
   coverage:
-    strains_with_gram_stain: ~40%
-    strains_with_16s_sequence: ~35%
-    strains_with_culture_collections: ~60%
-    strains_with_enzyme_data: ~55%
+    strains_with_gram_stain: "~40%"
+    strains_with_16s_sequence: "~35%"
+    strains_with_culture_collections: "~60%"
+    strains_with_enzyme_data: "~55%"
   cardinality:
     avg_enzymes_per_strain: 5.9
     avg_culture_collections_per_strain: 1.5
   performance_characteristics:
-  - Simple strain queries complete in <2s
-  - bif:contains searches are very fast with complex boolean logic
-  - Multi-join phenotype queries may take 5-10s
+    - "Simple strain queries (<5 properties) complete in <2s"
+    - "bif:contains keyword searches are very fast with complex boolean logic"
+    - "Multi-join phenotype queries (3+ optional blocks) may take 5-10s"
+  data_quality_notes:
+    - "All strains have taxonomic IDs but phenotype completeness varies"
+    - "Type strains have higher data completeness"
+
 anti_patterns:
-- title: bif:contains in FILTER
-  problem: bif:contains must be triple pattern, not in FILTER.
-  wrong_sparql: |
-    SELECT ?strain ?description
-    WHERE {
-      ?strain dct:description ?description .
-      FILTER(bif:contains(?description, "'thermophilic'"))
-    }
-  correct_sparql: |
-    SELECT ?strain ?description ?sc
-    WHERE {
-      ?strain dct:description ?description .
-      ?description bif:contains "'thermophilic'" option (score ?sc) .
-    }
-    ORDER BY DESC(?sc)
-  explanation: Use as triple pattern (?var bif:contains 'keywords') with single-quoted keywords.
-- title: Using Reserved Variable ?score
-  problem: Variable name ?score conflicts with score keyword.
-  wrong_sparql: |
-    SELECT ?strain ?score
-    WHERE {
-      ?strain rdfs:label ?label .
-      ?label bif:contains "'escherichia'" option (score ?score) .
-    }
-  correct_sparql: |
-    SELECT ?strain ?sc
-    WHERE {
-      ?strain rdfs:label ?label .
-      ?label bif:contains "'escherichia'" option (score ?sc) .
-    }
-  explanation: Never use ?score as variable name - use ?sc or any other name.
-- title: Required Phenotypes
-  problem: Requiring phenotypes excludes strains with missing data.
-  wrong_sparql: |
-    SELECT ?strain ?gramStain ?motile
-    WHERE {
-      ?strain a schema:Strain .
-      ?gs schema:describesStrain ?strain ;
-          schema:hasGramStain ?gramStain .
-      ?cm schema:describesStrain ?strain ;
-          schema:isMotile ?motile .
-    }
-  correct_sparql: |
-    SELECT ?strain ?gramStain ?motile
-    WHERE {
-      ?strain a schema:Strain .
-      OPTIONAL {
+  - title: "bif:contains in FILTER"
+    problem: "bif:contains must be used as triple pattern, not inside FILTER clause."
+    wrong_sparql: |
+      SELECT ?strain ?description
+      WHERE {
+        ?strain dct:description ?description .
+        FILTER(bif:contains(?description, "'thermophilic'"))
+      }
+    correct_sparql: |
+      SELECT ?strain ?description ?sc
+      WHERE {
+        ?strain dct:description ?description .
+        ?description bif:contains "'thermophilic'" option (score ?sc) .
+      }
+      ORDER BY DESC(?sc)
+    explanation: "Use as triple pattern (?var bif:contains 'keywords') with single-quoted keywords and option (score ?var) for relevance."
+
+  - title: "Using Reserved Variable ?score"
+    problem: "Variable name ?score conflicts with the score keyword in bif:contains."
+    wrong_sparql: |
+      SELECT ?strain ?score
+      WHERE {
+        ?strain rdfs:label ?label .
+        ?label bif:contains "'escherichia'" option (score ?score) .
+      }
+    correct_sparql: |
+      SELECT ?strain ?sc
+      WHERE {
+        ?strain rdfs:label ?label .
+        ?label bif:contains "'escherichia'" option (score ?sc) .
+      }
+    explanation: "Never use ?score as variable name - use ?sc, ?relevance, or any other non-reserved name."
+
+  - title: "Required Phenotypes Excluding Data"
+    problem: "Requiring phenotypes without OPTIONAL excludes strains with missing phenotypic data."
+    wrong_sparql: |
+      SELECT ?strain ?gramStain ?motile
+      WHERE {
+        ?strain a schema:Strain .
         ?gs schema:describesStrain ?strain ;
             schema:hasGramStain ?gramStain .
-      }
-      OPTIONAL {
         ?cm schema:describesStrain ?strain ;
             schema:isMotile ?motile .
       }
-    }
-  explanation: Use OPTIONAL for phenotypes since coverage is incomplete (~40%).
+    correct_sparql: |
+      SELECT ?strain ?gramStain ?motile
+      WHERE {
+        ?strain a schema:Strain .
+        OPTIONAL {
+          ?gs schema:describesStrain ?strain ;
+              schema:hasGramStain ?gramStain .
+        }
+        OPTIONAL {
+          ?cm schema:describesStrain ?strain ;
+              schema:isMotile ?motile .
+        }
+      }
+    explanation: "Use OPTIONAL for all phenotypes since coverage is incomplete (~40% for most phenotypes)."
+
 common_errors:
-- error: 400 Bad Request with bif:contains
-  causes:
-  - Using bif:contains in FILTER instead of as triple pattern
-  - Using ?score as variable name
-  - Missing single quotes around keywords
-  solutions:
-  - 'Use as triple: ?var bif:contains "''keyword''" option (score ?sc)'
-  - Never use ?score - use ?sc or other name
-  - 'Always wrap keywords in single quotes: ''keyword'''
-  - 'Boolean syntax: "''keyword1'' AND ''keyword2''", "''keyword1'' OR ''keyword2''"'
-- error: Empty results with phenotypes
-  causes:
-  - Assuming all strains have phenotypes
-  - Missing OPTIONAL clauses
-  solutions:
-  - Always use OPTIONAL for phenotype properties
-  - Check coverage statistics (~40% Gram stain, ~35% 16S)
-  - Use FILTER(BOUND(?var)) to require specific data
-- error: Query timeout
-  causes:
-  - Joining many phenotypes without LIMIT
-  - Querying all strains without filters
-  solutions:
-  - Add LIMIT to prevent processing entire database
-  - Use bif:contains to filter by keywords first
-  - Filter by genus/family to reduce scope
-  - Query phenotypes separately rather than all at once
+  - error: "400 Bad Request with bif:contains"
+    causes:
+      - "Using bif:contains inside FILTER instead of as triple pattern"
+      - "Using ?score as variable name (reserved keyword)"
+      - "Missing single quotes around keywords"
+      - "Incorrect boolean syntax"
+    solutions:
+      - "Use as triple: ?var bif:contains \"'keyword'\" option (score ?sc)"
+      - "Never use ?score - use ?sc or other non-reserved names"
+      - "Always wrap keywords in single quotes: 'keyword'"
+      - "Boolean syntax: \"'keyword1' AND 'keyword2'\", \"'keyword1' OR 'keyword2'\", \"NOT 'keyword'\""
+
+  - error: "Empty results with phenotypes"
+    causes:
+      - "Assuming all strains have complete phenotypic data"
+      - "Missing OPTIONAL clauses for phenotype properties"
+    solutions:
+      - "Always use OPTIONAL for phenotype properties (Gram stain, motility, enzymes, etc.)"
+      - "Check coverage statistics: ~40% Gram stain, ~35% 16S, ~55% enzyme data"
+      - "Use FILTER(BOUND(?var)) to explicitly require specific data when needed"
+
+  - error: "Query timeout"
+    causes:
+      - "Joining many phenotypes without LIMIT"
+      - "Querying all strains without filters"
+      - "Missing FROM clause causing cross-graph queries"
+    solutions:
+      - "Always add LIMIT to prevent processing entire database"
+      - "Use bif:contains to filter by keywords before joining phenotypes"
+      - "Filter by genus/family using CONTAINS(LCASE(?genus), 'name') to reduce scope"
+      - "Query phenotypes separately rather than joining all at once"
+      - "Always specify FROM <http://rdfportal.org/dataset/bacdive> clause"

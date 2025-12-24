@@ -406,24 +406,3 @@ def search_rhea_entity(
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data from Rhea API: {e}")
         return []
-
-# Databases using SPARQL for keyword search
-@mcp.tool()
-async def keyword_search_instructions(dbname:str) -> str:
-    f"""
-    Instructions for keyword search using SPARQL queries.
-    
-    :param dbname: {DBNAME_DESCRIPTION}
-    :type dbname: str
-    :return: A prompt instructing how to perform SPARQL queries for keyword search.
-    :rtype: str
-    """
-    toolcall_log("keyword_search_instructions")
-    instruction_file = os.path.join(KW_SEARCH_INSTRUCTIONS, dbname + ".md")
-    if not os.path.exists(instruction_file):
-        return f"Use {SPARQL_ENDPOINT[dbname]['keyword_search']}"
-    try:
-        with open(instruction_file, "r", encoding="utf-8") as file:
-            return file.read()
-    except Exception as e:
-        return f"Error reading keyword search instructions for '{dbname}': {e}"

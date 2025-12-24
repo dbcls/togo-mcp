@@ -15,9 +15,11 @@ schema_info:
     - http://rdf.glycosmos.org/sugarbind
     - http://rdf.glycosmos.org/pathway
     - http://rdf.glycosmos.org/disease
+  kw_search_tools:
+    - sparql  # Use bif:contains for keyword search
   version:
-    mie_version: "1.1"
-    mie_created: "2025-12-08"
+    mie_version: "1.2"
+    mie_created: "2025-12-23"
     data_version: "Release 2024.12"
     update_frequency: "Quarterly"
   license:
@@ -106,7 +108,7 @@ sample_rdf_entries:
       glycoinfo:glycan/G00051MO a glycan:Saccharide ;
         glytoucan:has_primary_id "G00051MO" ;
         glycan:has_Resource_entry glycoinfo:resource-entry/G00051MO .
-  
+
   - title: Glycan with ChEBI Cross-Reference
     description: External database entry linking glycan to ChEBI chemical database.
     rdf: |
@@ -114,7 +116,7 @@ sample_rdf_entries:
         rdfs:label "ChEBI" ;
         dcterms:identifier "146500" .
       glycoinfo:glycan/G01416HI glycan:has_resource_entry <http://purl.obolibrary.org/obo/CHEBI_146500> .
-  
+
   - title: Glycoprotein with Glycosylation Site
     description: Human protein with N-glycosylation site at specific sequence position.
     rdf: |
@@ -125,7 +127,7 @@ sample_rdf_entries:
       glycosmos:glycosylationsite/SITE00187901 a glycoconjugate:Glycosylation_Site ;
         sio:SIO_000772 glycoinfo:dbid/glygen/P02763 ;
         faldo:location [ a faldo:ExactPosition ; faldo:position 33 ] .
-  
+
   - title: Glycogene Entry
     description: Gene involved in glycosylation with functional description.
     rdf: |
@@ -133,7 +135,7 @@ sample_rdf_entries:
         rdfs:label "CSF1R" ;
         glycan:has_taxon <http://identifiers.org/taxonomy/9606> ;
         dcterms:description "colony stimulating factor 1 receptor" .
-  
+
   - title: Glycan Epitope
     description: Immunological epitope with alternative nomenclature.
     rdf: |
@@ -160,7 +162,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-  
+
   - title: Get Epitope Functional Annotations
     description: Retrieve biological context for specific epitopes
     question: What are the antibodies and tissues for epitope EP0007?
@@ -177,7 +179,7 @@ sparql_query_examples:
         OPTIONAL { <http://www.glycoepitope.jp/epitopes/EP0007> glycoepitope:organism ?organism }
         OPTIONAL { <http://www.glycoepitope.jp/epitopes/EP0007> glycoepitope:tissue ?tissue }
       }
-  
+
   - title: Count Glycoproteins by Species
     description: Aggregate statistics by taxonomy
     question: How many glycoproteins per species?
@@ -194,7 +196,7 @@ sparql_query_examples:
       GROUP BY ?taxon
       ORDER BY DESC(?count)
       LIMIT 20
-  
+
   - title: Find Human Glycosylation Sites with Positions
     description: Retrieve sequence positions for human proteins
     question: Which human proteins have glycosylation sites at which positions?
@@ -213,7 +215,7 @@ sparql_query_examples:
         ?site faldo:location/faldo:position ?position .
       }
       LIMIT 50
-  
+
   - title: Search Glycogene Descriptions
     description: Filter genes by functional annotations
     question: Which glycogenes have "receptor" in their description?
@@ -221,6 +223,7 @@ sparql_query_examples:
     sparql: |
       PREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>
       PREFIX dcterms: <http://purl.org/dc/terms/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT ?gene ?symbol ?description
       FROM <http://rdf.glycosmos.org/glycogenes>
@@ -231,7 +234,7 @@ sparql_query_examples:
         FILTER(CONTAINS(LCASE(?description), "receptor"))
       }
       LIMIT 20
-  
+
   - title: Glycan-Protein-Gene Integration
     description: Multi-entity join across graphs
     question: For glycan G00051MO, find associated proteins and genes
@@ -241,6 +244,7 @@ sparql_query_examples:
       PREFIX glytoucan: <http://www.glytoucan.org/glyco/owl/glytoucan#>
       PREFIX glycoconjugate: <http://purl.jp/bio/12/glyco/conjugate#>
       PREFIX sio: <http://semanticscience.org/resource/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT DISTINCT ?protein ?gene
       FROM <http://rdf.glytoucan.org/core>
@@ -260,7 +264,7 @@ sparql_query_examples:
         }
       }
       LIMIT 100
-  
+
   - title: Human Glycobiology Network Statistics
     description: Aggregate analysis with multiple joins
     question: Compute statistics for human glycoproteins
@@ -293,12 +297,28 @@ cross_references:
       Glycans link to external databases via Resource_entry objects.
       Coverage: 101,600/117,864 glycans (~86%).
     databases:
-      structure: Carbbank (44K), GlycomeDB (39K), GLYCOSCIENCES.de (22K), JCGGDB (22K), BCSDB (8K), CFG (8K)
-      chemical: PubChem Substance (32K), PubChem Compound (32K), ChEBI (11K), KEGG (10K)
-      protein_structure: PDB (6K)
+      structure:
+        - "Carbbank: 44K"
+        - "GlycomeDB: 39K"
+        - "GLYCOSCIENCES.de: 22K"
+        - "JCGGDB: 22K"
+        - "BCSDB: 8K"
+        - "CFG: 8K"
+        - "GlycoStore: extensive"
+        - "GlycoBase: extensive"
+        - "GlycoPaint: extensive"
+      chemical:
+        - "PubChem Substance: 32K"
+        - "PubChem Compound: 32K"
+        - "ChEBI: 11K"
+        - "KEGG: 10K"
+      protein_structure:
+        - "PDB: 6K"
     sparql: |
       PREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>
       PREFIX glytoucan: <http://www.glytoucan.org/glyco/owl/glytoucan#>
+      PREFIX dcterms: <http://purl.org/dc/terms/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT ?glycanId ?dbName ?dbId
       FROM <http://rdf.glytoucan.org/core>
@@ -309,15 +329,21 @@ cross_references:
         OPTIONAL { ?entry dcterms:identifier ?dbId }
       }
       LIMIT 50
-  
+
   - pattern: rdfs:seeAlso (Glycoproteins)
     description: |
       Protein database links via rdfs:seeAlso.
       Total: 153,178 glycoproteins.
     databases:
-      protein: UniProt (139K), PubChem (16K), ACGG GPDB2 (14K), GlyGen (12K), GlyConnect (2K)
+      protein:
+        - "UniProt: 139K"
+        - "PubChem: 16K"
+        - "ACGG GPDB2: 14K"
+        - "GlyGen: 12K"
+        - "GlyConnect: 2K"
     sparql: |
       PREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT ?protein ?externalDB
       FROM <http://rdf.glycosmos.org/glycoprotein>
@@ -327,15 +353,19 @@ cross_references:
         # FILTER(CONTAINS(STR(?externalDB), "purl.uniprot.org/uniprot"))
       }
       LIMIT 50
-  
+
   - pattern: rdfs:seeAlso (Glycogenes)
     description: |
       Gene database links via rdfs:seeAlso.
       Total: 423,164 glycogenes.
     databases:
-      gene: NCBI Gene (423K), KEGG Genes (381K)
+      gene:
+        - "NCBI Gene: 423K"
+        - "KEGG Genes: 381K"
+        - "HGNC: extensive"
     sparql: |
       PREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT ?gene ?externalDB
       FROM <http://rdf.glycosmos.org/glycogenes>
@@ -345,16 +375,22 @@ cross_references:
         # FILTER(CONTAINS(STR(?externalDB), "ncbigene"))
       }
       LIMIT 50
-  
+
   - pattern: sio:SIO_000772
     description: |
       Glycosylation sites reference parent proteins.
       Total: 414,798 sites.
     databases:
-      protein: UniProt, GlyGen, GlyConnect, ACGG GPDB2, O-GlcNAc Database
+      protein:
+        - "UniProt: extensive"
+        - "GlyGen: extensive"
+        - "GlyConnect: extensive"
+        - "ACGG GPDB2: extensive"
+        - "O-GlcNAc Database: extensive"
     sparql: |
       PREFIX glycoconjugate: <http://purl.jp/bio/12/glyco/conjugate#>
       PREFIX sio: <http://semanticscience.org/resource/>
+      PREFIX faldo: <http://biohackathon.org/resource/faldo#>
       
       SELECT ?site ?proteinRef ?position
       FROM <http://rdf.glycosmos.org/glycoprotein>
@@ -366,12 +402,11 @@ cross_references:
       LIMIT 50
 
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
   schema_design:
     - Multi-graph architecture (100+ graphs) for modular data management
     - FALDO for sequence positions, SIO for semantic relationships
     - Resource_entry pattern for external database cross-references
+    - Ontology integration via GO, ECO, UBERON, HPO, MONDO, DOID
   performance:
     - Always specify FROM graph to reduce search space significantly
     - Use bif:contains for label searches (full-text index + relevance scoring)
@@ -380,6 +415,8 @@ architectural_notes:
   data_integration:
     - ChEBI, PubChem for chemical IDs; UniProt for proteins; NCBI Gene for genes
     - KEGG/Reactome for pathways; PDB for structures
+    - Disease integration via DOID, MONDO, MeSH
+    - Taxonomy via NCBI Taxonomy
   data_quality:
     - GlyTouCan IDs: G[0-9]{5}[A-Z]{2} pattern
     - Label coverage varies: glycans <1%, proteins 17%, genes 32%
@@ -406,20 +443,21 @@ data_statistics:
     - FROM clause improves speed 10-100x on multi-graph queries
     - bif:contains fast for 173 epitopes, use FILTER for 414K sites with early filters
     - Multi-graph joins require explicit FROM for each graph
+    - Human-only queries typically return results within 5-10 seconds
 
 anti_patterns:
-  - title: "Omitting FROM Clause"
-    problem: "Searches all 100+ graphs causing timeouts"
+  - title: Omitting FROM Clause
+    problem: Searches all 100+ graphs causing timeouts
     wrong_sparql: |
       SELECT ?epitope WHERE { ?epitope a glycan:Glycan_epitope }
     correct_sparql: |
       SELECT ?epitope 
       FROM <http://rdf.glycoinfo.org/glycoepitope>
       WHERE { ?epitope a glycan:Glycan_epitope }
-    explanation: "FROM clause limits search to relevant graph, critical for performance"
-  
-  - title: "Using FILTER Instead of bif:contains"
-    problem: "No full-text index or relevance ranking"
+    explanation: FROM clause limits search to relevant graph, critical for performance
+
+  - title: Using FILTER Instead of bif:contains
+    problem: No full-text index or relevance ranking
     wrong_sparql: |
       SELECT ?label WHERE {
         ?epitope rdfs:label ?label .
@@ -431,10 +469,10 @@ anti_patterns:
         ?label bif:contains "'Lewis'" option (score ?sc)
       }
       ORDER BY DESC(?sc)
-    explanation: "bif:contains uses full-text index and provides relevance scoring"
-  
-  - title: "No Pagination on Large Datasets"
-    problem: "414K sites cause timeout"
+    explanation: bif:contains uses full-text index and provides relevance scoring
+
+  - title: No Pagination on Large Datasets
+    problem: 414K sites cause timeout
     wrong_sparql: |
       SELECT ?site WHERE { ?site a glycoconjugate:Glycosylation_Site }
     correct_sparql: |
@@ -445,28 +483,58 @@ anti_patterns:
           glycoconjugate:glycosylated_at ?site .
       }
       LIMIT 100
-    explanation: "Filter early by taxon, always add LIMIT for large datasets"
+    explanation: Filter early by taxon, always add LIMIT for large datasets
 
 common_errors:
-  - error: "Query timeout"
+  - error: Query timeout
     causes:
-      - "Missing FROM clause"
-      - "No early filters or LIMIT on large datasets"
+      - Missing FROM clause
+      - No early filters or LIMIT on large datasets
+      - Joining too many graphs without filters
     solutions:
-      - "Add FROM clause with specific graph(s)"
-      - "Add early filters (taxon, ID) and LIMIT"
-  
-  - error: "No label results"
+      - Add FROM clause with specific graph(s)
+      - Add early filters (taxon, ID) and LIMIT
+      - Use nested SELECT for complex aggregations
+    example_fix: |
+      # Before: Timeout
+      SELECT ?site WHERE { ?site a glycoconjugate:Glycosylation_Site }
+      
+      # After: Fast
+      SELECT ?site FROM <http://rdf.glycosmos.org/glycoprotein>
+      WHERE {
+        ?protein glycan:has_taxon <http://identifiers.org/taxonomy/9606> ;
+          glycoconjugate:glycosylated_at ?site .
+      }
+      LIMIT 100
+
+  - error: No label results
     causes:
-      - "Glycan labels rarely populated (<1%)"
-      - "Protein/gene labels partial (17%/32%)"
+      - Glycan labels rarely populated (<1%)
+      - Protein/gene labels partial (17%/32%)
     solutions:
-      - "Use GlyTouCan IDs for glycans"
-      - "Use rdfs:seeAlso external database links"
-  
-  - error: "bif:contains fails on descriptions"
+      - Use GlyTouCan IDs for glycans
+      - Use rdfs:seeAlso external database links
+      - Query Resource_entry for database identifiers
+    example_fix: |
+      # Instead of relying on glycan labels
+      SELECT ?glycan ?label WHERE { ?glycan rdfs:label ?label }
+      
+      # Use GlyTouCan IDs
+      SELECT ?glycan ?gtcId WHERE { 
+        ?glycan glytoucan:has_primary_id ?gtcId 
+      }
+
+  - error: bif:contains fails on descriptions
     causes:
-      - "Full-text index optimized for rdfs:label only"
+      - Full-text index optimized for rdfs:label only
+      - Non-label properties not indexed
     solutions:
-      - "Use bif:contains only on rdfs:label/skos:altLabel"
-      - "Use FILTER(CONTAINS()) for other properties"
+      - Use bif:contains only on rdfs:label/skos:altLabel
+      - Use FILTER(CONTAINS()) for other properties
+      - Be aware FILTER is slower than bif:contains
+    example_fix: |
+      # Don't use bif:contains on descriptions
+      ?description bif:contains "'receptor'"
+      
+      # Use FILTER instead
+      FILTER(CONTAINS(LCASE(?description), "receptor"))

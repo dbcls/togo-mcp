@@ -14,7 +14,9 @@ Create documentation that is **compact, clear, and complete** - sufficient for r
 ### 1.1 Systematic Discovery Workflow
 
 **Step 1: Check for Existing Documentation** (2 minutes)
-- Use `get_sparql_endpoints()` to identify available endpoints
+- Use `get_sparql_endpoints()` to identify available endpoints and keyword search APIs
+  - Returns: SPARQL endpoint URL + recommended keyword search API for each database
+  - Keyword search APIs include: dedicated tools (e.g., `search_uniprot_entity`), `OLS4:searchClasses`, `ncbi_esearch`, or "sparql" (SPARQL-only)
 - Use `get_graph_list(dbname)` to find ALL named graphs (data + ontology graphs)
 - Attempt `get_shex(dbname)` to retrieve existing shape expressions
 - Attempt `get_MIE_file(dbname)` to retrieve existing MIE files
@@ -296,13 +298,31 @@ Before finalizing, verify:
 **❌ Missing Error Guidance**: Not testing what fails → Note failing patterns during testing to document as anti-patterns
 
 ## Available Tools
-- `get_sparql_endpoints()` - Get available SPARQL endpoints
+- `get_sparql_endpoints()` - Get available SPARQL endpoints and keyword search APIs for all databases
 - `get_graph_list(dbname)` - List named graphs in database
 - `get_sparql_example(dbname)` - Get an example SPARQL query
 - `run_sparql(dbname, sparql_query)` - Execute SPARQL queries
 - `get_shex(dbname)` - Retrieve ShEx schema if available
 - `get_MIE_file(dbname)` - Retrieve existing MIE file if available
 - `save_MIE_file(dbname, mie_content)` - Save the final MIE file
+
+### Keyword Search APIs by Database Type:
+**Dedicated Search Tools:**
+- UniProt: `search_uniprot_entity(query, limit=20)`
+- PDB: `search_pdb_entity(db, query, limit=20)` where db="pdb"|"cc"|"prd"
+- ChEMBL: `search_chembl_molecule(query, limit=20)` or `search_chembl_target(query, limit=20)`
+- Reactome: `search_reactome_entity(query, species=None, types=None, rows=30)`
+- Rhea: `search_rhea_entity(query, limit=100)`
+- MeSH: `search_mesh_entity(query, limit=10)`
+
+**OLS4 (Ontology Lookup Service):**
+- ChEBI, GO, Mondo, NANDO: `OLS4:searchClasses(query, ontologyId=None, pageSize, pageNum)`
+
+**NCBI E-utilities:**
+- PubChem, Taxonomy, ClinVar, PubMed, NCBIGene, MedGen: `ncbi_esearch(database, query, max_results=20, start_index=0)`
+
+**SPARQL-Only (use bif:contains for keyword search):**
+- BacDive, MediaDive, DDBJ, GlycoCosmos, Ensembl, PubTator: Use `run_sparql()` with `bif:contains` pattern
 
 ## Using `bif:contains` for the Virtuoso backend.
 If the backend database is Virtuoso, **DO use `bif:contains` for string filtering whenever possible.**
@@ -318,6 +338,44 @@ LIMIT 50
 You can sort the results by `?sc` (keyword relevance score).　
 **DON'T use `?score` for the variable name** That would result in an error.
 
+## YAML Formatting Rules
+
+**CRITICAL: Use "|" (pipe) syntax for ALL multiline strings**
+
+For readability and consistency, ALL multiline string values in the MIE file MUST use the pipe (|) syntax:
+
+```yaml
+# ✅ CORRECT - Use pipe for multiline strings
+description: |
+  First line of description.
+  Second line of description.
+  
+sparql: |
+  SELECT ?s ?p ?o
+  WHERE {
+    ?s ?p ?o .
+  }
+  LIMIT 10
+
+# ❌ WRONG - Don't use quoted strings for multiline content
+description: "First line.\nSecond line."
+sparql: "SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10"
+```
+
+**When to use "|" syntax:**
+- description fields
+- sparql queries
+- rdf examples
+- shape_expressions
+- explanation fields
+- Any string value that spans multiple lines
+
+**Benefits:**
+- Better readability
+- Preserves formatting and indentation
+- Easier to edit SPARQL queries
+- Consistent style throughout the file
+
 ## MIE File Structure Template
 ```yaml
 schema_info:
@@ -329,6 +387,16 @@ schema_info:
   graphs:
     - http://example.org/dataset
     - http://example.org/ontology
+  kw_search_tools:
+    # Obtained from get_sparql_endpoints()
+    # Categories:
+    # - Dedicated: search_uniprot_entity, search_pdb_entity, search_chembl_molecule/target, 
+    #              search_reactome_entity, search_rhea_entity, search_mesh_entity
+    # - OLS4: OLS4:searchClasses (for chebi, go, mondo, nando)
+    # - NCBI: ncbi_esearch (for pubchem, taxonomy, clinvar, pubmed, ncbigene, medgen)
+    # - SPARQL-only: Use run_sparql with bif:contains for keyword search
+    - [keyword_search_api_name]  # e.g., search_uniprot_entity, OLS4:searchClasses, ncbi_esearch, or "sparql"
+
   # Metadata (integrated into schema_info)
   version:
     mie_version: "1.0"

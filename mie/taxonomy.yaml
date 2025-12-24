@@ -8,9 +8,11 @@ schema_info:
   base_uri: http://identifiers.org/taxonomy/
   graphs:
     - http://rdfportal.org/ontology/taxonomy
+  kw_search_tools:
+    - ncbi_esearch
   version:
     mie_version: "1.0"
-    mie_created: "2025-12-08"
+    mie_created: "2025-12-24"
     data_version: "2024"
     update_frequency: Monthly
   license:
@@ -68,7 +70,7 @@ sample_rdf_entries:
         tax:geneticCode tax:GeneticCode1 ;
         owl:sameAs obo:NCBITaxon_9606 ;
         rdfs:seeAlso <http://purl.uniprot.org/taxonomy/9606> .
-
+  
   - title: Bacterial Strain Entry
     description: Bacterial strain with complete taxonomic information.
     rdf: |
@@ -81,7 +83,7 @@ sample_rdf_entries:
         tax:equivalentName "Shigella flexneri 5a strain M90T" ;
         tax:geneticCode tax:GeneticCode11 ;
         rdfs:seeAlso <http://purl.uniprot.org/taxonomy/1086030> .
-
+  
   - title: Genus Level Classification
     description: Genus showing intermediate taxonomic rank.
     rdf: |
@@ -92,7 +94,7 @@ sample_rdf_entries:
         tax:rank tax:Genus ;
         tax:scientificName "Escherichia" ;
         rdfs:seeAlso <http://purl.uniprot.org/taxonomy/561> .
-
+  
   - title: Kingdom Level
     description: High-level classification (Animal kingdom).
     rdf: |
@@ -103,7 +105,7 @@ sample_rdf_entries:
         tax:rank tax:Kingdom ;
         tax:scientificName "Metazoa" ;
         tax:commonName "animals" .
-
+  
   - title: Root of Taxonomy Tree
     description: Top-level root node of entire taxonomy.
     rdf: |
@@ -132,7 +134,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - title: Get Biological Annotations for Taxa
     description: Retrieve complete biological annotations and classifications
     question: What are the biological annotations for taxonomy IDs 9606 and 10090?
@@ -156,7 +158,7 @@ sparql_query_examples:
         OPTIONAL { ?taxon tax:commonName ?commonName }
         OPTIONAL { ?taxon tax:geneticCode ?geneticCode }
       }
-
+  
   - title: Get Complete Lineage
     description: Retrieve full taxonomic lineage for an organism
     question: What is the complete lineage of humans?
@@ -177,7 +179,7 @@ sparql_query_examples:
           dcterms:identifier ?id .
       }
       ORDER BY DESC(?id)
-
+  
   - title: Find Species in Genus
     description: Get all species within a specific genus
     question: What species are in genus Escherichia?
@@ -199,7 +201,7 @@ sparql_query_examples:
           tax:rank tax:Genus .
       }
       LIMIT 20
-
+  
   - title: Find Taxa with UniProt Cross-References
     description: Retrieve organisms with UniProt Taxonomy links
     question: Which organisms have UniProt Taxonomy references?
@@ -217,7 +219,7 @@ sparql_query_examples:
         FILTER(CONTAINS(STR(?uniprotLink), "purl.uniprot.org"))
       }
       LIMIT 20
-
+  
   - title: Count Species Per Genus with Aggregation
     description: Biodiversity analysis counting species in genera
     question: Which genera have most species?
@@ -238,7 +240,7 @@ sparql_query_examples:
       GROUP BY ?genus ?genus_label
       ORDER BY DESC(?count)
       LIMIT 20
-
+  
   - title: Calculate Lineage Depth for Specific Species
     description: Count taxonomic hierarchy levels for given species
     question: What is the hierarchy depth from humans to root through major ranks?
@@ -277,7 +279,7 @@ cross_references:
           owl:sameAs ?sameAs .
       }
       LIMIT 30
-
+  
   - pattern: rdfs:seeAlso
     description: |
       Links to UniProt Taxonomy database for protein-related information.
@@ -299,28 +301,29 @@ cross_references:
       LIMIT 30
 
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
   schema_design:
     - Hierarchical classification via rdfs:subClassOf for parent-child relationships
     - owl:sameAs provides cross-database identifier equivalences (5 per taxon)
     - rdfs:seeAlso links to UniProt Taxonomy for protein database integration
     - Multiple naming systems (scientific, common, synonym, equivalent) for diverse contexts
     - Genetic code properties for both nuclear and mitochondrial genomes
+  
   performance:
     - Use bif:contains for label searches (full-text index + relevance scoring)
     - 3M+ taxa require LIMIT clauses for all exploratory queries
     - Hierarchical queries with rdfs:subClassOf* expensive on deep lineages
     - Filtering by tax:rank improves performance significantly
     - Always start transitive queries from specific taxa, not all taxa
+  
   data_integration:
     - OBO NCBITaxon for ontology interoperability
     - UniProt Taxonomy (rdfs:seeAlso) for protein database integration
     - TogoID relations available in separate graphs for cross-database links
     - Use owl:sameAs for identifier conversion across systems
+  
   data_quality:
     - All taxa have complete identity cross-references (owl:sameAs ~100%)
-    - Scientific names >99% complete
+    - Scientific names over 99% complete
     - Common names ~30% complete (higher for vertebrates)
     - UniProt links ~100% coverage via rdfs:seeAlso
 
@@ -329,14 +332,14 @@ data_statistics:
   estimated_species: 1500000
   taxonomic_ranks: 47
   coverage:
-    taxa_with_owl_sameAs: ~100%
-    taxa_with_scientific_names: '>99%'
-    taxa_with_common_names: ~30%
-    taxa_with_genetic_codes: ~100%
-    taxa_with_uniprot_links: ~100%
+    taxa_with_owl_sameAs: "~100%"
+    taxa_with_scientific_names: "99%+"
+    taxa_with_common_names: "~30%"
+    taxa_with_genetic_codes: "~100%"
+    taxa_with_uniprot_links: "~100%"
   cardinality:
     avg_owl_sameAs_per_taxon: 5.0
-    avg_common_names_per_taxon: 1-3
+    avg_common_names_per_taxon: "1-3"
     avg_synonyms_per_taxon: 0.1
   performance_characteristics:
     - bif:contains efficient for label searches with relevance ranking
@@ -360,7 +363,7 @@ anti_patterns:
       }
       ORDER BY DESC(?sc)
     explanation: bif:contains uses full-text index and provides relevance scoring
-
+  
   - title: Unbounded Lineage Traversal
     problem: rdfs:subClassOf* without constraints causes timeout on 3M+ taxa
     wrong_sparql: |
@@ -376,7 +379,7 @@ anti_patterns:
       }
       LIMIT 50
     explanation: Start from specific taxon and add LIMIT for transitive queries
-
+  
   - title: Expensive Queries on All Species
     problem: Running transitive queries on all species causes timeout
     wrong_sparql: |
@@ -407,7 +410,7 @@ common_errors:
       - Add LIMIT 50-100 for exploratory queries
       - Use rdfs:subClassOf+ for ancestors-only
       - Add tax:rank filters to reduce traversal
-
+  
   - error: Empty results for cross-database queries
     causes:
       - Looking for TogoID properties in wrong graph
@@ -416,7 +419,7 @@ common_errors:
       - Use owl:sameAs and rdfs:seeAlso in the taxonomy graph
       - Query TogoID relation graphs separately for cross-database links
       - Use rdfs:seeAlso for UniProt Taxonomy links
-
+  
   - error: Poor search results for organism names
     causes:
       - Using FILTER(CONTAINS()) instead of bif:contains

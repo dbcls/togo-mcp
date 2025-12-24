@@ -6,18 +6,20 @@ schema_info:
   base_uri: http://rdf.wwpdb.org/pdb/
   graphs:
     - http://rdfportal.org/dataset/pdbj
+  kw_search_tools:
+    - search_pdb_entity
   version:
     mie_version: "1.3"
     mie_created: "2025-01-10"
-    data_version: "Current"
-    update_frequency: "Weekly"
+    data_version: Current
+    update_frequency: Weekly
   license:
-    data_license: "Public Domain"
+    data_license: Public Domain
     license_url: https://www.wwpdb.org
   access:
-    rate_limiting: "Reasonable use"
-    max_query_timeout: "60s"
-    backend: "Virtuoso"
+    rate_limiting: Reasonable use
+    max_query_timeout: 60s
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -205,8 +207,8 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: "High-Resolution Protein (3NIR)"
-    description: "Ultra-high resolution structure with refinement statistics."
+  - title: High-Resolution Protein (3NIR)
+    description: Ultra-high resolution structure with refinement statistics.
     rdf: |
       @prefix pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#> .
       @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -217,9 +219,8 @@ sample_rdf_entries:
       pdb:3NIR/refine/3NIR,X-RAY_DIFFRACTION a pdbx:refine ;
         pdbx:refine.ls_d_res_high "0.48"^^xsd:decimal ;
         pdbx:refine.ls_R_factor_R_work "0.127"^^xsd:decimal .
-
-  - title: "DNA Structure (100D)"
-    description: "Dickerson dodecamer with sequence."
+  - title: DNA Structure (100D)
+    description: Dickerson dodecamer with sequence.
     rdf: |
       @prefix pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#> .
       
@@ -227,18 +228,16 @@ sample_rdf_entries:
         pdbx:entity.id "1" ;
         pdbx:entity.type "polymer" ;
         pdbx:entity.pdbx_description "DNA/RNA (5'-R(*CP*)-D(*CP*GP*GP*CP*GP*CP*CP*GP*)-R(*G)-3')" .
-
-  - title: "Protein with UniProt (16PK)"
-    description: "Protein with UniProt cross-reference."
+  - title: Protein with UniProt (16PK)
+    description: Protein with UniProt cross-reference.
     rdf: |
       @prefix pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#> .
       
       pdb:16PK/struct_ref/1 a pdbx:struct_ref ;
         pdbx:struct_ref.db_name "UNP" ;
         pdbx:struct_ref.pdbx_db_accession "P07378" .
-
-  - title: "Cryo-EM Structure (8A2Z)"
-    description: "EM structure with EMDB reference."
+  - title: Cryo-EM Structure (8A2Z)
+    description: EM structure with EMDB reference.
     rdf: |
       @prefix pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#> .
       
@@ -248,9 +247,8 @@ sample_rdf_entries:
       
       pdb:8A2Z/exptl/1 a pdbx:exptl ;
         pdbx:exptl.method "ELECTRON MICROSCOPY" .
-
-  - title: "RNA Structure (300D)"
-    description: "Hammerhead ribozyme with sequence."
+  - title: RNA Structure (300D)
+    description: Hammerhead ribozyme with sequence.
     rdf: |
       @prefix pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#> .
       
@@ -259,9 +257,9 @@ sample_rdf_entries:
         pdbx:entity_poly.pdbx_seq_one_letter_code "GUGGUCUGAUGAGGCC" .
 
 sparql_query_examples:
-  - title: "Search by Keywords"
-    description: "Find structures by classification keywords with biological annotations"
-    question: "Find kinase structures"
+  - title: Search by Keywords
+    description: Find structures by classification keywords with biological annotations
+    question: Find kinase structures
     complexity: basic
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -278,10 +276,9 @@ sparql_query_examples:
         FILTER(CONTAINS(LCASE(?keywords), "kinase"))
       }
       LIMIT 20
-
-  - title: "Software Usage Statistics"
-    description: "Analyze software tools used in structure determination"
-    question: "What software is most used for refinement?"
+  - title: Software Usage Statistics
+    description: Analyze software tools used in structure determination
+    question: What software is most used for refinement?
     complexity: basic
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -297,10 +294,9 @@ sparql_query_examples:
       GROUP BY ?software_name ?classification
       ORDER BY DESC(?usage_count)
       LIMIT 15
-
-  - title: "Crystallographic Parameters"
-    description: "Find X-ray structures with unit cell and symmetry information"
-    question: "What are the cell parameters for small unit cells?"
+  - title: Crystallographic Parameters
+    description: Find X-ray structures with unit cell and symmetry information
+    question: What are the cell parameters for small unit cells?
     complexity: intermediate
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -321,10 +317,9 @@ sparql_query_examples:
         FILTER(xsd:decimal(?a) > 20 && xsd:decimal(?a) < 50)
       }
       LIMIT 20
-
-  - title: "Biological Assemblies"
-    description: "Find quaternary structures with oligomeric state annotations"
-    question: "Which structures form tetramers?"
+  - title: Biological Assemblies
+    description: Find quaternary structures with oligomeric state annotations
+    question: Which structures form tetramers?
     complexity: intermediate
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -341,10 +336,9 @@ sparql_query_examples:
         FILTER(CONTAINS(?oligomeric_details, "tetrameric"))
       }
       LIMIT 20
-
-  - title: "Search Publications"
-    description: "Find structures by publication title keywords with citation metadata"
-    question: "Find CRISPR-related structures with publications"
+  - title: Search Publications
+    description: Find structures by publication title keywords with citation metadata
+    question: Find CRISPR-related structures with publications
     complexity: intermediate
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -362,10 +356,9 @@ sparql_query_examples:
         FILTER(CONTAINS(LCASE(?title), "crispr"))
       }
       LIMIT 20
-
-  - title: "Comprehensive Structure Analysis"
-    description: "Multi-category query combining experimental, quality, and metadata"
-    question: "What are high-quality recent kinase structures?"
+  - title: Comprehensive Structure Analysis
+    description: Multi-category query combining experimental, quality, and metadata
+    question: What are high-quality recent kinase structures?
     complexity: advanced
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -391,10 +384,9 @@ sparql_query_examples:
       }
       ORDER BY xsd:decimal(?resolution)
       LIMIT 20
-
-  - title: "Software Pipeline Analysis"
-    description: "Trace complete data processing workflow through software categories"
-    question: "What software pipelines are used together?"
+  - title: Software Pipeline Analysis
+    description: Trace complete data processing workflow through software categories
+    question: What software pipelines are used together?
     complexity: advanced
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
@@ -424,12 +416,12 @@ cross_references:
       Sequence database cross-references with db_name and pdbx_db_accession.
     databases:
       Protein:
-        - UNP (UniProt): 352K refs, ~172%
-        - PIR: 131
+        - "UNP (UniProt): 352K refs, ~172%"
+        - "PIR: 131"
       Nucleotide:
-        - GB (GenBank): 5.9K
-        - EMBL: 84
-        - REF (RefSeq): 49
+        - "GB (GenBank): 5.9K"
+        - "EMBL: 84"
+        - "REF (RefSeq): 49"
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
       
@@ -443,20 +435,19 @@ cross_references:
              pdbx:struct_ref.pdbx_db_accession ?db_accession .
       }
       LIMIT 30
-
   - pattern: pdbx:database_2
     description: |
       External database links for WWPDB partners, EMDB, BMRB.
     databases:
       WWPDB:
-        - PDB: 100%
-        - WWPDB: 100%
-        - RCSB: ~41%
-        - PDBE: ~8%
+        - "PDB: 100%"
+        - "WWPDB: 100%"
+        - "RCSB: ~41%"
+        - "PDBE: ~8%"
       Structure:
-        - EMDB: ~7%
-        - BMRB: ~3%
-        - NDB: ~2%
+        - "EMDB: ~7%"
+        - "BMRB: ~3%"
+        - "NDB: ~2%"
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
       
@@ -470,14 +461,13 @@ cross_references:
             pdbx:database_2.database_code ?db_code .
       }
       LIMIT 30
-
   - pattern: pdbx:citation
     description: |
       Publication references with DOI and PubMed identifiers.
     databases:
       Publications:
-        - DOI: ~75%
-        - PubMed: ~73%
+        - "DOI: ~75%"
+        - "PubMed: ~73%"
     sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
       
@@ -494,8 +484,6 @@ cross_references:
       LIMIT 20
 
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
   schema_design:
     - PDBx/mmCIF ontology with Category-Item design pattern
     - Datablock root with has_*Category properties linking to specialized categories
@@ -528,20 +516,20 @@ architectural_notes:
 data_statistics:
   total_entries: 204594
   experimental_methods:
-    xray: "~85%"
-    em: "~7%"
-    nmr: "~7%"
+    xray: ~85%
+    em: ~7%
+    nmr: ~7%
   coverage:
-    uniprot: "~172%"
-    emdb: "~7%"
-    doi: "~75%"
-    pubmed: "~73%"
+    uniprot: ~172%
+    emdb: ~7%
+    doi: ~75%
+    pubmed: ~73%
     resolution: ">85%"
-    cell_data: "~85%"
-    symmetry: "~85%"
-    software: "~90%"
-    keywords: "~95%"
-    assemblies: "~90%"
+    cell_data: ~85%
+    symmetry: ~85%
+    software: ~90%
+    keywords: ~95%
+    assemblies: ~90%
   cardinality:
     avg_uniprot_refs: 1.72
     avg_entities: 4.4
@@ -562,11 +550,11 @@ data_statistics:
     - "Cross-reference by db_name: works well"
     - "Keyword searches: use CONTAINS on keywords field"
     - "Category traversal: 2-3 property path steps optimal"
-    - "Recommend LIMIT 20-100"
+    - Recommend LIMIT 20-100
 
 anti_patterns:
-  - title: "Missing Numeric Conversion"
-    problem: "Resolution comparisons fail without casting"
+  - title: Missing Numeric Conversion
+    problem: Resolution comparisons fail without casting
     wrong_sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
       
@@ -584,10 +572,9 @@ anti_patterns:
         ?refine pdbx:refine.ls_d_res_high ?resolution .
         FILTER(xsd:decimal(?resolution) > 0 && xsd:decimal(?resolution) < 1.0)
       }
-    explanation: "Always use xsd:decimal() for numeric comparisons"
-
-  - title: "Inefficient Keyword Search"
-    problem: "Not using indexed keyword fields"
+    explanation: Always use xsd:decimal() for numeric comparisons
+  - title: Inefficient Keyword Search
+    problem: Not using indexed keyword fields
     wrong_sparql: |
       PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>
       
@@ -610,10 +597,9 @@ anti_patterns:
         FILTER(CONTAINS(LCASE(?keywords), "kinase"))
       }
       LIMIT 20
-    explanation: "Use struct_keywords for faster searches"
-
-  - title: "Missing Entry Filter"
-    problem: "Not filtering by datablock returns non-entries"
+    explanation: Use struct_keywords for faster searches
+  - title: Missing Entry Filter
+    problem: Not filtering by datablock returns non-entries
     wrong_sparql: |
       SELECT ?entry
       WHERE {
@@ -629,38 +615,36 @@ anti_patterns:
         BIND(STRAFTER(str(?entry), "http://rdf.wwpdb.org/pdb/") AS ?entry_id)
         ?entry pdbx:has_refineCategory ?refine .
       }
-    explanation: "Filter by pdbx:datablock and extract entry_id"
+    explanation: Filter by pdbx:datablock and extract entry_id
 
 common_errors:
-  - error: "Type conversion errors"
+  - error: Type conversion errors
     causes:
-      - "Comparing resolution strings without xsd:decimal()"
-      - "Missing numeric filters"
+      - Comparing resolution strings without xsd:decimal()
+      - Missing numeric filters
     solutions:
-      - "Always use xsd:decimal() for resolution/R-factors"
-      - "Filter out invalid values (< 0 or > 100)"
+      - Always use xsd:decimal() for resolution/R-factors
+      - Filter out invalid values (< 0 or > 100)
     example_fix: |
       # Wrong: FILTER(?resolution < 1.0)
       # Right: FILTER(xsd:decimal(?resolution) > 0 && xsd:decimal(?resolution) < 1.0)
-
-  - error: "Missing optional data"
+  - error: Missing optional data
     causes:
-      - "NMR structures lack resolution"
-      - "Not using OPTIONAL for cross-references"
-      - "Software metadata not always complete"
+      - NMR structures lack resolution
+      - Not using OPTIONAL for cross-references
+      - Software metadata not always complete
     solutions:
-      - "Use OPTIONAL for resolution, R-factors"
-      - "Filter by experimental method if requiring resolution"
-      - "Use OPTIONAL for software, citations, assemblies"
-
-  - error: "Query timeout"
+      - Use OPTIONAL for resolution, R-factors
+      - Filter by experimental method if requiring resolution
+      - Use OPTIONAL for software, citations, assemblies
+  - error: Query timeout
     causes:
-      - "Using CONTAINS on long text fields"
-      - "Not limiting results"
-      - "Missing FROM clause"
-      - "Complex multi-category joins without filters"
+      - Using CONTAINS on long text fields
+      - Not limiting results
+      - Missing FROM clause
+      - Complex multi-category joins without filters
     solutions:
-      - "Add LIMIT 20-100"
-      - "Include FROM clause"
-      - "Use keyword fields instead of titles"
-      - "Filter by entry_id early in multi-joins"
+      - Add LIMIT 20-100
+      - Include FROM clause
+      - Use keyword fields instead of titles
+      - Filter by entry_id early in multi-joins

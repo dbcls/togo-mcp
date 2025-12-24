@@ -3,6 +3,9 @@ This MCP server executes SPARQL queries against various biological/biomedical RD
 
 Additional functionalities are also provided that interact with a few REST APIs at various sites.
 
+## Remote MCP Server
+You can use the remote TogoMCP server (no need for local installation). See https://togomcp.rdfportal.org/ for instructions.
+
 ## Installation
 - Python (>= 3.11)
 - [uv](https://docs.astral.sh/uv/) package manager

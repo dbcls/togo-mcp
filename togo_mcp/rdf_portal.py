@@ -2,13 +2,13 @@ import httpx
 import os
 import yaml
 import sys
-from typing import Annotated, List, Dict, Any, Literal
+from typing import Annotated, List, Dict, Any
 from pydantic import Field
 from .server import *
 
-@mcp.resource("resource://boilerplate")
-def boilerplate() -> str:
-    return "Hello! I don't know why this is here. But, the server doesn't work without it."
+# @mcp.resource("resource://boilerplate")
+# def boilerplate() -> str:
+#     return "Hello! I don't know why this is here. But, the server doesn't work without it."
 
 @mcp.tool(name="TogoMCP_Usage_Guide",
             description="A general guideline for using TogoMCP.")

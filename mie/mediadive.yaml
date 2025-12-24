@@ -6,18 +6,20 @@ schema_info:
   base_uri: https://purl.dsmz.de/mediadive/
   graphs:
     - http://rdfportal.org/dataset/mediadive
+  kw_search_tools:
+    - sparql
   version:
-    mie_version: "1.0"
-    mie_created: "2024-12-08"
-    data_version: "Current"
-    update_frequency: "Regular"
+    mie_version: "1.1"
+    mie_created: "2024-12-23"
+    data_version: Current
+    update_frequency: Regular
   license:
-    data_license: "CC BY 4.0"
-    license_url: "https://www.dsmz.de"
+    data_license: CC BY 4.0
+    license_url: https://www.dsmz.de
   access:
-    rate_limiting: "Reasonable use"
-    max_query_timeout: "60 seconds"
-    backend: "Virtuoso"
+    rate_limiting: Reasonable use
+    max_query_timeout: 60 seconds
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -70,17 +72,17 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: "Culture Medium"
-    description: "Complete medium with pH and classification."
+  - title: Culture Medium
+    description: Complete medium with pH and classification.
     rdf: |
       mediadive:medium/1118 a schema:CultureMedium ;
         rdfs:label "MD1-MEDIUM" ;
         schema:belongsToGroup "MD1-MEDIUM" ;
         schema:hasFinalPH "7.0-7.2" ;
         schema:isComplex true .
-
-  - title: "Ingredient with Cross-References"
-    description: "Chemical ingredient with multiple database identifiers."
+  
+  - title: Ingredient with Cross-References
+    description: Chemical ingredient with multiple database identifiers.
     rdf: |
       mediadive:ingredient/234 a schema:Ingredient ;
         rdfs:label "Glucose" ;
@@ -89,9 +91,9 @@ sample_rdf_entries:
         schema:hasChEBI 17234 ;
         schema:hasPubChem 5793 ;
         schema:hasKEGG "C00031" .
-
-  - title: "Growth Conditions"
-    description: "Strain cultivation parameters."
+  
+  - title: Growth Conditions
+    description: Strain cultivation parameters with biological annotations.
     rdf: |
       mediadive:growth/5678 a schema:GrowthCondition ;
         schema:partOfMedium mediadive:medium/1118 ;
@@ -99,9 +101,9 @@ sample_rdf_entries:
         schema:growthTemperature 37 ;
         schema:growthPH 7.2 ;
         schema:hasOxygenRequirement "aerobic" .
-
-  - title: "Solution Recipe"
-    description: "Ingredient amounts in solution."
+  
+  - title: Solution Recipe
+    description: Ingredient amounts in solution.
     rdf: |
       mediadive:solution_recipe/890 a schema:SolutionRecipe ;
         schema:partOfSolution mediadive:solution/sol123 ;
@@ -109,9 +111,9 @@ sample_rdf_entries:
         schema:ingredientAmount 10.0 ;
         schema:ingredientUnit "g" ;
         schema:gramsPerLiter 10.0 .
-
-  - title: "Microbial Strain"
-    description: "Strain with taxonomic data and BacDive link."
+  
+  - title: Microbial Strain
+    description: Strain with taxonomic data and BacDive link.
     rdf: |
       mediadive:strain/12345 a schema:Strain ;
         schema:hasDSMNumber 12345 ;
@@ -120,10 +122,10 @@ sample_rdf_entries:
         schema:belongsTaxGroup "Bacteria" .
 
 sparql_query_examples:
-  - title: "Search Media by Keyword"
-    description: "Find culture media by label/group keywords using bif:contains."
-    question: "Which media are for marine organisms?"
-    complexity: "basic"
+  - title: Search Media by Keyword
+    description: Find culture media by label/group keywords using bif:contains.
+    question: Which media are for marine organisms?
+    complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -137,11 +139,11 @@ sparql_query_examples:
       }
       ORDER BY ?label
       LIMIT 30
-
-  - title: "Retrieve Medium Properties"
-    description: "Get functional properties and growth characteristics."
-    question: "What are the properties of specific media?"
-    complexity: "basic"
+  
+  - title: Retrieve Medium Properties
+    description: Get functional properties and growth characteristics.
+    question: What are the properties of specific media?
+    complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -155,11 +157,11 @@ sparql_query_examples:
         OPTIONAL { ?medium schema:hasFinalPH ?ph }
         OPTIONAL { ?medium schema:hasLinkToSource ?docLink }
       }
-
-  - title: "Search by pH Range"
-    description: "Find media within specific pH ranges."
-    question: "Which media have pH between 6.5 and 7.5?"
-    complexity: "intermediate"
+  
+  - title: Search by pH Range
+    description: Find media within specific pH ranges.
+    question: Which media have pH between 6.5 and 7.5?
+    complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -174,11 +176,11 @@ sparql_query_examples:
       }
       ORDER BY ?minPH
       LIMIT 20
-
-  - title: "Growth by Temperature"
-    description: "Find thermophilic organism conditions."
-    question: "What growth conditions exist above 45°C?"
-    complexity: "intermediate"
+  
+  - title: Growth by Temperature (Biological Annotations)
+    description: Find thermophilic organism conditions with biological growth parameters.
+    question: What growth conditions exist above 45°C?
+    complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -195,11 +197,11 @@ sparql_query_examples:
       }
       ORDER BY DESC(?temp)
       LIMIT 20
-
-  - title: "Medium Composition"
-    description: "Get complete ingredient list with concentrations."
-    question: "What are the ingredients in a specific medium?"
-    complexity: "intermediate"
+  
+  - title: Medium Composition
+    description: Get complete ingredient list with concentrations.
+    question: What are the ingredients in a specific medium?
+    complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -215,11 +217,11 @@ sparql_query_examples:
         FILTER(?medium = <https://purl.dsmz.de/mediadive/medium/1118>)
       }
       ORDER BY DESC(?gPerL)
-
-  - title: "Ingredient Cross-References"
-    description: "Link ingredients to chemical databases."
-    question: "Which ingredients have ChEBI and KEGG?"
-    complexity: "advanced"
+  
+  - title: Ingredient Cross-References
+    description: Link ingredients to chemical databases.
+    question: Which ingredients have ChEBI and KEGG?
+    complexity: advanced
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -236,11 +238,11 @@ sparql_query_examples:
       }
       ORDER BY ?label
       LIMIT 30
-
-  - title: "Strain-Medium Compatibility"
-    description: "Map strains to compatible media with growth indicators."
-    question: "Which media support specific bacterial strains?"
-    complexity: "advanced"
+  
+  - title: Strain-Medium Compatibility
+    description: Map strains to compatible media with growth indicators.
+    question: Which media support specific bacterial strains?
+    complexity: advanced
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -259,12 +261,20 @@ sparql_query_examples:
       LIMIT 40
 
 cross_references:
-  - pattern: "schema:has[Database] properties"
-    description: "Ingredients link to chemical databases via dedicated properties."
+  - pattern: schema:has[Database] properties
+    description: |
+      Ingredients link to chemical databases via dedicated properties.
     databases:
-      chemical_identifiers: ["GMO (41%)", "CAS (39%)"]
-      metabolic: ["ChEBI (32%)", "PubChem (18%)", "KEGG (13%)", "MetaCyc (7%)"]
-      regional: ["ZVG (15%)"]
+      chemical_identifiers:
+        - GMO (41%)
+        - CAS (39%)
+      metabolic:
+        - ChEBI (32%)
+        - PubChem (18%)
+        - KEGG (13%)
+        - MetaCyc (7%)
+      regional:
+        - ZVG (15%)
     sparql: |
       SELECT ?ingredient ?cas ?chebi ?kegg ?gmo
       FROM <http://rdfportal.org/dataset/mediadive>
@@ -276,11 +286,13 @@ cross_references:
         OPTIONAL { ?ingredient schema:hasGMO ?gmo }
         FILTER(BOUND(?cas) || BOUND(?chebi))
       } LIMIT 50
-
-  - pattern: "schema:hasBacDiveID"
-    description: "Strains link to BacDive for phenotypic data."
+  
+  - pattern: schema:hasBacDiveID
+    description: |
+      Strains link to BacDive for phenotypic data.
     databases:
-      microbial: ["BacDive (73% of 45,685 strains)"]
+      microbial:
+        - BacDive (73% of 45,685 strains)
     sparql: |
       SELECT ?strain ?dsmNumber ?bacDiveID ?species
       FROM <http://rdfportal.org/dataset/mediadive>
@@ -290,11 +302,13 @@ cross_references:
                 schema:hasBacDiveID ?bacDiveID ;
                 schema:hasSpecies ?species .
       } LIMIT 30
-
-  - pattern: "schema:hasLinkToSource"
-    description: "Media link to DSMZ PDF documentation."
+  
+  - pattern: schema:hasLinkToSource
+    description: |
+      Media link to DSMZ PDF documentation.
     databases:
-      documentation: ["DSMZ PDFs (99% of 3,289 media)"]
+      documentation:
+        - DSMZ PDFs (99% of 3,289 media)
     sparql: |
       SELECT ?medium ?label ?pdfLink
       FROM <http://rdfportal.org/dataset/mediadive>
@@ -305,8 +319,6 @@ cross_references:
       } LIMIT 30
 
 architectural_notes:
-  search_strategies:
-  - For general keyword search strategies across databases, call the keyword_search_instructions tool
   schema_design:
     - "Medium as central hub: compositions, solutions, growth conditions, steps"
     - "Hierarchical recipe: medium → solution → solution_recipe → ingredient"
@@ -363,7 +375,7 @@ anti_patterns:
         ?label bif:contains "'marine'"
       }
     explanation: "Use bif:contains for full-text search - faster and supports boolean operators."
-
+  
   - title: "Missing OPTIONAL for Partial Coverage"
     problem: "Requiring all cross-references filters out most ingredients."
     wrong_sparql: |
@@ -384,7 +396,7 @@ anti_patterns:
         FILTER(BOUND(?chebi) || BOUND(?kegg))
       }
     explanation: "Use OPTIONAL for properties with partial coverage, then filter for at least one."
-
+  
   - title: "Unbounded Composition Queries"
     problem: "Composition queries without medium filter return too many rows."
     wrong_sparql: |
@@ -414,7 +426,7 @@ common_errors:
       - "Use bif:contains for full-text search"
       - "Format: ?label bif:contains \"'keyword'\""
       - "Boolean: ?label bif:contains \"'keyword1' OR 'keyword2'\""
-
+  
   - error: "Empty cross-reference results"
     causes:
       - "Requiring all databases (AND logic)"
@@ -423,7 +435,7 @@ common_errors:
       - "Use OPTIONAL for each database property"
       - "Filter with OR: FILTER(BOUND(?chebi) || BOUND(?kegg))"
       - "Coverage: GMO 41%, CAS 39%, ChEBI 32%"
-
+  
   - error: "Query timeout on compositions"
     causes:
       - "No medium filter with 72K+ compositions"

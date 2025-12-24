@@ -1,13 +1,9 @@
-import httpx
-import json
 import os
-import yaml
-import sys
-from typing import Annotated, List, Dict, Any
+from typing import Annotated
 from pydantic import Field
 from .server import *
 
-@mcp.tool(enabled=True, name="Generate_MIE_file", description="Instructions for generating an MIE (Metadata Interoperability Exchange) file")
+@mcp.prompt(enabled=True, name="Generate_MIE_file", description="Instructions for generating an MIE (Metadata Interoperability Exchange) file")
 def generate_MIE_file(
     dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION)]
 ) -> str:
