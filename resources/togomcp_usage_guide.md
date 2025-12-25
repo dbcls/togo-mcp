@@ -50,15 +50,87 @@ Try search tool → Got results? → Use them
 - ChEMBL: Use `FROM <http://rdf.ebi.ac.uk/dataset/chembl>`
 - Split property paths when using `bif:contains`
 - Always use `LIMIT` (20-100)
+- **Avoid Cartesian products** - See detailed section below
 
-### Step 5: Connect IDs
-Use TogoID to convert between databases:
-```python
-togoid_convertId(ids="P04637,P17612", route="uniprot,chembl_target")
+---
+
+## Avoiding Cartesian Product Errors
+
+**What is a Cartesian Product?**
+A Cartesian product occurs when SPARQL matches multiple independent patterns that aren't properly connected, resulting in every combination of results - often millions of unwanted rows.
+
+**Common Causes:**
+```sparql
+# ❌ BAD: Two independent patterns
+SELECT ?protein ?disease WHERE {
+  ?protein a up:Protein .
+  ?annotation up:disease ?disease .
+}
+# Returns every protein × every disease = millions of rows!
 ```
 
-### Step 6: Synthesize Results
-Combine information, cite sources, note limitations.
+**How to Fix:**
+```sparql
+# ✅ GOOD: Patterns connected through shared variable
+SELECT ?protein ?disease WHERE {
+  ?protein a up:Protein ;
+           rdfs:seeAlso ?annotation .
+  ?annotation up:disease ?disease .
+}
+# Returns only proteins connected to their diseases
+```
+
+**Warning Signs:**
+- Query returns thousands/millions of rows unexpectedly
+- Results include random combinations of unrelated entities
+- Query times out or runs very slowly
+- Every entity appears with every other entity
+
+**Prevention Checklist:**
+1. ✅ Every triple pattern shares at least one variable with another pattern
+2. ✅ Verify the connection path from subject to object
+3. ✅ Use `LIMIT` during testing to catch problems early
+4. ✅ Review MIE file to understand correct relationship paths
+5. ✅ Test with small subset before running full query
+
+**Common Patterns to Avoid:**
+```sparql
+# ❌ Independent annotations
+?protein rdfs:seeAlso ?anno1 .
+?anno2 a up:Disease_Annotation .
+# Should be: ?protein rdfs:seeAlso ?anno2
+
+# ❌ Disconnected filters
+?protein up:mnemonic ?name .
+?disease rdfs:label ?diseaseLabel .
+# Missing: how protein and disease relate
+
+# ❌ Multiple OPTIONAL blocks without connections
+OPTIONAL { ?x a up:Protein }
+OPTIONAL { ?y up:citation ?z }
+# Should share variables if meant to be related
+```
+
+**Safe Patterns:**
+```sparql
+# ✅ Chain relationships
+?protein rdfs:seeAlso ?annotation .
+?annotation up:disease ?disease .
+?disease rdfs:label ?label .
+
+# ✅ Use property paths when appropriate
+?protein rdfs:seeAlso/up:disease/rdfs:label ?label .
+
+# ✅ Explicit FILTER to limit scope
+?protein a up:Protein .
+FILTER(?protein = <http://purl.uniprot.org/uniprot/P04637>)
+```
+
+**Before Running Any SPARQL:**
+1. Trace the path from source to target using MIE examples
+2. Ensure all triple patterns form a connected graph
+3. Test with `LIMIT 10` first
+4. If results look wrong, check for disconnected patterns
 
 ---
 
@@ -68,11 +140,13 @@ Combine information, cite sources, note limitations.
 ✅ **Read MIE files** - Before writing any SPARQL
 ✅ **Combine approaches** - Search for breadth, SPARQL for depth
 ✅ **Start simple** - Escalate complexity only when needed
+✅ **Verify connections** - Ensure SPARQL patterns form a connected graph
 
 ❌ Don't skip search tools based on assumptions
 ❌ Don't write SPARQL without reading MIE file
 ❌ Don't forget `up:reviewed 1` in UniProt
 ❌ Don't use `bif:contains` with property paths
+❌ Don't create disconnected triple patterns (Cartesian products)
 
 ---
 
@@ -137,3 +211,4 @@ search_reactome_entity("apoptosis", rows=30)
 2. Use SPARQL for precision when needed
 3. Combine both for comprehensive results
 4. Always read MIE files before SPARQL
+5. Verify all SPARQL patterns are properly connected to avoid Cartesian products
