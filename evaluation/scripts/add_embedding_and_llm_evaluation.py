@@ -213,15 +213,6 @@ class LLMEvaluator:
             model: Ollama generative model name (e.g., llama3.2, mistral, gemma2)
         """
         self.model = model
-        # Modern models have large context windows (llama3.2: 128K, mistral: 32K)
-        # Using 90000 chars (~22500 tokens) per text, leaving room for prompt and response
-        self._max_chars = 90000
-        
-    def _truncate_text(self, text: str) -> str:
-        """Truncate text to fit within token limits."""
-        if len(text) > self._max_chars:
-            return text[:self._max_chars] + "... [truncated]"
-        return text
     
     def evaluate_match(self, response_text: str, expected_answer: str) -> Dict[str, Any]:
         """
@@ -249,30 +240,26 @@ class LLMEvaluator:
             result["error"] = "Empty text"
             return result
         
-        # Truncate texts if needed
-        response_truncated = self._truncate_text(response_text)
-        expected_truncated = self._truncate_text(expected_answer)
-        
         # Build prompt for LLM evaluation
         prompt = f"""You are an expert evaluator. Your task is to determine if a RESPONSE text contains or discusses the same information as an EXPECTED ANSWER.
 
-EXPECTED ANSWER:
-{expected_truncated}
+    EXPECTED ANSWER:
+    {expected_answer}
 
-RESPONSE TEXT:
-{response_truncated}
+    RESPONSE TEXT:
+    {response_text}
 
-Analyze if the RESPONSE contains the key information from the EXPECTED ANSWER. The response may have additional details, but the core information should match.
+    Analyze if the RESPONSE contains the key information from the EXPECTED ANSWER. The response may have additional details, but the core information should match.
 
-Respond in this EXACT format (nothing else):
-MATCH: [YES/NO]
-CONFIDENCE: [HIGH/MEDIUM/LOW]
-REASON: [One brief sentence explaining why]
+    Respond in this EXACT format (nothing else):
+    MATCH: [YES/NO]
+    CONFIDENCE: [HIGH/MEDIUM/LOW]
+    REASON: [One brief sentence explaining why]
 
-Rules:
-- MATCH=YES if the response contains the expected information (even if phrased differently)
-- MATCH=NO if the response doesn't address the expected answer or gives wrong information
-- CONFIDENCE=HIGH if you're very sure, MEDIUM if somewhat sure, LOW if uncertain"""
+    Rules:
+    - MATCH=YES if the response contains the expected information (even if phrased differently)
+    - MATCH=NO if the response doesn't address the expected answer or gives wrong information
+    - CONFIDENCE=HIGH if you're very sure, MEDIUM if somewhat sure, LOW if uncertain"""
 
         try:
             response = ollama.chat(
