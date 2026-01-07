@@ -107,7 +107,7 @@ Add generative LLM evaluation (llama3.2):
 python add_embedding_and_llm_evaluation.py ../results/Q01_out.csv --llm-model llama3.2
 ```
 
-## With Embeddings and LLM Evaluation
+### With Embeddings and LLM Evaluation
 
 ```bash
 python add_embedding_and_llm_evaluation.py ../results/Q01_out.csv --llm-model llama3.2 -o ../results/Q01_with_embeddings_and_llm.csv
