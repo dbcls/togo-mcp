@@ -6,7 +6,7 @@ This guide explains how to use the `add_llm_evaluation.py` script to add LLM-bas
 
 ### 1. Install Ollama
 
-Ollama is required to generate embeddings locally.
+Ollama is required.
 
 **Windows:**
 ```powershell
