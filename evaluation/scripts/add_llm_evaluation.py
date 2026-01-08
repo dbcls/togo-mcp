@@ -6,7 +6,7 @@ This script reads existing evaluation results CSV files and adds:
     - LLM-based evaluation using a generative model to judge if texts discuss the same topic (Ollama with llama3.2)
 
 Usage:
-    python add__llm_evaluation.py Q01_out.csv
+    python add_llm_evaluation.py Q01_out.csv
 
 Requirements:
     pip install ollama pandas
