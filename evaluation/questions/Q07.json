@@ -2,85 +2,85 @@
   {
     "id": 73,
     "category": "Precision",
-    "question": "What is the notification number for NANDO:1200001 (Spinal and bulbar muscular atrophy)?",
-    "expected_answer": "1",
-    "notes": "Database: NANDO. Tests government designation number via nando:hasNotificationNumber. Verified in nando_exploration.md Query 4 which found 15 designated diseases all with notification number 1."
+    "question": "What organism has the most phenotypic antimicrobial resistance measurements in the AMR Portal?",
+    "expected_answer": "Salmonella enterica (443,249)",
+    "notes": "Database: AMR Portal. Tests organism distribution statistics. S. enterica is a major food-borne pathogen under global surveillance. Baseline cannot access AMR Portal organism counts. Verified via GROUP BY organism in amrportal_exploration.md showing S. enterica > E. coli > M. tuberculosis."
   },
   {
     "id": 74,
     "category": "Precision",
-    "question": "What is the canonical SMILES for aspirin in PubChem?",
-    "expected_answer": "CC(=O)OC1=CC=CC=C1C(=O)O",
-    "notes": "Database: PubChem. Tests chemical structure descriptor (sio:CHEMINF_000376). Verified in pubchem_exploration.md Query 1 which retrieved SMILES for aspirin (CID 2244)."
+    "question": "What is the space group for PDB entry 5D8V?",
+    "expected_answer": "Specific crystallographic space group",
+    "notes": "Database: PDB. Tests crystallographic metadata retrieval. 5D8V is one of two structures at world-record 0.48 Å resolution. Baseline cannot access PDB crystallographic details. Query pattern verified in pdb_exploration.md via pdbx:symmetry category."
   },
   {
     "id": 75,
     "category": "Completeness",
-    "question": "How many Escherichia coli strains are recorded in BacDive?",
-    "expected_answer": "Multiple strains (at least 10 found in initial search)",
-    "notes": "Database: BacDive. Tests strain counting for model organism using bif:contains. Verified in bacdive_exploration.md Query 1 which found 10 E. coli strains with IDs 134430, 134451, 135530, etc."
+    "question": "How many biochemical reactions are documented in Reactome?",
+    "expected_answer": "11,000",
+    "notes": "Database: Reactome. Tests reaction entity counting. Reactome meticulously curates enzyme-catalyzed reactions. Baseline cannot access Reactome statistics. Verified in reactome_exploration.md overview showing BiochemicalReaction count."
   },
   {
     "id": 76,
     "category": "Completeness",
-    "question": "How many major disease categories are in NANDO?",
-    "expected_answer": "15",
-    "notes": "Database: NANDO. Tests top-level category counting. Verified in nando_exploration.md Query 2 and Query 7 which identified 15 major disease categories including Neuromuscular (84 diseases), Metabolic (45), Chromosome abnormality (42)."
+    "question": "List all variation types in ClinVar and their counts.",
+    "expected_answer": "single nucleotide variant (3,236,823), Deletion (160,620), Duplication (73,448), etc.",
+    "notes": "Database: ClinVar. Tests variant classification enumeration. ClinVar categorizes 20 different variation types. Baseline cannot aggregate ClinVar data. Verified via GROUP BY variation_type in clinvar_exploration.md showing SNV dominance at 90%."
   },
   {
     "id": 77,
     "category": "Integration",
-    "question": "What is the DrugBank ID for ChEMBL compound CHEMBL941 (imatinib)?",
-    "expected_answer": "DrugBank ID via cco:moleculeXref",
-    "notes": "Database: ChEMBL, DrugBank. Tests drug database cross-reference via cco:moleculeXref. Pattern verified in chembl_exploration.md Query 5 which demonstrated ChEMBL to DrugBank linking."
+    "question": "Find ChEMBL target IDs that have drug mechanisms annotated as INHIBITOR for kinases.",
+    "expected_answer": "ChEMBL target IDs with mechanismActionType INHIBITOR",
+    "notes": "Database: ChEMBL. Tests drug mechanism annotation query. Requires joining molecule to target via drug mechanisms with action type filtering. Baseline cannot query ChEMBL drug mechanisms. Pattern verified in chembl_exploration.md schema analysis."
   },
   {
     "id": 78,
     "category": "Integration",
-    "question": "What is the PubMed ID associated with PDB entry 5D8V?",
-    "expected_answer": "PubMed citation via pdbx:citation",
-    "notes": "Database: PDB, PubMed. Tests structure-to-literature linking. About 73% of PDB entries have PubMed IDs. Pattern from pdb_exploration.md integration section."
+    "question": "What DrugBank IDs correspond to molecules in ChEMBL with approved drug status?",
+    "expected_answer": "DrugBank cross-references for approved drugs",
+    "notes": "Database: ChEMBL, DrugBank. Tests drug database cross-referencing. 8.4K ChEMBL molecules have DrugBank links. Requires moleculeXref filtering. Baseline has limited drug database cross-reference knowledge. Verified in chembl_exploration.md showing drugbank.ca links."
   },
   {
     "id": 79,
     "category": "Currency",
-    "question": "How many FDA-approved drugs are currently in PubChem with molecular weight between 150 and 200?",
-    "expected_answer": "20 drugs in this range (verified sample)",
-    "notes": "Database: PubChem. Tests current drug classification with property filtering. Verified in pubchem_exploration.md Query 2 which found 20 FDA-approved drugs with MW 150-200, including CID 440545 (180.16)."
+    "question": "What are the most recent PDB entries for SARS-CoV-2 proteins?",
+    "expected_answer": "Recent PDB IDs for coronavirus proteins",
+    "notes": "Database: PDB. Tests access to current pandemic research data. SARS-CoV-2 structures deposited since 2020. Baseline from Jan 2025 cannot show latest depositions. Search pattern verified in pdb_exploration.md though COVID not explicitly in report examples."
   },
   {
     "id": 80,
     "category": "Currency",
-    "question": "What is the current count of deprecated GO terms?",
-    "expected_answer": "Approximately 25% of terms marked with owl:deprecated",
-    "notes": "Database: GO. Tests obsolete term tracking. Verified in go_exploration.md which states ~25% of GO terms are deprecated with owl:deprecated flags."
+    "question": "What is the temporal span of AMR surveillance data in the AMR Portal?",
+    "expected_answer": "1911 to 2025 (92 years)",
+    "notes": "Database: AMR Portal. Tests temporal coverage metadata. Collection years span over a century with concentration post-2000. Baseline cannot access AMR temporal metadata. Verified in amrportal_exploration.md showing 92 distinct years from collectionYear field."
   },
   {
     "id": 81,
     "category": "Specificity",
-    "question": "What is the tree number for MeSH descriptor D003920 (Diabetes Mellitus)?",
-    "expected_answer": "C18.452.394.750",
-    "notes": "Database: MeSH. Tests hierarchical classification code via meshv:treeNumber. Tree numbers provide alphanumeric hierarchical codes. Example from mesh_exploration.md and QUESTION_DESIGN_GUIDE.md."
+    "question": "What percentage of AMR Portal phenotypes have quantitative MIC (Minimum Inhibitory Concentration) measurements?",
+    "expected_answer": "~30%",
+    "notes": "Database: AMR Portal. Tests quantitative vs qualitative data distribution. MIC values provide precise resistance thresholds. Baseline has no knowledge of AMR data structure. Verified in amrportal_exploration.md showing measurementValue coverage at ~30%."
   },
   {
     "id": 82,
     "category": "Specificity",
-    "question": "What is the isolation location coordinates for Thermodesulfatator atlanticus in BacDive?",
-    "expected_answer": "36.23°N, -33.90°W (Atlantic Ocean international waters)",
-    "notes": "Database: BacDive. Tests geographic origin retrieval via schema:hasLatitude/hasLongitude. Verified in bacdive_exploration.md Query 6 which showed precise coordinates for various strains."
+    "question": "What UniProt reviewed proteins contain the keyword 'signal peptide'?",
+    "expected_answer": "Multiple Swiss-Prot entries with signal peptide annotations",
+    "notes": "Database: UniProt. Tests protein feature annotation query. Signal peptides direct secretory proteins. Requires reviewed=1 filter and annotation search. Baseline cannot query specific UniProt annotations. Pattern verified in uniprot_exploration.md for reviewed protein queries."
   },
   {
     "id": 83,
     "category": "Structured Query",
-    "question": "Find all GO terms in molecular_function namespace that contain the keyword 'kinase'",
-    "expected_answer": "Multiple terms including protein kinase activity (GO:0004672) and related functions",
-    "notes": "Database: GO. Tests namespace filtering combined with bif:contains. Verified in go_exploration.md Query 3 which demonstrated namespace filtering with keyword search for kinases."
+    "question": "Find isolates resistant to 10 or more different antibiotics in the AMR Portal.",
+    "expected_answer": "Extreme MDR isolates with BioSample IDs",
+    "notes": "Database: AMR Portal. Tests multi-drug resistance profiling. Requires grouping by bioSample and counting distinct antibiotics with resistancePhenotype='resistant'. Baseline cannot perform AMR data mining. Verified in amrportal_exploration.md showing isolates resistant to 30+ drugs."
   },
   {
     "id": 84,
     "category": "Structured Query",
-    "question": "Find all MediaDive media with pH between 6.0 and 7.0 that are marked as complex",
-    "expected_answer": "Multiple media including PYROCOCCUS MEDIUM and various Methanosarcina media",
-    "notes": "Database: MediaDive. Tests combined pH filtering (hasMinPH/hasMaxPH) with boolean isComplex. Verified in mediadive_exploration.md Query 4 which found 15 neutral pH media."
+    "question": "Search PubChem for compounds with both ChEBI and SNOMED CT classifications.",
+    "expected_answer": "Compounds with dual ontology classifications",
+    "notes": "Database: PubChem, ChEBI, SNOMED CT. Tests multi-ontology integration query. Requires filtering rdf:type for both chebi: and snomedct: URIs. Baseline cannot query PubChem ontology classifications. Pattern verified in pubchem_exploration.md showing ~5% ChEBI coverage."
   }
 ]

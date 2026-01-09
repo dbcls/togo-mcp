@@ -1,361 +1,296 @@
 # Database Exploration Summary
 
 ## Overview
-- **Total databases explored**: 22
-- **Total exploration sessions**: 3 (Sessions 1-2 documented, Session 3 completed all remaining)
-- **Total documentation**: 279 KB of detailed exploration reports
+- **Total databases explored**: 23
+- **Total exploration sessions**: 2 (22 databases in session 1, 1 database in session 2)
+- **Date completed**: January 2026
 
 ## All Explored Databases
 
-### Molecular Biology Core (6 databases)
-1. **UniProt** - Protein sequences and functions (444M proteins, 923K curated)
-2. **PDB** - 3D protein structures (204K+ entries, 0.48Å best resolution)
-3. **NCBI Gene** - Gene information (57M+ genes across all organisms)
-4. **Ensembl** - Genome annotations (100+ species, transcript variants)
-5. **DDBJ** - DNA sequences (INSDC collaboration, genomic annotations)
-6. **Taxonomy** - Biological classification (3M+ taxa, hierarchical system)
+### Molecular Biology & Genomics
+1. **UniProt** - Protein sequences and functional annotations (444M proteins, Swiss-Prot vs TrEMBL)
+2. **NCBI Gene** - Gene database (57M+ entries, protein-coding, ncRNA, pseudogenes)
+3. **Ensembl** - Genome annotations for 100+ species (genes, transcripts, proteins, exons)
+4. **PDB** - 3D protein structures (204K+ entries from X-ray, NMR, cryo-EM)
+5. **DDBJ** - DNA sequence data from INSDC collaboration (nucleotide sequences, annotations)
 
-### Chemical & Drug Resources (4 databases)
-7. **ChEBI** - Chemical entities ontology (217K+ entities, hierarchical)
-8. **ChEMBL** - Bioactive molecules (2.4M compounds, 20M bioactivity measurements)
-9. **PubChem** - Chemical compounds (119M compounds, 1.7M bioassays)
-10. **Rhea** - Biochemical reactions (17K reactions, ChEBI-linked, EC classified)
+### Chemical & Drug Databases
+6. **PubChem** - Chemical molecules (119M compounds, 339M substances, bioactivity data)
+7. **ChEBI** - Chemical entities of biological interest (217K+ entities, hierarchical classification)
+8. **ChEMBL** - Bioactive molecules with drug-like properties (2.4M+ compounds, 20M bioactivity measurements)
 
-### Pathways & Systems (2 databases)
-11. **Reactome** - Biological pathways (22K pathways, BioPAX Level 3)
-12. **GO** - Gene Ontology (48K terms in 3 namespaces, hierarchical DAG)
+### Pathway & Reaction Databases
+9. **Reactome** - Biological pathways and processes (22K+ pathways, 30+ species)
+10. **Rhea** - Biochemical reactions (17,078 reactions, atom-balanced, ChEBI-linked)
+11. **Gene Ontology (GO)** - Controlled vocabulary for gene attributes (48,165 terms across 3 domains)
 
-### Clinical & Genetics (4 databases)
-13. **ClinVar** - Genetic variants (3.5M+ variants with clinical significance)
-14. **MedGen** - Medical genetics (233K clinical concepts, HPO/OMIM integrated)
-15. **MONDO** - Disease ontology (30K diseases, 90% cross-ref coverage)
-16. **NANDO** - Japanese rare diseases (2,777 intractable diseases)
+### Disease & Clinical Databases
+12. **ClinVar** - Genomic variants and clinical interpretations (3.5M+ variant records)
+13. **MedGen** - Medical genetics conditions (233K+ clinical concepts from OMIM, Orphanet, HPO)
+14. **MONDO** - Disease ontology (30K+ disease classes, 35+ database cross-references)
+15. **NANDO** - Japanese intractable/rare diseases (2,777 disease classes, multilingual)
 
-### Terminology & Literature (3 databases)
-17. **MeSH** - Medical subject headings (2.5M entities, 30K descriptors)
-18. **PubMed** - Biomedical literature (bibliographic metadata, MeSH annotations)
-19. **PubTator** - Literature mining (entity annotations from PubMed)
+### Literature & Annotations
+16. **PubMed** - Biomedical literature (bibliographic information, MeSH annotations)
+17. **PubTator** - Text-mining entity annotations (Disease and Gene annotations from PubMed)
+18. **MeSH** - Medical subject headings (controlled vocabulary, ~30K descriptors)
 
-### Specialized Resources (3 databases)
-20. **BacDive** - Bacterial diversity (97K+ strains, phenotypic data)
-21. **MediaDive** - Culture media (3,289 recipes, 1,489 ingredients)
-22. **GlyCosmos** - Glycoscience (glycans, glycoproteins, 100+ named graphs)
+### Microbiology & Specialized Databases
+19. **BacDive** - Bacterial diversity (97K+ strain records, phenotypic/genotypic data)
+20. **MediaDive** - Culture media recipes (3,289 standardized recipes from DSMZ)
+21. **Taxonomy** - NCBI biological classification (3M+ organisms, hierarchical relationships)
+22. **GlyCosmos** - Glycoscience portal (glycan structures, glycoproteins, glycosylation sites)
+23. **AMR Portal** - Antimicrobial resistance surveillance (1.7M phenotypic AST results, 1.1M genotypic AMR features) ✨ NEW
 
 ## Database Coverage Plan for 120 Questions
 
-### Recommended Distribution (by database richness and uniqueness)
+### Recommended Distribution
 
-**Tier 1: High Priority - Rich, Well-Connected (55 questions total)**
-- **UniProt**: 10 questions
-  - Rationale: Central protein resource, excellent search tools, 923K curated entries
-  - Categories: Precision (protein IDs), Integration (cross-refs), Specificity (domains)
-  
-- **PubChem**: 10 questions
-  - Rationale: 119M compounds, comprehensive descriptors, FDA drug data
-  - Categories: Precision (molecular properties), Completeness (counts), Integration (ChEBI links)
-  
-- **GO**: 8 questions
-  - Rationale: 48K terms, hierarchical navigation, fundamental for biology
-  - Categories: Completeness (descendants), Structured Query (ancestors), Precision (terms)
-  
-- **Reactome**: 7 questions
-  - Rationale: 22K pathways, BioPAX ontology, species-specific
-  - Categories: Completeness (pathway members), Integration (protein/compound links)
-  
-- **ChEMBL**: 7 questions
-  - Rationale: 20M bioactivity measurements, drug development focus
-  - Categories: Structured Query (IC50 filters), Integration (target-compound)
-  
-- **ClinVar**: 7 questions
-  - Rationale: 3.5M variants, clinical significance, disease associations
-  - Categories: Precision (variant IDs), Specificity (rare variants), Integration (MedGen)
-  
-- **NCBI Gene**: 6 questions
-  - Rationale: 57M genes, orthology relationships, comprehensive
-  - Categories: Precision (gene IDs), Integration (Ensembl/HGNC), Completeness (orthologs)
+**Tier 1 - Rich Content (8-12 questions each):**
+- **UniProt** (12 questions) - Largest protein database, excellent search, cross-references
+- **PubChem** (10 questions) - Massive chemical database, diverse properties, bioactivity
+- **ChEMBL** (10 questions) - Drug discovery, bioactivity, target relationships
+- **GO** (10 questions) - Ontology navigation, hierarchical queries, gene annotations
+- **ClinVar** (10 questions) - Clinical variants, pathogenicity, temporal data
+- **Reactome** (8 questions) - Pathways, molecular interactions, species coverage
+- **PDB** (8 questions) - Structural data, experimental methods, resolution metrics
 
-**Tier 2: Medium Priority - Specialized Value (45 questions total)**
-- **PDB**: 6 questions (structural biology, resolution data, experimental methods)
-- **Rhea**: 6 questions (biochemical reactions, transport, EC numbers)
-- **MeSH**: 6 questions (medical terminology, hierarchical trees)
-- **MONDO**: 5 questions (disease ontology, cross-references)
-- **ChEBI**: 5 questions (chemical ontology, hierarchical relationships)
-- **Taxonomy**: 5 questions (biological classification, rank navigation)
-- **Ensembl**: 5 questions (genome annotations, transcript variants)
-- **MedGen**: 4 questions (clinical concepts, HPO integration)
-- **PubMed**: 3 questions (literature search, MeSH annotations)
+**Tier 2 - Specialized Content (4-6 questions each):**
+- **AMR Portal** (6 questions) - Resistance surveillance, phenotype-genotype linkage, geographic trends ✨ NEW
+- **NCBI Gene** (6 questions) - Gene IDs, orthology, cross-references
+- **MeSH** (6 questions) - Medical terminology, rare diseases, hierarchical
+- **Rhea** (6 questions) - Biochemical reactions, transport, EC numbers
+- **ChEBI** (5 questions) - Chemical ontology, molecular properties, roles
+- **MONDO** (5 questions) - Disease ontology, integration across sources
+- **Ensembl** (5 questions) - Genome annotations, transcript variants
 
-**Tier 3: Lower Priority - Niche Applications (20 questions total)**
-- **NANDO**: 4 questions (Japanese rare diseases, unique dataset)
-- **BacDive**: 4 questions (bacterial strains, phenotypic data)
-- **MediaDive**: 3 questions (culture media recipes, growth conditions)
-- **GlyCosmos**: 3 questions (glycobiology, specialized field)
-- **PubTator**: 3 questions (text mining, entity extraction)
-- **DDBJ**: 3 questions (DNA sequences, INSDC data)
+**Tier 3 - Niche Content (2-4 questions each):**
+- **NANDO** (4 questions) - Japanese rare diseases, unique identifiers
+- **BacDive** (4 questions) - Bacterial strains, growth conditions
+- **MediaDive** (4 questions) - Culture media, ingredients, protocols
+- **MedGen** (3 questions) - Clinical concepts, relationship tracking
+- **PubMed** (3 questions) - Literature metadata, MeSH annotations
+- **PubTator** (3 questions) - Entity annotations, text mining
+- **GlyCosmos** (3 questions) - Glycans, glycoproteins, lectin interactions
+- **Taxonomy** (3 questions) - Organism classification, genetic codes
+- **DDBJ** (2 questions) - Nucleotide sequences, genomic features
 
-### Rationale for Distribution
-1. **Priority based on**:
-   - Data richness and comprehensiveness
-   - Search tool quality and reliability
-   - Cross-database integration potential
-   - Biological research relevance
-   - Unique specialized information
+**Total: 120 questions**
 
-2. **Balance across question categories**:
-   - Precision: ~25 questions (exact IDs, properties)
-   - Completeness: ~20 questions (counts, exhaustive lists)
-   - Integration: ~25 questions (cross-database links)
-   - Structured Query: ~20 questions (complex filtering)
-   - Specificity: ~15 questions (rare entities, niche data)
-   - Currency: ~15 questions (recent updates, current status)
-
-3. **Organism diversity**:
-   - Human: ~60 questions (clinical relevance)
-   - Model organisms: ~30 questions (research applications)
-   - Microbes: ~20 questions (bacterial diversity)
-   - Multi-species: ~10 questions (comparative genomics)
+### Rationale
+- **UniProt, PubChem, ChEMBL, GO, ClinVar**: Extremely rich datasets with diverse query opportunities, excellent tools, high research relevance
+- **AMR Portal**: NEW database with unique surveillance data, phenotype-genotype correlation, geographic/temporal analysis - excellent for integration and currency questions
+- **Reactome, PDB, Rhea**: Specialized but deep content with clear use cases
+- **NANDO, BacDive, MediaDive**: Unique niche databases perfect for specificity questions
+- **Integration opportunities**: Cross-database questions leverage ID conversion tools (TogoID) and shared identifiers
 
 ## Cross-Database Integration Opportunities
 
 ### High-Value Integration Pairs
-1. **UniProt ↔ PDB**: Protein sequence to structure (via search tools + conversion)
-2. **ChEMBL ↔ PubChem**: Compound ID conversion, activity data enrichment
-3. **ClinVar ↔ MedGen**: Variant to disease phenotype mapping
-4. **NCBI Gene ↔ Ensembl**: Gene ID conversion, orthology relationships
-5. **Reactome ↔ Rhea**: Pathway reactions to detailed biochemistry
-6. **GO ↔ UniProt**: Functional annotation to protein entries
-7. **MeSH ↔ PubMed**: Term-based literature retrieval
-8. **ChEBI ↔ Rhea**: Compound to reaction participation
-9. **MONDO ↔ NANDO**: International to Japanese disease mapping
-10. **Taxonomy ↔ NCBI Gene**: Organism-specific gene queries
 
-### Multi-Database Integration Questions (Examples)
-1. "Find the 3D structure (PDB) for the protein encoded by human gene BRCA1 (NCBI Gene), then list its associated pathways (Reactome)"
-   - Chain: NCBI Gene → UniProt → PDB + Reactome
-   
-2. "What clinical variants (ClinVar) are associated with the disease identified as MONDO:0010526, and what are their phenotypes (MedGen)?"
-   - Chain: MONDO → ClinVar → MedGen
-   
-3. "For the compound resveratrol in PubChem, find its ChEBI classification, then identify biochemical reactions (Rhea) it participates in"
-   - Chain: PubChem → ChEBI → Rhea
-   
-4. "Find bacterial strains (BacDive) that can be cultured using medium DSMZ 1, then identify their taxonomic classification (Taxonomy)"
-   - Chain: MediaDive → BacDive → Taxonomy
+1. **UniProt ↔ NCBI Gene**: Protein to gene ID conversion, orthology
+2. **UniProt ↔ ChEMBL**: Protein targets with bioactivity data
+3. **PubChem ↔ ChEBI**: Chemical entity standardization, ID conversion
+4. **ClinVar ↔ MedGen**: Variant to clinical concept mapping
+5. **ClinVar ↔ NCBI Gene**: Variant to gene associations
+6. **Ensembl ↔ NCBI Gene**: Genome annotation cross-references
+7. **ChEMBL ↔ PubChem**: Drug compounds across databases
+8. **Reactome ↔ UniProt**: Pathway components to proteins
+9. **Rhea ↔ ChEBI**: Reactions to chemical participants
+10. **GO ↔ UniProt**: Gene ontology annotations on proteins
+11. **AMR Portal ↔ Taxonomy**: Resistance data to organism classification ✨ NEW
+12. **AMR Portal ↔ PubMed**: Surveillance data to literature citations ✨ NEW
+13. **AMR Portal ↔ BioSample**: Phenotype-genotype linkage via samples ✨ NEW
 
-### TogoID Conversion Opportunities
-- UniProt ↔ NCBI Gene (gene-protein mapping)
-- PubChem ↔ ChEBI (chemical identifier conversion)
-- Ensembl ↔ NCBI Gene (gene database reconciliation)
-- ChEMBL ↔ PubChem (compound cross-referencing)
-- Multiple disease ontologies (MONDO ↔ MeSH ↔ OMIM)
+### Multi-Database Query Examples
+
+**Example 1**: "Find human kinases (UniProt) with bioactivity data (ChEMBL) and associated pathways (Reactome)"
+- Databases: UniProt, ChEMBL, Reactome
+- Integration: Protein IDs, target mapping, pathway components
+
+**Example 2**: "Convert BRCA1 variant (ClinVar) to gene ID (NCBI Gene) to disease associations (MedGen)"
+- Databases: ClinVar, NCBI Gene, MedGen
+- Integration: Variant → Gene → Clinical concept
+
+**Example 3**: "Find ATP-dependent reactions (Rhea) with chemical properties (ChEBI) in metabolic pathways (Reactome)"
+- Databases: Rhea, ChEBI, Reactome
+- Integration: Reaction participants, chemical entities, pathway context
+
+**Example 4**: "Track carbapenem resistance genes (AMR Portal) in Klebsiella pneumoniae (Taxonomy) with geographic distribution and link to literature (PubMed)" ✨ NEW
+- Databases: AMR Portal, Taxonomy, PubMed
+- Integration: Genotype/phenotype data, organism classification, citations
 
 ## Database Characteristics
 
 ### Rich Content (Good for multiple questions)
-**Characteristics**: Large datasets, comprehensive coverage, multiple query types
-- **UniProt**: 444M proteins with rich annotations, excellent search tools
-- **PubChem**: 119M compounds with detailed molecular descriptors
-- **ChEMBL**: 20M bioactivity measurements, drug-focused
-- **ClinVar**: 3.5M variants with clinical interpretations
-- **NCBI Gene**: 57M genes with orthology and cross-references
-- **GO**: 48K terms with hierarchical relationships
-- **Reactome**: 22K pathways with molecular detail
-
-**Question Opportunities**: Precision lookups, completeness counts, structured queries
+**Excellent search tools, diverse data, high research value:**
+- **UniProt**: search_uniprot_entity, 444M proteins, comprehensive annotations
+- **PubChem**: get_pubchem_compound_id, get_compound_attributes, 119M compounds
+- **ChEMBL**: search_chembl_molecule, search_chembl_target, 2.4M compounds, 20M bioactivities
+- **GO**: searchClasses, getDescendants, getAncestors, 48K terms with rich hierarchy
+- **ClinVar**: Via NCBI tools, 3.5M variants with clinical interpretations
+- **AMR Portal**: SPARQL queries, 1.7M phenotypes + 1.1M genotypes, phenotype-genotype correlation ✨ NEW
 
 ### Specialized Content (Good for specificity questions)
-**Characteristics**: Niche domains, unique data types, expert curation
-- **NANDO**: 2,777 Japanese intractable diseases (unique dataset)
-- **BacDive**: 97K bacterial strains with phenotypic characterization
-- **MediaDive**: 3,289 culture media recipes (specialized protocols)
-- **GlyCosmos**: Glycoscience-specific (carbohydrates, glycoproteins)
-- **Rhea**: 17K expert-curated biochemical reactions
-- **PubTator**: Literature-mined entity annotations
-
-**Question Opportunities**: Specificity, niche applications, rare entities
+**Niche domains, unique identifiers, expert curation:**
+- **NANDO**: Japanese rare diseases, government-designated intractable diseases
+- **BacDive**: Bacterial strain characterization, growth conditions, 97K strains
+- **MediaDive**: Culture media recipes, hierarchical ingredients, DSMZ standardization
+- **MeSH**: Medical terminology, rare disease descriptors, controlled vocabulary
+- **GlyCosmos**: Glycoscience specialization, 100+ named graphs
+- **Rhea**: Expert-curated reactions, atom-balanced, transport reactions
+- **AMR Portal**: Resistance surveillance, quantitative MIC data, geographic/temporal tracking ✨ NEW
 
 ### Well-Connected (Good for integration questions)
-**Characteristics**: Extensive cross-references, ID conversion support, TogoID integrated
-- **UniProt**: 200+ database cross-references, central hub
-- **ChEMBL**: Links to UniProt, PDB, PubChem, DrugBank
-- **ClinVar**: MedGen, OMIM, MeSH, HGNC connections
-- **MedGen**: OMIM, Orphanet, HPO, MONDO integration
-- **MONDO**: 39+ database cross-references, 90% coverage
-- **PubChem**: ChEBI, Wikidata, UniProt, PDB links
-- **Reactome**: UniProt, ChEBI, Ensembl, GO annotations
+**Strong cross-references, ID conversion capabilities:**
+- **UniProt**: 200+ database cross-references, central hub for proteins
+- **PubChem**: Links to ChEBI, DrugBank, patents, genes, proteins
+- **ChEMBL**: Cross-references to UniProt, PDB, PubChem
+- **ClinVar**: Links to MedGen, OMIM, MeSH, HGNC
+- **NCBI Gene**: Cross-references to Ensembl, HGNC, OMIM
+- **Reactome**: Links to UniProt, ChEBI, PubMed, GO
+- **AMR Portal**: BioSample, SRA, INSDC, PubMed, ARO ontology, NCBI Taxonomy ✨ NEW
 
-**Question Opportunities**: Integration, ID conversion, cross-database navigation
+### Ontology-Based (Good for structured query questions)
+**Hierarchical relationships, semantic queries:**
+- **GO**: Three ontology domains, hierarchical navigation
+- **ChEBI**: Chemical entity classification, role hierarchy
+- **MONDO**: Disease ontology, cross-ontology integration
+- **MeSH**: Tree number hierarchy, 16 categories
+- **NANDO**: Japanese rare disease taxonomy
+- **Taxonomy**: Biological classification hierarchy
 
-### High-Quality Curation
-**Characteristics**: Manual curation, expert review, standardized annotations
-- **UniProt (Swiss-Prot)**: 923K manually curated entries
-- **Reactome**: Expert-curated pathways
-- **Rhea**: 100% atom-balanced, ChEBI-linked reactions
-- **GO**: Standardized ontology with evidence codes
-- **ChEBI**: Ontology-structured chemical entities
-- **MeSH**: NLM-controlled medical vocabulary
-
-**Question Opportunities**: Precision, verifiability, authoritative answers
-
-### Dynamic/Current (Good for currency questions)
-**Characteristics**: Frequent updates, recent additions, time-sensitive data
-- **ClinVar**: Continuous variant submissions, classification updates
-- **PubMed**: Daily literature updates
-- **NCBI Gene**: Regular gene annotation updates
-- **Reactome**: Pathway updates for new discoveries
-- **ChEMBL**: Regular bioactivity data releases
-- **UniProt**: Monthly releases
-
-**Question Opportunities**: Currency, recent additions, current classifications
+### Temporal/Currency Content (Good for currency questions)
+**Recent updates, time-sensitive data:**
+- **ClinVar**: Last updated dates, current classifications
+- **PDB**: Recent structure depositions, current resolution records
+- **PubMed**: Latest publications, recent MeSH annotations
+- **NCBI Gene**: Current gene symbols, recent annotations
+- **AMR Portal**: Collection years 1911-2025, temporal resistance trends ✨ NEW
 
 ## Recommendations
 
-### For Question Generation (Next Phase)
+### For Question Generation
 
-1. **Prioritize High-Value Databases**
-   - Focus 46% of questions (55/120) on Tier 1 databases
-   - These provide the most reliable, comprehensive answers
-   - Best demonstrate TogoMCP value-add
+1. **Leverage unique strengths**: 
+   - UniProt for protein IDs and annotations
+   - NANDO for rare Japanese diseases
+   - AMR Portal for resistance surveillance and epidemiology ✨ NEW
+   - BacDive/MediaDive for microbiology specifics
+   - PDB for structural metrics
 
-2. **Balance Question Categories**
-   - Ensure each category has 15-25 questions
-   - Mix simple and complex questions within each category
-   - Include both single-database and integration questions
+2. **Focus on integration**:
+   - UniProt ↔ ChEMBL for drug-target questions
+   - ClinVar ↔ MedGen for variant-disease mapping
+   - AMR Portal ↔ BioSample/Taxonomy for resistance epidemiology ✨ NEW
+   - Use TogoID for systematic ID conversion
 
-3. **Leverage Database Strengths**
-   - **UniProt**: Protein identification, domain queries, cross-references
-   - **PubChem**: Molecular properties, FDA drugs, stereoisomers
-   - **ChEMBL**: Bioactivity filtering, target-compound relationships
-   - **ClinVar**: Variant pathogenicity, disease associations
-   - **GO**: Hierarchical navigation, term relationships
-   - **Reactome**: Pathway membership, species specificity
+3. **Exploit hierarchies**:
+   - GO for ancestor/descendant queries
+   - MeSH for medical terminology navigation
+   - ChEBI for chemical classification
+   - MONDO for disease relationships
 
-4. **Cross-Database Integration Focus**
-   - Create 25 integration questions (20% of total)
-   - Test TogoID conversion capabilities
-   - Verify cross-reference accuracy
-   - Challenge multi-step reasoning
+4. **Test temporal capabilities**:
+   - ClinVar update dates
+   - PDB recent depositions
+   - AMR Portal resistance trend analysis (2010-2025) ✨ NEW
+   - PubMed recent literature
 
-5. **Specificity and Niche Data**
-   - Use Tier 3 databases for specificity questions
-   - Highlight unique capabilities (NANDO for Japanese diseases)
-   - Test handling of specialized terminology
-   - Verify rare entity retrieval
-
-6. **Avoid Pitfalls**
-   - Don't overuse UniProt TrEMBL (use Swiss-Prot, reviewed=1)
-   - Avoid timeout-prone queries (large aggregations without LIMIT)
-   - Don't rely on incomplete external links (verify coverage first)
-   - Test questions before finalizing (verify answers exist)
-
-7. **Question Quality Checks**
-   - Each question should have clear, verifiable answer
-   - Avoid ambiguous or overly broad questions
-   - Ensure database tools can efficiently answer
-   - Verify expected answers using exploration reports
+5. **Include specificity questions**:
+   - NANDO Japanese identifiers
+   - BacDive strain-specific growth conditions
+   - MediaDive culture medium recipes
+   - AMR Portal MIC measurements, MDR isolates ✨ NEW
+   - Rare disease MeSH descriptors
 
 ### Databases That Pair Well Together
 
-**Protein-Centric Workflows**
-- UniProt + PDB + Reactome (sequence → structure → pathways)
-- UniProt + GO + NCBI Gene (function annotation across databases)
-- ChEMBL + UniProt (drug target analysis)
+**Chemistry Focus:**
+- PubChem + ChEBI + ChEMBL (compound properties, bioactivity, drug discovery)
+- Rhea + ChEBI + Reactome (reactions, chemicals, pathways)
 
-**Chemical-Centric Workflows**
-- PubChem + ChEBI + Rhea (compound → classification → reactions)
-- ChEMBL + PubChem (bioactivity data enrichment)
-- ChEBI + Reactome (compound pathway participation)
-
-**Clinical-Centric Workflows**
-- ClinVar + MedGen + MONDO (variant → phenotype → disease)
-- MONDO + NANDO (international-Japanese disease mapping)
+**Clinical Focus:**
+- ClinVar + MedGen + MONDO (variants, clinical concepts, disease ontology)
 - ClinVar + NCBI Gene + UniProt (variant → gene → protein)
 
-**Microbiology Workflows**
-- BacDive + MediaDive + Taxonomy (strain → culture → classification)
-- DDBJ + Taxonomy + NCBI Gene (sequence → organism → genes)
+**Pathway/Systems Biology:**
+- Reactome + UniProt + GO (pathways, proteins, functions)
+- Reactome + Rhea + ChEBI (pathways, reactions, chemicals)
 
-**Literature-Centric Workflows**
-- PubMed + MeSH (literature search with controlled vocabulary)
-- PubTator + PubMed (entity-focused literature mining)
+**Structural Biology:**
+- PDB + UniProt + ChEMBL (structures, sequences, ligands)
+
+**Microbiology/AMR:** ✨ NEW
+- AMR Portal + BacDive + Taxonomy (resistance, strains, classification)
+- AMR Portal + PubMed + MedGen (surveillance, literature, clinical concepts)
+
+**Literature/Annotation:**
+- PubMed + PubTator + MeSH (articles, entity annotations, controlled vocabulary)
 
 ### Particularly Interesting Findings
 
-1. **Universal ChEBI Integration**
-   - Rhea has 100% ChEBI coverage for compounds
-   - Enables chemical-reaction linking across PubChem-ChEBI-Rhea
+1. **UniProt Swiss-Prot quality filter**: CRITICAL to use reviewed=1 for performance and quality
+2. **AMR Portal phenotype-genotype linkage**: BioSample connects resistance phenotypes with AMR genes ✨ NEW
+3. **AMR Portal extreme MDR**: Isolates resistant to 30+ antibiotics, public health concern ✨ NEW
+4. **ChEMBL bioactivity scale**: Nanomolar IC50 values for kinase inhibitors
+5. **GO hierarchy depth**: 25 descendant terms for autophagy (GO:0006914)
+6. **ClinVar pathogenic variants**: BRCA1 c.5266dup with update timestamps
+7. **PDB resolution record**: 0.48 Å achieved (atomic resolution)
+8. **NANDO multilingual**: Japanese kanji, hiragana, and English labels
+9. **BacDive temperature extremes**: Thermophiles >70°C documented
+10. **MediaDive ingredient detail**: GMO 41%, CAS 39%, ChEBI 32% coverage
+11. **Rhea transport reactions**: 5,984 cellular location-specific reactions
+12. **GlyCosmos graph diversity**: 100+ named graphs for glycobiology
+13. **AMR Portal geographic coverage**: 150+ countries, all continents represented ✨ NEW
+14. **AMR Portal temporal span**: 92 years of data (1911-2025), concentrated post-2000 ✨ NEW
 
-2. **Clinical Variant Ecosystem**
-   - ClinVar-MedGen-MONDO form comprehensive clinical genetics network
-   - 90% cross-reference coverage in MONDO enables disease integration
+### Common Query Patterns Across Databases
 
-3. **Hierarchical Navigation Excellence**
-   - GO with 48K terms in DAG structure
-   - MeSH with 16 tree categories
-   - Taxonomy with 47 hierarchical ranks
-   - All support ancestor/descendant queries
+**Search Tools:**
+- `search_uniprot_entity`, `search_chembl_molecule`, `search_mesh_entity`, `search_pdb_entity`
+- All support keyword-based queries with relevance scoring
+- AMR Portal uses `bif:contains` in SPARQL for flexible text search ✨ NEW
 
-4. **Japanese-Specific Resources**
-   - NANDO provides unique coverage of Japanese intractable diseases
-   - 2,777 diseases with bilingual labels and government policy links
+**SPARQL Queries:**
+- OLS4 databases: `searchClasses`, `getAncestors`, `getDescendants`
+- TogoMCP databases: Direct SPARQL with `run_sparql`
+- AMR Portal: Large dataset requires LIMIT clauses and organism filters ✨ NEW
 
-5. **Structural Biology Integration**
-   - PDB with 204K structures links to UniProt, Ensembl
-   - Resolution data enables quality assessment
-   - Experimental method diversity (X-ray, NMR, cryo-EM)
+**ID Conversion:**
+- `togoid_convertId` for systematic cross-database ID mapping
+- Common routes: UniProt ↔ NCBI Gene, PubChem ↔ ChEBI
+- AMR Portal: BioSample as primary linkage key ✨ NEW
 
-6. **Bacterial Strain Specialization**
-   - BacDive with 97K strains has rich phenotypic data
-   - MediaDive provides culture protocols
-   - Strong Taxonomy integration
+**Ontology Navigation:**
+- Hierarchical queries in GO, ChEBI, MONDO, MeSH, NANDO
+- Parent/child relationships, subsumption
+- Tree number navigation in MeSH
 
-7. **Bioactivity Data Scale**
-   - ChEMBL has 20M bioactivity measurements
-   - PubChem has 1.7M bioassays
-   - Enables drug discovery and repurposing queries
+### Performance Considerations
 
-8. **Search Tool Quality**
-   - search_uniprot_entity: Excellent for protein identification
-   - search_chembl_molecule: Reliable compound search
-   - search_pdb_entity: Fast structure lookup
-   - OLS4 search: Comprehensive ontology search
+**Fast Queries:**
+- UniProt Swiss-Prot (reviewed=1)
+- ChEMBL targeted searches
+- GO ontology navigation
+- Small PDB result sets
 
-9. **ID Conversion Infrastructure**
-   - TogoID supports systematic ID conversion
-   - Critical for integration questions
-   - Well-documented conversion routes
+**Requires Optimization:**
+- UniProt TrEMBL (444M records - must filter)
+- AMR Portal (1.7M phenotypes - must use organism/antibiotic filters + LIMIT) ✨ NEW
+- PubChem comprehensive searches
+- Complex multi-database joins
 
-10. **Expert Curation Value**
-    - Swiss-Prot (923K proteins) shows massive quality difference vs TrEMBL
-    - Reactome pathways are BioPAX Level 3 standardized
-    - Rhea reactions are 100% chemically balanced
-
-## Next Steps
-
-**Ready for Question Generation Phase (PROMPT 2)**
-
-The exploration phase is complete with:
-- ✅ All 22 databases thoroughly explored
-- ✅ Detailed exploration reports (8-21 KB each)
-- ✅ SPARQL queries tested and documented
-- ✅ Search tools verified with examples
-- ✅ Cross-database opportunities identified
-- ✅ Question coverage plan established
-
-Proceed to generate 120 high-quality evaluation questions distributed across:
-- 6 question categories (Precision, Completeness, Integration, Currency, Specificity, Structured Query)
-- 22 databases (following the recommended distribution above)
-- Multiple difficulty levels (simple lookups to complex multi-step queries)
-
-Use the detailed findings in individual exploration reports to craft questions with:
-- Specific, verifiable answers
-- Clear testing objectives
-- Appropriate complexity
-- Biological realism
-- Cross-database integration where valuable
+**Best Practices:**
+- Use specific entity IDs when known
+- Filter by organism, database section, or category
+- Apply LIMIT to exploratory queries
+- AMR Portal: Always specify FROM clause, use bif:contains for text ✨ NEW
+- Prefer search tools over broad SPARQL when available
 
 ---
 
-**Exploration Status**: ✅ COMPLETE - All 22 databases documented
-**Next Action**: Generate 120 evaluation questions based on this comprehensive exploration
-**Documentation**: 279 KB of detailed reports available in `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/exploration/`
+**Last Updated**: January 2026 (after AMR Portal exploration)  
+**Total Databases**: 23 (all explored)  
+**Ready for**: Question generation phase (PROMPT 2)  
+**New Addition**: AMR Portal - antimicrobial resistance surveillance with unique phenotype-genotype correlation capabilities ✨

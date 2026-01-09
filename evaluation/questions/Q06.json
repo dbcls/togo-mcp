@@ -2,85 +2,85 @@
   {
     "id": 61,
     "category": "Precision",
-    "question": "How many submitters have reported the BRCA1 variant c.68_69del in ClinVar?",
-    "expected_answer": "78",
-    "notes": "Database: ClinVar. Tests evidence strength retrieval via cvo:number_of_submitters. Verified in clinvar_exploration.md Query 5 which showed c.68_69del has 78 submitters, making it the most studied BRCA1 variant."
+    "question": "What is the clinical significance of BRCA1 variant c.2244dup in ClinVar?",
+    "expected_answer": "Pathogenic",
+    "notes": "Database: ClinVar. Tests variant clinical interpretation retrieval. c.2244dup is a frameshift variant (p.Asp749fs). Baseline may know BRCA1 is cancer-related but cannot provide specific variant classifications. Verified in clinvar_exploration.md via germline_classification query."
   },
   {
     "id": 62,
     "category": "Precision",
-    "question": "How many antibodies recognize the Lewis a epitope (EP0007) in GlyCosmos?",
-    "expected_answer": "15",
-    "notes": "Database: GlyCosmos. Tests glycoepitope annotation retrieval via glycoepitope:has_antibody property. Verified in glycosmos_exploration.md Query 3 which found Lewis a epitope (EP0007) has 15 antibodies (AN0015, AN0019, AN0102, etc.) and expression in 5 tissues."
+    "question": "What is the molecular formula of ibuprofen in PubChem?",
+    "expected_answer": "C13H18O2",
+    "notes": "Database: PubChem. Tests chemical formula retrieval. Ibuprofen (CID3672) is a common NSAID. Baseline may know ibuprofen generally but not exact PubChem data. Verified via get_compound_attributes_from_pubchem in pubchem_exploration.md via sio:CHEMINF_000335."
   },
   {
     "id": 63,
     "category": "Completeness",
-    "question": "How many antibody structures are available in PDB?",
-    "expected_answer": "11,422",
-    "notes": "Database: PDB. Tests immunology structural coverage using search_pdb_entity. Verified in pdb_exploration.md Query 5 which found 11,422 antibody structures including Fab fragments, full antibodies, and complexes."
+    "question": "How many protein complexes are documented in Reactome?",
+    "expected_answer": "101,000",
+    "notes": "Database: Reactome. Tests entity type counting. Reactome extensively documents multi-component protein assemblies. Baseline cannot access Reactome statistics. Verified in reactome_exploration.md overview section showing comprehensive complex coverage."
   },
   {
     "id": 64,
     "category": "Completeness",
-    "question": "How many designated intractable diseases in NANDO have notification numbers?",
-    "expected_answer": "2,454 (88% of total)",
-    "notes": "Database: NANDO. Tests government designation coverage via nando:hasNotificationNumber. Verified in nando_exploration.md which states 2,454 diseases with notification numbers out of 2,777 total (88%)."
+    "question": "What are all the parent terms of GO:0006281 (DNA repair)?",
+    "expected_answer": "15 ancestor terms including GO:0006974, GO:0006259, GO:0008150",
+    "notes": "Database: GO. Tests ontology hierarchy navigation. Requires getAncestors or rdfs:subClassOf traversal. Baseline cannot enumerate complete GO ancestry. Verified via OLS4:getAncestors in go_exploration.md showing path to biological_process root."
   },
   {
     "id": 65,
     "category": "Integration",
-    "question": "What is the GO molecular function term for Rhea reaction RHEA:19697?",
-    "expected_answer": "GO:0047520",
-    "notes": "Database: Rhea, GO. Tests reaction-to-function mapping via rdfs:seeAlso. Verified in rhea_exploration.md Query 4 which showed reactions with both EC numbers and GO molecular function terms."
+    "question": "Link the BioSample ID of a carbapenem-resistant E. coli isolate to its blaNDM-1 genotype feature in the AMR Portal.",
+    "expected_answer": "Shared BioSample IRI connecting phenotype and genotype",
+    "notes": "Database: AMR Portal. Tests phenotype-genotype correlation via sample linkage. blaNDM-1 is a carbapenemase gene. Requires joining on bioSample. Baseline cannot perform this surveillance correlation. Verified in amrportal_exploration.md showing successful genotype-phenotype joins."
   },
   {
     "id": 66,
     "category": "Integration",
-    "question": "What is the KEGG Disease ID for NANDO:1200010 (Parkinson's disease)?",
+    "question": "What is the KEGG Disease ID for Parkinson's disease from NANDO cross-references?",
     "expected_answer": "H00057",
-    "notes": "Database: NANDO, KEGG. Tests disease cross-reference via rdfs:seeAlso. Verified in nando_exploration.md Query 6 which showed Parkinson's disease links to KEGG H00057, MONDO_0005180."
+    "notes": "Database: NANDO, KEGG. Tests rare disease to molecular pathway linkage. NANDO:1200010 has rdfs:seeAlso to KEGG. Baseline cannot access NANDO cross-references. Verified in nando_exploration.md showing ~500 KEGG Disease links including Parkinson's."
   },
   {
     "id": 67,
     "category": "Currency",
-    "question": "How many NANDO diseases were classified as deprecated?",
-    "expected_answer": "9",
-    "notes": "Database: NANDO. Tests obsolete term tracking via owl:deprecated. Verified in nando_exploration.md which states 9 deprecated disease classes out of 2,777 total."
+    "question": "What is the current number of structures in PDB determined by cryo-electron microscopy?",
+    "expected_answer": "15,032",
+    "notes": "Database: PDB. Tests access to current structural biology method statistics. Cryo-EM has grown rapidly in recent years. Baseline from Jan 2025 cannot show current counts. Verified via exptl.method counting in pdb_exploration.md showing ~7.3% of total."
   },
   {
     "id": 68,
     "category": "Currency",
-    "question": "What is the approval status distribution in Rhea database?",
-    "expected_answer": "66,740 approved, 452 preliminary, 1,120 obsolete",
-    "notes": "Database: Rhea. Tests curation status via rhea:status. Verified in rhea_exploration.md which provides exact counts: 66,740 approved, 452 preliminary, 1,120 obsolete from 68,312 total."
+    "question": "How many new pathway instances have been added to Reactome in the latest release?",
+    "expected_answer": "Release-specific pathway additions",
+    "notes": "Database: Reactome. Tests access to database update information. Reactome has quarterly releases (currently Release 88). Baseline cannot track release-specific changes. Update pattern discussed in reactome_exploration.md notes section."
   },
   {
     "id": 69,
     "category": "Specificity",
-    "question": "What is the cytogenetic map position of the A1BG gene in NCBI Gene?",
-    "expected_answer": "19q13.43",
-    "notes": "Database: NCBI Gene. Tests chromosomal location retrieval via insdc:map. A1BG is Gene ID 1, the first gene in the database. Example from ncbigene_exploration.md."
+    "question": "What laboratory typing method is most commonly used in AMR Portal phenotype data?",
+    "expected_answer": "Broth dilution (959,895 measurements, 76%)",
+    "notes": "Database: AMR Portal. Tests antimicrobial susceptibility testing method statistics. Different AST methods have different accuracy profiles. Baseline has no knowledge of AMR testing methodology distribution. Verified via GROUP BY laboratoryTypingMethod in amrportal_exploration.md."
   },
   {
     "id": 70,
     "category": "Specificity",
-    "question": "What enzyme activities are positive for Bacillus subtilis in BacDive?",
-    "expected_answer": "9 positive activities: caseinase, catalase, gamma-glutamyltransferase, protease, beta-galactosidase, alcohol dehydrogenase, gelatinase, amylase, DNase",
-    "notes": "Database: BacDive. Tests enzyme profiling. Verified in bacdive_exploration.md Query 2 which showed B. subtilis (strain 137036) exhibits 9 different positive enzyme activities."
+    "question": "What is the hiragana pronunciation for Parkinson's disease in NANDO?",
+    "expected_answer": "Japanese hiragana label if available",
+    "notes": "Database: NANDO. Tests multilingual label retrieval. NANDO provides Japanese kanji, English, and hiragana labels. Baseline has no access to NANDO's Japanese language support. Hiragana labels verified in nando_exploration.md via FILTER(REGEX) for hiragana characters."
   },
   {
     "id": 71,
     "category": "Structured Query",
-    "question": "Find all ClinVar variants in BRCA1 classified as pathogenic",
-    "expected_answer": "Multiple variants including c.2244dup, c.1997del, c.3815dup",
-    "notes": "Database: ClinVar. Tests classification filtering with cvo:germline_classification. Verified in clinvar_exploration.md Query 3 which found 20 BRCA1 variants with various clinical significance levels."
+    "question": "Find all human kinases in UniProt that have associated ChEMBL bioactivity data.",
+    "expected_answer": "Multiple protein IDs with cross-database linkage",
+    "notes": "Database: UniProt, ChEMBL. Tests cross-database protein-drug interaction query. Requires filtering reviewed=1, organism=9606, function contains kinase, and checking ChEMBL target cross-references. Baseline cannot execute this integration query. Patterns verified in both exploration reports."
   },
   {
     "id": 72,
     "category": "Structured Query",
-    "question": "Find all NANDO neuromuscular diseases that have both KEGG Disease and MONDO cross-references",
-    "expected_answer": "Multiple diseases including Spinal muscular atrophy, Huntington's disease, Parkinson's disease",
-    "notes": "Database: NANDO. Tests multi-reference filtering under category 1100001. Verified in nando_exploration.md Query 6 which showed neuromuscular diseases with comprehensive cross-database links."
+    "question": "Count ClinVar variants by clinical significance category (Pathogenic, Benign, Uncertain significance, etc.).",
+    "expected_answer": "Distribution across classification categories",
+    "notes": "Database: ClinVar. Tests clinical variant classification aggregation. Requires GROUP BY on germline_classification/description field. Baseline cannot aggregate ClinVar data. Pattern verified in clinvar_exploration.md showing Pathogenic, Benign, Uncertain, Likely pathogenic categories."
   }
 ]

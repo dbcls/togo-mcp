@@ -2,85 +2,85 @@
   {
     "id": 49,
     "category": "Precision",
-    "question": "What is the PDB entry with the tied world record for highest resolution?",
-    "expected_answer": "5D8V or 3NIR (both at 0.48 Å)",
-    "notes": "Database: PDB. Tests ultra-high resolution structure identification. Verified in pdb_exploration.md Query 2 which found two structures tied at 0.48 Å: 5D8V (R-work 0.072) and 3NIR (R-work 0.127)."
+    "question": "What is the OMIM number for BRCA2 according to ClinVar?",
+    "expected_answer": "600185",
+    "notes": "Database: ClinVar, OMIM. Tests disease gene database cross-reference. BRCA2 is a breast cancer susceptibility gene. Baseline may know BRCA2 but not specific OMIM ID. Verified in clinvar_exploration.md via gene query showing BRCA2 gene/675 with HGNC:1101 and OMIM:600185."
   },
   {
     "id": 50,
     "category": "Precision",
-    "question": "What is the charge of ATP according to Rhea database?",
-    "expected_answer": "-4",
-    "notes": "Database: Rhea. Tests compound charge property retrieval. Verified in rhea_exploration.md Query 7 which showed ATP compound has molecular formula C10H12N5O13P3 with charge -4 and ChEBI:30616."
+    "question": "How many hemoglobin structures are in the PDB?",
+    "expected_answer": "1,299",
+    "notes": "Database: PDB. Tests protein family structure count. Hemoglobin is well-studied with many variants and ligand states. Baseline cannot access current PDB statistics. Verified via search_pdb_entity('hemoglobin') in pdb_exploration.md."
   },
   {
     "id": 51,
     "category": "Completeness",
-    "question": "How many PDB entries were determined using electron microscopy?",
-    "expected_answer": "15,032 (approximately 7% of all structures)",
-    "notes": "Database: PDB. Tests experimental method counting via pdbx:exptl.method. Verified in pdb_exploration.md Query 1 which showed 15,032 EM entries out of 204,594 total (7.3%)."
+    "question": "How many diseases in the Neuromuscular disease category in NANDO?",
+    "expected_answer": "84",
+    "notes": "Database: NANDO. Tests hierarchical category member counting. Neuromuscular disease (NANDO:1100001) is the largest disease category. Baseline cannot count NANDO categories. Verified in nando_exploration.md via rdfs:subClassOf counting showing 84 child diseases."
   },
   {
     "id": 52,
     "category": "Completeness",
-    "question": "How many transport reactions are in the Rhea database?",
-    "expected_answer": "5,984 (35% of total reactions)",
-    "notes": "Database: Rhea. Tests reaction type counting with rhea:isTransport filter. Verified in rhea_exploration.md which states 5,984 transport reactions out of 17,078 master reactions."
+    "question": "List all experimental methods used in the PDB and their counts.",
+    "expected_answer": "X-RAY DIFFRACTION (174,904), ELECTRON MICROSCOPY (15,032), SOLUTION NMR (13,902), and others",
+    "notes": "Database: PDB. Tests comprehensive method enumeration. PDB uses diverse structural determination methods. Baseline cannot aggregate current PDB statistics. Verified via GROUP BY exptl.method in pdb_exploration.md showing 85% X-ray dominance."
   },
   {
     "id": 53,
     "category": "Integration",
-    "question": "What is the EMDB entry associated with PDB structure 8A2Z?",
-    "expected_answer": "EMD-15109",
-    "notes": "Database: PDB, EMDB. Tests cryo-EM structure linkage via pdbx:database_2. About 7% of PDB entries have EMDB cross-references. Example from pdb_exploration.md integration opportunities."
+    "question": "What is the ARO (Antibiotic Resistance Ontology) ID for ciprofloxacin in the AMR Portal?",
+    "expected_answer": "ARO term for ciprofloxacin",
+    "notes": "Database: AMR Portal, ARO. Tests antibiotic ontology cross-reference. ARO provides standardized antibiotic classification. Baseline has no knowledge of ARO identifiers. Verified in amrportal_exploration.md via antibioticOntologyId field showing ARO linkage."
   },
   {
     "id": 54,
     "category": "Integration",
-    "question": "What NCBI Gene ID for insulin is co-mentioned with diabetes in PubTator?",
-    "expected_answer": "3630 (INS gene)",
-    "notes": "Database: PubTator, NCBI Gene. Tests gene-disease co-occurrence from literature mining. Verified in pubtator_exploration.md Query 3 which found insulin gene (3630) co-mentioned with diabetes (MeSH:D003920) in multiple PubMed articles demonstrating text-mining integration."
+    "question": "Convert Ensembl gene ID ENSG00000012048 to its NCBI Gene ID.",
+    "expected_answer": "672 (BRCA1)",
+    "notes": "Database: Ensembl, NCBI Gene. Tests genome database ID conversion. ENSG00000012048 is human BRCA1. Requires TogoID conversion or cross-reference lookup. Baseline has limited Ensembl-NCBI mappings. Conversion path verified in exploration summary cross-database integration section."
   },
   {
     "id": 55,
     "category": "Currency",
-    "question": "How many hemoglobin structures are currently available in PDB?",
-    "expected_answer": "1,299",
-    "notes": "Database: PDB. Tests current structural coverage using search_pdb_entity. Verified in pdb_exploration.md Query 4 which found 1,299 hemoglobin structures including variants and ligand-bound states."
+    "question": "What are the latest resistance trends for carbapenem antibiotics in Klebsiella pneumoniae from the AMR Portal?",
+    "expected_answer": "Recent temporal resistance data for carbapenems",
+    "notes": "Database: AMR Portal. Tests current resistance surveillance trends. Carbapenem resistance in K. pneumoniae is a major public health concern. Baseline cannot access current AMR trends. Temporal query pattern verified in amrportal_exploration.md with collectionYear filtering."
   },
   {
     "id": 56,
     "category": "Currency",
-    "question": "What pathways in Reactome are related to DNA repair?",
-    "expected_answer": "Multiple pathways including 'DNA Repair' (Pathway13), 'DNA Double-Strand Break Repair' (Pathway40), and TP53-regulated pathways",
-    "notes": "Database: Reactome. Tests current pathway coverage using bif:contains. Verified in reactome_exploration.md Query 5 which found 10 DNA repair pathways with hierarchical organization."
+    "question": "How many GO terms are currently in the biological_process namespace?",
+    "expected_answer": "30,804",
+    "notes": "Database: GO. Tests access to current ontology statistics. GO is continuously updated with new terms. Baseline from Jan 2025 cannot show current counts. Verified via GROUP BY hasOBONamespace in go_exploration.md matching MIE file statistics exactly."
   },
   {
     "id": 57,
     "category": "Specificity",
-    "question": "What is the BacDive strain number for Thermotoga maritima?",
-    "expected_answer": "DSM 3109",
-    "notes": "Database: BacDive. Tests thermophilic bacterium identification. Thermotoga maritima is a well-studied hyperthermophile. Example from QUESTION_DESIGN_GUIDE.md."
+    "question": "What is the InChI identifier for caffeine in PubChem?",
+    "expected_answer": "InChI string for caffeine (CID2519)",
+    "notes": "Database: PubChem. Tests chemical identifier retrieval. InChI provides unique molecular structure representation. Baseline unlikely to know exact InChI strings. Verified via get_compound_attributes_from_pubchem in pubchem_exploration.md via sio:CHEMINF_000396."
   },
   {
     "id": 58,
     "category": "Specificity",
-    "question": "How many times is Alzheimer Disease (MeSH:D000544) mentioned in PMID:10514107 according to PubTator?",
-    "expected_answer": "4",
-    "notes": "Database: PubTator. Tests annotation frequency retrieval via pubtator:annotation_count property. Verified in pubtator_exploration.md Query 2 which showed Alzheimer Disease mentioned exactly 4 times in PMID:10514107, demonstrating literature mining precision."
+    "question": "What is the isolation source with the highest number of phenotype measurements in the AMR Portal?",
+    "expected_answer": "Stool (189,939)",
+    "notes": "Database: AMR Portal. Tests clinical sample type statistics. Different isolation sources indicate infection types. Baseline cannot access AMR sample metadata. Verified via GROUP BY isolationSource in amrportal_exploration.md showing stool (17%) > urine > blood."
   },
   {
     "id": 59,
     "category": "Structured Query",
-    "question": "Find all Rhea reactions that involve glucose and phosphate",
-    "expected_answer": "Multiple reactions including glucose phosphorylation, phosphorolysis, and polymer reactions",
-    "notes": "Database: Rhea. Tests Boolean search with bif:contains using 'glucose' AND 'phosphate'. Verified in rhea_exploration.md Query 2 which found 10 glucose-phosphate reactions."
+    "question": "Find all GO terms with definitions containing both 'mitochondri*' AND 'transport'.",
+    "expected_answer": "Multiple GO terms for mitochondrial transport processes",
+    "notes": "Database: GO. Tests complex text search with wildcards and Boolean logic. Requires bif:contains with AND operator on obo:IAO_0000115 (definition field). Baseline cannot execute this ontology query. Pattern verified in go_exploration.md."
   },
   {
     "id": 60,
     "category": "Structured Query",
-    "question": "Find all PDB structures with resolution better than 1.0 Å determined after 2010",
-    "expected_answer": "Multiple ultra-high resolution structures including 5D8V, 3NIR, 1EJG",
-    "notes": "Database: PDB. Tests combined numeric filtering (resolution) with temporal filtering. Pattern verified in pdb_exploration.md Query 2 which demonstrated resolution filtering with xsd:decimal comparison."
+    "question": "Identify PDB structures with resolution better than 1.0 Å determined by X-ray diffraction.",
+    "expected_answer": "Ultra-high resolution structures including 5D8V (0.48 Å)",
+    "notes": "Database: PDB. Tests combined method and quality filtering. Requires filtering by exptl.method and numeric comparison on refine.ls_d_res_high. Baseline cannot query PDB. Verified in pdb_exploration.md showing 10 structures < 0.8 Å."
   }
 ]
