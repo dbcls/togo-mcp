@@ -1,87 +1,88 @@
-# ChEBI Exploration Report
+# ChEBI (Chemical Entities of Biological Interest) Exploration Report
 
 ## Database Overview
-- **Purpose**: ChEBI (Chemical Entities of Biological Interest) is an ontology database containing 217,000+ chemical entities of biological interest
-- **Scope**: Small molecules, atoms, ions, functional groups, and macromolecules with hierarchical classification
-- **Key data types**: Molecular structure data (formula, mass, InChI, SMILES), biological roles, chemical relationships (conjugate acids/bases, tautomers, enantiomers), and cross-references to 20+ databases
+- **Purpose**: Ontology database for chemical entities of biological interest
+- **Scope**: 217,000+ chemical entities including small molecules, atoms, ions, functional groups, macromolecules
+- **Key entities**: Chemical compounds with hierarchical classification, molecular data, biological roles, chemical relationships
+- **Integration**: Cross-references to 20+ databases (KEGG, DrugBank, PubChem, HMDB, CAS, etc.)
 
 ## Schema Analysis (from MIE file)
 
-### Main Properties Available
-- **Core identification**: rdfs:label, oboInOwl:id, oboInOwl:hasOBONamespace
-- **Structural data**: formula, mass, charge, smiles, inchi, inchikey
-- **Definitions**: obo:IAO_0000115 (textual definitions)
-- **Synonyms**: hasRelatedSynonym, hasExactSynonym
-- **Cross-references**: hasDbXref (to CAS, KEGG, DrugBank, PubChem, HMDB, etc.)
-- **Classification**: rdfs:subClassOf (hierarchical relationships)
-- **Status**: owl:deprecated (indicates obsolete entries)
+### Main Properties
+- `rdfs:label`: Chemical name (e.g., "ATP", "water", "aspirin")
+- `rdfs:subClassOf`: Parent chemical class (hierarchical classification)
+- `obo:IAO_0000115`: Definition/description
+- `oboInOwl:id`: ChEBI identifier (e.g., "CHEBI:15422")
+- `oboInOwl:hasDbXref`: Cross-references to external databases
+- `oboInOwl:hasRelatedSynonym`: Alternative names
+- `oboInOwl:hasExactSynonym`: Exact synonyms
+- `chebi:formula`: Molecular formula (e.g., "C9H8O4")
+- `chebi:mass`: Molecular mass (e.g., "180.15740")
+- `chebi:charge`: Ionic charge
+- `chebi:smiles`: SMILES notation
+- `chebi:inchi`: InChI string
+- `chebi:inchikey`: InChI Key
+- `owl:deprecated`: Deprecation status
 
 ### Important Relationships
-- Hierarchical classification via rdfs:subClassOf
-- Chemical relationships via OWL restrictions:
-  - has_role (biological roles via RO_0000087)
-  - is_conjugate_acid_of / is_conjugate_base_of
-  - is_tautomer_of
-  - is_enantiomer_of
-- **CRITICAL namespace distinction**:
-  - Data properties use: `http://purl.obolibrary.org/obo/chebi/` (with trailing slash)
-  - Relationship properties use: `http://purl.obolibrary.org/obo/chebi#` (with hash)
+- **Hierarchical**: `rdfs:subClassOf` for chemical classification
+- **Biological roles**: Via `RO_0000087` property through OWL restrictions
+- **Chemical relationships**: Conjugate acids/bases, tautomers, enantiomers (via OWL restrictions)
+- **Cross-references**: Links to 20+ external databases via `oboInOwl:hasDbXref`
 
 ### Query Patterns Observed
-- OWL ontology structure with owl:Class entities
-- Use bif:contains for full-text search with relevance scoring
-- Relationships encoded as OWL restrictions (not direct properties)
-- Filter by CHEBI_ URI prefix to exclude ontology metadata
-- OPTIONAL clauses needed for molecular properties (abstract classes lack them)
+- **CRITICAL**: ChEBI uses TWO namespaces:
+  - Data properties (formula, mass, smiles): `http://purl.obolibrary.org/obo/chebi/`
+  - Relationship properties (is_conjugate_acid_of, etc.): `http://purl.obolibrary.org/obo/chebi#`
+- Use `bif:contains` for efficient keyword search with relevance scoring
+- Always include `FROM <http://rdf.ebi.ac.uk/dataset/chebi>` clause
+- Filter by `CHEBI_` URI prefix to exclude non-entity classes
+- Use OWL restrictions to access biological roles and chemical relationships
+- Use OPTIONAL for molecular properties (not all entities have all properties)
 
 ## Search Queries Performed
 
-1. **Query**: "aspirin" in ChEBI ontology (via OLS4 searchClasses)
-   - **Results**: Found 10 aspirin-related entities:
-     - CHEBI:138614 - aspirin-triggered resolvin D2
-     - CHEBI:140208 - aspirin-triggered protectin D1(1-)
-     - CHEBI:138618 - aspirin-triggered resolvin D6
-     - CHEBI:138617 - aspirin-triggered resolvin D5
-     - CHEBI:138615 - aspirin-triggered resolvin D3
-     - CHEBI:138616 - aspirin-triggered resolvin D4
-     - CHEBI:140202 - aspirin-triggered protectin D1
-     - CHEBI:138179 - aspirin-triggered resolvin D1
-     - CHEBI:141699 - aspirin-based probe AP
-     - CHEBI:134674 - Yosprala (aspirin + omeprazole mixture)
-   - All are specialized derivatives or formulations involving aspirin
-   - Shows rich hierarchy with resolvins (anti-inflammatory mediators)
+1. **Query**: "ATP" (OLS4 searchClasses)
+   - **Results**: Found 10 entities including:
+     - CHEBI:15422: ATP (main entity)
+     - CHEBI:30616: ATP(4-) (deprotonated form at pH 7.3)
+     - CHEBI:20855: ATP-sugar
+     - CHEBI:20854: ATP synthase inhibitor
+     - CHEBI:57299: ATP(3-)
+     - Multiple hierarchical ancestors shown (76 total ancestors for ATP)
+   - Definition: "An adenosine 5'-phosphate in which the 5'-phosphate is a triphosphate group"
 
-2. **Direct lookup**: Aspirin (acetylsalicylic acid) CHEBI:15365 properties
-   - **Results**:
+2. **Query**: Aspirin molecular properties (CHEBI:15365)
+   - **Results**: Complete molecular data retrieved
      - Label: "acetylsalicylic acid"
      - Formula: C9H8O4
      - Mass: 180.15740
      - SMILES: CC(=O)Oc1ccccc1C(O)=O
      - InChIKey: BSYNRYMUTXBXSQ-UHFFFAOYSA-N
 
-3. **Query**: "glucose" in ChEBI ontology
-   - **Results**: Found 268 glucose-related entities including:
-     - CHEBI:17234 - glucose (main entry, aldohexose)
-     - CHEBI:229783 - glucose transporter 1 inhibitor
-     - Multiple glucose derivatives and conjugates
-   - Shows comprehensive carbohydrate coverage
+3. **Query**: ATP(4-) parent classes
+   - **Results**: Single direct parent
+     - CHEBI:61557: nucleoside 5'-triphoshate(4-)
+   - Demonstrates precise hierarchical classification
 
-4. **Query**: "caffeine" in ChEBI ontology  
-   - **Results**: Found 16 caffeine-related entities including:
-     - CHEBI:27732 - caffeine (trimethylxanthine, purine alkaloid)
-     - CHEBI:177330 - caffeine-d9 (deuterated isotopologue)
-     - CHEBI:178066 - caffeine-(trimethyl-(13)C3) (13C-modified)
-     - CHEBI:31332 - caffeine monohydrate
-   - Demonstrates isotopologue and derivative coverage
+4. **Query**: "antibiotic" (OLS4 searchClasses)
+   - **Results**: Found 494 total entities, including:
+     - CHEBI:80084: Antibiotic TA (macrolide)
+     - CHEBI:39208: antibiotic insecticide
+     - CHEBI:39215: antibiotic pesticide
+     - CHEBI:39216: antibiotic acaricide
+     - CHEBI:39217: antibiotic nematicide
+   - Demonstrates biological role classification
 
-5. **Query**: "insulin" in ChEBI ontology
-   - **Results**: Search via OLS4 for insulin-related entities
-   - Shows protein hormone and peptide coverage in ChEBI
+5. **Query**: General ATP search (OLS4:search across all ontologies)
+   - **Results**: Mixed results from multiple ontologies
+   - Confirmed need to specify ontologyId for precise ChEBI queries
 
 ## SPARQL Queries Tested
 
 ```sparql
 # Query 1: Get molecular properties for aspirin
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
 
@@ -95,12 +96,31 @@ WHERE {
   OPTIONAL { obo:CHEBI_15365 chebi:inchikey ?inchikey }
 }
 
-# Results: Successfully retrieved complete molecular structure data for aspirin
-# This demonstrates access to core molecular properties needed for drug databases
+# Results: Complete molecular characterization
+# - acetylsalicylic acid, C9H8O4, 180.15740, SMILES, InChIKey
+# Demonstrates comprehensive molecular data availability
 ```
 
 ```sparql
-# Query 2: Full-text search for glucose (from MIE examples)
+# Query 2: Get hierarchical parents for ATP(4-)
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT ?parent ?parentLabel
+FROM <http://rdf.ebi.ac.uk/dataset/chebi>
+WHERE {
+  obo:CHEBI_30616 rdfs:subClassOf ?parent .
+  FILTER(STRSTARTS(STR(?parent), "http://purl.obolibrary.org/obo/CHEBI_"))
+  ?parent rdfs:label ?parentLabel .
+}
+
+# Results: nucleoside 5'-triphoshate(4-)
+# Shows single immediate parent in hierarchy
+# Demonstrates how to navigate chemical classification tree
+```
+
+```sparql
+# Query 3: Keyword search with bif:contains (from MIE example)
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 SELECT ?entity ?label ?sc
@@ -113,162 +133,133 @@ WHERE {
 ORDER BY DESC(?sc)
 LIMIT 20
 
-# Expected results: D-glucose, beta-D-glucose, alpha-D-glucose, glucose-6-phosphate, etc.
-# This shows powerful keyword search with relevance scoring
-```
-
-```sparql
-# Query 3: Navigate hierarchy - find parent classes (from MIE examples)
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-
-SELECT ?parent ?parentLabel
-FROM <http://rdf.ebi.ac.uk/dataset/chebi>
-WHERE {
-  obo:CHEBI_17203 rdfs:subClassOf ?parent .
-  FILTER(STRSTARTS(STR(?parent), "http://purl.obolibrary.org/obo/CHEBI_"))
-  ?parent rdfs:label ?parentLabel .
-}
-
-# Expected results: For L-proline (CHEBI:17203):
-# - proline (CHEBI:26271)
-# - proteinogenic amino acid (CHEBI:83813)
-# Demonstrates hierarchical ontology navigation
-```
-
-```sparql
-# Query 4: Find cross-references to external databases
-PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
-
-SELECT ?entity ?label ?xref
-FROM <http://rdf.ebi.ac.uk/dataset/chebi>
-WHERE {
-  ?entity a owl:Class ;
-          rdfs:label ?label ;
-          oboInOwl:hasDbXref ?xref .
-  FILTER(STRSTARTS(?xref, "KEGG:") || STRSTARTS(?xref, "DrugBank:"))
-}
-LIMIT 100
-
-# Expected results: Entities with KEGG Compound IDs and DrugBank IDs
-# Demonstrates integration with external chemical databases
-```
-
-```sparql
-# Query 5: Find chemical relationships via OWL restrictions
-PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX chebi: <http://purl.obolibrary.org/obo/chebi#>
-
-SELECT ?acid ?acidLabel ?base ?baseLabel
-FROM <http://rdf.ebi.ac.uk/dataset/chebi>
-WHERE {
-  ?acid rdfs:subClassOf ?restriction .
-  ?restriction owl:onProperty chebi:is_conjugate_acid_of ;
-               owl:someValuesFrom ?base .
-  ?acid rdfs:label ?acidLabel .
-  ?base rdfs:label ?baseLabel .
-}
-LIMIT 20
-
-# Expected results: Pairs of conjugate acid-base compounds
-# Shows how chemical relationships are encoded as OWL restrictions
+# Would return glucose and related compounds ranked by relevance
+# Demonstrates efficient full-text search capability
 ```
 
 ## Interesting Findings
 
 ### Specific Entities for Questions
-1. **Acetylsalicylic acid (aspirin)** - CHEBI:15365 - well-known drug with complete molecular data
-2. **L-proline** - CHEBI:17203 - proteinogenic amino acid, good for hierarchy queries
-3. **Water** - CHEBI:15377 - simplest molecule with extensive cross-references
-4. **Ciprofloxacin** - CHEBI:100241 - antibiotic with conjugate base and tautomer relationships
-5. **Triolein** - CHEBI:53753 - triglyceride with complex molecular structure
-6. **Phosphorus atom** - CHEBI:28659 - elemental entity
-7. **Aspirin-triggered resolvins** - CHEBI:138614-138618 - specialized derivatives showing hierarchy depth
+- **ATP (CHEBI:15422)**: Energy currency, 76 hierarchical ancestors
+- **ATP(4-) (CHEBI:30616)**: Physiological form at pH 7.3
+- **Aspirin (CHEBI:15365)**: Complete molecular data, drug compound
+- **Water (CHEBI:15377)**: Simplest example, all properties present
+- **L-proline (CHEBI:17203)**: Amino acid with structural data
+- **Ciprofloxacin (CHEBI:100241)**: Shows conjugate base/tautomer relationships
 
 ### Unique Properties
-- **Dual namespace system**: chebi/ for data properties, chebi# for relationships (critical to get right!)
-- **OWL restriction encoding**: Biological roles and chemical relationships not as direct properties
-- **Rich ontology hierarchy**: Multiple inheritance, deep classification trees
-- **Comprehensive cross-references**: Links to 20+ external databases (CAS, KEGG, DrugBank, PubChem, HMDB)
-- **Structure identifiers**: InChI/InChIKey for exact structure matching, SMILES for substructure
+- **Dual namespace system**: chebi/ for data, chebi# for relationships
+- **OWL restriction encoding**: Biological roles and chemical relationships
+- **217,368 total entities**: 86% have formulas, 81% have InChI
+- **Complete structural data**: SMILES, InChI, InChIKey for most compounds
+- **Hierarchical depth**: Some compounds have 76+ ancestors (like ATP)
 
 ### Connections to Other Databases
-- **KEGG**: Metabolic pathway connections
+- **KEGG**: Metabolic pathway integration
 - **DrugBank**: Drug information
-- **PubChem**: Compound data integration
-- **HMDB**: Human metabolite connections
-- **CAS**: Chemical registry numbers
-- **UniProt**: Via RO_0000087 (has_role) relationships
-- **GO**: Biological process/function connections
+- **PubChem**: Chemical substance database
+- **HMDB**: Human metabolome
+- **CAS**: Chemical abstracts
+- **20+ databases total**: Comprehensive cross-referencing
 
-### Specific, Verifiable Facts
-- Total chemical entities: 217,368
-- Entities with formulas: 187,110 (~86%)
-- Average database cross-references per entity: 1.9
-- Average synonyms per entity: 1.2
-- Average parent classes per entity: 1.7
-- Coverage: ~91% with labels, ~86% with formulas, ~81% with InChI, ~85% with SMILES
+### Verifiable Facts
+- 217,368 total chemical entities
+- 187,110 have molecular formulas (86%)
+- 81% have InChI identifiers
+- 85% have SMILES notations
+- Average 1.9 cross-references per entity
+- Average 1.2 synonyms per entity
+- 494 antibiotic-related entities
+- 176 ATP-related entities
 
 ## Question Opportunities by Category
 
+**FOCUS ON BIOLOGICAL CONTENT, NOT INFRASTRUCTURE METADATA**
+
 ### Precision
-- "What is the ChEBI ID for acetylsalicylic acid (aspirin)?"
-- "What is the molecular formula of L-proline (CHEBI:17203)?"
-- "What is the InChIKey for ciprofloxacin?"
-- "What is the exact molecular mass of triolein?"
-- "What CAS registry number is assigned to water in ChEBI?"
+✅ **Biological IDs and molecular properties**
+- "What is the ChEBI ID for ATP?"
+- "What is the molecular weight of aspirin?"
+- "What is the InChIKey for acetylsalicylic acid?"
+- "What is the SMILES notation for L-proline?"
+- "What is the exact molecular formula for ATP(4-)?"
+
+❌ Avoid: "What version is ChEBI?" "When was the database updated?"
 
 ### Completeness
-- "List all aspirin-triggered resolvins in ChEBI"
-- "How many parent classes does L-proline have?"
-- "Count all chemical entities with KEGG cross-references"
-- "List all conjugate bases of ciprofloxacin"
-- "Find all tautomers of a specific compound"
+✅ **Counts and comprehensive lists of chemical entities**
+- "How many chemical entities are in ChEBI?"
+- "How many antibiotic-related compounds are in ChEBI?"
+- "List all parent classes of ATP"
+- "How many compounds have InChI identifiers?"
+- "How many hierarchical ancestors does ATP have?"
+
+❌ Avoid: "How many database tables exist?" "What is the server capacity?"
 
 ### Integration
-- "Convert ChEBI ID CHEBI:15365 to its KEGG Compound ID"
-- "Find the DrugBank ID for ciprofloxacin from ChEBI"
-- "Link ChEBI water (CHEBI:15377) to PubChem CID"
-- "Find UniProt proteins that interact with a ChEBI compound via has_role relationship"
+✅ **Cross-database chemical entity linking**
+- "What is the KEGG identifier for ATP?"
+- "Convert ChEBI:15365 to its corresponding PubChem CID"
+- "What DrugBank ID corresponds to aspirin in ChEBI?"
+- "Find all HMDB cross-references for glucose"
+- "What CAS number is associated with water in ChEBI?"
+
+❌ Avoid: "What databases link to this endpoint?" "List all API URLs"
 
 ### Currency
-- "What are the most recently added chemical entities in ChEBI (2025)?"
-- "Find newly characterized resolvins added in 2024-2025"
-- "What new drug compounds have been classified in recent releases?"
+✅ **Recent chemical classifications and updates**
+- "What new drug compounds were added to ChEBI in 2024?"
+- "Has the classification of ciprofloxacin been updated?"
+- "What is the current count of deprecated entities?"
+- "Are there any recent antibiotic entries?"
+
+❌ Avoid: "What is the current database version?" "When was the server migrated?"
 
 ### Specificity
-- "What is the stereochemistry of aspirin-triggered resolvin D1?"
-- "What are all the hydroxy substituent positions in aspirin-triggered resolvin D2?"
-- "Find the specific benzothiazole fluorophore in the aspirin-based probe AP"
-- "What is the exact composition of Yosprala mixture?"
+✅ **Rare or specialized chemical entities**
+- "What is the ChEBI ID for Atpenin B (rare antibiotic)?"
+- "Find the molecular structure of ATP synthase inhibitor"
+- "What is the chemical classification of ATP-sugar?"
+- "What are the conjugate acid/base relationships for ciprofloxacin?"
+- "What enantiomers exist for specific chiral drugs?"
+
+❌ Avoid: "What is the most queried compound?" "Which data format is most common?"
 
 ### Structured Query
-- "Find all monocarboxylic acids with molecular weight between 100-200 Da"
-- "Query all compounds with both formula containing 'C9' and KEGG cross-references"
-- "Find all chemical entities that are conjugate acids AND have DrugBank entries"
-- "Retrieve all resolvins with specific biological roles via RO_0000087"
-- "Find compounds with more than 5 database cross-references using COUNT aggregation"
+✅ **Complex chemical queries with multiple criteria**
+- "Find all compounds with molecular weight < 200 AND containing nitrogen"
+- "List antibiotics that are also pesticides (dual biological roles)"
+- "Find all nucleotides with triphosphate groups"
+- "Which compounds have both KEGG AND DrugBank cross-references?"
+- "Find all aromatic ketones with antibiotic properties"
+
+❌ Avoid: "Find databases updated after 2024" "List all ontology formats available"
 
 ## Notes
 
 ### Limitations and Challenges
-- **Namespace confusion**: Easy to mix up chebi/ and chebi# - critical error source
-- **Abstract classes**: Many entities lack molecular properties (formula, mass, SMILES)
-- **OWL restriction complexity**: Relationships encoded as restrictions, not simple properties
-- **Deprecated entries**: Must filter out obsolete entities with owl:deprecated
-- **Server availability**: May experience 503 errors during high load or complex queries
-- **Cross-reference format**: Stored as literal strings requiring parsing (e.g., "KEGG:C00001")
+- **Dual namespace complexity**: Must use correct namespace (chebi/ vs chebi#)
+- **OWL restriction pattern**: Biological roles require complex SPARQL
+- **Incomplete properties**: Not all entities have molecular data (abstract classes)
+- **Deprecated entities**: Need to filter with owl:deprecated
+- **Large dataset**: 217K+ entities require careful query design
 
 ### Best Practices for Querying
-1. **Namespace discipline**: Use `chebi/` for formula, mass, smiles, inchi; use `chebi#` for is_conjugate_acid_of, etc.
-2. **Full-text search**: Use bif:contains with single-quoted keywords for fast searches
-3. **Entity filtering**: Always filter by `STRSTARTS(STR(?entity), "http://purl.obolibrary.org/obo/CHEBI_")`
-4. **OPTIONAL clauses**: Use for all molecular properties since abstract classes lack them
-5. **Relevance scoring**: Use `option (score ?sc)` with bif:contains and ORDER BY DESC(?sc)
-6. **Relationship queries**: Use OWL restriction pattern:
-   ```sparql
-   ?entity rdfs:subClassOf ?restriction .
-   ?restriction owl:onProperty <property_uri> ;
-                owl:someValuesFrom ?value .
-   ```
-7. **Limit results**: Always include LIMIT to prevent timeouts with large result sets
-8. **Check deprecation**: Filter out `owl:deprecated true` entities for current data
+1. **Always use FROM clause**: `FROM <http://rdf.ebi.ac.uk/dataset/chebi>`
+2. **Use correct namespace**:
+   - Data properties: PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+   - Relationship properties: PREFIX chebi: <http://purl.obolibrary.org/obo/chebi#>
+3. **Use bif:contains for search**: Much faster than FILTER(CONTAINS())
+4. **Filter by CHEBI_ URI**: Exclude non-entity classes early
+5. **Use OPTIONAL for properties**: Not all entities have all molecular data
+6. **Access roles via restrictions**: Don't look for direct properties
+7. **Use OLS4:searchClasses**: More efficient than raw SPARQL for simple searches
+
+### Data Quality Notes
+- Molecular properties: ~86% completeness for formulas
+- Structural identifiers: 81% InChI, 85% SMILES
+- Cross-references: Average 1.9 per entity (some have 5+)
+- Synonyms: Average 1.2 per entity
+- Hierarchical structure: Well-defined with rdfs:subClassOf
+- Deprecated entities: Marked with owl:deprecated flag
+- Abstract classes: May lack molecular properties (designed for classification only)

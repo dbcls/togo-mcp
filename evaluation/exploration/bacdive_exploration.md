@@ -1,92 +1,122 @@
 # BacDive Exploration Report
 
 ## Database Overview
-- **Purpose**: BacDive (Bacterial Diversity Metadatabase) provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data.
+- **Purpose**: Standardized bacterial and archaeal strain information metadatabase
 - **Scope**: 97,000+ strain records with phenotypic and genotypic characterizations
-- **Key data types**: Strains (core records), Phenotypes (morphology, Gram staining, enzyme activities, oxygen tolerance), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), GeographicOrigin
+- **Key Data Types**: 
+  - Taxonomy (genus, species, family, order, class, phylum, domain)
+  - Morphology (Gram stain, cell motility)
+  - Physiology (oxygen tolerance, enzyme activities)
+  - Culture conditions (media, temperature, pH)
+  - Molecular data (16S rRNA sequences, genomes)
+  - Geographic origin and isolation sources
+  - Culture collection numbers and references
 
 ## Schema Analysis (from MIE file)
 
-### Main Properties Available
-- **Strain core**: BacDive ID, TaxID, genus, species, family, domain, designation, type strain status, scientific name
-- **Phenotypes**: Gram stain, cell motility, oxygen tolerance
-- **Enzyme activities**: Enzyme name, activity status (+/-), EC number
-- **Culture conditions**: Temperature range, pH range, culture medium with links to recipes
-- **Sequences**: 16S rRNA sequences and genome sequences with accessions, sequence length, database source
-- **Geographic data**: Country, latitude, longitude of isolation location
-- **Culture collections**: Links to institutional collections (DSMZ, JCM, KCTC, CCUG, etc.)
+### Main Entity Types
+1. **schema:Strain** - Central hub entity
+   - Full taxonomic hierarchy (domain → phylum → class → order → family → genus → species)
+   - BacDive ID and NCBI Taxonomy ID
+   - Scientific name and designation
+   - Type strain indicator (boolean)
+   - Description text
+
+2. **Phenotype Entities** (all link via schema:describesStrain)
+   - **schema:Enzyme** - Enzyme activities with positive/negative/variable results, EC numbers
+   - **schema:GramStain** - Gram staining results (positive/negative/variable)
+   - **schema:CellMotility** - Motility indicator (boolean)
+   - **schema:OxygenTolerance** - Aerobic/anaerobic classification
+
+3. **Culture Condition Entities**
+   - **schema:CultureMedium** - Medium names with optional MediaDive links
+   - **schema:CultureTemperature** - Temperature ranges (start/end in °C)
+   - **schema:CulturePH** - pH ranges (start/end)
+
+4. **Molecular Data**
+   - **schema:16SSequence** - 16S rRNA sequences with accession numbers, length, database source (ENA/GenBank)
+   - **schema:GenomeSequence** - Genome sequences with accession and source
+
+5. **Identifiers and References**
+   - **schema:CultureCollectionNumber** - Strain repository numbers (DSMZ, JCM, KCTC, CCUG) with URLs
+   - **schema:LocationOfOrigin** - Geographic origin with country, latitude, longitude
+   - **schema:Reference** - Literature references with PubMed IDs and DOIs
 
 ### Important Relationships
-- Hub-and-spoke design with Strain as central entity
-- All phenotypes and annotations connect via `schema:describesStrain`
-- Sequences linked via `schema:hasSequenceAccession`
-- Culture collections linked via `schema:hasLink` to institutional databases
-- NCBI Taxonomy integration via `schema:hasTaxID`
+- **Hub-and-spoke architecture**: Strain is central entity, all other data connects via `schema:describesStrain`
+- **Multiple inheritance**: Enzyme is also Protein and GeneProduct
+- **Optional data**: Use OPTIONAL blocks for phenotypes (~40% coverage)
 
 ### Query Patterns Observed
-- **Full-text search** using Virtuoso's `bif:contains` with boolean operators (AND, OR, NOT)
-- Relevance scoring with `option (score ?sc)`
-- OPTIONAL clauses critical for phenotypes due to incomplete coverage
-- Keywords in single quotes: `'keyword'`, boolean logic: `'keyword1' AND 'keyword2'`
+- Use `bif:contains` for keyword search with boolean operators (AND, OR, NOT)
+- Must be triple pattern: `?var bif:contains "'keyword'" option (score ?sc)`
+- Never use `?score` as variable name (reserved keyword)
+- Always use OPTIONAL for phenotypes (incomplete coverage)
+- Filter by genus/species using CONTAINS(LCASE(?var), 'text') for efficiency
+- FROM clause: `FROM <http://rdfportal.org/dataset/bacdive>`
 
 ## Search Queries Performed
 
-1. **Query**: Escherichia coli strains
-   - **Results**: Found 10 E. coli strains with IDs like 134430, 134451, 135530, etc.
-   - Relevance scores all at 24 indicating exact matches
+1. **Query**: Search for thermophilic strains using bif:contains
+   **Results**: Empty results - likely because "thermophilic" appears in descriptions not labels. Need to search dct:description field instead.
 
-2. **Query**: Bacillus enzyme activities
-   - **Results**: Found various positive enzyme activities including:
-     - Bacillus aryabhattai: gelatinase (+)
-     - Bacillus subtilis: caseinase, catalase, gamma-glutamyltransferase, protease, beta-galactosidase, alcohol dehydrogenase, gelatinase, amylase, DNase (+)
-     - Bacillus cereus: oxidase, catalase (+)
-     - Terribacillus saccharophilus: DNase, caseinase, catalase, lecithinase (+)
+2. **Query**: Filter Bacillus genus strains
+   **Results**: Found 20 strains including Paenibacillus, Actinobacillus, Bacillus, Solibacillus, Lactobacillus, Marinilactibacillus species. Shows genus filter working correctly.
 
-3. **Query**: Strains with 16S sequences (sorted by length)
-   - **Results**: Found both genome-length sequences (9M+ bp) and actual 16S rRNA (~1900-2000 bp)
-   - Notable long sequences: Bradyrhizobium barranii (9.9M bp genome), Frigoriglobus tundricola (9.8M bp)
-   - Typical 16S: Mycobacterium insubricum (1995 bp), Leptospira species (~1900-1994 bp)
+3. **Query**: Retrieve strains with 16S sequences
+   **Results**: Found 20 strains with 16S sequences ranging from 207-1532 bp in length. Accessions from JN/JQ series (NCBI). Coverage includes Nocardia, Mycobacterium, Sphingomonas, Clostridium, etc.
 
-4. **Query**: Thermophilic bacteria with phenotypes
-   - **Results**: Found strains with "thermophilic" in descriptions:
-     - Campylobacter pinnipediorum: microaerotolerant, thermophilic, Gram-negative, temp 22-42°C
-     - Nonomuraea rhodomycinica: aerobe, spore-forming, thermophilic, Gram-positive, temp 20-50°C
-     - Mycoplasmopsis ciconiae: thermophilic, Gram-negative, pleomorphic, temp 10-46°C
+4. **Query**: Positive enzyme activities
+   **Results**: Found enzymes including catalase, beta-galactosidase, lysine decarboxylase, ornithine decarboxylase, gelatinase, amylase, DNase, caseinase, oxidase. All with "+" activity.
 
-5. **Query**: Culture collection numbers (DSM)
-   - **Results**: Found extensive links to DSMZ collection:
-     - DSM 45197, DSM 45095, DSM 45136, DSM 20295, DSM 30723, etc.
-     - All with direct URLs to DSMZ catalogue pages
+5. **Query**: E. coli growth conditions
+   **Results**: Retrieved culture media (CIP Medium 3, CIP Medium 72), temperature ranges (5-41°C with 30°C optimal), but no pH data in these records. Multiple temperature points per strain.
 
-6. **Query**: Geographic locations
-   - **Results**: Found diverse origins with coordinates:
-     - Salmonella enterica (Denmark: 55.68°N, 12.57°E)
-     - Rhodanobacter umsongensis (South Korea: 36.93°N, 127.73°E)
-     - Marinactinospora thermotolerans (China: 17.98°N, 116.00°E)
-     - Methanoregula boonei (USA: 42.5°N, -76.5°W)
-     - Thermodesulfatator atlanticus (International waters: 36.23°N, -33.90°W)
+6. **Query**: DSMZ culture collection numbers
+   **Results**: Found 20 DSM strains (DSM 45197, DSM 45095, etc.) all with links to DSMZ catalogue. Strong DSMZ representation as expected.
+
+7. **Query**: Bacillus phenotype profile (Gram stain + motility + oxygen tolerance)
+   **Results**: All B. subtilis strains are Gram-positive, mostly motile (isMotile=1), mix of obligate aerobe and facultative anaerobe. B. cereus and B. licheniformis also present.
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Full-text search for E. coli
+# Query 1: Filter by genus name
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
-SELECT ?strain ?label ?sc
+SELECT ?strain ?label ?genus ?species
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
   ?strain a schema:Strain ;
-          rdfs:label ?label .
-  ?label bif:contains "'escherichia' AND 'coli'" option (score ?sc) .
+          rdfs:label ?label ;
+          schema:hasGenus ?genus ;
+          schema:hasSpecies ?species .
+  FILTER(CONTAINS(LCASE(?genus), "bacillus"))
 }
-ORDER BY DESC(?sc)
-LIMIT 10
-
-# Results: Successfully found 10 E. coli strains with relevance scores, demonstrating powerful full-text search capability
+LIMIT 20
 ```
+**Results**: Successfully retrieved 20 Bacillus-related strains. Shows CONTAINS(LCASE()) effective for case-insensitive genus filtering.
 
 ```sparql
-# Query 2: Enzyme activities for Bacillus species
+# Query 2: Strains with 16S sequences
+PREFIX schema: <https://purl.dsmz.de/schema/>
+
+SELECT ?strain ?strainLabel ?accession ?length
+FROM <http://rdfportal.org/dataset/bacdive>
+WHERE {
+  ?strain a schema:Strain ;
+          rdfs:label ?strainLabel .
+  ?seq a schema:16SSequence ;
+       schema:describesStrain ?strain ;
+       schema:hasSequenceAccession ?accession ;
+       schema:hasSequenceLength ?length .
+}
+LIMIT 20
+```
+**Results**: Retrieved 16S sequences with lengths 207-1532 bp, all from JN/JQ accession series. Demonstrates molecular data availability.
+
+```sparql
+# Query 3: Positive enzyme activities
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
 SELECT ?strainLabel ?enzymeLabel ?activity
@@ -99,50 +129,27 @@ WHERE {
           rdfs:label ?enzymeLabel ;
           schema:hasActivity ?activity .
   FILTER(?activity = "+")
-  FILTER(CONTAINS(LCASE(?strainLabel), "bacillus"))
 }
 LIMIT 20
-
-# Results: Retrieved diverse enzyme activities including gelatinase, caseinase, catalase, protease, amylase, DNase for various Bacillus species
 ```
+**Results**: Found diverse positive enzyme activities (catalase, beta-galactosidase, decarboxylases, etc.) across E. coli, Enterococcus, Proteus, Acinetobacter, Haemophilus, Salmonella, Kitasatospora, Bacillus, Aquaspirillum.
 
 ```sparql
-# Query 3: 16S sequences with length filtering
+# Query 4: Complete growth conditions for Escherichia
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
-SELECT ?strain ?strainLabel ?accession ?length
+SELECT ?label ?medium ?tempStart ?tempEnd ?phStart ?phEnd
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
   ?strain a schema:Strain ;
-          rdfs:label ?strainLabel .
-  ?seq a schema:16SSequence ;
-       schema:describesStrain ?strain ;
-       schema:hasSequenceAccession ?accession ;
-       schema:hasSequenceLength ?length .
-  FILTER(?length < 2000)
-}
-ORDER BY DESC(?length)
-LIMIT 20
-
-# Results: Found typical 16S rRNA sequences (~1900-2000 bp) from Mycobacterium, Leptospira, Bacteroides species with ENA/GenBank accessions
-```
-
-```sparql
-# Query 4: Thermophilic bacteria with phenotypes
-PREFIX schema: <https://purl.dsmz.de/schema/>
-PREFIX dct: <http://purl.org/dc/terms/>
-
-SELECT ?strain ?description ?gramStain ?tempStart ?tempEnd ?sc
-FROM <http://rdfportal.org/dataset/bacdive>
-WHERE {
-  ?strain a schema:Strain ;
-          dct:description ?description .
-  ?description bif:contains "'thermophilic'" option (score ?sc) .
+          rdfs:label ?label ;
+          schema:hasGenus ?genus .
+  FILTER(CONTAINS(LCASE(?genus), "escherichia"))
   
   OPTIONAL {
-    ?gs a schema:GramStain ;
-        schema:describesStrain ?strain ;
-        schema:hasGramStain ?gramStain .
+    ?m a schema:CultureMedium ;
+       schema:describesStrain ?strain ;
+       rdfs:label ?medium .
   }
   OPTIONAL {
     ?temp a schema:CultureTemperature ;
@@ -150,118 +157,172 @@ WHERE {
           schema:hasTemperatureRangeStart ?tempStart ;
           schema:hasTemperatureRangeEnd ?tempEnd .
   }
+  OPTIONAL {
+    ?ph a schema:CulturePH ;
+        schema:describesStrain ?strain ;
+        schema:hasPHRangeStart ?phStart ;
+        schema:hasPHRangeEnd ?phEnd .
+  }
 }
-ORDER BY DESC(?sc)
-LIMIT 15
-
-# Results: Successfully combined full-text search with structured phenotype data, showing temperature ranges and Gram stain properties
+LIMIT 20
 ```
+**Results**: Retrieved E. coli growth conditions with CIP Media 3 and 72, temperature ranges 5-41°C. pH data absent for these samples. OPTIONAL clauses prevent excluding strains with missing data.
 
 ```sparql
-# Query 5: Geographic locations with coordinates
+# Query 5: DSMZ culture collection links
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
-SELECT ?strainLabel ?country ?latitude ?longitude
+SELECT ?strain ?collectionLabel ?link
+FROM <http://rdfportal.org/dataset/bacdive>
+WHERE {
+  ?strain a schema:Strain .
+  ?ccn a schema:CultureCollectionNumber ;
+       schema:describesStrain ?strain ;
+       rdfs:label ?collectionLabel ;
+       schema:hasLink ?link .
+  FILTER(CONTAINS(?collectionLabel, "DSM"))
+}
+LIMIT 20
+```
+**Results**: Retrieved 20 DSM culture collection numbers with working URLs to DSMZ catalogue. All follow pattern DSM-XXXXX.
+
+```sparql
+# Query 6: Multi-phenotype profile
+PREFIX schema: <https://purl.dsmz.de/schema/>
+
+SELECT ?label ?gramStain ?isMotile ?oxygenTolerance
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
   ?strain a schema:Strain ;
-          rdfs:label ?strainLabel .
-  ?location a schema:LocationOfOrigin ;
-            schema:describesStrain ?strain ;
-            schema:hasCountry ?country ;
-            schema:hasLatitude ?latitude ;
-            schema:hasLongitude ?longitude .
+          rdfs:label ?label ;
+          schema:hasGenus ?genus .
+  FILTER(CONTAINS(LCASE(?genus), "bacillus"))
+  
+  OPTIONAL {
+    ?gs a schema:GramStain ;
+        schema:describesStrain ?strain ;
+        schema:hasGramStain ?gramStain .
+  }
+  OPTIONAL {
+    ?cm a schema:CellMotility ;
+        schema:describesStrain ?strain ;
+        schema:isMotile ?isMotile .
+  }
+  OPTIONAL {
+    ?ot a schema:OxygenTolerance ;
+        schema:describesStrain ?strain ;
+        schema:hasOxygenTolerance ?oxygenTolerance .
+  }
+  FILTER(BOUND(?gramStain) && BOUND(?isMotile))
 }
 LIMIT 20
-
-# Results: Retrieved diverse geographic origins worldwide with precise coordinates, enabling geographic distribution studies
 ```
+**Results**: Retrieved complete phenotype profiles for Bacillus strains. All Gram-positive, mostly motile, mix of obligate aerobes and facultative anaerobes. FILTER(BOUND()) ensures complete data.
 
 ## Interesting Findings
 
-### Specific Entities for Questions
-1. **Campylobacter pinnipediorum** (strain 140488) - microaerotolerant, thermophilic, Gram-negative, isolated from California sea lion abscess
-2. **Nonomuraea rhodomycinica** (strain 140579) - aerobe, spore-forming, thermophilic, from peat swamp forest soil, temp 20-50°C
-3. **Bradyrhizobium barranii subsp. apii** (strain 170252) - has complete 9.9M bp genome sequence
-4. **Bacillus subtilis** (strain 137036) - exhibits 9 different positive enzyme activities
-5. **Thermodesulfatator atlanticus** (strain 16890) - isolated from international waters in Atlantic Ocean
+### Biological/Scientific Content
+1. **Enzyme Diversity**: 573,112 enzyme records averaging 5.9 per strain, covering metabolic capabilities
+2. **Bacillus subtilis Variation**: Multiple strains with different oxygen tolerances (obligate aerobe vs facultative anaerobe)
+3. **16S Sequence Lengths**: Highly variable (207-1532 bp) suggesting partial vs complete sequences
+4. **Temperature Ranges**: E. coli can grow 5-41°C with 30°C optimal
+5. **Culture Media**: CIP Media series well-represented, suggesting French collection influence
 
-### Unique Properties
-- **Mixed sequence data**: Database contains both 16S rRNA sequences (~1900 bp) AND complete genomes (up to 9M+ bp) in same field
-- **Rich enzyme data**: 573,112 enzyme records covering diverse metabolic activities
-- **Geographic precision**: Latitude/longitude coordinates for many strains enabling spatial analysis
-- **Culture collection integration**: Direct links to institutional collections (DSMZ, JCM, KCTC, CCUG)
-- **Full-text search power**: Virtuoso's `bif:contains` with boolean logic very effective
+### Taxonomic Coverage
+- **97,334 total strains** across bacteria and archaea
+- **100% NCBI Taxonomy linkage** enabling standardized classification
+- **Type strains**: Indicated via isTypeStrain boolean flag
+- **Diverse genera**: Bacillus, Escherichia, Nocardia, Mycobacterium, Sphingomonas, Clostridium, etc.
 
-### Connections to Other Databases
-- **NCBI Taxonomy**: Via `schema:hasTaxID` (100% coverage)
-- **ENA/GenBank**: Via sequence accessions (~35% 16S, ~10% genomes)
-- **Culture collections**: DSMZ (>90%), JCM (~40%), KCTC (~30%), CCUG (~25%)
-- **MediaDive**: Via `schema:hasMediaLink` (~20% of culture media)
+### Data Completeness Patterns
+- **Gram stain**: ~40% of strains
+- **16S sequences**: ~35% of strains (87,045 sequences)
+- **Enzyme data**: ~55% of strains
+- **Culture collections**: ~60% of strains (149,377 numbers)
+- **Type strains**: Higher data completeness than non-type strains
 
-### Specific, Verifiable Facts
-- Total strains: 97,334
-- Total enzymes: 573,112
-- Total 16S sequences: 87,045
-- Average enzymes per strain: 5.9
-- Gram stain coverage: ~40%
-- 16S sequence coverage: ~35%
-- Type strain data: More complete than regular strains
+### Culture Collection Integration
+- **DSMZ dominance**: >90% culture collection coverage
+- **JCM**: ~40% coverage (Japanese Collection)
+- **KCTC**: ~30% coverage (Korean Collection)
+- **All with working URLs** to institutional catalogues
+
+### Molecular Data Availability
+- **87,045 16S sequences** from ENA (~60%) and NCBI GenBank (~40%)
+- **Genome sequences** available for subset
+- **Sequence databases**: Indicated via `fromSequenceDB` property
 
 ## Question Opportunities by Category
 
+**FOCUS ON BIOLOGICAL CONTENT, NOT INFRASTRUCTURE METADATA**
+
 ### Precision
-- "What is the BacDive ID for Campylobacter pinnipediorum isolated from California sea lion?"
-- "What is the NCBI Taxonomy ID for Nonomuraea rhodomycinica strain 140579?"
-- "What is the 16S rRNA sequence accession (ENA) for Mycobacterium insubricum strain 8559?"
-- "What is the DSM culture collection number for [specific strain]?"
-- "What are the exact geographic coordinates (latitude/longitude) where Thermodesulfatator atlanticus was isolated?"
+- "What is the DSM culture collection number for Bacillus aryabhattai strain 1290?" (Need to verify from data)
+- "What is the 16S rRNA sequence length for Olivibacter ginsenosidimutans strain 159786?" (1445 bp)
+- "What is the NCBI Taxonomy ID for Acetobacter aceti?" (435)
+- "What is the optimal growth temperature for Escherichia coli strains in BacDive?" (30°C)
+- "What is the specific enzyme activity result for gelatinase in Bacillus aryabhattai?" (+)
 
 ### Completeness
-- "How many Escherichia coli strains are in BacDive?"
-- "List all positive enzyme activities for Bacillus subtilis strain 137036"
-- "How many bacterial strains in BacDive have complete 16S rRNA sequences?"
-- "How many strains are from thermophilic bacteria?"
-- "Count strains with Gram-negative phenotype"
+- "How many bacterial strains are in BacDive?" (97,334)
+- "How many enzyme activity records are available?" (573,112)
+- "How many strains have 16S rRNA sequences?" (87,045)
+- "How many culture collection numbers link to DSMZ?" (>90% of 149,377)
+- "What is the average number of enzyme records per strain?" (5.9)
+- "How many strains are designated as type strains?" (Need count)
 
 ### Integration
-- "Find the NCBI Taxonomy ID for BacDive strain 134430 (E. coli)"
 - "Convert BacDive strain ID to DSMZ culture collection number"
-- "Find MediaDive recipe link for culture medium used with [specific strain]"
-- "Link 16S sequence accession to NCBI Nucleotide database"
+- "What is the NCBI Taxonomy ID for a strain with DSM number DSM 45197?"
+- "Find the 16S rRNA sequence accession for strain with BacDive ID X"
+- "Link strain to MediaDive culture medium recipe via hasMediaLink"
+- "What PubMed references are associated with specific strains?"
 
 ### Currency
-- "What are the most recently added bacterial strains (2024) in BacDive?"
-- "Find newly characterized thermophilic strains from marine environments"
-- "What new enzyme activities have been characterized in 2024?"
+- "What is the latest version of BacDive data?" (2024)
+- "What are the most recently added strains?" (Need temporal data)
+- "Which strains have genome sequences deposited recently?"
+- "What new culture media have been linked to strains?"
 
 ### Specificity
-- "What are the growth temperature and pH ranges for the thermophilic archaeon Thermodesulfatator atlanticus?"
-- "What enzyme activities are positive for the rare bacterium Terribacillus saccharophilus?"
-- "What is the isolation source and geographic location of Mycoplasmopsis ciconiae?"
-- "Find all strains of Nonomuraea rhodomycinica with complete phenotypic profiles"
+- "What is the oxygen tolerance classification for Aquaspirillum serpens?" (Need to find)
+- "Find rare thermophilic archaea strains with growth temperatures above 70°C"
+- "What is the Gram stain result for Marinilactibacillus psychrotolerans?" (Need to check)
+- "Which strains from the JCM collection are motile anaerobes?"
+- "Find strains from Japan with both 16S sequences and genome data"
 
 ### Structured Query
-- "Find all Gram-positive bacteria with gelatinase activity isolated from soil"
-- "Retrieve all thermophilic strains (containing 'thermophilic' in description) with temperature range > 45°C and their Gram stain properties"
-- "Find all strains from Japan with 16S rRNA sequences and culture collection numbers"
-- "Query strains with positive catalase AND amylase activities from genus Bacillus"
-- "Find marine bacterial strains (from locations with latitude < 30°) with complete genome sequences"
+- "Find all Gram-positive, motile, obligate aerobe Bacillus strains"
+- "List strains with positive catalase activity AND temperature range 5-41°C"
+- "Find type strains from DSMZ collection with complete phenotype data (Gram stain, motility, oxygen tolerance)"
+- "Retrieve strains with 16S sequences >1400 bp from genera containing 'coccus'"
+- "Find strains that grow in CIP Medium 3 at temperatures >37°C with positive enzyme activities"
 
 ## Notes
 
-### Limitations and Challenges
-- **Incomplete phenotype coverage**: Only ~40% have Gram stain, ~35% have 16S sequences
-- **OPTIONAL clauses essential**: Must use OPTIONAL for all phenotypes to avoid excluding strains
-- **Mixed sequence types**: 16SSequence entities contain both actual 16S rRNA (~1900 bp) and complete genomes (millions of bp)
-- **Variable ?score reserved**: Cannot use `?score` as variable name with `bif:contains`, must use `?sc` or similar
-- **Query timeouts possible**: Always use LIMIT, especially with multi-join phenotype queries
+### Limitations
+- **Phenotype incompleteness**: Only ~40% have Gram stain, ~35% have 16S sequences
+- **Variable data quality**: Type strains have better coverage than non-type strains
+- **bif:contains restrictions**: Must use as triple pattern, not in FILTER; ?score is reserved keyword
+- **Empty pH data**: Many culture conditions lack pH ranges
+- **16S sequence variability**: Lengths range 207-1532 bp suggesting mix of partial/complete sequences
 
-### Best Practices for Querying
-1. **Full-text search**: Use `bif:contains` as triple pattern, not in FILTER
-2. **Syntax**: Keywords in single quotes: `'keyword'`, boolean: `'word1' AND 'word2'`
-3. **Relevance scoring**: Use `option (score ?sc)` and `ORDER BY DESC(?sc)` for best results
-4. **Phenotypes**: Always use OPTIONAL blocks for enzyme activities, Gram stain, motility, etc.
-5. **Performance**: Start with genus/species filters or keyword search, then add phenotypes
-6. **Sequences**: Filter by length to distinguish 16S RNA (<2000 bp) from genomes (>1M bp)
-7. **LIMIT**: Always include LIMIT to prevent timeouts, especially for exploratory queries
+### Best Practices
+1. **Always use OPTIONAL for phenotypes**: Prevents excluding strains with missing data
+2. **Use CONTAINS(LCASE())** for genus/species text matching
+3. **Never use ?score**: Use ?sc or other variable names
+4. **bif:contains syntax**: `?var bif:contains "'keyword'" option (score ?sc)`
+5. **Boolean operators**: "'keyword1' AND 'keyword2'", "'keyword1' OR 'keyword2'", "NOT 'keyword'"
+6. **FROM clause required**: `FROM <http://rdfportal.org/dataset/bacdive>`
+7. **LIMIT always**: Prevent processing entire 97K+ strains
+8. **Check BOUND()**: Use FILTER(BOUND(?var)) to require specific data when needed
+
+### Unique Strengths
+- **Comprehensive phenotypic data**: Enzyme activities, Gram stain, motility, oxygen tolerance
+- **Culture condition details**: Media, temperature, pH ranges for cultivation
+- **Strong culture collection links**: Direct URLs to DSMZ, JCM, KCTC, CCUG catalogues
+- **Type strain identification**: Boolean flag enables filtering for nomenclature standards
+- **Molecular + phenotypic**: Combines 16S/genome sequences with physiological traits
+- **Geographic metadata**: Isolation locations with coordinates
+- **Hub-and-spoke design**: Clean schema with strain as central entity
+- **Full taxonomic hierarchy**: Domain through species level for all strains

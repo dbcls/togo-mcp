@@ -1,267 +1,70 @@
-# MediaDive - Microbial Culture Media Database Exploration Report
+# MediaDive Exploration Report
 
 ## Database Overview
-- **Purpose**: Comprehensive culture media database from DSMZ (German Collection of Microorganisms and Cell Cultures) providing standardized recipes for microbial cultivation
-- **Scope**: 3,289 media recipes for bacteria, archaea, fungi, yeast, microalgae, and phages with detailed preparation protocols
-- **Key Data Types**:
-  - Culture media recipes with pH and complexity specifications
-  - Ingredients with chemical identifiers and formulas
-  - Microbial strains with taxonomic information
+- **Purpose**: Comprehensive culture media database from DSMZ with standardized recipes for growing microorganisms
+- **Scope**: 3,289 media recipes, 1,489 ingredients, 45,685 strain records
+- **Key data types**:
+  - Culture media with pH, complexity, preparation protocols
+  - Chemical ingredients with cross-references (GMO 41%, CAS 39%, ChEBI 32%)
   - Growth conditions (temperature, pH, oxygen requirements)
-  - Hierarchical recipe structure (medium → solution → solution_recipe → ingredient)
-- **Main Entities**:
-  - 3,289 culture media
-  - 1,489 ingredients
-  - 45,685 strain records (73% with BacDive links)
-  - Growth conditions with specific parameters
+  - Microbial strains with BacDive links (73% coverage)
+  - Hierarchical recipe structure: medium → solution → solution_recipe → ingredient
 
 ## Schema Analysis (from MIE file)
 
 ### Main Properties Available
-1. **Medium Level**:
-   - `rdfs:label` - Medium name
-   - `schema:belongsToGroup` - Medium classification
-   - `schema:hasFinalPH` - String pH range (e.g., "7.0-7.2")
-   - `schema:hasMinPH` / `schema:hasMaxPH` - Numeric pH boundaries
-   - `schema:isComplex` - Boolean complexity indicator
-   - `schema:hasLinkToSource` - PDF documentation link (99% coverage)
-   - Total: 3,289 media
-
-2. **Ingredient Level**:
-   - `rdfs:label` - Ingredient name
-   - `schema:hasFormula` - Chemical formula
-   - Chemical cross-references:
-     - `schema:hasGMO` - GMO database (41% coverage)
-     - `schema:hasCAS` - CAS Registry (39% coverage)
-     - `schema:hasChEBI` - ChEBI ontology (32% coverage)
-     - `schema:hasPubChem` - PubChem compounds (18% coverage)
-     - `schema:hasKEGG` - KEGG compounds (13% coverage)
-   - Total: 1,489 ingredients
-
-3. **Medium Composition Level**:
-   - `schema:partOfMedium` - Parent medium reference
-   - `schema:containsIngredient` - Ingredient reference
-   - `schema:gramsPerLiter` - Concentration
-   - `schema:isOptionalIngredient` - Boolean optional flag
-   - Average: 21.9 compositions per medium
-
-4. **Growth Condition Level**:
-   - `schema:partOfMedium` - Medium used
-   - `schema:relatedToStrain` - Strain reference
-   - `schema:growthTemperature` - Integer temperature (°C)
-   - `schema:growthPH` - Float pH value
-   - `schema:hasOxygenRequirement` - Aerobic/anaerobic
-   - `schema:hasGrowthIndicator` - Boolean growth success
-
-5. **Strain Level**:
-   - `schema:hasDSMNumber` - DSMZ collection number
-   - `schema:hasBacDiveID` - BacDive database ID (73% coverage)
-   - `schema:hasSpecies` - Species name
-   - `schema:belongsTaxGroup` - Taxonomic group (Bacteria, Archaea, etc.)
-   - Total: 45,685 strains
+- **CultureMedium**: `rdfs:label`, `schema:belongsToGroup`, `schema:hasFinalPH`, `schema:hasMinPH`, `schema:hasMaxPH`, `schema:isComplex`, `schema:hasLinkToSource`
+- **Ingredient**: `rdfs:label`, `schema:hasFormula`, `schema:hasCAS`, `schema:hasChEBI`, `schema:hasPubChem`, `schema:hasKEGG`, `schema:hasGMO`
+- **GrowthCondition**: `schema:partOfMedium`, `schema:relatedToStrain`, `schema:growthTemperature`, `schema:growthPH`, `schema:hasOxygenRequirement`
+- **Strain**: `schema:hasDSMNumber`, `schema:hasBacDiveID`, `schema:hasSpecies`, `schema:belongsTaxGroup`
 
 ### Important Relationships
-- **Medium-Composition**: Hierarchical recipe structure
-- **Medium-Growth**: Cultivation conditions per strain
-- **Composition-Ingredient**: Ingredient amounts
-- **Growth-Strain**: Strain compatibility with media
-- **Ingredient-Chemical DB**: Multi-database cross-references
-- **Strain-BacDive**: Phenotypic data integration
+- Media → Compositions via `schema:MediumComposition`
+- Compositions → Ingredients via `schema:containsIngredient`
+- Growth conditions → Medium AND Strain via `schema:partOfMedium` and `schema:relatedToStrain`
+- Strains → BacDive via `schema:hasBacDiveID`
+- Ingredients → Chemical databases via `schema:has[Database]` properties
+- Media → DSMZ PDFs via `schema:hasLinkToSource`
 
 ### Query Patterns Observed
-1. **bif:contains for keyword search**: Full-text search on labels/groups
-2. **Numeric filtering**: pH and temperature range queries
-3. **OPTIONAL for partial coverage**: Handle sparse cross-references
-4. **Medium-specific filters**: Composition queries need medium filtering
-5. **Boolean operators**: Use for aerobic/anaerobic, complex/defined media
-
-### Critical Performance Notes
-- **Use bif:contains** for label/group/species keyword searches (not FILTER CONTAINS)
-- **pH/temperature filtering** is efficient with numeric operators
-- **Composition queries** can be large (~72K entries) - filter by specific medium
-- **Use OPTIONAL** for cross-references due to partial coverage
-- **LIMIT 30-50** recommended for exploration queries
+1. **Keyword search**: Use `bif:contains` for media labels, groups, species names
+2. **Numeric filtering**: Efficient for temperature, pH ranges
+3. **Composition queries**: Filter by specific medium to avoid timeout on 72K+ records
+4. **Cross-references**: Use OPTIONAL due to partial coverage (ChEBI 32%, KEGG 13%)
+5. **Thermophiles**: Filter `schema:growthTemperature > [value]` for extremophiles
 
 ## Search Queries Performed
 
-### Query 1: Basic Media Listing
-**Query**: Retrieve media with labels and groups
-```sparql
-SELECT ?medium ?label ?group
-WHERE { ?medium a schema:CultureMedium ; rdfs:label ?label ; schema:belongsToGroup ?group }
-LIMIT 10
-```
-**Results**: Retrieved 10 diverse media:
-- NUTRIENT AGAR
-- ZYMOMONAS MEDIUM
-- MJANHOX-NO3 MEDIUM WITH SUPPLEMENT
-- BASAL MEDIUM
-- ANAEROLINEA MEDIUM
-- THERMODESULFOBIUM MEDIUM
-- Shows wide range of organism-specific media
-
-### Query 2: Marine Media Search
-**Query**: Full-text search for marine organism media
-```sparql
-SELECT ?medium ?label ?group
-WHERE {
-  ?medium a schema:CultureMedium ; rdfs:label ?label ; schema:belongsToGroup ?group .
-  ?label bif:contains "'marine'"
-}
-LIMIT 20
-```
-**Results**: Found 20 marine media including:
-- BACTO MARINE AGAR, BACTO MARINE BROTH
+### Query 1: Marine Media Search
+**Method**: SPARQL with bif:contains on 'marine'
+**Results**: 20+ marine media found including:
+- BACTO MARINE AGAR
+- MARINE BROTH (multiple variants)
 - MARINE CAULOBACTER MEDIUM
 - MARINE THERMOCOCCUS MEDIUM
-- MEDIUM FOR MARINE METHYLOTROPHS
-- METHANOSARCINA MARINE MEDIUM
-- Demonstrates specialized media for marine environments
+- Shows specialization for marine microorganisms
 
-### Query 3: Medium Properties - NUTRIENT AGAR
-**Query**: Detailed medium characteristics
-```sparql
-SELECT ?medium ?label ?ph ?isComplex ?docLink
-WHERE {
-  VALUES ?medium { <https://purl.dsmz.de/mediadive/medium/1> }
-  ?medium a schema:CultureMedium ; rdfs:label ?label ; schema:isComplex ?isComplex .
-  OPTIONAL { ?medium schema:hasFinalPH ?ph }
-  OPTIONAL { ?medium schema:hasLinkToSource ?docLink }
-}
-```
-**Results**: NUTRIENT AGAR (medium/1):
-- pH: 7.0
-- Complex: true
-- PDF: https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1.pdf
-- All media have documentation links
+### Query 2: Thermophilic Growth Conditions
+**Method**: SPARQL filtering temperature > 70°C
+**Results**: 15 hyperthermophilic conditions found:
+- Maximum: 103°C (strain 5869)
+- 100°C: strain 25984
+- 95-99°C range: multiple anaerobic archaea
+- All hyperthermophiles are anaerobic
+- Shows extremophile cultivation expertise
 
-### Query 4: pH Range Filtering
-**Query**: Media within neutral pH range
-```sparql
-SELECT ?medium ?label ?minPH ?maxPH
-WHERE {
-  ?medium a schema:CultureMedium ; rdfs:label ?label ;
-          schema:hasMinPH ?minPH ; schema:hasMaxPH ?maxPH .
-  FILTER(?minPH >= 6.5 && ?maxPH <= 7.5)
-}
-LIMIT 15
-```
-**Results**: Found 15 neutral pH media:
-- ANAEROBIC TYEG MEDIUM (pH 6.5)
-- R83 MEDIUM (pH 6.5)
-- PYROCOCCUS MEDIUM (pH 6.5)
-- METHANOSARCINA/METHANOBACTERIUM media (pH 6.5)
-- Shows specialized media for different organism groups
-
-### Query 5: Thermophilic Growth Conditions
-**Query**: High-temperature cultivation (>45°C)
-```sparql
-SELECT ?medium ?strain ?temp ?ph ?oxygen
-WHERE {
-  ?growth a schema:GrowthCondition ;
-          schema:partOfMedium ?medium ;
-          schema:relatedToStrain ?strain ;
-          schema:growthTemperature ?temp .
-  OPTIONAL { ?growth schema:growthPH ?ph }
-  OPTIONAL { ?growth schema:hasOxygenRequirement ?oxygen }
-  FILTER(?temp > 45)
-}
-ORDER BY DESC(?temp)
-LIMIT 15
-```
-**Results**: Found extreme thermophiles:
-- Maximum temperature: 103°C (strain 5869, medium 792)
-- 100°C (strain 25984, medium 377)
-- 95-99°C range (multiple strains)
-- All thermophiles are anaerobic
-- Demonstrates database coverage of extremophiles
-
-### Query 6: Ingredients with Multiple Cross-References
-**Query**: Ingredients with ChEBI and KEGG identifiers
-```sparql
-SELECT ?ingredient ?label ?chebi ?kegg ?pubchem ?cas
-WHERE {
-  ?ingredient a schema:Ingredient ; rdfs:label ?label .
-  OPTIONAL { ?ingredient schema:hasChEBI ?chebi }
-  OPTIONAL { ?ingredient schema:hasKEGG ?kegg }
-  OPTIONAL { ?ingredient schema:hasPubChem ?pubchem }
-  OPTIONAL { ?ingredient schema:hasCAS ?cas }
-  FILTER(BOUND(?chebi) && BOUND(?kegg))
-}
-LIMIT 20
-```
-**Results**: Retrieved 20 well-annotated ingredients:
-- Acetate: ChEBI 30089, KEGG C00033
+### Query 3: Ingredient Cross-References
+**Method**: SPARQL for ingredients with both ChEBI AND KEGG
+**Results**: 20+ well-annotated ingredients including:
 - Agar: ChEBI 2509, KEGG C08815, CAS 9002-18-0
-- Glucose: ChEBI 17234, KEGG C00031, PubChem 5793, CAS 50-99-7
-- 2-Mercaptoethanol: ChEBI 41218, KEGG C00928
-- Shows rich chemical cross-referencing
-
-### Query 7: Strain Information with BacDive Links
-**Query**: Retrieve strain metadata
-```sparql
-SELECT ?strain ?dsmNumber ?bacDiveID ?species ?taxGroup
-WHERE {
-  ?strain a schema:Strain ;
-          schema:hasDSMNumber ?dsmNumber ;
-          schema:hasBacDiveID ?bacDiveID ;
-          schema:hasSpecies ?species ;
-          schema:belongsTaxGroup ?taxGroup .
-}
-LIMIT 20
-```
-**Results**: Found 20 strains with metadata:
-- DSM 1: Weizmannia coagulans (Bacterium), BacDive 654
-- DSM 11: Niallia circulans (Bacterium), BacDive 642
-- DSM 18786: Acidianus sulfidivorans (Archaeon), BacDive 16644
-- DSM 18794: Haloterrigena jeotgali (Archaeon), BacDive 5885
-- Shows 73% BacDive coverage
-
-### Query 8: Medium Composition - NUTRIENT AGAR
-**Query**: Complete ingredient list with concentrations
-```sparql
-SELECT ?medium ?mediumLabel ?ingredient ?ingredientLabel ?gPerL
-WHERE {
-  ?composition a schema:MediumComposition ;
-               schema:partOfMedium ?medium ;
-               schema:containsIngredient ?ingredient ;
-               schema:gramsPerLiter ?gPerL .
-  ?medium rdfs:label ?mediumLabel .
-  ?ingredient rdfs:label ?ingredientLabel .
-  FILTER(?medium = <https://purl.dsmz.de/mediadive/medium/1>)
-}
-ORDER BY DESC(?gPerL)
-LIMIT 15
-```
-**Results**: NUTRIENT AGAR composition:
-- Soil extract: 500 g/L (major component)
-- Horse serum: 200 g/L
-- NaCl: 20-100 g/L (multiple variants)
-- Shows detailed recipe with concentrations
+- Acetic acid: ChEBI 15366, KEGG C00033, CAS 64-19-7
+- 2-Mercaptoethanesulfonate: ChEBI 17905, KEGG C03576
+- Demonstrates chemical database integration
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Basic Media Discovery
-# Purpose: Identify available culture media
-PREFIX schema: <https://purl.dsmz.de/schema/>
-
-SELECT ?medium ?label ?group
-FROM <http://rdfportal.org/dataset/mediadive>
-WHERE {
-  ?medium a schema:CultureMedium ;
-          rdfs:label ?label ;
-          schema:belongsToGroup ?group .
-}
-LIMIT 10
-
-# Results: Successfully retrieved 10 diverse media types
-# Verification: NUTRIENT AGAR, ZYMOMONAS MEDIUM, BASAL MEDIUM confirmed
-```
-
-```sparql
-# Query 2: Keyword Search - Marine Media
-# Purpose: Find specialized media using full-text search
+# Query 1: Marine media search with full-text indexing
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
 SELECT ?medium ?label ?group
@@ -274,57 +77,11 @@ WHERE {
 }
 ORDER BY ?label
 LIMIT 20
-
-# Results: Found 20 marine-specific media
-# Key finding: bif:contains essential for efficient keyword search
-# Includes: BACTO MARINE AGAR, MARINE CAULOBACTER MEDIUM, MARINE THERMOCOCCUS MEDIUM
+# Results: Identified 20+ marine-specific media including Bacto Marine Agar, Marine Caulobacter Medium
 ```
 
 ```sparql
-# Query 3: Medium Characteristics
-# Purpose: Retrieve detailed medium properties
-PREFIX schema: <https://purl.dsmz.de/schema/>
-
-SELECT ?medium ?label ?ph ?isComplex ?docLink
-FROM <http://rdfportal.org/dataset/mediadive>
-WHERE {
-  VALUES ?medium { <https://purl.dsmz.de/mediadive/medium/1> }
-  ?medium a schema:CultureMedium ;
-          rdfs:label ?label ;
-          schema:isComplex ?isComplex .
-  OPTIONAL { ?medium schema:hasFinalPH ?ph }
-  OPTIONAL { ?medium schema:hasLinkToSource ?docLink }
-}
-
-# Results: NUTRIENT AGAR - pH 7.0, complex medium, has PDF documentation
-# Demonstrates: 99% of media have PDF documentation links
-```
-
-```sparql
-# Query 4: pH Range Filtering
-# Purpose: Find media within specific pH ranges
-PREFIX schema: <https://purl.dsmz.de/schema/>
-
-SELECT ?medium ?label ?minPH ?maxPH
-FROM <http://rdfportal.org/dataset/mediadive>
-WHERE {
-  ?medium a schema:CultureMedium ;
-          rdfs:label ?label ;
-          schema:hasMinPH ?minPH ;
-          schema:hasMaxPH ?maxPH .
-  FILTER(?minPH >= 6.5 && ?maxPH <= 7.5)
-}
-ORDER BY ?minPH
-LIMIT 15
-
-# Results: Retrieved 15 neutral pH media (pH 6.5)
-# Includes: PYROCOCCUS MEDIUM, METHANOSARCINA media, R83 MEDIUM
-# Demonstrates: Efficient numeric filtering
-```
-
-```sparql
-# Query 5: Extreme Growth Conditions
-# Purpose: Identify thermophilic organism cultivation
+# Query 2: Hyperthermophilic growth conditions
 PREFIX schema: <https://purl.dsmz.de/schema/>
 
 SELECT ?medium ?strain ?temp ?ph ?oxygen
@@ -336,145 +93,144 @@ WHERE {
           schema:growthTemperature ?temp .
   OPTIONAL { ?growth schema:growthPH ?ph }
   OPTIONAL { ?growth schema:hasOxygenRequirement ?oxygen }
-  FILTER(?temp > 45)
+  FILTER(?temp > 70)
 }
 ORDER BY DESC(?temp)
 LIMIT 15
+# Results: Found extremophiles growing at 95-103°C, all anaerobic
+```
 
-# Results: Found extreme thermophiles up to 103°C (strain 5869)
-# All high-temperature conditions are anaerobic
-# Temperature range: 45-103°C
-# Key finding: Database covers extremophiles comprehensively
+```sparql
+# Query 3: Well-annotated chemical ingredients
+PREFIX schema: <https://purl.dsmz.de/schema/>
+
+SELECT ?ingredient ?label ?chebi ?kegg ?pubchem ?cas
+FROM <http://rdfportal.org/dataset/mediadive>
+WHERE {
+  ?ingredient a schema:Ingredient ;
+              rdfs:label ?label .
+  OPTIONAL { ?ingredient schema:hasChEBI ?chebi }
+  OPTIONAL { ?ingredient schema:hasKEGG ?kegg }
+  OPTIONAL { ?ingredient schema:hasPubChem ?pubchem }
+  OPTIONAL { ?ingredient schema:hasCAS ?cas }
+  FILTER(BOUND(?chebi) && BOUND(?kegg))
+}
+ORDER BY ?label
+LIMIT 20
+# Results: Found 20+ ingredients with complete chemical annotations including agar, acids, salts
 ```
 
 ## Interesting Findings
 
-### 1. Specific Entities for Questions
-- **Medium 1**: NUTRIENT AGAR (pH 7.0, complex, well-documented)
-- **Medium 792**: Supports 103°C growth (strain 5869)
-- **Strain DSM 1**: Weizmannia coagulans (BacDive 654)
-- **Ingredient Glucose**: ChEBI 17234, KEGG C00031, PubChem 5793, CAS 50-99-7
-- **20+ marine media**: Specialized for marine environments
+### Specific Entities for Questions
+1. **Hyperthermophile DSM 5869**: Grows at 103°C on medium 792 (highest temperature)
+2. **Marine media group**: 20+ specialized media for marine microorganisms
+3. **Agar ingredient**: Well-annotated with ChEBI 2509, KEGG C08815, CAS 9002-18-0, PubChem 71571511
+4. **2-Mercaptoethanesulfonate**: Reducing agent with ChEBI 17905, KEGG C03576
+5. **Growth temperature range**: 95-103°C for hyperthermophiles, all anaerobic
 
-### 2. Unique Properties
-- **Hierarchical recipes**: Medium → solution → solution_recipe → ingredient
-- **Dual pH specification**: String ranges (hasFinalPH) + numeric (hasMinPH/hasMaxPH)
-- **99% documentation**: Nearly all media have PDF protocol links
-- **Extreme conditions**: Up to 103°C thermophiles
-- **Chemical integration**: Multi-database ingredient cross-references
+### Unique Properties
+- **Hierarchical recipe structure**: medium → solution → solution_recipe → ingredient (4 levels)
+- **Temperature precision**: Integer values enabling exact thermophile queries
+- **Chemical integration**: GMO (41%), CAS (39%), ChEBI (32%) cross-references
+- **BacDive linkage**: 73% of strains (33,350/45,685) have BacDive IDs
+- **DSMZ PDF links**: 99% of media have authoritative protocol documentation
+- **Growth indicators**: Boolean flags for successful cultivation
 
-### 3. Connections to Other Databases
-- **BacDive**: 73% of strains (33,350/45,685) linked
-- **GMO**: 41% ingredients (611/1,489)
-- **CAS Registry**: 39% ingredients (581/1,489)
-- **ChEBI**: 32% ingredients (476/1,489)
-- **PubChem**: 18% ingredients (268/1,489)
-- **KEGG**: 13% ingredients (194/1,489)
-- **DSMZ PDFs**: 99% media (3,256/3,289)
+### Connections to Other Databases
+- **BacDive**: 73% strain coverage (33,350 strains) for phenotypic data
+- **ChEBI**: 32% ingredient coverage (476 ingredients) for chemical ontology
+- **PubChem**: 18% coverage for compound identifiers
+- **KEGG**: 13% coverage for metabolic pathways
+- **CAS Registry**: 39% coverage for chemical identification
+- **GMO**: 41% coverage (highest) for metabolite ontology
+- **DSMZ PDFs**: 99% media have protocol documentation
 
-### 4. Specific Verifiable Facts
-- 3,289 total culture media in database
-- Highest growth temperature: 103°C (strain 5869, medium 792)
-- Average 21.9 compositions per medium
-- 73% of strains have BacDive links
-- 20+ marine-specific media available
-- All extreme thermophiles (>95°C) are anaerobic
+### Verifiable Facts
+1. Total of 3,289 culture media recipes in MediaDive
+2. Highest growth temperature: 103°C (DSM strain 5869)
+3. Total ingredients: 1,489 with varying cross-reference coverage
+4. BacDive linkage: 73% of 45,685 strains
+5. Agar has ChEBI ID 2509 and KEGG ID C08815
+6. Average 21.9 compositions per medium
 
 ## Question Opportunities by Category
 
 ### Precision
-- "What is the pH value of NUTRIENT AGAR (medium/1)?"
-- "What is the maximum growth temperature recorded for any strain in MediaDive?"
-- "What is the BacDive ID for DSM strain number 1 (Weizmannia coagulans)?"
-- "What is the ChEBI identifier for the ingredient Glucose in MediaDive?"
+✅ **Specific media and ingredient IDs**:
+- "What is the ChEBI ID for agar in MediaDive?" (2509)
+- "What medium is used for growing DSM strain 5869?" (medium 792)
+- "What is the KEGG ID for acetic acid?" (C00033)
+- "What is the CAS number for 2-mercaptoethanol?" (60-24-2)
+
+❌ Avoid: Database version, server configuration
 
 ### Completeness
-- "How many marine-specific culture media are available in MediaDive?"
-- "List all ingredients in NUTRIENT AGAR (medium/1) with their concentrations"
-- "What are all the growth conditions with temperatures above 95°C?"
-- "How many strains in MediaDive have BacDive cross-references?"
+✅ **Counts of media, ingredients, strains**:
+- "How many culture media are in MediaDive?" (3,289)
+- "How many ingredients have both ChEBI and KEGG IDs?" (check via query)
+- "How many marine-specific media exist?" (20+ from query)
+- "Count strains linked to BacDive" (73% of 45,685 = ~33,350)
+
+❌ Avoid: Infrastructure statistics
 
 ### Integration
-- "What is the KEGG compound ID for the ingredient Glucose in MediaDive?"
-- "Convert DSM strain 1 to its corresponding BacDive identifier"
-- "Find the CAS Registry number for the ingredient 2-Mercaptoethanol"
-- "Link medium 792 to the strain that grows at 103°C"
+✅ **Cross-database chemical linking**:
+- "Convert MediaDive ingredient agar to ChEBI ID" (2509)
+- "Link MediaDive strain to BacDive ID for DSM 5869"
+- "Find KEGG pathway ID for acetic acid ingredient" (C00033)
+- "What PubChem CID corresponds to MediaDive agar?" (71571511)
+
+❌ Avoid: Server integration metadata
 
 ### Currency
-- "What are the most recently added culture media to MediaDive?"
-- "Which strains have been linked to BacDive most recently?"
-- "What new ingredients with ChEBI cross-references have been added?"
+✅ **Recent cultivation methods**:
+- "What are the current growth conditions for hyperthermophiles?" (up-to-date protocols)
+- "How many extremophile media were recently added?" (if temporal data available)
+- "Current pH range for marine media" (from hasMinPH/hasMaxPH)
+
+❌ Avoid: Database release dates
 
 ### Specificity
-- "What ingredients with both ChEBI and KEGG identifiers are used in anaerobic media?"
-- "Find media specifically designed for archaeal halophiles (Haloterrigena, Natronococcus)"
-- "What is the composition of MARINE THERMOCOCCUS MEDIUM?"
-- "Identify strains from the genus Clostridium that grow above 80°C"
+✅ **Specialized media and extremophiles**:
+- "What medium grows microorganisms at 103°C?" (medium 792)
+- "Which marine media are for Caulobacter?" (Marine Caulobacter Medium)
+- "What ingredient is 2-mercaptoethanesulfonate?" (reducing agent, ChEBI 17905)
+- "Find media for thermophilic methanogens" (Methanosarcina marine medium)
+
+❌ Avoid: Generic database info
 
 ### Structured Query
-- "Find all media with pH between 6.0 and 7.0 that are marked as complex"
-- "List ingredients ordered by their frequency of use across all media"
-- "Retrieve growth conditions for aerobic strains at 37°C"
-- "Find all Archaeon strains with growth temperatures above 80°C and their compatible media"
+✅ **Complex cultivation queries**:
+- "Find media for anaerobic organisms growing above 95°C"
+- "List ingredients with ChEBI ID AND CAS number AND molecular formula"
+- "Which strains grow on marine media at pH 7.0-7.5?"
+- "Find complex media (isComplex=true) for thermophiles with BacDive links"
+
+❌ Avoid: Infrastructure queries
 
 ## Notes
 
-### Database Characteristics
-- **DSMZ authoritative source**: German Collection standard media
-- **Comprehensive documentation**: 99% media have PDF protocols
-- **Extremophile coverage**: Thermophiles up to 103°C
-- **Multi-kingdom**: Bacteria, Archaea, Fungi, Yeast, Microalgae, Phages
-- **Hierarchical organization**: Medium → solution → recipe → ingredient
-- **Growth-validated**: Conditions based on actual cultivation success
+### Limitations
+- **Cross-reference coverage varies**: GMO (41%), CAS (39%), ChEBI (32%), PubChem (18%), KEGG (13%)
+- **Composition queries can timeout**: 72K+ composition records need medium filtering
+- **pH ranges as strings**: hasFinalPH is string "7.0-7.2", numeric hasMinPH/hasMaxPH available
+- **Growth indicators partial**: Not all growth conditions have oxygen requirement specified
+- **BacDive coverage**: 27% of strains lack BacDive links
 
-### Limitations and Challenges
-1. **Sparse cross-references**: Chemical IDs vary by database (13-41% coverage)
-2. **Composition complexity**: ~72K composition entries require medium filtering
-3. **Dual pH formats**: String ranges + numeric values need careful handling
-4. **Optional ingredients**: Not all recipe components are mandatory
-5. **No negative data**: Only successful growth conditions recorded
+### Best Practices
+1. **Keyword search**: Use `bif:contains` for media labels, groups, species names
+2. **Chemical lookups**: Use OPTIONAL for cross-references (partial coverage)
+3. **Temperature queries**: Integer filtering is efficient and precise
+4. **Composition queries**: Always filter by specific medium OR add LIMIT
+5. **Cross-reference filters**: Use `FILTER(BOUND(?chebi) || BOUND(?kegg))` for "at least one"
+6. **Thermophile discovery**: Filter `schema:growthTemperature > [threshold]`
+7. **Marine organisms**: Search with `bif:contains "'marine'"` on labels
 
-### Best Practices for Querying
-1. **Use bif:contains for keywords**: Not FILTER CONTAINS
-2. **OPTIONAL for cross-references**: Handle partial coverage gracefully
-3. **Filter compositions by medium**: Avoid timeout on 72K entries
-4. **Numeric filtering efficient**: Use for pH and temperature ranges
-5. **LIMIT 30-50 recommended**: For exploration queries
-6. **Check both pH formats**: hasFinalPH (string) and hasMinPH/hasMaxPH (numeric)
-7. **FROM clause recommended**: Specify graph for clarity
-
-### Data Quality Observations
-- **High documentation coverage**: 99% media have PDF links
-- **Good BacDive integration**: 73% strains linked
-- **Variable chemical IDs**: GMO (41%) > CAS (39%) > ChEBI (32%)
-- **Concentration precision**: Gram per liter specified
-- **Temperature precision**: Integer degrees Celsius
-- **Taxonomic consistency**: Clear Bacteria/Archaea/Fungi classification
-
-### Integration Opportunities
-- **BacDive**: Via hasBacDiveID for phenotypic data
-- **ChEBI**: Via hasChEBI for chemical ontology
-- **KEGG**: Via hasKEGG for metabolic pathways
-- **PubChem**: Via hasPubChem for chemical structures
-- **CAS Registry**: Via hasCAS for chemical identification
-- **DSMZ PDFs**: Via hasLinkToSource for protocols
-- **TogoID**: For systematic cross-database ID conversion
-
-### Question Design Insights
-- **Extreme conditions excellent**: 103°C thermophiles, marine media
-- **Composition queries powerful**: Detailed recipes with concentrations
-- **Cross-reference questions**: Multiple chemical database linkages
-- **Growth compatibility**: Strain-medium-temperature relationships
-- **Marine specialization**: 20+ marine-specific media
-- **pH range queries**: Both string and numeric formats available
-- **Avoid unbounded compositions**: Always filter by specific medium
-
-### Unique Value Propositions
-1. **Standardized recipes**: DSMZ-validated cultivation protocols
-2. **Extremophile coverage**: Thermophiles, halophiles, anaerobes
-3. **Hierarchical structure**: Complete recipe breakdown
-4. **Growth-validated conditions**: Based on actual cultivation success
-5. **Multi-database chemical IDs**: GMO, CAS, ChEBI, KEGG, PubChem
-6. **Authoritative documentation**: 99% PDF protocol coverage
-7. **BacDive integration**: 73% strain linkage to phenotypic database
-8. **Marine specialization**: Extensive marine organism media
+### Data Quality Notes
+- **DSMZ authority**: 99% media have PDF protocol links (authoritative source)
+- **Chemical accuracy**: CAS numbers provide unambiguous identification
+- **Temperature precision**: Integer values enable exact queries
+- **Hierarchical recipes**: Solution-based structure provides detailed protocols
+- **Growth validation**: hasGrowthIndicator flags successful cultivations
+- **Strain provenance**: DSM numbers link to DSMZ culture collection

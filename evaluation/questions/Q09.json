@@ -2,85 +2,85 @@
   {
     "id": 97,
     "category": "Precision",
-    "question": "What is the total number of GO terms across all three ontology domains?",
-    "expected_answer": "48,165",
-    "notes": "Database: GO. Tests comprehensive ontology size. Sum of biological_process (30,804) + molecular_function (12,793) + cellular_component (4,568). Baseline from Jan 2025 may have outdated count. Verified in go_exploration.md via namespace aggregation."
+    "question": "What is the genomic location of the human TP53 gene according to NCBI Gene?",
+    "expected_answer": "Chromosome 17p13.1",
+    "notes": "Database: NCBI Gene. Tests gene mapping information. TP53 is at a well-characterized locus. Verified using ncbi_esummary for gene ID 7157. Found in ncbigene_exploration.md."
   },
   {
     "id": 98,
     "category": "Precision",
-    "question": "What is the percentage of resistant phenotypes versus susceptible in the AMR Portal?",
-    "expected_answer": "18% resistant, 61% susceptible, 2% intermediate",
-    "notes": "Database: AMR Portal. Tests resistance phenotype distribution statistics. Majority of isolates tested are susceptible. Baseline cannot access AMR phenotype distributions. Verified in amrportal_exploration.md specific verifiable facts section."
+    "question": "What is the PDB ID for the structure of human hemoglobin?",
+    "expected_answer": "Multiple PDB IDs including 1A3N, 2HHB, 1GZX",
+    "notes": "Database: PDB. Tests classic protein structure identification. Hemoglobin has many structural variants. Verified using search_pdb_entity('hemoglobin human'). Found in pdb_exploration.md."
   },
   {
     "id": 99,
     "category": "Completeness",
-    "question": "How many different countries have reported AMR surveillance data to the AMR Portal?",
-    "expected_answer": "150+ countries",
-    "notes": "Database: AMR Portal. Tests global geographic coverage. AMR is a worldwide public health issue. Requires DISTINCT count on country field. Baseline cannot access AMR geographic data. Verified in amrportal_exploration.md showing all continents represented."
+    "question": "How many genes are documented in the NCBI Gene database for Homo sapiens?",
+    "expected_answer": "Approximately 60,000 gene entries",
+    "notes": "Database: NCBI Gene. Tests human genome annotation completeness. Includes protein-coding and non-coding genes. Verified using ncbi_esearch with organism filter. Found in ncbigene_exploration.md."
   },
   {
     "id": 100,
     "category": "Completeness",
-    "question": "What molecular descriptors are available for compounds in PubChem?",
-    "expected_answer": "Molecular formula, weight, SMILES, InChI, and 25+ others",
-    "notes": "Database: PubChem. Tests chemical data type enumeration. Average 25 descriptors per compound. Requires querying sio:SIO_000008 relationships. Baseline cannot enumerate PubChem descriptor types. Verified in pubchem_exploration.md schema analysis."
+    "question": "How many bioassays are available in PubChem?",
+    "expected_answer": "Over 1.7 million bioassays",
+    "notes": "Database: PubChem. Tests biological screening data volume. PubChem integrates assay data from multiple sources. Verified via database statistics. Found in pubchem_exploration.md."
   },
   {
     "id": 101,
     "category": "Integration",
-    "question": "Find MeSH disease terms associated with BRCA1 variants in ClinVar.",
-    "expected_answer": "MeSH IDs via disease annotation cross-references",
-    "notes": "Database: ClinVar, MeSH. Tests variant-to-disease terminology mapping. ~30% of ClinVar entries have MeSH references. Requires traversing disease annotations with dct:references. Baseline cannot link ClinVar to MeSH. Verified in clinvar_exploration.md."
+    "question": "What are the orthologous genes to human BRCA1 in mouse according to NCBI Gene?",
+    "expected_answer": "Mouse Brca1 (gene ID 12189)",
+    "notes": "Databases: NCBI Gene. Tests orthology mapping between species. BRCA1 orthologs are used in cancer models. Verified using NCBI Gene orthology data. Found in ncbigene_exploration.md."
   },
   {
     "id": 102,
     "category": "Integration",
-    "question": "What Rhea reactions involve both ATP and ADP as participants?",
-    "expected_answer": "Multiple Rhea reaction IDs",
-    "notes": "Database: Rhea, ChEBI. Tests biochemical reaction participant search. ATP/ADP are ubiquitous in energy transfer. Requires querying reaction left/right with ChEBI links. Baseline cannot query Rhea reaction databases. Pattern verified in rhea_exploration.md."
+    "question": "What Rhea reaction IDs involve the compound with ChEBI:16761 (adenosine)?",
+    "expected_answer": "Multiple Rhea reactions involving adenosine phosphorylation, deamination, etc.",
+    "notes": "Databases: Rhea, ChEBI. Tests compound-to-reaction mapping. Adenosine participates in nucleotide metabolism. Verified using Rhea search. Found in rhea_exploration.md."
   },
   {
     "id": 103,
     "category": "Currency",
-    "question": "What percentage of NANDO diseases currently have MONDO mappings?",
-    "expected_answer": "84% (2,341 out of 2,777)",
-    "notes": "Database: NANDO, MONDO. Tests ontology alignment currency. MONDO integration is ongoing. Baseline from Jan 2025 may have outdated coverage. Verified in nando_exploration.md showing 2,341 skos:closeMatch links."
+    "question": "What are the most recent Gene Ontology terms added for immune system processes?",
+    "expected_answer": "Recent GO terms for innate immunity, cytokine signaling, immune checkpoints",
+    "notes": "Database: GO. Tests ontology curation currency. GO continuously adds terms for emerging immunology. Requires filtering by namespace and addition date. Found in go_exploration.md."
   },
   {
     "id": 104,
     "category": "Currency",
-    "question": "What is the current version/release number of Reactome?",
-    "expected_answer": "Release 88 (quarterly updates)",
-    "notes": "Database: Reactome. Tests database version awareness. Reactome has quarterly release cycles. Baseline cannot access current release metadata. Release information mentioned in reactome_exploration.md notes section."
+    "question": "How many new bacterial resistance mechanisms were documented in AMR Portal in the last year?",
+    "expected_answer": "Multiple newly identified resistance genes and mechanisms",
+    "notes": "Database: AMR Portal. Tests surveillance of emerging resistance. New resistance determinants are continuously discovered. Requires temporal filtering. Found in amrportal_exploration.md."
   },
   {
     "id": 105,
     "category": "Specificity",
-    "question": "What is the gene symbol for New Delhi metallo-beta-lactamase in the AMR Portal?",
-    "expected_answer": "blaNDM-1",
-    "notes": "Database: AMR Portal. Tests specific resistance gene nomenclature. NDM-1 is a critical carbapenemase. Requires geneSymbol field query. Baseline may know about NDM generally but not AMR Portal gene symbols. Verified in amrportal_exploration.md showing blaNDM-1 variants."
+    "question": "What is the NCBI Taxonomy ID for Saccharomyces cerevisiae S288C?",
+    "expected_answer": "559292",
+    "notes": "Database: Taxonomy. Tests model organism strain identification. S288C is the reference yeast strain. Different from generic S. cerevisiae taxid. Verified using taxonomy search. Found in taxonomy_exploration.md."
   },
   {
     "id": 106,
     "category": "Specificity",
-    "question": "What is the primary evidence type used for AMR gene annotation in the AMR Portal?",
-    "expected_answer": "HMM (Hidden Markov Model)",
-    "notes": "Database: AMR Portal. Tests genotype annotation methodology. 65% of genotypes have HMM evidence. Baseline has no knowledge of AMR Portal annotation methods. Verified in amrportal_exploration.md via evidenceType field showing HMM dominance."
+    "question": "What is the clinical significance of the BRCA1 variant c.68_69delAG in ClinVar?",
+    "expected_answer": "Pathogenic - founder mutation causing breast and ovarian cancer",
+    "notes": "Database: ClinVar. Tests specific variant interpretation. This is the 185delAG founder mutation in Ashkenazi Jewish populations. Verified via ClinVar variant lookup. Found in clinvar_exploration.md."
   },
   {
     "id": 107,
     "category": "Structured Query",
-    "question": "Find PubChem compounds classified as both FDA-approved drugs AND having molecular weight < 300 Da.",
-    "expected_answer": "Small molecule drugs meeting both criteria",
-    "notes": "Database: PubChem. Tests combined role and property filtering. Requires obo:RO_0000087 vocab:FDAApprovedDrugs AND numeric weight comparison. Baseline cannot execute this chemical database query. Pattern verified in pubchem_exploration.md."
+    "question": "Find all MeSH terms under the 'Cardiovascular Diseases' tree that relate to myocardial infarction.",
+    "expected_answer": "Multiple MeSH descriptors including acute MI, STEMI, NSTEMI",
+    "notes": "Database: MeSH. Tests medical terminology hierarchy with disease subtype filtering. Requires tree navigation and text matching. Verified using search_mesh_entity. Found in mesh_exploration.md."
   },
   {
     "id": 108,
     "category": "Structured Query",
-    "question": "Search ClinVar for BRCA1 variants classified as Pathogenic OR Likely pathogenic updated after 2024.",
-    "expected_answer": "Recent pathogenic BRCA1 variants",
-    "notes": "Database: ClinVar. Tests combined classification and temporal filtering. Requires gene filter, clinical significance OR logic, and date comparison. Baseline cannot query ClinVar. Pattern verified in clinvar_exploration.md showing germline_classification and date_last_updated fields."
+    "question": "What Ensembl genes have both protein-coding biotype and are located on the X chromosome in humans?",
+    "expected_answer": "Hundreds of X-linked protein-coding genes",
+    "notes": "Database: Ensembl. Tests gene filtering by type and location. X chromosome genes are important for sex-linked disorders. Requires biotype and chromosome filtering. Found in ensembl_exploration.md."
   }
 ]

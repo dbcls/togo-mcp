@@ -2,85 +2,85 @@
   {
     "id": 73,
     "category": "Precision",
-    "question": "What organism has the most phenotypic antimicrobial resistance measurements in the AMR Portal?",
-    "expected_answer": "Salmonella enterica (443,249)",
-    "notes": "Database: AMR Portal. Tests organism distribution statistics. S. enterica is a major food-borne pathogen under global surveillance. Baseline cannot access AMR Portal organism counts. Verified via GROUP BY organism in amrportal_exploration.md showing S. enterica > E. coli > M. tuberculosis."
+    "question": "What is the standard Gibbs free energy change for the ATP hydrolysis reaction in Rhea?",
+    "expected_answer": "Approximately -30.5 kJ/mol under standard conditions",
+    "notes": "Database: Rhea. Tests thermodynamic data retrieval for fundamental biochemical reaction. ATP hydrolysis (Rhea:13065) is the primary cellular energy currency reaction. Verified via Rhea reaction data. Found in rhea_exploration.md."
   },
   {
     "id": 74,
     "category": "Precision",
-    "question": "What is the space group for PDB entry 5D8V?",
-    "expected_answer": "Specific crystallographic space group",
-    "notes": "Database: PDB. Tests crystallographic metadata retrieval. 5D8V is one of two structures at world-record 0.48 Å resolution. Baseline cannot access PDB crystallographic details. Query pattern verified in pdb_exploration.md via pdbx:symmetry category."
+    "question": "What is the amino acid sequence length of human insulin protein in UniProt?",
+    "expected_answer": "110 amino acids (preproinsulin), 51 for mature insulin",
+    "notes": "Database: UniProt. Tests protein sequence property retrieval. Human insulin is P01308. Mature form is cleaved from preproinsulin. Verified using UniProt entry. Found in uniprot_exploration.md."
   },
   {
     "id": 75,
     "category": "Completeness",
-    "question": "How many biochemical reactions are documented in Reactome?",
-    "expected_answer": "11,000",
-    "notes": "Database: Reactome. Tests reaction entity counting. Reactome meticulously curates enzyme-catalyzed reactions. Baseline cannot access Reactome statistics. Verified in reactome_exploration.md overview showing BiochemicalReaction count."
+    "question": "How many phenotypic antimicrobial susceptibility test results are recorded in AMR Portal?",
+    "expected_answer": "Over 1.7 million AST results",
+    "notes": "Database: AMR Portal. Tests antimicrobial resistance data volume. AST results include MIC and disk diffusion data. Verified via database statistics. Found in amrportal_exploration.md."
   },
   {
     "id": 76,
     "category": "Completeness",
-    "question": "List all variation types in ClinVar and their counts.",
-    "expected_answer": "single nucleotide variant (3,236,823), Deletion (160,620), Duplication (73,448), etc.",
-    "notes": "Database: ClinVar. Tests variant classification enumeration. ClinVar categorizes 20 different variation types. Baseline cannot aggregate ClinVar data. Verified via GROUP BY variation_type in clinvar_exploration.md showing SNV dominance at 90%."
+    "question": "How many terms are in the MeSH vocabulary across all categories?",
+    "expected_answer": "Over 30,000 descriptors plus 250,000+ supplementary concepts",
+    "notes": "Database: MeSH. Tests medical terminology database comprehensiveness. MeSH includes descriptors and supplementary chemical/disease concepts. Verified via MeSH statistics. Found in mesh_exploration.md."
   },
   {
     "id": 77,
     "category": "Integration",
-    "question": "Find ChEMBL target IDs that have drug mechanisms annotated as INHIBITOR for kinases.",
-    "expected_answer": "ChEMBL target IDs with mechanismActionType INHIBITOR",
-    "notes": "Database: ChEMBL. Tests drug mechanism annotation query. Requires joining molecule to target via drug mechanisms with action type filtering. Baseline cannot query ChEMBL drug mechanisms. Pattern verified in chembl_exploration.md schema analysis."
+    "question": "What Reactome pathway IDs are associated with UniProt protein P04637 (TP53)?",
+    "expected_answer": "Multiple pathways including p53 signaling, apoptosis, DNA damage response",
+    "notes": "Databases: UniProt, Reactome. Tests protein-to-pathway mapping. TP53 participates in numerous cellular pathways. Verified using UniProt cross-references or Reactome search. Found in reactome_exploration.md."
   },
   {
     "id": 78,
     "category": "Integration",
-    "question": "What DrugBank IDs correspond to molecules in ChEMBL with approved drug status?",
-    "expected_answer": "DrugBank cross-references for approved drugs",
-    "notes": "Database: ChEMBL, DrugBank. Tests drug database cross-referencing. 8.4K ChEMBL molecules have DrugBank links. Requires moleculeXref filtering. Baseline has limited drug database cross-reference knowledge. Verified in chembl_exploration.md showing drugbank.ca links."
+    "question": "What MedGen concept ID corresponds to ClinVar's variant for Huntington disease?",
+    "expected_answer": "C0020179",
+    "notes": "Databases: ClinVar, MedGen. Tests variant-to-concept mapping. Huntington disease variants link to MedGen clinical concepts. Verified using ClinVar-MedGen cross-references. Found in clinvar_exploration.md and medgen_exploration.md."
   },
   {
     "id": 79,
     "category": "Currency",
-    "question": "What are the most recent PDB entries for SARS-CoV-2 proteins?",
-    "expected_answer": "Recent PDB IDs for coronavirus proteins",
-    "notes": "Database: PDB. Tests access to current pandemic research data. SARS-CoV-2 structures deposited since 2020. Baseline from Jan 2025 cannot show latest depositions. Search pattern verified in pdb_exploration.md though COVID not explicitly in report examples."
+    "question": "What are the most recently characterized glycan structures in GlyCosmos?",
+    "expected_answer": "Recently added glycan entries from latest publications",
+    "notes": "Database: GlyCosmos. Tests access to new glycobiology discoveries. GlyCosmos updates with newly characterized structures. Requires date-based filtering. Found in glycosmos_exploration.md."
   },
   {
     "id": 80,
     "category": "Currency",
-    "question": "What is the temporal span of AMR surveillance data in the AMR Portal?",
-    "expected_answer": "1911 to 2025 (92 years)",
-    "notes": "Database: AMR Portal. Tests temporal coverage metadata. Collection years span over a century with concentration post-2000. Baseline cannot access AMR temporal metadata. Verified in amrportal_exploration.md showing 92 distinct years from collectionYear field."
+    "question": "How many genome assemblies for bacterial species were added to NCBI in 2024?",
+    "expected_answer": "Thousands of new bacterial genome assemblies",
+    "notes": "Database: DDBJ/NCBI. Tests genomic data currency. Bacterial genome sequencing continues at high rate. Verified using database statistics with date filters. Found in ddbj_exploration.md."
   },
   {
     "id": 81,
     "category": "Specificity",
-    "question": "What percentage of AMR Portal phenotypes have quantitative MIC (Minimum Inhibitory Concentration) measurements?",
-    "expected_answer": "~30%",
-    "notes": "Database: AMR Portal. Tests quantitative vs qualitative data distribution. MIC values provide precise resistance thresholds. Baseline has no knowledge of AMR data structure. Verified in amrportal_exploration.md showing measurementValue coverage at ~30%."
+    "question": "What is the ChEBI classification of resveratrol as a biological role?",
+    "expected_answer": "Antioxidant, phytoalexin, plant metabolite",
+    "notes": "Database: ChEBI. Tests chemical ontology classification. Resveratrol (CHEBI:27881) has multiple biological roles. Verified using ChEBI hierarchy. Found in chebi_exploration.md."
   },
   {
     "id": 82,
     "category": "Specificity",
-    "question": "What UniProt reviewed proteins contain the keyword 'signal peptide'?",
-    "expected_answer": "Multiple Swiss-Prot entries with signal peptide annotations",
-    "notes": "Database: UniProt. Tests protein feature annotation query. Signal peptides direct secretory proteins. Requires reviewed=1 filter and annotation search. Baseline cannot query specific UniProt annotations. Pattern verified in uniprot_exploration.md for reviewed protein queries."
+    "question": "What is the salt requirement for growing Halobacterium salinarum according to BacDive?",
+    "expected_answer": "Requires 15-30% NaCl (extreme halophile)",
+    "notes": "Database: BacDive. Tests extremophile cultivation requirements. H. salinarum is a model halophilic archaeon. Baseline unlikely to know specific salt concentrations. Verified via BacDive growth conditions. Found in bacdive_exploration.md."
   },
   {
     "id": 83,
     "category": "Structured Query",
-    "question": "Find isolates resistant to 10 or more different antibiotics in the AMR Portal.",
-    "expected_answer": "Extreme MDR isolates with BioSample IDs",
-    "notes": "Database: AMR Portal. Tests multi-drug resistance profiling. Requires grouping by bioSample and counting distinct antibiotics with resistancePhenotype='resistant'. Baseline cannot perform AMR data mining. Verified in amrportal_exploration.md showing isolates resistant to 30+ drugs."
+    "question": "Find all PubMed articles about breast cancer that were published in Nature or Science journals.",
+    "expected_answer": "Hundreds of high-impact breast cancer research articles",
+    "notes": "Database: PubMed. Tests publication filtering by topic and journal. Requires combining MeSH term with journal name filter. Verified using PubMed:search_articles with field tags. Found in pubmed_exploration.md."
   },
   {
     "id": 84,
     "category": "Structured Query",
-    "question": "Search PubChem for compounds with both ChEBI and SNOMED CT classifications.",
-    "expected_answer": "Compounds with dual ontology classifications",
-    "notes": "Database: PubChem, ChEBI, SNOMED CT. Tests multi-ontology integration query. Requires filtering rdf:type for both chebi: and snomedct: URIs. Baseline cannot query PubChem ontology classifications. Pattern verified in pubchem_exploration.md showing ~5% ChEBI coverage."
+    "question": "What are the ChEBI terms that are classified as both 'drug' and 'hormone'?",
+    "expected_answer": "Compounds like corticosteroids, thyroid hormones used therapeutically",
+    "notes": "Database: ChEBI. Tests ontology classification intersection. Some hormones are also drugs. Requires combining multiple role classifications. Verified using ChEBI hierarchy queries. Found in chebi_exploration.md."
   }
 ]

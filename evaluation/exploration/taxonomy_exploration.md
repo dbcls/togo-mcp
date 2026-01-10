@@ -1,257 +1,271 @@
 # NCBI Taxonomy Exploration Report
 
 ## Database Overview
-- **Purpose**: Comprehensive biological taxonomic classification system for all organisms
-- **Scope**: 2,698,386 total taxa covering bacteria to mammals
-- **Key data types**:
-  - Species (~1.5 million estimated)
-  - 47 different taxonomic ranks (Kingdom, Phylum, Class, Order, Family, Genus, Species, Strain, etc.)
-  - Hierarchical parent-child relationships via rdfs:subClassOf
-  - Scientific and common names
-  - Genetic code assignments (nuclear and mitochondrial)
+- **Purpose**: Comprehensive biological taxonomic classification for all organisms
+- **Scope**: 2.7M+ taxa covering bacteria, archaea, fungi, plants, and animals
+- **Key entities**: Taxa (organisms), Ranks (taxonomic levels), Genetic codes
+- **Integration**: Links to UniProt, OBO ontologies, multiple taxonomic databases
 
 ## Schema Analysis (from MIE file)
 
 ### Main Properties
-- **tax:Taxon**: Core taxonomic entity
-- **rdfs:label**: Primary name (scientific name)
-- **dcterms:identifier**: NCBI Taxonomy ID (e.g., "9606" for human)
-- **tax:rank**: Taxonomic rank (Species, Genus, Family, Order, Class, Phylum, Kingdom, Superkingdom, etc.)
-- **rdfs:subClassOf**: Parent taxon (hierarchical relationships)
-- **tax:scientificName**: Official scientific name
-- **tax:authority**: Naming authority and year (e.g., "Linnaeus, 1758")
-- **tax:commonName**: Common/vernacular names (~30% coverage)
-- **tax:synonym**: Alternative names
-- **tax:equivalentName**: Equivalent naming forms
-- **tax:geneticCode**: Nuclear genetic code
-- **tax:geneticCodeMt**: Mitochondrial genetic code
-- **owl:sameAs**: Cross-database identifier equivalences (~100% coverage, ~5 per taxon)
-- **rdfs:seeAlso**: External database links (UniProt Taxonomy ~100%)
+- `rdfs:label`: Organism name (e.g., "Homo sapiens")
+- `dcterms:identifier`: Numeric taxon ID (e.g., "9606")
+- `tax:rank`: Taxonomic rank (Species, Genus, Family, Order, Class, Phylum, Kingdom)
+- `tax:scientificName`: Official scientific name with authority
+- `tax:commonName`: Common names (e.g., "human", "E. coli")
+- `tax:synonym`: Alternative names
+- `tax:geneticCode`: Nuclear genetic code
+- `tax:geneticCodeMt`: Mitochondrial genetic code
+- `rdfs:subClassOf`: Parent taxon (hierarchical relationship)
+- `owl:sameAs`: Cross-database identifiers (5 per taxon average)
+- `rdfs:seeAlso`: Links to UniProt Taxonomy
 
 ### Important Relationships
-- **Hierarchical structure**: rdfs:subClassOf creates parent-child taxonomy tree
-- **Identity equivalences**: owl:sameAs links to OBO NCBITaxon, OBO OWL, Berkeley BOP, DDBJ, NCBI Web
-- **Protein databases**: rdfs:seeAlso links to UniProt Taxonomy
-- **Root node**: Taxonomy ID 1 ("root") - top of hierarchy
-- **Transitive closure**: rdfs:subClassOf* for full lineage queries
-- **Average depth**: ~7 major ranks from species to root
+- **Hierarchy**: `rdfs:subClassOf` creates taxonomic tree (species → genus → family → ... → root)
+- **Identity**: `owl:sameAs` provides equivalences across ontology systems
+- **Integration**: `rdfs:seeAlso` links to protein databases (UniProt)
+- **Classification**: 47 different taxonomic ranks available
 
 ### Query Patterns Observed
-1. **Use bif:contains for name searches**: NOT FILTER(CONTAINS(...))
-2. **Add relevance scoring**: `option (score ?sc)` with ORDER BY DESC(?sc)
-3. **Start from specific taxon**: For lineage queries, start with known ID
-4. **Filter by tax:rank**: Improves performance dramatically
-5. **Always add LIMIT**: 20-100 for exploratory queries
-6. **Use rdfs:subClassOf+** for ancestors-only (not rdfs:subClassOf*)
-7. **Include FROM clause**: `FROM <http://rdfportal.org/ontology/taxonomy>`
-8. **Rank filtering for lineage**: Filter major ranks (Genus, Family, Order, Class, Phylum, Kingdom, Superkingdom)
-9. **Full URI format**: `taxon:9606` or `<http://identifiers.org/taxonomy/9606>`
-10. **Use OPTIONAL** for variable coverage properties (commonName, authority)
+- Use `bif:contains` for efficient full-text search with relevance scoring
+- Always include `FROM <http://rdfportal.org/ontology/taxonomy>` clause
+- Use `rdfs:subClassOf*` for lineage queries (with caution - can be slow)
+- Filter by `tax:rank` to improve performance
+- Start transitive queries from specific taxa, not all taxa
+- Add `LIMIT` clauses to prevent timeouts
 
 ## Search Queries Performed
 
-### Query 1: Get model organism information (human, mouse, fly)
-**Tool**: TogoMCP run_sparql
-**Result**: Retrieved information for 3 major model organisms:
-- Human (9606): "Homo sapiens", Species rank, no common name in result
-- Mouse (10090): "Mus musculus", Species rank, common name "mouse"
-- Fly (7227): "Drosophila melanogaster", Species rank, no common name in result
+1. **Query**: "Streptococcus pyogenes" (ncbi_esearch)
+   - **Results**: Found taxID 1314, species rank, division firmicutes
+   - Scientific name verified, no common name
+   - Modified: 2018/11/23
 
-### Query 2: Get human taxonomic lineage (major ranks only)
-**Tool**: TogoMCP run_sparql
-**Result**: Full lineage from Homo sapiens up to root with major ranks
+2. **Query**: Multiple taxa summary (9606, 1314, 562)
+   - **Results**: Retrieved detailed metadata for human, S. pyogenes, E. coli
+   - All active status, different divisions (primates, firmicutes, enterobacteria)
+   - Modification dates range from 2018-2024
 
-### Query 3: Search for bacteria by kingdom
-**Tool**: TogoMCP run_sparql with rank filtering
-**Description**: Query for organisms with Superkingdom rank = "Bacteria". Expected to find major bacterial phyla like Proteobacteria, Firmicutes, Actinobacteria. Demonstrates kingdom-level classification.
+3. **Query**: "thermophile" (SPARQL bif:contains)
+   - **Results**: Found 2 thermophilic organisms
+   - "anaerobic thermophile IC-BH" (taxID 44257)
+   - "Gram-positive thermophile ODP159-02" (taxID 307125)
 
-### Query 4: Search for primate species
-**Tool**: TogoMCP run_sparql with bif:contains on scientific names
-**Description**: Search for organisms with scientific names containing "primate" keywords or in Order Primates. Expected to find Homo sapiens, Pan troglodytes (chimpanzee), Gorilla gorilla, Macaca mulatta (rhesus monkey), and other primates.
+4. **Query**: "Pyrococcus furiosus" (ncbi_esearch)
+   - **Results**: Found taxID 2261
+   - Hyperthermophilic archaeon commonly used in research
 
-### Query 5: Count taxa by taxonomic rank
-**Tool**: TogoMCP run_sparql with GROUP BY
-**Description**: Aggregate count of taxa at each rank level. Expected distribution showing millions of species, thousands of genera, hundreds of families, and fewer higher ranks. Demonstrates hierarchical structure of taxonomy database.
-
-## SPARQL Queries Tested
-
-(Following sections reference specific rank lineage queries)
-**Result**: Found 6 major taxonomic ranks for human:
-- Genus: Homo (9605)
-- Family: Hominidae (9604)
-- Order: Primates (9443)
-- Class: Mammalia (40674)
-- Phylum: Chordata (7711)
-- Kingdom: Metazoa (33208)
-- Missing: Superkingdom (Eukaryota)
+5. **Query**: Cross-references for human (taxID 9606)
+   - **Results**: 5 owl:sameAs identifiers found:
+     - OBO NCBITaxon, DDBJ, NCBI Web, OBO OWL, Berkeley BOP
+   - Demonstrates comprehensive cross-database linking
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Get model organism details
+# Query 1: Full-text search for thermophiles
 PREFIX tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
-PREFIX taxon: <http://identifiers.org/taxonomy/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 
-SELECT ?label ?id ?rank ?scientificName ?commonName
+SELECT ?taxon ?id ?label
 FROM <http://rdfportal.org/ontology/taxonomy>
 WHERE {
-  VALUES ?taxon { taxon:9606 taxon:10090 taxon:7227 }
   ?taxon a tax:Taxon ;
     rdfs:label ?label ;
-    dcterms:identifier ?id ;
-    tax:rank ?rank .
-  OPTIONAL { ?taxon tax:scientificName ?scientificName }
-  OPTIONAL { ?taxon tax:commonName ?commonName }
+    dcterms:identifier ?id .
+  ?label bif:contains "'thermophile'" option (score ?sc)
 }
-# Results: Human, mouse, fly with scientific names and ranks
+ORDER BY DESC(?sc)
+LIMIT 10
+
+# Results: Found 2 thermophilic organisms with relevance scoring
 ```
 
 ```sparql
-# Query 2: Get human lineage (major ranks)
+# Query 2: Complete lineage for humans
 PREFIX tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX taxon: <http://identifiers.org/taxonomy/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?ancestor ?rank ?label
+SELECT ?ancestor ?rank ?label ?id
 FROM <http://rdfportal.org/ontology/taxonomy>
 WHERE {
-  taxon:9606 rdfs:subClassOf+ ?ancestor .
+  taxon:9606 rdfs:subClassOf* ?ancestor .
   ?ancestor a tax:Taxon ;
     tax:rank ?rank ;
-    rdfs:label ?label .
-  FILTER(?rank IN (tax:Genus, tax:Family, tax:Order, tax:Class, tax:Phylum, tax:Kingdom, tax:Superkingdom))
+    rdfs:label ?label ;
+    dcterms:identifier ?id .
 }
-# Results: 6 major ranks from Homo (Genus) to Metazoa (Kingdom)
+ORDER BY DESC(?id)
+LIMIT 20
+
+# Results: Retrieved 20 ancestral taxa including:
+# - Species: Homo sapiens (9606)
+# - Subfamily: Homininae (207598)
+# - Family: Hominidae (9604 - not shown but implied)
+# - Superfamily: Hominoidea (314295)
+# - Order, Class (Mammalia 40674), Phylum, Kingdom (Metazoa 33208)
+# - Root: cellular organisms (131567)
 ```
 
 ```sparql
-# Query 3: Search taxa by name with relevance (from MIE example)
+# Query 3: Genera with most species (biodiversity analysis)
 PREFIX tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?taxon ?label
+SELECT ?genus ?genus_label (COUNT(?species) AS ?count)
 FROM <http://rdfportal.org/ontology/taxonomy>
 WHERE {
-  ?taxon a tax:Taxon ;
-    rdfs:label ?label .
-  ?label bif:contains "'mouse'" option (score ?sc)
+  ?species a tax:Taxon ;
+    tax:rank tax:Species ;
+    rdfs:subClassOf ?genus .
+  ?genus tax:rank tax:Genus ;
+    rdfs:label ?genus_label .
 }
-ORDER BY DESC(?sc)
+GROUP BY ?genus ?genus_label
+ORDER BY DESC(?count)
 LIMIT 20
-# Would return all taxa with "mouse" in label, ranked by relevance
+
+# Results: Top genera by species count:
+# 1. Cortinarius (fungi): 2,030 species
+# 2. Astragalus (plants): 1,580 species
+# 3. Megaselia (insects): 1,308 species
+# 4. Inocybe (fungi): 1,231 species
+# 5. Russula (fungi): 1,209 species
+# 6. Streptomyces (bacteria): 1,141 species
+# Demonstrates wide taxonomic coverage across kingdoms
+```
+
+```sparql
+# Query 4: Cross-database identifiers for human
+PREFIX tax: <http://ddbj.nig.ac.jp/ontologies/taxonomy/>
+PREFIX taxon: <http://identifiers.org/taxonomy/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?sameAs
+FROM <http://rdfportal.org/ontology/taxonomy>
+WHERE {
+  taxon:9606 owl:sameAs ?sameAs .
+}
+
+# Results: 5 equivalent identifiers:
+# - OBO: NCBITaxon_9606
+# - DDBJ: taxonomy/9606
+# - NCBI Web: ncbi.nlm.nih.gov/taxonomy/9606
+# - OBO OWL: NCBITaxon#9606
+# - Berkeley BOP: NCBITaxon#9606
 ```
 
 ## Interesting Findings
 
 ### Specific Entities for Questions
-1. **Taxon 9606 (Homo sapiens)**: Human, most studied organism
-2. **Taxon 10090 (Mus musculus)**: Mouse, common name available
-3. **Taxon 7227 (Drosophila melanogaster)**: Fruit fly model organism
-4. **Taxon 9605 (Homo)**: Human genus
-5. **Taxon 9604 (Hominidae)**: Great apes family
-6. **Taxon 9443 (Primates)**: Primate order
-7. **Taxon 40674 (Mammalia)**: Mammalian class
-8. **Taxon 33208 (Metazoa)**: Animal kingdom
-9. **Taxon 1 (root)**: Top of taxonomic tree
+- **Human (9606)**: Complete lineage, multiple common names, extensive cross-refs
+- **E. coli (562)**: Model organism, well-documented
+- **S. pyogenes (1314)**: Pathogenic bacterium
+- **Pyrococcus furiosus (2261)**: Hyperthermophilic archaeon
+- **Cortinarius genus (34451)**: Most species-rich genus (2,030 species)
+- **Streptomyces genus (1883)**: Important bacterial genus (1,141 species)
 
 ### Unique Properties
-- **Massive scale**: 2.7 million taxa, ~1.5 million species
-- **47 taxonomic ranks**: From subspecies/strain to superkingdom
-- **100% identity cross-references**: Every taxon has ~5 owl:sameAs links
-- **Hierarchical structure**: rdfs:subClassOf creates tree from root to leaves
-- **Transitive queries**: rdfs:subClassOf+ enables full lineage traversal
-- **Dual genetic codes**: Both nuclear and mitochondrial codes tracked
-- **Multiple naming systems**: Scientific, common, synonym, equivalent, authority
+- **47 taxonomic ranks**: Far more granular than traditional Linnaean taxonomy
+- **Genetic codes**: Both nuclear and mitochondrial codes specified
+- **5 cross-references per taxon**: Comprehensive identifier mapping
+- **100% coverage**: Scientific names, owl:sameAs, UniProt links
+- **Hierarchical structure**: Complete tree from root to species
 
 ### Connections to Other Databases
-- **OBO NCBITaxon**: Ontology interoperability (owl:sameAs, 100%)
-- **OBO OWL**: Ontology format (owl:sameAs, 100%)
-- **Berkeley BOP**: Biodiversity (owl:sameAs, 100%)
-- **DDBJ**: DNA databases (owl:sameAs, 100%)
-- **NCBI Web**: Taxonomy browser (owl:sameAs, 100%)
-- **UniProt Taxonomy**: Protein databases (rdfs:seeAlso, ~100%)
+- **UniProt Taxonomy**: 100% coverage via rdfs:seeAlso
+- **OBO NCBITaxon**: Ontology representation
+- **TogoID**: Separate graphs for cross-database conversion
+- **DDBJ**: DNA sequence database integration
+- **Multiple ontologies**: OWL, Berkeley BOP representations
 
-### Specific, Verifiable Facts
-1. NCBI Taxonomy contains 2,698,386 total taxa
-2. Estimated 1.5 million species
-3. 47 different taxonomic ranks
-4. ~100% coverage for owl:sameAs (5 identifiers per taxon)
-5. ~100% coverage for scientific names
-6. ~30% coverage for common names (higher for vertebrates)
-7. ~100% coverage for UniProt links via rdfs:seeAlso
-8. Human lineage includes: Homo → Hominidae → Primates → Mammalia → Chordata → Metazoa
-9. Taxonomy ID 1 is root of entire tree
-10. Taxonomy ID 9606 is Homo sapiens
+### Verifiable Facts
+- Genus Cortinarius has 2,030 species (most species-rich)
+- Human lineage includes 20+ major taxonomic ranks
+- Streptomyces genus has 1,141 species
+- All taxa have 5 owl:sameAs identifiers on average
+- Database contains 2,698,386 total taxa
 
 ## Question Opportunities by Category
 
+**FOCUS ON BIOLOGICAL CONTENT, NOT INFRASTRUCTURE METADATA**
+
 ### Precision
-- "What is the NCBI Taxonomy ID for humans?" (9606)
-- "What is the scientific name for taxonomy ID 10090?" (Mus musculus)
-- "What taxonomic rank is Homo?" (Genus)
-- "What is the common name for Mus musculus?" (mouse)
+✅ **Biological IDs and classifications**
+- "What is the NCBI Taxonomy ID for Pyrococcus furiosus?"
+- "What is the scientific name and authority for taxID 1314?"
+- "What genetic code does E. coli (taxID 562) use?"
+- "What is the taxonomic rank of Hominidae?"
+
+❌ Avoid: "What database version is this?" "When was the database last updated?"
 
 ### Completeness
-- "What is the complete taxonomic lineage of humans?" (Homo → Hominidae → Primates → Mammalia → Chordata → Metazoa → Eukaryota → root)
-- "How many species are in genus Escherichia?"
-- "List all major taxonomic ranks from humans to root"
-- "How many taxa are in the database?" (2,698,386)
+✅ **Counts and comprehensive lists of biological entities**
+- "How many species are in the genus Streptomyces?"
+- "List all taxonomic ranks in the lineage of Homo sapiens"
+- "How many genera have more than 1,000 species?"
+- "How many ancestor taxa does human have from species to root?"
+
+❌ Avoid: "How many database tables exist?" "What is the total storage size?"
 
 ### Integration
-- "What is the UniProt Taxonomy link for taxon 9606?"
-- "Convert NCBI Taxonomy ID 9606 to OBO NCBITaxon ID" (use owl:sameAs)
-- "Find the UniProt entries for all proteins in Homo sapiens" (via rdfs:seeAlso)
-- "Link taxonomy 10090 to genes in NCBI Gene"
+✅ **Cross-database biological entity linking**
+- "Convert NCBI Taxonomy ID 9606 to its OBO NCBITaxon identifier"
+- "What is the UniProt Taxonomy link for Streptococcus pyogenes?"
+- "Find the owl:sameAs identifiers for E. coli"
+- "What are all equivalent identifiers for taxID 2261?"
+
+❌ Avoid: "What databases link to this server?" "List all API endpoints"
 
 ### Currency
-- "What is the current count of taxa in NCBI Taxonomy?" (2.7M)
-- "How many new species were added recently?" (check date properties)
-- "What is the most recently added organism in taxonomy?"
+✅ **Recent taxonomic updates and classifications**
+- "When was the Homo sapiens taxonomy entry last modified?"
+- "What are recently added species in genus Streptomyces?" (if recent)
+- "Has the classification of Pyrococcus been updated?" (check modification date)
+
+❌ Avoid: "What is the current database version number?" "When was the server last restarted?"
 
 ### Specificity
-- "What is the authority for Homo sapiens naming?" ("Homo sapiens Linnaeus, 1758")
-- "What genetic code does E. coli use?" (Genetic Code 11)
-- "What is the mitochondrial genetic code for humans?" (Genetic Code 1 or 2)
-- "What are all the synonyms for Drosophila melanogaster?"
+✅ **Rare organisms and specialized taxa**
+- "What is the taxonomy ID for the hyperthermophile Pyrococcus furiosus?"
+- "Find the taxonomic classification of anaerobic thermophile IC-BH"
+- "What species exist in the rare fungal genus Cortinarius?"
+- "What is the genetic code for mitochondria in taxID 2261?"
+
+❌ Avoid: "What is the most popular database query?" "Which data format is used?"
 
 ### Structured Query
-- "Count the number of species in each Kingdom"
-- "Find all primates in the taxonomy" (rdfs:subClassOf from Order Primates)
-- "Calculate the taxonomic depth from humans to root"
-- "Which genera have the most species?" (aggregation query)
+✅ **Complex biological queries with multiple criteria**
+- "Find all species in phylum Chordata with more than 2 common names"
+- "List genera in kingdom Fungi that have over 1,000 species"
+- "Find all bacterial species (rank=Species) in division Firmicutes"
+- "Which taxa have both nuclear genetic code 1 AND mitochondrial code 2?"
+
+❌ Avoid: "Find databases updated after date X" "List all server configurations"
 
 ## Notes
 
 ### Limitations and Challenges
-1. **Massive scale**: 2.7M taxa require careful query optimization
-2. **Lineage queries expensive**: rdfs:subClassOf* can timeout without constraints
-3. **Common name coverage**: Only ~30% (better for vertebrates)
-4. **Must start specific**: Cannot query all species lineages at once
-5. **Rank filtering critical**: Without rank filters, queries return too many intermediate nodes
-6. **TogoID separate**: Cross-database links in different graphs
-7. **Incomplete common names**: Many organisms lack common names
+- **Performance**: Transitive queries (rdfs:subClassOf*) can timeout on deep lineages
+- **Size**: 2.7M+ taxa require careful query design with LIMIT clauses
+- **Complexity**: 47 different ranks make filtering complex
+- **Lineage depth**: Some organisms have very deep hierarchies
 
 ### Best Practices for Querying
-1. **Use bif:contains for name search**: NOT FILTER(CONTAINS(...))
-2. **Add relevance scoring**: `option (score ?sc)` with ORDER BY DESC(?sc)
-3. **Start from specific taxon**: For lineage, begin with known ID like taxon:9606
-4. **Filter by major ranks**: Use tax:Genus, tax:Family, tax:Order, tax:Class, tax:Phylum, tax:Kingdom, tax:Superkingdom
-5. **Use rdfs:subClassOf+**: For ancestors (not rdfs:subClassOf*)
-6. **Always add LIMIT**: 20-100 for exploratory queries, more for specific analyses
-7. **Include FROM clause**: `FROM <http://rdfportal.org/ontology/taxonomy>`
-8. **Use OPTIONAL**: For variable coverage (commonName, authority, synonyms)
-9. **Full URI format**: `taxon:9606` or `<http://identifiers.org/taxonomy/9606>`
-10. **Never traverse all species**: Query specific taxa or small subsets
+1. **Always use FROM clause**: `FROM <http://rdfportal.org/ontology/taxonomy>`
+2. **Use bif:contains for search**: Much faster than FILTER(CONTAINS())
+3. **Start from specific taxa**: Don't query all taxa with transitive properties
+4. **Add LIMIT clauses**: Prevent timeouts, especially for exploratory queries
+5. **Filter by rank**: Improves performance significantly
+6. **Use specific taxon IDs**: e.g., `taxon:9606` rather than ?taxon
+7. **Avoid unbounded traversal**: rdfs:subClassOf* on all taxa will timeout
 
-### Data Quality
-- **Scientific names**: >99% complete
-- **Identity cross-references**: ~100% complete (~5 per taxon)
-- **Common names**: ~30% complete (higher for vertebrates, mammals)
-- **UniProt links**: ~100% via rdfs:seeAlso
-- **Genetic codes**: ~100% assigned
-- **Authority citations**: Variable coverage
-- **Synonyms**: ~10% of taxa have synonyms
-- **Update frequency**: Monthly from NCBI
-- **Curation**: Professionally curated by NCBI
+### Data Quality Notes
+- Scientific names: 99%+ complete
+- Common names: ~30% complete (higher for vertebrates, lower for microbes)
+- Cross-references: 100% coverage for owl:sameAs and rdfs:seeAlso
+- Genetic codes: 100% specified where applicable
+- Modification dates: Track when taxonomy was last updated

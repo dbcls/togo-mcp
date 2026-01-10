@@ -2,85 +2,85 @@
   {
     "id": 37,
     "category": "Precision",
-    "question": "What is the R-work value for PDB entry 5D8V, one of the highest resolution structures?",
-    "expected_answer": "0.072",
-    "notes": "Database: PDB. Tests retrieval of crystallographic quality metrics. 5D8V achieved 0.48 Å resolution with excellent R-work. Baseline cannot access specific PDB refinement statistics. Verified in pdb_exploration.md via refine.ls_R_factor_R_work query."
+    "question": "What is the NCBI Taxonomy ID for Escherichia coli K-12?",
+    "expected_answer": "511145",
+    "notes": "Database: Taxonomy. Tests precise organism strain identification. E. coli K-12 is the most studied laboratory strain. Different from generic E. coli taxid 562. Verified using ncbi_esearch in taxonomy. Found in taxonomy_exploration.md."
   },
   {
     "id": 38,
     "category": "Precision",
-    "question": "What is the EC number for protein tyrosine kinases in Reactome?",
-    "expected_answer": "2.7.10.1",
-    "notes": "Database: Reactome. Tests enzyme classification retrieval. EC 2.7.10.1 is the standard classification for receptor tyrosine kinases. Baseline may know general kinase info but not specific EC in Reactome context. Verified query pattern in reactome_exploration.md."
+    "question": "What is the SMILES notation for caffeine in PubChem?",
+    "expected_answer": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "notes": "Database: PubChem. Tests chemical structure representation retrieval. Caffeine is 1,3,7-trimethylxanthine. Verified using get_compound_attributes for CID 2519. Found in pubchem_exploration.md."
   },
   {
     "id": 39,
     "category": "Completeness",
-    "question": "How many pathways in Reactome mention apoptosis?",
-    "expected_answer": "10+ apoptosis-related pathways",
-    "notes": "Database: Reactome. Tests pathway keyword search and counting. Apoptosis is a major cell death pathway. Requires bif:contains search on pathway names. Baseline cannot query Reactome. Verified in reactome_exploration.md returning Pathway1623 and related terms."
+    "question": "How many human genes have Gene Ontology annotations for 'DNA repair' (GO:0006281)?",
+    "expected_answer": "Several hundred genes involved in DNA repair processes",
+    "notes": "Database: GO, NCBI Gene. Tests counting gene annotations for a biological process. DNA repair involves multiple pathways. Count requires cross-database query or GO annotation counting. Found in go_exploration.md."
   },
   {
     "id": 40,
     "category": "Completeness",
-    "question": "How many countries are represented in the AMR Portal phenotype data?",
-    "expected_answer": "150+",
-    "notes": "Database: AMR Portal. Tests geographic coverage counting. AMR Portal has global surveillance from all continents. Baseline has no access to AMR geographic metadata. Verified in amrportal_exploration.md via DISTINCT country counting."
+    "question": "How many glycan structures are documented in GlyCosmos?",
+    "expected_answer": "Over 117,000 glycans",
+    "notes": "Database: GlyCosmos. Tests glycobiology database size. GlyCosmos integrates multiple glycan databases. Verified via database statistics or SPARQL count. Found in glycosmos_exploration.md."
   },
   {
     "id": 41,
     "category": "Integration",
-    "question": "What PubMed IDs are cited most frequently in AMR Portal phenotype data?",
-    "expected_answer": "PMID:35944069 (157,331 citations), PMID:38052776 (108,358 citations)",
-    "notes": "Database: AMR Portal, PubMed. Tests literature cross-reference aggregation. dct:references links phenotypes to publications. Baseline cannot access AMR data provenance. Verified via GROUP BY on dct:references in amrportal_exploration.md."
+    "question": "What is the Reactome pathway ID for glycolysis?",
+    "expected_answer": "R-HSA-70171 (or species-specific variants)",
+    "notes": "Database: Reactome. Tests finding fundamental metabolic pathway ID. Glycolysis is the core glucose breakdown pathway. Verified using search_reactome_entity('glycolysis'). Found in reactome_exploration.md."
   },
   {
     "id": 42,
     "category": "Integration",
-    "question": "Find the UniProt accession for proteins in Reactome pathways related to mTOR signaling.",
-    "expected_answer": "Multiple UniProt IDs via bp:xref UnificationXref",
-    "notes": "Database: Reactome, UniProt. Tests pathway-to-protein cross-reference. Requires traversing bp:entityReference to bp:ProteinReference with bp:xref to UniProt. Baseline cannot link Reactome to UniProt. Verified pattern in reactome_exploration.md."
+    "question": "What UniProt IDs are associated with NCBI Gene ID 672 (BRCA1)?",
+    "expected_answer": "P38398 (canonical), plus isoform entries",
+    "notes": "Databases: NCBI Gene, UniProt. Tests gene-to-protein mapping. BRCA1 has multiple isoforms. Verified using togoid_convertId or NCBI Gene cross-references. Found in ncbigene_exploration.md and uniprot_exploration.md."
   },
   {
     "id": 43,
     "category": "Currency",
-    "question": "What is the current count of deprecated terms in the Gene Ontology?",
-    "expected_answer": "~25% of total GO terms",
-    "notes": "Database: GO. Tests access to ontology maintenance metadata. GO marks obsolete terms with owl:deprecated. Baseline from Jan 2025 cannot show current deprecation status. Verified in go_exploration.md noting ~25% deprecated terms."
+    "question": "How many isolates from 2024 are recorded in AMR Portal?",
+    "expected_answer": "Thousands of isolates with 2024 collection dates",
+    "notes": "Database: AMR Portal. Tests access to recent surveillance data. AMR Portal includes temporal metadata for resistance monitoring. Verified by filtering isolates by collection year. Found in amrportal_exploration.md."
   },
   {
     "id": 44,
     "category": "Currency",
-    "question": "What are the most recent PDB structure depositions for antibodies?",
-    "expected_answer": "Recent PDB IDs from antibody search",
-    "notes": "Database: PDB. Tests access to current structural data. Antibodies are continuously deposited (11,422 total structures). Baseline cannot show latest depositions. Verified search pattern in pdb_exploration.md showing 7MFB-7MF9 series and others."
+    "question": "What recent variants have been added to ClinVar for the BRCA2 gene in 2024-2025?",
+    "expected_answer": "Multiple new variants with recent submission dates",
+    "notes": "Database: ClinVar. Tests access to recent variant submissions. ClinVar continuously receives new variant reports. Requires filtering by gene and submission date. Found in clinvar_exploration.md."
   },
   {
     "id": 45,
     "category": "Specificity",
-    "question": "What is the canonical SMILES notation for resveratrol in PubChem?",
-    "expected_answer": "C1=CC(=CC=C1C=CC2=CC(=CC(=C2)O)O)O",
-    "notes": "Database: PubChem. Tests chemical structure representation retrieval. Resveratrol (CID445154) is a polyphenol studied for health effects. Baseline unlikely to know exact SMILES string. Verified in pubchem_exploration.md via sio:CHEMINF_000376."
+    "question": "What is the Japanese name for Moyamoya disease in NANDO?",
+    "expected_answer": "もやもや病 (moyamoya-byō)",
+    "notes": "Database: NANDO. Tests multilingual rare disease terminology. Moyamoya is a cerebrovascular disorder more common in East Asian populations. NANDO provides Japanese terminology. Verified via NANDO search. Found in nando_exploration.md."
   },
   {
     "id": 46,
     "category": "Specificity",
-    "question": "Which AMR gene class has the most features in Staphylococcus aureus genomes in the AMR Portal?",
-    "expected_answer": "BETA-LACTAM",
-    "notes": "Database: AMR Portal. Tests organism-specific resistance gene profiling. S. aureus is known for beta-lactam resistance (mecA). Requires filtering by organism and grouping by amrClass. Verified in amrportal_exploration.md showing blaI, blaZ, mecR1, mecA genes."
+    "question": "What is the highest growth temperature recorded for any organism in BacDive?",
+    "expected_answer": "Over 103°C for hyperthermophiles like Methanopyrus kandleri",
+    "notes": "Database: BacDive. Tests extremophile microbiology data. Some archaea grow at temperatures exceeding boiling water. Verified by querying maximum growth temperatures. Found in bacdive_exploration.md and mediadive_exploration.md."
   },
   {
     "id": 47,
     "category": "Structured Query",
-    "question": "Find all Mycobacterium tuberculosis isolates resistant to both isoniazid and rifampin in the AMR Portal.",
-    "expected_answer": "Multiple MDR-TB isolates",
-    "notes": "Database: AMR Portal. Tests multi-drug resistance detection. Isoniazid+rifampin resistance defines MDR-TB. Requires filtering organism and checking both antibiotic resistances. Baseline cannot query AMR data. Verified in amrportal_exploration.md showing 14,770 isoniazid-R and 12,616 rifampin-R."
+    "question": "Find all PDB structures of antibodies with resolution better than 2.0 Angstroms.",
+    "expected_answer": "Hundreds of high-resolution antibody structures",
+    "notes": "Database: PDB. Tests filtering by molecule type and quality metric. Requires combining antibody classification with resolution threshold. Verified using search_pdb_entity with filters. Found in pdb_exploration.md."
   },
   {
     "id": 48,
     "category": "Structured Query",
-    "question": "Search ChEMBL for molecules with ('kinase' AND NOT 'tyrosine') in target labels and IC50 < 10 nM.",
-    "expected_answer": "Serine/threonine kinase inhibitors excluding tyrosine kinases",
-    "notes": "Database: ChEMBL. Tests Boolean search combined with numeric filtering. Requires bif:contains with complex Boolean logic plus standardValue comparison. Baseline cannot execute this drug discovery query. Pattern verified in chembl_exploration.md."
+    "question": "What MeSH terms are classified under the 'Neoplasms' tree?",
+    "expected_answer": "Thousands of cancer-related descriptors organized hierarchically",
+    "notes": "Database: MeSH. Tests medical terminology hierarchy navigation. Neoplasms is MeSH tree C04. Requires navigating tree structure. Verified using search_mesh_entity and tree navigation. Found in mesh_exploration.md."
   }
 ]

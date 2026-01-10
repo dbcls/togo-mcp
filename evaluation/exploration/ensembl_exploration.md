@@ -1,79 +1,95 @@
 # Ensembl Exploration Report
 
 ## Database Overview
-- **Purpose**: Comprehensive genomics database providing genome annotations for vertebrate species
-- **Scope**: 3M+ genes, 4M+ transcripts, 2M+ proteins across 100+ species
-- **Key data types**: Genes, transcripts, proteins, exons with genomic coordinates, biotypes, and quality flags
+- **Purpose**: Comprehensive genomics database providing genome annotations for 100+ species
+- **Scope**: 3M+ genes, 4M+ transcripts, 2M+ proteins across vertebrates
+- **Key Data Types**:
+  - Genes (with biotypes, chromosomal locations, cross-references)
+  - Transcripts (with quality flags, isoforms)
+  - Proteins (translated products)
+  - Exons (ordered components of transcripts)
+  - Genomic coordinates (FALDO-based positions with strand)
+  - Cross-references (UniProt, HGNC, NCBI Gene, Reactome, OMIM)
 
 ## Schema Analysis (from MIE file)
 
-### Main Properties Available
-- **Gene properties** (EnsemblGene):
-  - `dcterms:identifier` - Ensembl gene ID (ENSG...)
-  - `rdfs:label` - Gene symbol
-  - `dcterms:description` - Full gene name with source
-  - `terms:has_biotype` - Functional classification (protein_coding, lncRNA, miRNA, etc.)
-  - `obo:RO_0002162` - Species (NCBI Taxonomy ID)
-  - `so:part_of` - Chromosome location
-  - `faldo:location` - Genomic coordinates (start, end, strand)
-  - `rdfs:seeAlso` - Cross-references (UniProt, HGNC, NCBI Gene, etc.)
+### Main Entity Types
+1. **terms:EnsemblGene** - Gene records
+   - rdfs:label (gene symbol, e.g., "BRCA1")
+   - dcterms:identifier (Ensembl ID, e.g., "ENSG00000012048")
+   - dcterms:description (full gene name and source)
+   - terms:has_biotype (functional classification)
+   - obo:RO_0002162 (taxonomic classification - in taxon)
+   - so:part_of (chromosomal location)
+   - faldo:location (genomic coordinates with strand)
+   - rdfs:seeAlso (external cross-references)
 
-- **Transcript properties** (EnsemblTranscript):
-  - `dcterms:identifier` - Ensembl transcript ID (ENST...)
-  - `so:transcribed_from` - Parent gene
-  - `so:translates_to` - Protein product (if protein-coding)
-  - `terms:has_transcript_flag` - Quality flags (MANE, APPRIS, TSL, canonical)
-  - `sio:SIO_000974` - Ordered exons
+2. **terms:EnsemblTranscript** - Transcript variants
+   - dcterms:identifier (transcript ID, e.g., "ENST00000468300")
+   - so:transcribed_from (parent gene)
+   - so:translates_to (protein product, if protein-coding)
+   - terms:has_biotype (transcript type)
+   - terms:has_transcript_flag (quality annotations: MANE Select, canonical, APPRIS, TSL)
+   - faldo:location (coordinates)
+   - sio:SIO_000974 (has ordered exons)
 
-- **Protein properties** (EnsemblProtein):
-  - `dcterms:identifier` - Ensembl protein ID (ENSP...)
-  - `so:translation_of` - Parent transcript
-  - `rdfs:seeAlso` - UniProt cross-references
+3. **terms:EnsemblProtein** - Protein products
+   - dcterms:identifier (protein ID, e.g., "ENSP00000417148")
+   - so:translation_of (source transcript)
+   - rdfs:seeAlso (UniProt cross-references)
 
-- **Exon properties** (EnsemblExon):
-  - `dcterms:identifier` - Exon ID (ENSE...)
-  - `faldo:location` - Exon coordinates
-  - Ordered via EnsemblOrderedExon with `sio:SIO_000300` (order number)
+4. **terms:EnsemblExon** - Exon regions
+   - dcterms:identifier (exon ID, e.g., "ENSE00003884397")
+   - faldo:location (coordinates)
+
+5. **terms:EnsemblOrderedExon** - Exon ordering
+   - sio:SIO_000628 (refers to exon)
+   - sio:SIO_000300 (exon order number)
+
+6. **FALDO Locations** - Genomic positions
+   - faldo:Region with faldo:begin and faldo:end
+   - faldo:position (integer coordinate)
+   - Strand encoded in position type (ForwardStrandPosition/ReverseStrandPosition)
 
 ### Important Relationships
-- **Central dogma hierarchy**: Gene → Transcript → Protein following molecular biology
-- **FALDO ontology**: Standardized genomic coordinates with strand information (ForwardStrandPosition, ReverseStrandPosition)
-- **SO (Sequence Ontology)**: Defines relationships (transcribed_from, translates_to, part_of)
-- **Biotype classification**: Categorizes genes/transcripts functionally (protein_coding, lncRNA, miRNA, pseudogene, etc.)
-- **Quality flags**: Transcript confidence annotations (MANE Select, APPRIS principal, TSL levels)
-- **Multi-assembly support**: Separate graphs for GRCh38, GRCh37 genome builds
+- **Gene → Transcript**: so:transcribed_from links transcripts to genes
+- **Transcript → Protein**: so:translates_to (only for protein-coding)
+- **Transcript → Exons**: sio:SIO_000974 links to ordered exons
+- **Ordered Exon → Exon**: sio:SIO_000628 references actual exon
+- **Taxonomic**: obo:RO_0002162 (in taxon) for species classification
+- **Chromosomal**: so:part_of for chromosome assignment
+- **External**: rdfs:seeAlso for cross-references
 
 ### Query Patterns Observed
-- **Full-text search**: Use bif:contains with wildcards (BRCA*) and relevance scoring
-- **Boolean searches**: 'kinase' AND 'receptor' in descriptions
-- **Species filtering**: Always filter by obo:RO_0002162 taxonomy:XXXXX
-- **Chromosome queries**: FILTER(CONTAINS(STR(?chr), "GRCh38/Y"))
-- **Strand detection**: Check faldo:begin/rdf:type for ForwardStrandPosition vs ReverseStrandPosition
-- **Optional patterns**: Use OPTIONAL for so:translates_to (not all transcripts encode proteins)
-- **DISTINCT requirement**: Always use DISTINCT with FALDO location queries to avoid duplicates
+- Use `bif:contains` with wildcards (*) for gene symbol search with scoring
+- Filter by species early: `obo:RO_0002162 taxonomy:9606` (human)
+- Chromosome filter: `FILTER(CONTAINS(STR(?chr), "GRCh38/X"))`
+- Use DISTINCT with FALDO queries (duplicate positions possible)
+- Strand from position type: `BIND(IF(?strand_type = faldo:ForwardStrandPosition, "+", "-"))`
+- FROM clause: `FROM <http://rdfportal.org/dataset/ensembl>`
+- OPTIONAL for proteins (not all transcripts encode proteins)
 
 ## Search Queries Performed
 
-1. **Query**: UniProt search for "human BRCA1" → **Results**: P38398 (Breast cancer type 1 susceptibility protein, EC 2.3.2.27, RING-type E3 ubiquitin transferase)
+1. **Query**: Search BRCA genes using wildcard
+   **Results**: Found BRCA1, BRCA2, BRCA1P1 (pseudogene), plus LRG reference sequences. All with descriptions mentioning "DNA repair associated".
 
-2. **Query**: BRCA genes with bif:contains → **Results**: Found BRCA1 (ENSG00000012048), BRCA2 (ENSG00000139618), BRCA1P1 (pseudogene, ENSG00000267595), plus LRG reference sequences
+2. **Query**: Protein-coding genes on chromosome X
+   **Results**: Retrieved 20 genes including HTR2C, CA5B, TLR8, IL13RA1, ARX, PIGA. Shows diverse functions on X chromosome.
 
-3. **Query**: BRCA1 genomic coordinates → **Results**: Chromosome 17:43044295-43170245 (negative strand, GRCh38)
+3. **Query**: Genes with "kinase" AND "receptor" in description
+   **Results**: Found 10 receptor-related kinases including ROR1, ROR2 (receptor tyrosine kinase), RIPK3, IRAK1/IRAK3 (interleukin receptor kinases), TNK1/TNK2 (tyrosine kinase non-receptor), GRK1 (GPCR kinase).
 
-4. **Query**: BRCA1 gene-transcript-protein hierarchy → **Results**: 10 transcript-protein pairs with multiple UniProt IDs (P38398 canonical, plus isoforms A0A0U1RRA9, A0A9Y1QPT7, etc.)
+4. **Query**: BRCA1 genomic coordinates
+   **Results**: chr17:43,044,295-43,170,245 on reverse strand (-). Two chromosome URIs returned showing integration with different standards.
 
-5. **Query**: TP53 transcripts → **Results**: 20+ transcripts (ENST00000269305, ENST00000359597, etc.), all encoding proteins showing alternative splicing complexity
-
-6. **Query**: TP53 transcript ENST00000269305 exons → **Results**: 11 exons ordered sequentially (ENSE00003753508, ENSE00004023728, etc.) with genomic coordinates
-
-7. **Query**: Y chromosome protein-coding genes → **Results**: 20 genes including SRY (ENSG00000184895), AMELY (ENSG00000099721), ZFY (ENSG00000067646), UTY, DDX3Y, USP9Y
-
-8. **Query**: Kinase receptor genes (functional search) → **Results**: 10 genes including ROR2 (ENSG00000169071), ROR1, ALK (ENSG00000171094), AXL (ENSG00000167601), RIPK family members
+5. **Query**: BRCA1 gene-transcript-protein-UniProt mapping
+   **Results**: Found 10 transcript-protein pairs, all linking to UniProt. Main isoform P38398, plus variants H0Y850, E7EQW4, A0A9Y1QQK3, A0A9Y1QPT7. Shows alternative splicing.
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Gene symbol search with bif:contains
+# Query 1: Gene symbol search with wildcard
 PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX taxonomy: <http://identifiers.org/taxonomy/>
@@ -90,11 +106,54 @@ WHERE {
 }
 ORDER BY DESC(?sc)
 LIMIT 10
-# Results: Found BRCA1 (ENSG00000012048), BRCA2 (ENSG00000139618), BRCA1P1 (pseudogene) with full descriptions. Fast query with wildcard support.
 ```
+**Results**: Successfully retrieved BRCA family genes with wildcard matching and relevance scoring.
 
 ```sparql
-# Query 2: Genomic coordinates with FALDO
+# Query 2: Chromosome-specific genes with biotype filter
+PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
+PREFIX so: <http://purl.obolibrary.org/obo/so#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX taxonomy: <http://identifiers.org/taxonomy/>
+
+SELECT ?gene ?id ?label
+FROM <http://rdfportal.org/dataset/ensembl>
+WHERE {
+  ?gene a terms:EnsemblGene ;
+        dcterms:identifier ?id ;
+        rdfs:label ?label ;
+        so:part_of ?chr ;
+        terms:has_biotype <http://ensembl.org/glossary/ENSGLOSSARY_0000026> ;
+        obo:RO_0002162 taxonomy:9606 .
+  FILTER(CONTAINS(STR(?chr), "GRCh38/X"))
+}
+LIMIT 20
+```
+**Results**: Retrieved protein-coding genes from chromosome X. Biotype filter (ENSGLOSSARY_0000026) for protein-coding works.
+
+```sparql
+# Query 3: Functional keyword search in descriptions
+PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX taxonomy: <http://identifiers.org/taxonomy/>
+
+SELECT ?gene ?id ?label ?description
+FROM <http://rdfportal.org/dataset/ensembl>
+WHERE {
+  ?gene a terms:EnsemblGene ;
+        dcterms:identifier ?id ;
+        rdfs:label ?label ;
+        dcterms:description ?description ;
+        obo:RO_0002162 taxonomy:9606 .
+  ?description bif:contains "('kinase' AND 'receptor')" option (score ?sc) .
+}
+ORDER BY DESC(?sc)
+LIMIT 10
+```
+**Results**: Found receptor kinases. Boolean AND operator in bif:contains working for complex searches.
+
+```sparql
+# Query 4: Genomic coordinates with FALDO and strand detection
 PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
 PREFIX faldo: <http://biohackathon.org/resource/faldo#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
@@ -116,11 +175,11 @@ WHERE {
   BIND(IF(?strand_type = faldo:ForwardStrandPosition, "+", "-") AS ?strand)
   FILTER(?id = "ENSG00000012048")
 }
-# Results: BRCA1 on chr17:43044295-43170245, negative strand. DISTINCT required to avoid duplicates from multiple chromosome annotations.
 ```
+**Results**: Retrieved precise coordinates with strand. DISTINCT needed (returned 2 rows for different chr URIs). Strand detection via position type works.
 
 ```sparql
-# Query 3: Gene-transcript-protein hierarchy
+# Query 5: Gene-Transcript-Protein hierarchy with UniProt
 PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
 PREFIX so: <http://purl.obolibrary.org/obo/so#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
@@ -142,212 +201,117 @@ WHERE {
   FILTER(?gene_label = "BRCA1")
 }
 LIMIT 10
-# Results: Retrieved 10 transcript-protein pairs for BRCA1 with UniProt IDs including canonical P38398 and isoforms.
 ```
-
-```sparql
-# Query 4: TP53 alternative transcripts
-PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
-PREFIX so: <http://purl.obolibrary.org/obo/so#>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX taxonomy: <http://identifiers.org/taxonomy/>
-
-SELECT ?gene_id ?label ?transcript_id ?protein_id
-FROM <http://rdfportal.org/dataset/ensembl>
-WHERE {
-  ?gene a terms:EnsemblGene ;
-        dcterms:identifier ?gene_id ;
-        rdfs:label ?label ;
-        obo:RO_0002162 taxonomy:9606 .
-  ?transcript so:transcribed_from ?gene ;
-              dcterms:identifier ?transcript_id .
-  OPTIONAL {
-    ?transcript so:translates_to ?protein .
-    ?protein dcterms:identifier ?protein_id .
-  }
-  FILTER(?label = "TP53")
-}
-LIMIT 20
-# Results: Retrieved 20 TP53 transcripts, all with protein products, demonstrating alternative splicing. OPTIONAL used for non-coding RNA cases.
-```
-
-```sparql
-# Query 5: Ordered exons for transcript
-PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX faldo: <http://biohackathon.org/resource/faldo#>
-
-SELECT ?transcript_id ?exon_id ?order ?start ?end
-FROM <http://rdfportal.org/dataset/ensembl>
-WHERE {
-  ?transcript a terms:EnsemblTranscript ;
-              dcterms:identifier ?transcript_id ;
-              sio:SIO_000974 ?ordered_exon .
-  ?ordered_exon sio:SIO_000628 ?exon ;
-                sio:SIO_000300 ?order .
-  ?exon dcterms:identifier ?exon_id ;
-        faldo:location/faldo:begin/faldo:position ?start ;
-        faldo:location/faldo:end/faldo:position ?end .
-  FILTER(?transcript_id = "ENST00000269305")
-}
-ORDER BY ?order
-LIMIT 20
-# Results: Retrieved 11 ordered exons for TP53 transcript ENST00000269305 with coordinates (exon 1: 7687377-7687490, etc.).
-```
-
-```sparql
-# Query 6: Chromosome-specific genes
-PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
-PREFIX so: <http://purl.obolibrary.org/obo/so#>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX taxonomy: <http://identifiers.org/taxonomy/>
-
-SELECT ?gene ?id ?label
-FROM <http://rdfportal.org/dataset/ensembl>
-WHERE {
-  ?gene a terms:EnsemblGene ;
-        dcterms:identifier ?id ;
-        rdfs:label ?label ;
-        so:part_of ?chr ;
-        terms:has_biotype <http://ensembl.org/glossary/ENSGLOSSARY_0000026> ;
-        obo:RO_0002162 taxonomy:9606 .
-  FILTER(CONTAINS(STR(?chr), "GRCh38/Y"))
-}
-LIMIT 20
-# Results: Retrieved 20 protein-coding genes on Y chromosome including SRY (sex-determining region), AMELY, ZFY, USP9Y, etc.
-```
-
-```sparql
-# Query 7: Functional keyword search
-PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX taxonomy: <http://identifiers.org/taxonomy/>
-
-SELECT ?gene ?id ?label ?description
-FROM <http://rdfportal.org/dataset/ensembl>
-WHERE {
-  ?gene a terms:EnsemblGene ;
-        dcterms:identifier ?id ;
-        rdfs:label ?label ;
-        dcterms:description ?description ;
-        obo:RO_0002162 taxonomy:9606 .
-  ?description bif:contains "('kinase' AND 'receptor')" option (score ?sc) .
-}
-ORDER BY DESC(?sc)
-LIMIT 10
-# Results: Retrieved 10 receptor kinase genes with relevance ranking: ROR2, ROR1, ALK, AXL, RIPK family, GRK3, DDR1.
-```
+**Results**: Successfully navigated gene → transcript → protein → UniProt. Multiple isoforms evident from different UniProt IDs.
 
 ## Interesting Findings
 
-### Specific Entities That Could Form Good Questions
-- **BRCA1 (ENSG00000012048)**: Chromosome 17:43044295-43170245, negative strand, 10+ transcript isoforms, UniProt P38398
-- **TP53 (ENSG00000141510)**: 20+ alternative transcripts demonstrating complex splicing
-- **SRY (ENSG00000184895)**: Y chromosome sex-determining gene
-- **ENST00000269305**: TP53 transcript with 11 exons, well-documented structure
-- **ALK (ENSG00000171094)**: Receptor tyrosine kinase, cancer target
-- **Y chromosome**: 20+ protein-coding genes (AMELY, ZFY, UTY, DDX3Y, USP9Y)
+### Biological/Scientific Content
+1. **BRCA1 Isoforms**: Multiple transcript variants producing different proteins (P38398 main isoform, plus H0Y850, E7EQW4, A0A9Y1QQK3, A0A9Y1QPT7)
+2. **BRCA1 Location**: chr17:43,044,295-43,170,245 (125,950 bp gene on reverse strand)
+3. **Receptor Kinases**: Diverse families including receptor tyrosine kinases (ROR1/2), interleukin receptor kinases (IRAK1/3), GPCR kinases (GRK1)
+4. **X Chromosome Genes**: Includes immune genes (TLR8, IL13RA1), transcription factors (ARX), metabolic enzymes (GPC4, CA5B)
+5. **Pseudogenes**: BRCA1P1 identified as pseudogene with HGNC annotation
 
-### Unique Properties or Patterns
-- **Alternative splicing**: Single genes produce multiple transcripts (TP53 has 20+, BRCA1 has 10+)
-- **Strand encoding**: ForwardStrandPosition (+) vs ReverseStrandPosition (-) in FALDO
-- **Quality flags**: MANE Select, APPRIS, TSL for transcript quality assessment
-- **LRG references**: Locus Reference Genomic sequences (LRG_292, LRG_293) for clinical use
-- **Ordered exons**: SIO ontology provides sequential exon numbering
-- **Multi-assembly**: GRCh38 and GRCh37 in separate named graphs
-- **Cross-references**: ~60% genes have UniProt links, extensive HGNC coverage
+### Genomic Annotation Quality
+- **Gene Descriptions**: ~95% have full descriptions with source attribution (HGNC Symbol)
+- **Transcript Variants**: BRCA1 has 10+ protein-coding transcripts (alternative splicing)
+- **Quality Flags**: Transcripts annotated with MANE Select, canonical, APPRIS, TSL levels
+- **Strand Information**: Encoded in FALDO position types (Forward/Reverse)
+- **Multiple Assemblies**: GRCh38 and GRCh37 available in separate graphs
 
-### Connections to Other Databases
-- **UniProt**: ~60% of genes have protein cross-references (P38398 for BRCA1)
-- **HGNC**: Human Gene Nomenclature Committee IDs (HGNC:1100 for BRCA1)
-- **NCBI Gene**: Cross-references via identifiers.org
-- **Reactome**: Pathway connections (via rdfs:seeAlso)
+### Database Coverage
+- **Human**: 87,688 genes (smaller focused set compared to mouse)
+- **Mouse**: 744,820 genes (largest representation)
+- **Rat**: 143,695 genes
+- **100+ Species**: Comprehensive vertebrate coverage
+- **Protein-coding**: ~40% of transcripts encode proteins (rest are ncRNA, miRNA, lncRNA)
+
+### External Integration
+- **UniProt Links**: ~60% of genes have UniProt cross-references
+- **HGNC**: Human gene nomenclature with accession numbers
+- **NCBI Gene**: Gene database cross-references
+- **Reactome**: Pathway database links
 - **OMIM**: Clinical/disease associations
-- **NCBI Taxonomy**: Species classification (9606 for human)
-- **UniParc**: Protein sequence archives
-- **GeneCards**: Gene information aggregator
+- **LRG**: Locus Reference Genomic sequences for clinical reporting
 
-### Specific, Verifiable Facts
-- **BRCA1**: ENSG00000012048, chr17:43044295-43170245, negative strand, 10+ isoforms
-- **TP53**: ENSG00000141510, 20+ transcripts, all protein-coding
-- **Y chromosome**: 20+ protein-coding genes including SRY
-- **ENST00000269305**: TP53 transcript with exactly 11 exons
-- **Species coverage**: 100+ vertebrate species with 3M+ genes total
-- **Human genes**: 87,688 genes annotated
-- **Alternative transcripts**: 40% of transcripts encode proteins (others are non-coding)
+### Alternative Splicing Evidence
+- **BRCA1**: 10+ different protein-coding transcripts
+- **Isoform Diversity**: Single gene produces multiple protein variants
+- **UniProt Mapping**: Different transcripts map to different UniProt entries
+- **Clinical Relevance**: MANE Select transcripts represent clinically important isoforms
 
 ## Question Opportunities by Category
 
+**FOCUS ON BIOLOGICAL CONTENT, NOT INFRASTRUCTURE METADATA**
+
 ### Precision
-- "What is the Ensembl gene ID for human BRCA1?" (Answer: ENSG00000012048)
-- "What are the genomic coordinates of BRCA1 in GRCh38?" (Answer: chr17:43044295-43170245, negative strand)
-- "What is the UniProt ID for BRCA1 from Ensembl?" (Answer: P38398)
-- "How many exons does TP53 transcript ENST00000269305 have?" (Answer: 11)
-- "What chromosome is the SRY gene located on?" (Answer: Y chromosome)
+- "What is the Ensembl gene ID for BRCA1?" (ENSG00000012048)
+- "What is the exact genomic start position of BRCA1 on GRCh38?" (43,044,295)
+- "What strand is BRCA1 located on?" (Reverse/minus strand)
+- "What is the UniProt ID for the canonical BRCA1 protein?" (P38398)
+- "What chromosome is the HTR2C gene located on?" (X chromosome)
 
 ### Completeness
-- "How many alternative transcripts does TP53 have in Ensembl?" (Answer: 20+)
-- "List all protein-coding genes on the human Y chromosome" (Answer: 20+ genes including SRY, AMELY, ZFY, etc.)
-- "What are all the exons of transcript ENST00000269305 in sequential order?" (Answer: 11 exons from ENSE00003753508 to ENSE00004023724)
-- "How many transcript isoforms does BRCA1 have?" (Answer: 10+ isoforms)
-- "List all BRCA genes in the human genome" (Answer: BRCA1, BRCA2, BRCA1P1 pseudogene)
+- "How many transcripts does the BRCA1 gene produce?" (10+ protein-coding)
+- "How many protein-coding genes are on the X chromosome?" (Need count from query)
+- "List all receptor tyrosine kinases with 'ROR' in their name" (ROR1, ROR2)
+- "How many UniProt isoforms are linked to BRCA1?" (5+ from query: P38398, H0Y850, E7EQW4, A0A9Y1QQK3, A0A9Y1QPT7)
+- "What is the total number of human genes in Ensembl?" (87,688)
 
 ### Integration
-- "What is the UniProt ID corresponding to Ensembl protein ENSP00000478114?" (Answer: P38398)
-- "Find the HGNC identifier for BRCA1 from Ensembl" (Answer: HGNC:1100)
-- "Convert Ensembl gene ID ENSG00000141510 to its gene symbol" (Answer: TP53)
-- "What Reactome pathways are associated with BRCA1?" (Uses rdfs:seeAlso cross-references)
-- "Find NCBI Gene IDs for Y chromosome genes in Ensembl"
+- "Convert Ensembl gene ID ENSG00000012048 to UniProt accession" (P38398 + isoforms)
+- "What is the HGNC ID for BRCA1?" (HGNC:1100)
+- "Link transcript ENST00000468300 to its corresponding protein" (ENSP00000417148)
+- "What Reactome pathways involve BRCA1?" (Need pathway cross-references)
+- "Convert gene symbol TP53 to Ensembl gene ID for human"
 
 ### Currency
-- "What genome assembly version does Ensembl currently use for human?" (Answer: GRCh38, Release 114)
-- "Which transcripts have MANE Select status?" (MANE = Matched Annotation from NCBI and EMBL-EBI)
-- "What is the most recent release of Ensembl?" (Answer: Release 114)
-- "How many genes are annotated in the latest human genome assembly?"
+- "What is the current Ensembl release version?" (Release 114)
+- "How frequently does Ensembl update annotations?" (Quarterly)
+- "What are the latest MANE Select transcripts for BRCA1?"
+- "Which genome assembly is currently primary?" (GRCh38)
 
 ### Specificity
-- "What is the strand orientation of BRCA1?" (Answer: Negative/reverse strand)
-- "What is the genomic position of exon 1 of transcript ENST00000269305?" (Answer: 7687377-7687490)
-- "What is the biotype of gene ENSG00000184895 (SRY)?" (Answer: protein_coding)
-- "Which transcript flags indicate the highest quality for TP53?" (Answer: MANE Select, APPRIS principal)
-- "What is the LRG identifier for BRCA1?" (Answer: LRG_292)
+- "What is the biotype of the BRCA1P1 gene?" (Pseudogene)
+- "Find the LRG reference sequence for BRCA2" (LRG_293)
+- "What is the transcript support level (TSL) for ENST00000468300?"
+- "Which BRCA1 transcripts have the MANE Select flag?"
+- "What are the APPRIS annotations for BRCA1 isoforms?"
 
 ### Structured Query
-- "Find all human genes with 'receptor' and 'kinase' in their description" (Boolean bif:contains search)
-- "List genes on chromosome X that are protein-coding" (Chromosome + biotype filtering)
-- "Retrieve all transcripts of BRCA1 that encode proteins" (Gene→transcript→protein traversal)
-- "Find genes on the negative strand of chromosome 17" (FALDO strand detection)
-- "Get exons for a transcript in sequential order" (SIO ordered exon query)
+- "Find all kinase genes on chromosome X with 'receptor' in their description"
+- "List all genes on chromosome 17 between positions 43M-44M on the reverse strand"
+- "Find all protein-coding genes with more than 10 transcripts"
+- "Retrieve all miRNA genes (biotype) on the X chromosome"
+- "Find genes with both UniProt AND OMIM cross-references in cardiovascular disease"
 
 ## Notes
 
-### Limitations or Challenges
-- **Server instability**: Occasional 500 errors on complex queries
-- **FALDO duplicates**: Multiple chromosome annotations require DISTINCT
-- **Not all transcripts code proteins**: ~60% of transcripts are non-coding (lncRNA, miRNA, etc.)
-- **Assembly versions**: Must specify GRCh38 or GRCh37 graph explicitly
-- **Large result sets**: Broad queries timeout without species/chromosome filters
-- **Missing descriptions**: ~5% of genes lack description fields
-- **Cross-reference completeness**: Not all genes have all external database links
+### Limitations
+- **Species Filter Required**: Without taxonomy filter, results mix all 100+ species
+- **FALDO Duplicates**: DISTINCT needed due to multiple chromosome URI standards
+- **Protein Coverage**: Only ~40% of transcripts are protein-coding (many ncRNAs)
+- **Strand Detection**: No direct strand property - must infer from position type
+- **Assembly Versions**: Multiple assemblies require graph selection or filtering
 
-### Best Practices for Querying
-1. **Always filter by species**: Use obo:RO_0002162 taxonomy:9606 for human (or other taxonomy ID)
-2. **Use bif:contains** for text searches with relevance ranking and wildcards
-3. **Always use DISTINCT** with FALDO location queries to avoid duplicates
-4. **FROM clause**: Specify graph (<http://rdfportal.org/dataset/ensembl>)
-5. **OPTIONAL for proteins**: Not all transcripts encode proteins, use OPTIONAL for so:translates_to
-6. **Strand detection**: Use faldo:begin/rdf:type and IF() to convert to +/-
-7. **Chromosome filtering**: Use CONTAINS(STR(?chr), "GRCh38/X") for specific chromosomes
-8. **LIMIT required**: Always use LIMIT for exploratory queries to prevent timeouts
-9. **Cross-reference filtering**: Use STRSTARTS for specific database patterns
-10. **Order exons**: Use ORDER BY ?order when querying ordered exons
+### Best Practices
+1. **Always filter by species**: `obo:RO_0002162 taxonomy:9606` for human
+2. **Use bif:contains for symbols**: With wildcards ('BRCA*') and scoring
+3. **DISTINCT for FALDO**: Prevent duplicate coordinates
+4. **OPTIONAL for proteins**: Not all transcripts encode proteins
+5. **Strand from position type**: `BIND(IF(?strand_type = faldo:ForwardStrandPosition, "+", "-"))`
+6. **Biotype filtering**: Use biotype URIs to filter gene types (protein-coding, miRNA, lncRNA)
+7. **Define all prefixes**: so:, obo:, faldo:, sio:, terms: required
+8. **Chromosome filter**: `FILTER(CONTAINS(STR(?chr), "GRCh38/X"))` for specific chromosomes
 
-### Anti-patterns to Avoid
-- ❌ Querying without species filter (returns mixed results from all organisms)
-- ❌ Using FILTER(REGEX()) instead of bif:contains for text search (slow)
-- ❌ Omitting DISTINCT in FALDO location queries (duplicate results)
-- ❌ Requiring proteins without OPTIONAL (excludes non-coding transcripts)
-- ❌ Trying to access non-existent faldo:strand property (use position type instead)
-- ❌ Missing FROM clause (may query wrong graph)
-- ❌ Broad searches without LIMIT (timeouts)
-- ❌ Not defining all required prefixes (causes 400 errors)
+### Unique Strengths
+- **Alternative Splicing**: Complete transcript isoform information
+- **Quality Annotations**: MANE Select, APPRIS, TSL flags for transcript confidence
+- **Multi-species**: 100+ vertebrate genomes in single database
+- **FALDO Coordinates**: Structured genomic positions with strand
+- **External Integration**: UniProt, HGNC, NCBI Gene, Reactome, OMIM
+- **LRG Sequences**: Clinical reference sequences for diagnostics
+- **Ordered Exons**: Complete exon structure with sequential ordering
+- **Gene Hierarchies**: Gene → Transcript → Protein → External IDs
+- **Biotype Classification**: Functional categorization of genes/transcripts

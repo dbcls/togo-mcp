@@ -1,175 +1,118 @@
 # Rhea Exploration Report
 
 ## Database Overview
-- **Purpose**: Comprehensive expert-curated database of biochemical reactions
-- **Scope**: 17,078 master reactions, 34,156 directional representations, 17,078 bidirectional forms, 11,763 small molecules, 254 polymers, 5,984 transport reactions
-- **Key data types**: Biochemical reactions with stoichiometry, transport reactions with cellular locations, polymer reactions with polymerization indices, EC and GO annotations
+Rhea is a comprehensive expert-curated database of biochemical reactions:
+- **17,078 master reactions** (unspecified direction)
+- **34,156 directional reactions** (left-to-right, right-to-left)
+- **17,078 bidirectional reactions** (reversible)
+- **11,763 small molecule compounds** (all with ChEBI IDs)
+- **254 polymer structures** (with polymerization indices)
+- **5,984 transport reactions** (with cellular location annotations)
+- All approved reactions are atom-balanced and charge-balanced
+- Serves as reference reaction resource for UniProtKB enzyme annotations
 
 ## Schema Analysis (from MIE file)
 
 ### Main Properties Available
-- **Reaction core properties**:
-  - `rhea:accession` - Unique identifier (RHEA:XXXXX)
-  - `rhea:equation` - Text equation representation
-  - `rhea:htmlEquation` - HTML formatted equation
-  - `rhea:status` - rhea:Approved, rhea:Preliminary, rhea:Obsolete
-  - `rhea:isChemicallyBalanced` - Boolean (all approved reactions = 1)
-  - `rhea:isTransport` - Boolean for transmembrane transport
-  
-- **Reaction relationships**:
-  - `rhea:side` - Links to left (_L) and right (_R) sides
-  - `rhea:directionalReaction` - Links to directional forms (L→R, R→L)
-  - `rhea:bidirectionalReaction` - Links to bidirectional form
-  - `rhea:ec` - Links to UniProt enzyme classification
-  
-- **Participant properties**:
-  - `rhea:compound` - Links to compound entity
-  - `rhea:location` - rhea:In or rhea:Out for transport reactions
-  - `rhea:contains1/2/3/N` - Stoichiometry encoding (1, 2, 3, or >3)
-  
-- **Compound properties**:
-  - `rhea:name` - Chemical name
-  - `rhea:formula` - Molecular formula
-  - `rhea:charge` - Molecular charge
-  - `rhea:chebi` - ChEBI cross-reference
-  - `rhea:polymerizationIndex` - For polymers (n, n-1, n+1, etc.)
+- **Reactions**: Accession (RHEA:XXXXX), equation (text and HTML), status (Approved/Preliminary/Obsolete)
+- **Chemical Balance**: isChemicallyBalanced (boolean), all approved reactions are balanced
+- **Transport**: isTransport flag, location annotations (In/Out for cellular compartments)
+- **Reaction Variants**: Master reaction links to directional (L→R, R→L) and bidirectional forms
+- **Reaction Sides**: Left and right sides with participants
+- **Stoichiometry**: Encoded in property names (contains1, contains2, contains3, containsN)
+- **Compounds**: Small molecules with formula, charge, name, HTML name, ChEBI cross-reference
+- **Polymers**: Polymerization index (n, n-1), formula with index notation, underlying ChEBI
+- **EC Numbers**: Enzyme Commission classification via http://purl.uniprot.org/enzyme/
+- **Cross-References**: GO (molecular function), KEGG, MetaCyc, Reactome, MACiE
 
 ### Important Relationships
-- **Quartet system**: Each master reaction (RHEA:XXXXX0) has ID-based relationship to directional (XXXXX1, XXXXX2) and bidirectional (XXXXX3) forms
-- **Hierarchical structure**: Reaction → ReactionSide (_L, _R) → Participant → Compound
-- **ChEBI integration**: All small molecules link to ChEBI via rdfs:subClassOf and rhea:chebi
-- **Cross-database links**: rdfs:seeAlso links to GO (molecular function), BioCyc/MetaCyc, Reactome, MACiE
-- **Stoichiometry encoding**: Separate properties (contains1, contains2, contains3, containsN) for different stoichiometric coefficients
+- `rhea:directionalReaction` - Links master to L→R and R→L forms
+- `rhea:bidirectionalReaction` - Links master to reversible form
+- `rhea:side` - Links reaction to left/right sides
+- `rhea:contains` - Links side to all participants
+- `rhea:contains1/2/3/N` - Stoichiometry-specific participant links
+- `rhea:compound` - Links participant to compound entity
+- `rhea:location` - For transport reactions (rhea:In or rhea:Out)
+- `rhea:chebi` - Links compound to ChEBI ontology
+- `rhea:ec` - Links reaction to EC enzyme classification
+- `rdfs:seeAlso` - Cross-references to GO, KEGG, MetaCyc, etc.
+- `rhea:transformableTo` - Links left side to right side (reaction direction)
 
 ### Query Patterns Observed
-- **Full-text search**: Use bif:contains with single quotes for fast keyword searching
-- **Boolean operators**: 'glucose' AND 'phosphate' or 'atp' OR 'gtp' in bif:contains
-- **Relevance ranking**: ORDER BY DESC(?sc) after bif:contains option (score ?sc)
-- **Type filtering**: Filter by rhea:status early (rhea:Approved) for quality results
-- **Traversal pattern**: reaction → side → participant → compound for complete information
-- **Cross-reference filtering**: Use STRSTARTS or CONTAINS on URI strings for specific databases
+- **Keyword search**: MUST use `bif:contains` on equation or labels (not FILTER)
+- **Boolean operators**: Supports AND, OR, NOT in bif:contains
+- **Reaction quartet**: Each ID has 4 forms (e.g., 10000 master, 10001 L→R, 10002 R→L, 10003 bidirectional)
+- **Status filter**: Always filter by `rhea:status rhea:Approved` for production queries
+- **Transport queries**: Filter by `rhea:isTransport 1` and check participant locations
+- **Stoichiometry**: Use containsN properties for compounds appearing multiple times
 
 ## Search Queries Performed
 
-1. **Query**: ATP reactions → **Results**: 10 results including transport reactions (ATP(in) = ATP(out)), metabolic reactions (ATP + D-glyceraldehyde = ADP + D-glyceraldehyde 3-phosphate + H(+)), and ion transport (ATP + Mg(2+) with location annotations)
-
-2. **Query**: glucose AND phosphate → **Results**: 10 results showing glucose phosphorylation (D-glucose 6-phosphate + H2O = D-glucose + phosphate), polymer reactions ([phosphate](n) + D-glucose), and disaccharide phosphorolysis (nigerose + phosphate = beta-D-glucose 1-phosphate + D-glucose)
-
-3. **Query**: Transport reactions (rhea:isTransport = 1) → **Results**: 20 results showing ATP-dependent transport (Zn(2+)(in) = Zn(2+)(out)), ion pumps (H(+)(in) → H(+)(out)), and substrate import (guanine(out) → guanine(in)) with explicit location annotations
-
-4. **Query**: Reactions with EC and GO annotations → **Results**: 20 results showing diverse enzymes (EC 3.1.1.63, 2.4.2.35, 1.2.1.42) with corresponding GO molecular function terms (GO:0047520, GO:0047285, GO:0047104)
-
-5. **Query**: Polymer reactions → **Results**: 15 results showing glycosyl transferases ([(1->3)-alpha-D-glucosyl](n) + UDP-alpha-D-glucose = [(1->3)-alpha-D-glucosyl](n+1)), folate modifications ((6S)-tetrahydrofolyl-(gamma-L-Glu)(n)), and polysaccharide synthesis with various polymerization indices (n, n-1, n+1)
+1. **Query: "ATP"** → Results: 10 ATP-involving reactions including ion pumps (K+, Na+), transport reactions, DNA methylation
+2. **Query: "glucose phosphate"** → Results: 10 reactions including glucose-6-phosphate hydrolysis, phosphotransfer, complex glycosylation
+3. **Query: "transport"** (keyword search)** → Results: Got mixed results, better to use isTransport flag
+4. **Transport reactions (SPARQL)** → Results: 10 transport reactions including ATP-dependent ion pumps, metabolite transporters
+5. **ATP + ADP reactions with EC** → Results: 10 kinase reactions with EC numbers (2.7.x.x phosphotransferases)
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Full-text search with relevance ranking
+# Query 1: Find transport reactions
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rhea: <http://rdf.rhea-db.org/>
 
-SELECT ?reaction ?equation ?label
+SELECT ?reaction ?equation ?accession
 WHERE {
   ?reaction rdfs:subClassOf rhea:Reaction ;
             rhea:equation ?equation ;
-            rdfs:label ?label ;
-            rhea:status rhea:Approved .
-  ?equation bif:contains "'ATP'" option (score ?sc) .
-}
-ORDER BY DESC(?sc)
-LIMIT 10
-# Results: Retrieved 10 ATP-related reactions ranked by relevance, including both transport and metabolic reactions. Fast query (<1s).
-```
-
-```sparql
-# Query 2: Boolean search for compound combinations
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX rhea: <http://rdf.rhea-db.org/>
-
-SELECT ?reaction ?equation
-WHERE {
-  ?reaction rdfs:subClassOf rhea:Reaction ;
-            rhea:equation ?equation ;
-            rhea:status rhea:Approved .
-  ?equation bif:contains "'glucose' AND 'phosphate'" option (score ?sc) .
-}
-ORDER BY DESC(?sc)
-LIMIT 10
-# Results: Retrieved 10 glucose-phosphate reactions including phosphorylation, phosphorolysis, and isomerization reactions. Demonstrates AND operator functionality.
-```
-
-```sparql
-# Query 3: Transport reactions with cellular locations
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX rhea: <http://rdf.rhea-db.org/>
-
-SELECT ?reaction ?equation ?participant ?compound ?location
-WHERE {
-  ?reaction rdfs:subClassOf rhea:Reaction ;
-            rhea:equation ?equation ;
+            rhea:accession ?accession ;
             rhea:isTransport 1 ;
-            rhea:side ?side .
-  ?side rhea:contains ?participant .
-  ?participant rhea:compound ?compound ;
-               rhea:location ?location .
+            rhea:status rhea:Approved .
 }
-LIMIT 20
-# Results: Retrieved 20 transport reactions with explicit rhea:In and rhea:Out location annotations. Shows ATP-dependent ion transport and substrate import/export.
+LIMIT 10
+# Results: Retrieved ATP-dependent Zn2+ pump, guanine transporter, H+ pump, 
+# Na+ transporter, glycerol-3-phosphate transporter, molybdate transporter, K+ pump, etc.
 ```
 
 ```sparql
-# Query 4: Reactions with EC numbers and GO terms
+# Query 2: Search reactions with ATP and ADP, get EC numbers
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rhea: <http://rdf.rhea-db.org/>
 
-SELECT DISTINCT ?reaction ?equation ?ec ?goTerm
+SELECT ?reaction ?equation ?ec
 WHERE {
   ?reaction rdfs:subClassOf rhea:Reaction ;
             rhea:equation ?equation ;
             rhea:ec ?ec ;
+            rhea:status rhea:Approved .
+  ?equation bif:contains "'ATP' AND 'ADP'" option (score ?sc) .
+}
+ORDER BY DESC(?sc)
+LIMIT 10
+# Results: Kinase reactions (EC 2.7.x.x) - xylitol kinase, viomycin kinase, 
+# erythritol kinase, GMP kinase, adenosine kinase, etc.
+```
+
+```sparql
+# Query 3: Find reactions with GO molecular function annotations
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rhea: <http://rdf.rhea-db.org/>
+
+SELECT ?reaction ?accession ?equation ?goTerm
+WHERE {
+  ?reaction rdfs:subClassOf rhea:Reaction ;
+            rhea:accession ?accession ;
+            rhea:equation ?equation ;
             rdfs:seeAlso ?goTerm .
   FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
 }
-LIMIT 20
-# Results: Retrieved 20 reactions with both EC classifications and GO molecular function terms, demonstrating comprehensive enzyme annotation.
+LIMIT 10
+# Results: Reactions with specific GO molecular function terms like retinyl-palmitate esterase,
+# flavonol 3-O-xylosyltransferase, long-chain-fatty-acyl-CoA biosynthesis, etc.
 ```
 
 ```sparql
-# Query 5: Polymer reactions with polymerization indices
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX rhea: <http://rdf.rhea-db.org/>
-
-SELECT DISTINCT ?reaction ?equation ?polymer ?polyIndex
-WHERE {
-  ?reaction rdfs:subClassOf rhea:Reaction ;
-            rhea:equation ?equation ;
-            rhea:side ?side .
-  ?side rhea:contains ?participant .
-  ?participant rhea:compound ?compound .
-  ?compound rdfs:subClassOf rhea:Polymer ;
-            rhea:name ?polymer ;
-            rhea:polymerizationIndex ?polyIndex .
-}
-LIMIT 15
-# Results: Retrieved 15 polymer reactions showing polymerization (n → n+1) and depolymerization, including glycosyl transferases, polysaccharide synthesis, and protein glycosylation.
-```
-
-```sparql
-# Query 6: Specific reaction details by accession
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX rhea: <http://rdf.rhea-db.org/>
-
-SELECT ?property ?value
-WHERE {
-  ?reaction rhea:accession "RHEA:10000" ;
-            ?property ?value .
-}
-LIMIT 30
-# Results: Retrieved complete metadata for RHEA:10000 (pentanamide hydrolysis) including equation, EC number (3.5.1.50), GO term (GO:0050168), reaction sides, directional variants, literature citation, and chemical balance status.
-```
-
-```sparql
-# Query 7: Compound details with ChEBI links
+# Query 4: Get compound details for ATP
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rhea: <http://rdf.rhea-db.org/>
 
@@ -180,136 +123,115 @@ WHERE {
             rhea:formula ?formula ;
             rhea:charge ?charge ;
             rhea:chebi ?chebi .
-  FILTER(CONTAINS(?name, "ATP"))
+  FILTER(?name = "ATP")
 }
-LIMIT 10
-# Results: Retrieved 8 ATP-related compounds including ATP (C10H12N5O13P3, charge -4, CHEBI:30616), dATP, 2-oxo-ATP, N(6)-methyl-ATP variants, demonstrating comprehensive molecular descriptors.
-```
-
-```sparql
-# Query 8: Reaction quartet - master and directional forms
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX rhea: <http://rdf.rhea-db.org/>
-
-SELECT ?masterReaction ?masterEquation ?directional ?bidirectional
-WHERE {
-  ?masterReaction rhea:accession "RHEA:13941" ;
-                  rhea:equation ?masterEquation .
-  OPTIONAL {
-    ?masterReaction rhea:directionalReaction ?directional .
-  }
-  OPTIONAL {
-    ?masterReaction rhea:bidirectionalReaction ?bidirectional .
-  }
-}
-# Results: RHEA:13941 (ATP + D-glyceraldehyde = ADP + D-glyceraldehyde 3-phosphate + H(+)) links to directional reactions RHEA:13942 and RHEA:13943, and bidirectional RHEA:13944, demonstrating the quartet system.
+# Results: ATP - formula C10H12N5O13P3, charge -4, ChEBI:30616
 ```
 
 ## Interesting Findings
 
-### Specific Entities That Could Form Good Questions
-- **RHEA:10000**: Pentanamide hydrolysis (first reaction in database, well-documented)
-- **RHEA:13941**: ATP-dependent glyceraldehyde kinase with complete quartet
-- **Transport reactions**: RHEA:20621 (Zn(2+) transport), RHEA:20852 (H+ pump)
-- **Polymer reactions**: RHEA:19749 (glucosyl transferase with n→n+1), RHEA:20908 (complex glycosaminoglycan synthesis)
-- **ATP compound**: C10H12N5O13P3, charge -4, CHEBI:30616
+### Specific Entities for Questions
+- **RHEA:10000**: Pentanamide hydrolysis - well-documented example reaction
+- **ATP reactions**: Hundreds involving ATP (ion pumps, kinases, transporters)
+- **Transport reactions**: 5,984 total with cellular location annotations
+- **Reaction quartets**: Each reaction has 4 IDs (master + 2 directional + bidirectional)
+- **ATP compound**: Rhea ID 6372, formula C10H12N5O13P3, charge -4, CHEBI:30616
 
-### Unique Properties or Patterns
-- **Quartet system**: Each reaction has 4 representations (master + 2 directional + bidirectional) with predictable ID patterns (XXXXX0, XXXXX1, XXXXX2, XXXXX3)
-- **Location annotations**: Transport reactions use rhea:In and rhea:Out for precise cellular compartment tracking
-- **Stoichiometry encoding**: Separate properties for different coefficients (contains1/2/3/N) enable efficient filtering
-- **Polymer notation**: Standardized notation for polymerization indices (n, n-1, n+1) in formulas and charges
-- **Universal chemical balance**: All approved reactions have rhea:isChemicallyBalanced = 1
-- **Full-text search optimization**: bif:contains with relevance scoring is much faster than FILTER(CONTAINS())
+### Unique Properties
+- **Reaction directionality**: Systematic representation of all directions
+- **Atom-balanced**: All approved reactions chemically validated
+- **Location annotations**: Transport reactions specify In/Out compartments
+- **Polymer notation**: Specialized (n), (n-1) notation in formulas
+- **Stoichiometry encoding**: Property names (contains1, contains2, etc.)
+- **EC classification**: ~45% reactions have enzyme commission numbers
+- **Status tracking**: Approved (66,740), Preliminary (452), Obsolete (1,120)
 
 ### Connections to Other Databases
-- **ChEBI**: 100% coverage for all 11,763 small molecules via rdfs:subClassOf and rhea:chebi
-- **Gene Ontology**: ~55% of reactions have GO molecular function terms (GO:XXXXXXX)
-- **BioCyc/MetaCyc**: ~35% coverage via identifiers.org/biocyc/METACYC:XXX
-- **Reactome**: Selected pathway connections via identifiers.org/reactome/R-HSA-XXXXXX
-- **UniProt Enzyme**: ~45% have EC classifications via http://purl.uniprot.org/enzyme/X.X.X.X
-- **MACiE**: Mechanism annotations for selected reactions
+- **ChEBI**: 100% small molecules have ChEBI IDs
+- **GO**: ~55% reactions have molecular function annotations
+- **KEGG Reaction**: ~35% metabolic pathway coverage
+- **MetaCyc/BioCyc**: Comprehensive metabolic pathway links
+- **Reactome**: Selected pathway links
+- **UniProt EC**: Enzyme classification links
+- **MACiE**: Enzyme mechanism annotations
 
-### Specific, Verifiable Facts
-- **17,078 master reactions** with 34,156 directional and 17,078 bidirectional representations (quartet system)
-- **5,984 transport reactions** (35% of total) with explicit cellular location annotations
-- **254 polymer structures** with standardized polymerization notation
-- **66,740 approved reactions** vs 452 preliminary and 1,120 obsolete
-- **100% ChEBI coverage** for all small molecule compounds
-- **Average 4-6 participants per reaction** (substrates + products)
-- **ATP (CHEBI:30616)**: Molecular formula C10H12N5O13P3, charge -4, most common high-energy compound
+### Specific Verifiable Facts
+- **17,078 master reactions** total
+- **5,984 transport reactions** (35% of total)
+- **11,763 small molecules** with ChEBI links
+- **254 polymer structures**
+- **ATP formula**: C10H12N5O13P3
+- **ATP charge**: -4
+- **ATP ChEBI ID**: CHEBI:30616
+- **Reaction RHEA:22044**: K+ pump (K+ out + ATP → K+ in + ADP)
 
 ## Question Opportunities by Category
 
 ### Precision
-- "What is the molecular formula of ATP in the Rhea database?" (Answer: C10H12N5O13P3)
-- "What is the charge of ATP according to Rhea?" (Answer: -4)
-- "What is the ChEBI identifier for ATP in Rhea?" (Answer: CHEBI:30616)
-- "How many directional forms does reaction RHEA:10000 have?" (Answer: 2 - RHEA:10001 and RHEA:10002)
-- "What is the EC number associated with reaction RHEA:10000?" (Answer: 3.5.1.50)
+- "What is the molecular formula of ATP in Rhea?" → C10H12N5O13P3
+- "What is the charge on ATP?" → -4
+- "What is the ChEBI ID for ATP in Rhea?" → CHEBI:30616
+- "What is the equation for reaction RHEA:10000?" → Specific pentanamide hydrolysis
+- "What EC number is associated with RHEA:20780?" → EC 2.7.4.8 (GMP kinase)
 
 ### Completeness
-- "How many approved reactions are in the Rhea database?" (Answer: 66,740 from total 68,312)
-- "How many transport reactions are in Rhea?" (Answer: 5,984)
-- "How many polymer structures are in Rhea?" (Answer: 254)
-- "List all directional and bidirectional forms of reaction RHEA:13941" (Answer: RHEA:13942, RHEA:13943, RHEA:13944)
-- "How many reactions in Rhea have EC number classifications?" (Answer: ~45% of reactions)
+- "How many reactions are in Rhea?" → 17,078 master reactions
+- "How many transport reactions exist?" → 5,984
+- "How many reactions involve ATP?" → Large count from search
+- "How many reactions have EC numbers?" → ~45% (based on coverage)
+- "How many reactions have GO annotations?" → ~55%
 
 ### Integration
-- "What is the GO molecular function term for reaction RHEA:19697?" (Answer: GO:0047520)
-- "Find the ChEBI identifier for the water molecule in Rhea" (Answer: CHEBI:15377)
-- "What Reactome pathways reference reactions involving ATP transport?" (Uses rdfs:seeAlso with identifiers.org/reactome)
-- "Convert Rhea compound accession CHEBI:30616 to its Rhea compound ID" (Answer: Compound_6372)
-- "Find BioCyc/MetaCyc cross-references for glucose-6-phosphatase reactions"
+- "What is the ChEBI ID for ATP as used in Rhea?" → CHEBI:30616
+- "Find GO terms associated with reaction RHEA:19697" → GO:0047520
+- "What KEGG reactions correspond to Rhea reactions?" → Via rdfs:seeAlso
+- "Link Rhea reactions to UniProt EC numbers" → Via rhea:ec property
+- "Convert Rhea reaction to MetaCyc identifiers" → Cross-reference query
 
 ### Currency
-- "How many reactions were classified as 'Preliminary' in the current Rhea release?" (Answer: 452)
-- "What is the approval status distribution in Rhea?" (Answer: 66,740 approved, 452 preliminary, 1,120 obsolete)
-- "Which reactions have been recently added to Rhea with polymer substrates?"
-- "What are the most recent transport reactions added for metal ions?"
+- "How many reactions are in approved status?" → 66,740
+- "How many reactions are preliminary?" → 452 (recently added)
+- "What reactions were recently added?" → Filter by status
+- "Are there new transport reactions?" → Query recent updates
 
 ### Specificity
-- "What is the polymerization index notation used in Rhea reaction RHEA:19749?" (Answer: n and n+1)
-- "What cellular location is specified for Zn(2+) in transport reaction RHEA:20621?" (Answer: In and Out)
-- "What is the stoichiometry of H(+) in reaction RHEA:20852?" (Answer: 1 H(+)(in) and 2 H(+)(out))
-- "What is the literature citation for reaction RHEA:10000?" (Answer: Published in Friedrich, C.G. and Mitrenga, G., J. Gen. Microbiol. 125 (1981) 367-374)
-- "What is the formula notation for the polymer in reaction RHEA:20908?" (Contains complex glycan notation with (n))
+- "What is the stoichiometry of ATP in reaction RHEA:22044?" → 1 (from contains1)
+- "Find reactions with polymerization index n-1" → Polymer queries
+- "What cellular location does Zn2+ go to in RHEA:20621?" → Out
+- "Find reactions with charge-balanced equations" → All approved reactions
+- "What is the polymerization index of polymer 10035?" → n-1
 
 ### Structured Query
-- "Find all approved reactions involving glucose and phosphate" (Boolean AND search with bif:contains)
-- "List reactions that are both chemically balanced and transport reactions" (rhea:isChemicallyBalanced = 1 AND rhea:isTransport = 1)
-- "Find all reactions with EC number 3.5.1.* and GO annotations" (EC classification + cross-reference filtering)
-- "Retrieve all ATP-related compounds with negative charge" (Compound filtering with formula pattern and charge)
-- "Find polymer reactions where polymerization index increases by 1" (Filter for polyIndex = "n+1")
+- "Find approved transport reactions involving ATP and ADP" → Multiple filters
+- "List kinase reactions (EC 2.7.x.x) with stoichiometry > 1 for ATP" → Complex
+- "Find reactions with GO annotations AND EC numbers" → Cross-references
+- "Search for reactions with glucose AND phosphate but NOT transport" → Boolean
+- "Find bidirectional reactions involving NADH/NAD+" → Direction + participants
 
 ## Notes
 
-### Limitations or Challenges
-- **Quartet complexity**: Users need to understand the relationship between master, directional, and bidirectional reactions
-- **Polymer notation**: Requires parsing of specialized notation (n, n-1, (n)) which may be unfamiliar
-- **Literature citations**: Stored in rdfs:comment as free text, requiring parsing for structured access
-- **Cross-reference completeness**: Not all reactions have external database links (coverage varies 35-55%)
-- **Query performance**: Full traversal (reaction→side→participant→compound) without LIMIT can timeout
-- **Preliminary status**: 452 reactions still under curation may have incomplete annotations
+### Limitations
+- **Reaction quartet complexity**: Same reaction represented 4 ways (can be confusing)
+- **Stoichiometry encoding**: Property names (contains1, contains2) not standard
+- **Polymer notation**: Specialized (n), (n-1) requires parsing
+- **Literature citations**: In rdfs:comment field, requires text parsing
+- **Not all reactions have EC numbers**: Only ~45% coverage
+- **Transport location**: Only for transport reactions, not general localization
 
-### Best Practices for Querying
-1. **Use bif:contains** for text search instead of FILTER(CONTAINS()) - much faster with relevance ranking
-2. **Always use LIMIT** on exploratory queries to prevent timeouts
-3. **Filter by status early**: Add rhea:status rhea:Approved to focus on curated reactions
-4. **Start from reactions**: When querying participants/compounds, begin with reaction filters then traverse
-5. **Use ORDER BY DESC(?sc)** after bif:contains to get most relevant results first
-6. **Boolean operators**: Use single quotes around keywords: 'glucose' AND 'phosphate'
-7. **Cross-reference filtering**: Use STRSTARTS or CONTAINS on URI strings for specific database patterns
-8. **Stoichiometry queries**: Use specific properties (contains1, contains2) for efficient filtering
-9. **ID-based lookups**: Use rhea:accession "RHEA:XXXXX" for direct access (very fast)
-10. **Type checking**: Verify rdfs:subClassOf rhea:Reaction for reaction queries
+### Best Practices
+1. **ALWAYS use bif:contains** for text searches in equations/labels
+2. **Filter by rhea:status rhea:Approved** for production queries
+3. **Use LIMIT clauses** to prevent timeouts on exploratory queries
+4. **Start from master reactions** and navigate to directional forms if needed
+5. **For transport**: Check both isTransport flag and location properties
+6. **Boolean operators**: Use 'ATP' AND 'ADP' in bif:contains for complex searches
+7. **ORDER BY DESC(?sc)** after bif:contains for relevance ranking
+8. **Cross-references**: Use STRSTARTS to filter by database namespace
 
-### Anti-patterns to Avoid
-- ❌ Using FILTER(CONTAINS()) instead of bif:contains for text search (slow, no ranking)
-- ❌ Omitting LIMIT on open-ended relationship traversals (timeouts)
-- ❌ Confusing master reactions with directional forms (different properties)
-- ❌ Querying compound properties from participant entities (use rhea:compound link)
-- ❌ Not filtering by reaction status (includes obsolete and preliminary reactions)
-- ❌ Trying to count all reactions without LIMIT (timeout even with COUNT)
-- ❌ Missing DISTINCT when querying multiple optional cross-references (cartesian products)
-- ❌ Comparing polymerization indices as numbers (they're strings: "n", "n-1", "n+1")
+### Performance Notes
+- Simple reaction lookups by accession: <1 second
+- Keyword searches with bif:contains: <1 second for 20 results
+- Complex joins (reaction-side-participant-compound): 2-5 seconds with LIMIT
+- Full graph traversals may timeout without LIMIT
+- Boolean operators in bif:contains are very efficient
+- Status and transport filters are well-indexed
