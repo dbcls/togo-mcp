@@ -1,0 +1,531 @@
+question_id,date,category,question_text,baseline_success,baseline_actually_answered,baseline_has_expected,baseline_confidence,baseline_text,baseline_error,baseline_time,baseline_input_tokens,baseline_output_tokens,togomcp_success,togomcp_has_expected,togomcp_confidence,togomcp_text,togomcp_error,togomcp_time,togomcp_input_tokens,togomcp_output_tokens,togomcp_cache_creation_input_tokens,togomcp_cache_read_input_tokens,tools_used,tool_details,value_add,expected_answer,notes
+25,2026-01-09,Precision,What is the cytogenetic location of the BRCA1 gene according to ClinVar?,True,True,True,1.0,"According to my training knowledge, the BRCA1 gene is located at cytogenetic location **17q21.31** on chromosome 17.
+
+This location refers to:
+- Chromosome 17
+- Long arm (q)
+- Region 2
+- Band 1
+- Sub-band 31
+
+This is the standard cytogenetic location for BRCA1 that would be reported in ClinVar and other genetic databases. The BRCA1 gene is well-known for its association with hereditary breast and ovarian cancer syndrome when pathogenic variants are present.",,5.100819110870361,58,129,True,True,1.0,"Perfect! According to the NCBI Gene database (which integrates ClinVar data), the **cytogenetic location of the BRCA1 gene is 17q21.31**.
+
+This means:
+- **Chromosome 17** (the number 17)
+- **Long arm** (q)
+- **Region 2, band 1, sub-band 31** (21.31)
+
+The gene spans from position 43,044,294 to 43,170,326 on chromosome 17 (based on the latest genome assembly GCF_000001405.40), contains 31 exons, and spans approximately 126 kb of DNA.",,35.49882531166077,23,596,5209,137342,"mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary, mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary","[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""BRCA1 AND human[organism]"", ""max_results"": 5}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""7157""]}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""BRCA1[Gene Name] AND human[organism]"", ""max_results"": 1}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""672""]}}]",VALUABLE,17q21.31,Database: ClinVar. Tests gene location metadata retrieval. BRCA1 is located on chromosome 17. Baseline may know general location but not precise cytogenetic band. Verified via gene details query in clinvar_exploration.md showing HGNC:1100.
+26,2026-01-09,Precision,How many submitters have reported data for the BRCA1 variant c.68_69del in ClinVar?,True,False,False,0.0,"I don't have access to real-time ClinVar database information or the ability to query specific variant submissions. The number of submitters for any particular variant in ClinVar, including BRCA1 c.68_69del, changes over time as new submissions are added or existing ones are updated.
+
+To find the current number of submitters for the BRCA1 variant c.68_69del in ClinVar, you would need to:
+
+1. Visit the ClinVar website (https://www.ncbi.nlm.nih.gov/clinvar/)
+2. Search for ""BRCA1 c.68_69del""
+3. Look at the variant record page, which will show the number of submitters and their interpretations
+
+This information is publicly available and regularly updated in the ClinVar database. If you need the most current data, I recommend checking the database directly.",,5.781114101409912,63,199,True,False,0.0,"Perfect! I found the correct variant. The BRCA1 variant c.68_69del corresponds to ClinVar variation ID **17662** (VCV000017662). Now let me get the full details to count the number of submitters:
+
+Based on the ClinVar data I retrieved, the **BRCA1 variant c.68_69del (p.Glu23fs)** has been reported by **86 submitters** in ClinVar.
+
+This information comes from the ""supporting_submissions"" section which lists 86 SCV (Submitter ClinVar) accessions from different organizations. This variant:
+
+- **ClinVar ID**: VCV000017662
+- **Classification**: Pathogenic (reviewed by expert panel)
+- **Review status**: Reviewed by expert panel (highest confidence level)
+- **Associated condition**: BRCA1-related cancer predisposition
+- **Alternative names**: 185delAG, 187delAG, c.185delAG
+- **Molecular consequence**: Frameshift variant leading to p.Glu23ValfsTer17
+
+This is a well-established pathogenic variant in the BRCA1 gene, and the large number of submitters (86) along with expert panel review reflects its clinical significance in hereditary breast and ovarian cancer syndrome.",,24.176125049591064,14,568,12891,79435,"mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary","[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""clinvar"", ""query"": ""BRCA1 c.68_69del"", ""max_results"": 10}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""clinvar"", ""ids"": [""185037"", ""54425"", ""41722"", ""17662"", ""822""]}}]",CRITICAL,78,Database: ClinVar. Tests evidence strength metrics. This is the most studied BRCA1 variant. Baseline cannot access submitter counts. Verified in clinvar_exploration.md via number_of_submitters field showing this variant has highest submission count.
+27,2026-01-09,Completeness,How many beta-lactam resistance genes are detected in the AMR Portal?,True,False,False,0.0,"I don't have access to real-time data from the AMR (Antimicrobial Resistance) Portal or any specific database queries. The number of beta-lactam resistance genes detected would depend on:
+
+1. **Which AMR Portal** you're referring to (there are several, including NCBI's NDARO, CARD, ResFinder, etc.)
+2. **The current date** - these databases are regularly updated with new sequences
+3. **The specific criteria** used for classification
+
+As of my training data, major beta-lactam resistance gene families include:
+- **bla genes** (the most common designation), including:
+  - Beta-lactamases (e.g., TEM, SHV, CTX-M families)
+  - Carbapenemases (e.g., KPC, NDM, OXA, VIM, IMP families)
+  - AmpC beta-lactamases
+
+These databases typically contain **hundreds to thousands** of beta-lactam resistance gene variants when counting all allelic variations.
+
+To get the exact current number, you would need to:
+- Visit the specific AMR Portal database directly
+- Check their statistics or download their latest dataset
+- Filter for beta-lactam resistance genes
+
+Could you specify which AMR Portal you're interested in, and I can provide more targeted guidance on where to find this information?",,9.76819896697998,53,305,True,False,0.0,"Perfect! Based on my queries to the AMR Portal database, I can provide you with the answer:
+
+## Answer
+
+The AMR Portal detects **442 distinct beta-lactam resistance genes**.
+
+### Additional Context
+
+The most frequently occurring beta-lactam resistance genes in the database include:
+
+1. **penA** - 22,039 occurrences (involved in penicillin resistance)
+2. **mtrR** - 21,225 occurrences (regulator affecting beta-lactam susceptibility)
+3. **blaC** - 20,858 occurrences (beta-lactamase)
+4. **bla_1** - 19,467 occurrences (beta-lactamase variant)
+5. **bla_2** - 18,919 occurrences (beta-lactamase variant)
+6. **ampC_2** - 16,139 occurrences (AmpC beta-lactamase)
+7. **ampC_1** - 16,104 occurrences (AmpC beta-lactamase)
+
+The database contains over 1.1 million genotypic AMR features total, with beta-lactam resistance genes representing a significant portion of the cataloged resistance mechanisms. These genes encode enzymes (beta-lactamases) and other proteins that confer resistance to beta-lactam antibiotics including penicillins, cephalosporins, and carbapenems.",,48.515525817871094,27,1185,12088,154467,"mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX aro: <http://purl.obolibrary.org/obo/ARO_>\n\nSELECT (COUNT(DISTINCT ?gene) AS ?count)\nWHERE {\n  ?gene rdf:type ?type .\n  ?gene rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(?label), \""beta-lactam\"") || CONTAINS(LCASE(?label), \""beta lactam\""))\n}\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT (COUNT(DISTINCT ?geneSymbol) as ?geneCount)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:amrClass ?amrClass .\n  ?s amr:geneSymbol ?geneSymbol .\n  FILTER(CONTAINS(?amrClass, \""BETA-LACTAM\""))\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?geneSymbol (COUNT(*) as ?occurrences)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:amrClass ?amrClass .\n  ?s amr:geneSymbol ?geneSymbol .\n  FILTER(CONTAINS(?amrClass, \""BETA-LACTAM\""))\n}\nGROUP BY ?geneSymbol\nORDER BY DESC(?occurrences)\nLIMIT 20\n""}}]",CRITICAL,"243,389",Database: AMR Portal. Tests genotype feature counting by AMR class. Beta-lactam is the largest resistance gene category. Baseline has no access to AMR genotype statistics. Verified via GROUP BY amrClass in amrportal_exploration.md showing 21% of all genotypes.
+28,2026-01-09,Completeness,List all major disease categories in NANDO.,True,False,True,0.5,"I don't have specific information about the complete list of major disease categories in NANDO (Nano and Disorder) database in my training knowledge.
+
+NANDO is a nanomedicine and disease ontology database, but I cannot provide you with a definitive, comprehensive list of its major disease categories without access to the actual database or its current documentation.
+
+If you need this information, I would recommend:
+1. Visiting the official NANDO database website
+2. Consulting the NANDO documentation or publications
+3. Accessing the ontology structure directly through their interface
+
+I apologize that I cannot provide more specific details about NANDO's disease classification system with certainty.",,5.526113033294678,47,148,True,True,0.8,"Perfect! Here are all the **major disease categories in NANDO** (Nanbyo Disease Ontology):
+
+## Major Disease Categories in NANDO
+
+1. **Blood disease** (血液系疾患)
+2. **Bone and joint disease** (骨・関節系疾患)
+3. **Cardiovascular disease** (循環器系疾患)
+4. **Chromosome abnormality** (染色体または遺伝子に変化を伴う症候群)
+5. **Endocrine disease** (内分泌系疾患)
+6. **Eye and visual system disease** (視覚系疾患)
+7. **Gastrointestinal disease** (消化器系疾患)
+8. **Hearing and balance disorder** (聴覚・平衡機能系疾患)
+9. **Immune system disease** (免疫系疾患)
+10. **Metabolic disease** (代謝系疾患)
+11. **Neuromuscular disease** (神経・筋疾患)
+12. **Otorhinolaryngological disease** (耳鼻科系疾患)
+13. **Renal and urological disease** (腎・泌尿器系疾患)
+14. **Respiratory disease** (呼吸器系疾患)
+15. **Skin and connective tissue disease** (皮膚・結合組織疾患)
+
+These 15 categories organize the 2,777 intractable (rare) diseases in NANDO, which is the comprehensive Japanese government-maintained ontology for designated intractable diseases eligible for government support. Each category contains specific diseases with detailed multilingual labels, clinical information, and cross-references to international disease databases like MONDO.",,24.53593397140503,15,843,11240,89039,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?category ?en_label ?ja_label\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?category a owl:Class ;\n            rdfs:subClassOf nando:1000001 ;\n            rdfs:label ?en_label ;\n            rdfs:label ?ja_label .\n  FILTER(LANG(?en_label) = \""en\"")\n  FILTER(LANG(?ja_label) = \""ja\"" && !REGEX(STR(?ja_label), \""^[\u3041-\u3093]+$\""))\n}\nORDER BY ?en_label""}}]",CRITICAL,"15 categories including Neuromuscular disease, Metabolic disease, Immune system disease, etc.",Database: NANDO. Tests hierarchical category enumeration. NANDO has 15 top-level disease categories. Baseline cannot retrieve complete category list. Verified via rdfs:subClassOf query from NANDO:1000001 in nando_exploration.md.
+29,2026-01-09,Integration,What is the HGNC identifier for the TP53 gene in ClinVar?,True,False,True,1.0,"I don't have access to specific ClinVar database records in my training data that would allow me to state the exact HGNC identifier for TP53 as it appears in ClinVar with certainty.
+
+However, I can tell you that:
+
+1. **TP53** (Tumor Protein P53) has the **HGNC ID: HGNC:11998**
+
+2. This is the standard HGNC (HUGO Gene Nomenclature Committee) identifier for the TP53 gene, which should be consistently used across genomic databases including ClinVar.
+
+ClinVar uses HGNC identifiers as one of the standard gene identifiers in their records, so the TP53 gene entries in ClinVar should reference HGNC:11998. However, without direct access to query the current ClinVar database, I cannot verify this with absolute certainty for the specific ClinVar implementation.",,6.451292991638184,57,209,True,True,1.0,"The HGNC identifier for the TP53 gene in ClinVar is **HGNC:11998**.
+
+This information comes from the ClinVar RDF database, where the TP53 gene (NCBI Gene ID: 7157) is annotated with its official HGNC (HUGO Gene Nomenclature Committee) identifier.",,22.37573003768921,15,392,6887,85410,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""clinvar""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\n\nSELECT DISTINCT ?gene ?symbol ?hgnc_id\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?gene a cvo:Gene ;\n        cvo:symbol ?symbol ;\n        cvo:hgnc_id ?hgnc_id .\n  FILTER(?symbol = \""TP53\"")\n}\nLIMIT 10""}}]",CRITICAL,HGNC:11998,"Database: ClinVar, HGNC. Tests gene nomenclature cross-reference. TP53 is a major tumor suppressor. Baseline may know TP53 but not specific HGNC ID. Verified in clinvar_exploration.md via gene query showing NCBI Gene 7157 maps to HGNC:11998."
+30,2026-01-09,Integration,Link NANDO:1200010 to its corresponding MONDO ontology identifier.,True,False,False,0.0,"I don't have access to a specific mapping between NANDO:1200010 and its corresponding MONDO identifier in my training data. 
+
+To find this mapping, you would need to:
+
+1. Check the NANDO (Nanbyo Disease Ontology) database directly for cross-references to MONDO
+2. Use the MONDO browser or API to search for the disease
+3. Consult ontology mapping resources like the OxO (Ontology Xref Service) or OLS (Ontology Lookup Service)
+
+If you can tell me what disease NANDO:1200010 represents, I might be able to help identify the likely MONDO identifier based on the disease name, but I cannot provide a definitive mapping without access to the actual cross-reference data.",,6.572479009628296,55,175,True,True,1.0,"Great! I found the mapping:
+
+**NANDO:1200010** corresponds to **MONDO:0005180**
+
+This links the NANDO (NanbyoData Ontology) identifier for a rare disease to its equivalent term in the MONDO (Monarch Disease Ontology). MONDO is a comprehensive disease ontology that integrates multiple disease resources including rare disease databases like NANDO.
+
+Would you like me to retrieve more information about this disease term from either ontology?",,15.948778629302979,8,228,475,52648,mcp__togomcp__togoid_convertId,"[{""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""1200010"", ""route"": ""nando,mondo""}}]",CRITICAL,MONDO:0005180,"Database: NANDO, MONDO. Tests rare disease ontology cross-reference. NANDO:1200010 is Parkinson's disease. Requires skos:closeMatch lookup. Baseline cannot perform this cross-database mapping. Verified in nando_exploration.md showing 84% MONDO coverage."
+31,2026-01-09,Currency,What are the most recently characterized kinase inhibitors in ChEMBL?,True,False,True,0.8,"I don't have access to real-time ChEMBL database information or the ability to query what the ""most recently characterized"" kinase inhibitors are, as my training data has a cutoff date and doesn't include live database access.
+
+However, I can tell you that ChEMBL is continuously updated with new compounds and bioactivity data. To find the most recently characterized kinase inhibitors in ChEMBL, you would need to:
+
+1. **Access ChEMBL directly** (www.ebi.ac.uk/chembl/) and use their web interface or API
+2. **Search for kinase inhibitors** using target classification filters
+3. **Sort by deposition date** or entry date to find the most recent additions
+4. **Filter by activity data quality** (e.g., compounds with IC50, Ki, or Kd values)
+
+Alternatively, you could:
+- Use the ChEMBL SQL database or RESTful API to query compounds by date
+- Check recent ChEMBL release notes, which often highlight newly added datasets
+- Look at recent publications that deposited kinase inhibitor data to ChEMBL
+
+If you need specific information about recent kinase inhibitors in ChEMBL, I'd recommend checking the database directly or asking someone who has current access to query it for you.",,8.531461000442505,54,300,True,True,0.8,"Excellent! Now I have comprehensive data. Let me compile the findings about the most recently characterized kinase inhibitors in ChEMBL:
+
+## Most Recently Characterized Kinase Inhibitors in ChEMBL
+
+Based on my query of the ChEMBL database, here are the most recently characterized kinase inhibitors (identified by their high ChEMBL ID numbers, which indicate recent additions to the database):
+
+### **Top Recent Kinase Inhibitors:**
+
+#### 1. **Upadacitinib Hemihydrate (CHEMBL5315119)** - Phase 4 (Marketed)
+   - **Targets**: JAK kinases (JAK1, JAK2, JAK3, TYK2)
+   - **Indication**: Rheumatoid arthritis
+   - **Class**: JAK inhibitor (tyrosine kinase)
+
+#### 2. **Ritlecitinib Tosylate (CHEMBL5314649)** - Phase 4 (Marketed)
+   - **Target**: JAK3 (Tyrosine-protein kinase JAK3)
+   - **Indication**: Alopecia areata
+   - **Class**: Selective JAK3 inhibitor
+
+#### 3. **Sovleplenib (CHEMBL5095034)** - Phase 3
+   - **Target**: SYK (Tyrosine-protein kinase SYK)
+   - **Indications**: 
+     - Idiopathic thrombocytopenic purpura (Phase 3)
+     - Autoimmune hemolytic anemia (Phase 2)
+     - Various cancers and lymphomas (Phase 1-2)
+   - **Class**: SYK inhibitor
+
+#### 4. **GLPG-0259 (CHEMBL5095028)** - Phase 2
+   - **Target**: MAP kinase-activated protein kinase 5 (MK5/MAPKAPK5)
+   - **Class**: MAPK pathway inhibitor
+
+#### 5. **Tilpisertib (CHEMBL4802154)** - Phase 2
+   - **Target**: MAP3K8 (Mitogen-activated protein kinase kinase kinase 8)
+   - **Class**: MAP3K inhibitor
+
+#### 6. **Selonsertib (CHEMBL3916717)** - Phase 3
+   - **Target**: ASK1/MAP3K5 (Mitogen-activated protein kinase kinase kinase 5)
+   - **Potency**: IC50 values ranging from 2-86 nM, with EC50 of 2 nM
+   - **Class**: ASK1 inhibitor
+   - **Note**: Was in development for liver diseases including NASH (non-alcoholic steatohepatitis)
+
+#### 7. **Pirtobrutinib (CHEMBL4650485)** - Phase 4 (Marketed)
+   - **Target**: BTK (Bruton's tyrosine kinase)
+   - **Indications**: 
+     - Mantle cell lymphoma (Phase 4)
+     - Chronic lymphocytic leukemia (Phase 3)
+   - **Class**: Non-covalent BTK inhibitor
+
+#### 8. **Taletrectinib (CHEMBL4650989)** - Phase 2
+   - **Targets**: ROS1 kinase, Neurotrophic tyrosine kinase receptors (TRK)
+   - **Indication**: Non-small cell lung cancer
+   - **Class**: Multi-kinase inhibitor (ROS1/TRK)
+
+#### 9. **Tolebrutinib (CHEMBL4650323)** - Phase 3
+   - **Target**: BTK (Bruton's tyrosine kinase)
+   - **Indications**: Multiple sclerosis (chronic progressive)
+   - **Class**: BTK inhibitor for CNS penetration
+
+#### 10. **Orelabrutinib (CHEMBL4650321)** - Phase 3
+   - **Target**: BTK (Bruton's tyrosine kinase)
+   - **Class**: Selective BTK inhibitor
+
+### **Key Trends in Recent Kinase Inhibitors:**
+
+1. **JAK/BTK Dominance**: Many recent approvals target JAK kinases (for autoimmune diseases) and BTK (for hematologic malignancies)
+
+2. **Clinical Success**: Several compounds have reached Phase 4 (marketed), including upadacitinib, ritlecitinib, and pirtobrutinib
+
+3. **Selective Targeting**: Newer inhibitors show improved selectivity profiles (e.g., selective JAK3, non-covalent BTK inhibitors)
+
+4. **Diverse Therapeutic Areas**: 
+   - Autoimmune diseases (JAK, SYK inhibitors)
+   - Oncology (BTK, ROS1/TRK, FLT3 inhibitors)
+   - Inflammatory conditions (MAPK pathway inhibitors)
+
+5. **MAP Kinase Pathway**: Several compounds targeting different levels of the MAPK cascade (MAP3K5/ASK1, MAP3K8, MAPKAPK5) for inflammatory and metabolic diseases
+
+These compounds represent the cutting edge of kinase inhibitor development, with ChEMBL IDs above 3.9 million indicating their recent characterization and addition to the database.",,96.46676683425903,42,3680,21970,318578,"mcp__togomcp__search_chembl_target, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""kinase"", ""limit"": 20}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\nPREFIX bibo: <http://purl.org/ontology/bibo/>\n\nSELECT DISTINCT ?molecule ?moleculeLabel ?chemblId ?target ?targetLabel ?activityType ?value ?units ?pmid ?year\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?activity a cco:Activity ;\n            cco:hasMolecule ?molecule ;\n            cco:standardType ?activityType ;\n            cco:hasAssay ?assay ;\n            cco:hasDocument ?document .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:chemblId ?chemblId .\n  \n  ?assay cco:hasTarget ?target .\n  \n  ?target rdfs:label ?targetLabel .\n  \n  ?targetLabel bif:contains \""'kinase'\"" option (score ?sc) .\n  \n  ?document bibo:pmid ?pmid ;\n            bibo:year ?year .\n  \n  OPTIONAL { ?activity cco:standardValue ?value }\n  OPTIONAL { ?activity cco:standardUnits ?units }\n  \n  FILTER(?activityType IN (\""IC50\"", \""Ki\"", \""Kd\""))\n  FILTER(?year >= 2020)\n}\nORDER BY DESC(?year) DESC(?sc)\nLIMIT 50""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?molecule ?moleculeLabel ?chemblId ?target ?targetLabel ?mechanismType\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?mechanism a cco:Mechanism ;\n             cco:hasMolecule ?molecule ;\n             cco:hasTarget ?target ;\n             cco:mechanismActionType ?mechanismType .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:chemblId ?chemblId .\n  \n  ?target rdfs:label ?targetLabel .\n  \n  ?targetLabel bif:contains \""'kinase'\"" option (score ?sc) .\n  \n  FILTER(?mechanismType = \""INHIBITOR\"")\n}\nORDER BY DESC(?sc)\nLIMIT 30""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT ?molecule ?moleculeLabel ?chemblId ?phase ?atc\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  VALUES ?chemblId { \""CHEMBL3916717\"" \""CHEMBL4802154\"" \""CHEMBL5095028\"" \""CHEMBL3544960\"" \""CHEMBL3545243\"" \""CHEMBL3182621\"" \""CHEMBL3545383\"" }\n  \n  ?molecule cco:chemblId ?chemblId ;\n            rdfs:label ?moleculeLabel .\n  \n  OPTIONAL { ?molecule cco:highestDevelopmentPhase ?phase }\n  OPTIONAL { ?molecule cco:atcClassification ?atc }\n}\nORDER BY DESC(?chemblId)""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?moleculeLabel ?chemblId ?target ?targetLabel ?activityType ?value ?units\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  VALUES ?chemblId { \""CHEMBL3916717\"" \""CHEMBL4802154\"" \""CHEMBL5095028\"" }\n  \n  ?molecule cco:chemblId ?chemblId ;\n            rdfs:label ?moleculeLabel ;\n            cco:hasActivity ?activity .\n  \n  ?activity cco:standardType ?activityType ;\n            cco:hasAssay/cco:hasTarget ?target .\n  \n  ?target rdfs:label ?targetLabel .\n  \n  OPTIONAL { ?activity cco:standardValue ?value }\n  OPTIONAL { ?activity cco:standardUnits ?units }\n  \n  FILTER(?activityType IN (\""IC50\"", \""Ki\"", \""Kd\"", \""EC50\""))\n  FILTER(xsd:decimal(?value) < 1000)\n}\nORDER BY ?chemblId ?activityType\nLIMIT 50""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?molecule ?moleculeLabel ?chemblId ?target ?targetLabel ?mechanismType ?phase\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?mechanism a cco:Mechanism ;\n             cco:hasMolecule ?molecule ;\n             cco:hasTarget ?target ;\n             cco:mechanismActionType ?mechanismType .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:chemblId ?chemblId .\n  \n  ?target rdfs:label ?targetLabel .\n  \n  ?targetLabel bif:contains \""('tyrosine' AND 'kinase')\"" option (score ?sc) .\n  \n  OPTIONAL { ?molecule cco:highestDevelopmentPhase ?phase }\n  \n  FILTER(?mechanismType = \""INHIBITOR\"")\n  FILTER(xsd:integer(SUBSTR(?chemblId, 7)) > 3500000)\n}\nORDER BY DESC(?chemblId)\nLIMIT 30""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?moleculeLabel ?chemblId ?disease ?phase\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  VALUES ?chemblId { \""CHEMBL5315119\"" \""CHEMBL5314649\"" \""CHEMBL4650485\"" \""CHEMBL5095034\"" \""CHEMBL4650989\"" \""CHEMBL4650323\"" }\n  \n  ?molecule cco:chemblId ?chemblId ;\n            rdfs:label ?moleculeLabel ;\n            cco:hasDrugIndication ?indication .\n  \n  ?indication cco:hasMeshHeading ?disease ;\n              cco:highestDevelopmentPhase ?phase .\n}\nORDER BY DESC(?chemblId) DESC(?phase)""}}]",CRITICAL,Recent ChEMBL entries with IC50 < 100 nM,Database: ChEMBL. Tests access to current drug discovery data. Kinase inhibitors are continuously being characterized. Baseline frozen at Jan 2025 cannot show latest additions. Verified query pattern in chembl_exploration.md for sub-100nM inhibitors.
+32,2026-01-09,Currency,How has ciprofloxacin resistance in E. coli changed from 2010 to 2023 in the AMR Portal?,True,False,True,0.7142857142857143,"I don't have access to real-time data from the AMR (Antimicrobial Resistance) Portal or any specific database showing ciprofloxacin resistance trends in E. coli from 2010 to 2023.
+
+However, I can tell you what has generally been observed globally regarding ciprofloxacin resistance in E. coli during this period, based on my training knowledge:
+
+**General trends (2010-2023):**
+- Ciprofloxacin resistance in E. coli has been **increasing globally**
+- Rates vary significantly by region, with higher resistance typically seen in:
+  - South and Southeast Asia
+  - Parts of Africa
+  - Southern and Eastern Europe
+  
+- Lower rates generally in:
+  - Northern Europe
+  - Some parts of North America
+
+**Typical patterns observed:**
+- Many countries have seen resistance rates rise from 20-30% to 30-50% or higher
+- Some regions already had high baseline resistance (>50%) in 2010
+- The increase is associated with overuse of fluoroquinolones and spread of resistant strains
+
+**To get specific AMR Portal data**, you would need to:
+1. Visit the WHO GLASS (Global Antimicrobial Resistance and Use Surveillance System) portal
+2. Or check regional databases like ECDC (European) or CDC (US) surveillance systems
+3. Filter for E. coli and ciprofloxacin resistance over your time period of interest
+
+Would you like me to explain the mechanisms behind fluoroquinolone resistance or discuss implications of these trends?",,9.570729970932007,68,356,True,True,0.7142857142857143,"Perfect! Now I have comprehensive data to answer the question. Let me provide a detailed analysis.
+
+## Ciprofloxacin Resistance in E. coli (2010-2023) - AMR Portal Data
+
+Based on the AMR Portal database, here's how ciprofloxacin resistance in *Escherichia coli* has changed from 2010 to 2023:
+
+### **Overall Trends:**
+
+The data shows **10,658 antimicrobial susceptibility tests** for ciprofloxacin in *E. coli* during this period, with **2,081 resistant isolates** (19.5% overall).
+
+### **Year-by-Year Resistance Rates:**
+
+| Year | Total Samples | Resistant | Susceptible | Resistance Rate |
+|------|---------------|-----------|-------------|-----------------|
+| 2010 | 293 | 77 | 214 | 26.3% |
+| 2011 | 533 | 124 | 408 | 23.3% |
+| 2012 | 341 | 60 | 276 | 17.6% |
+| 2013 | 1,176 | 49 | 1,053 | 4.2% |
+| 2014 | 316 | 165 | 143 | 52.2% |
+| 2015 | 1,438 | 630 | 781 | 43.8% |
+| 2016 | 496 | 159 | 325 | 32.1% |
+| 2017 | 1,109 | 151 | 945 | 13.6% |
+| 2018 | 837 | 20 | 817 | 2.4% |
+| 2019 | 2,006 | 139 | 1,856 | 6.9% |
+| 2020 | 1,643 | 271 | 1,365 | 16.5% |
+| 2021 | 99 | 6 | 93 | 6.1% |
+| 2022 | 156 | 92 | 49 | 59.0% |
+| 2023 | 215 | 138 | 63 | 64.2% |
+
+### **Key Observations:**
+
+1. **High Variability**: Resistance rates fluctuate significantly year-to-year, ranging from 2.4% (2018) to 64.2% (2023).
+
+2. **Recent Spike**: There's a concerning upward trend in 2022-2023, with resistance rates jumping to **59-64%**, the highest in the entire period.
+
+3. **Mid-Period Peak**: 2014-2015 showed elevated resistance (43-52%), followed by a decline in 2017-2019.
+
+4. **Sample Size Variation**: Testing volume varied considerably, from 99 samples (2021) to 2,006 samples (2019), which may affect year-to-year comparisons.
+
+### **Geographic Distribution (2010-2023):**
+
+| Region | Total Samples | Resistant Isolates | Resistance Rate |
+|--------|---------------|-------------------|-----------------|
+| Americas | 7,823 | 957 | 12.2% |
+| Europe | 1,989 | 689 | 34.6% |
+| Asia | 419 | 239 | 57.0% |
+| Africa | 52 | 27 | 51.9% |
+| Oceania | 2 | 0 | 0% |
+
+**Regional Insights**: Europe and Asia show notably higher resistance rates (35% and 57% respectively) compared to the Americas (12%), suggesting significant geographic variation in ciprofloxacin resistance patterns.
+
+### **Conclusion:**
+
+While there isn't a simple linear trend, the data reveals concerning patterns: a recent sharp increase in resistance (2022-2023), substantial geographic variation, and overall high resistance rates in certain regions. The data suggests ciprofloxacin resistance in *E. coli* remains a significant and evolving public health concern, particularly in recent years.",,50.56081414222717,26,1942,15293,163561,"mcp__togomcp__list_databases, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__list_databases"", ""input"": {}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?year \n       (COUNT(*) as ?total) \n       (SUM(?isResistant) as ?resistant)\n       (SUM(?isSusceptible) as ?susceptible)\n       (SUM(?isIntermediate) as ?intermediate)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism \""Escherichia coli\"" .\n  ?s amr:antibioticName \""ciprofloxacin\"" .\n  ?s amr:collectionYear ?year .\n  ?s amr:resistancePhenotype ?phenotype .\n  BIND(IF(?phenotype = \""resistant\"", 1, 0) as ?isResistant)\n  BIND(IF(?phenotype = \""susceptible\"", 1, 0) as ?isSusceptible)\n  BIND(IF(?phenotype = \""intermediate\"", 1, 0) as ?isIntermediate)\n  FILTER(?year >= 2010 && ?year <= 2023)\n}\nGROUP BY ?year\nORDER BY ?year""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?region (COUNT(*) as ?samples) \n       (SUM(?isResistant) as ?resistant)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism \""Escherichia coli\"" .\n  ?s amr:antibioticName \""ciprofloxacin\"" .\n  ?s amr:collectionYear ?year .\n  ?s amr:resistancePhenotype ?phenotype .\n  ?s amr:geographicalRegion ?region .\n  BIND(IF(?phenotype = \""resistant\"", 1, 0) as ?isResistant)\n  FILTER(?year >= 2010 && ?year <= 2023)\n}\nGROUP BY ?region\nORDER BY DESC(?samples)""}}]",CRITICAL,Temporal trend data showing year-by-year resistance rates,"Database: AMR Portal. Tests temporal resistance trend analysis. Requires filtering by organism, antibiotic, and year range. Baseline cannot track resistance trends over time. Verified temporal query pattern in amrportal_exploration.md with collectionYear filtering."
+33,2026-01-09,Specificity,What is the notification number for Spinal and bulbar muscular atrophy in NANDO?,True,False,True,1.0,"I don't have access to the specific notification numbers from the NANDO (Navigating Anomalies Notifications Database Orphanet) database in my training data. 
+
+To find the notification number for Spinal and bulbar muscular atrophy (also known as Kennedy disease) in NANDO, you would need to:
+
+1. Access the Orphanet website directly
+2. Search their NANDO database for ""Spinal and bulbar muscular atrophy"" or ""Kennedy disease""
+3. Look up the specific notification number assigned to this condition
+
+I apologize that I cannot provide the specific notification number with certainty from my training knowledge alone.",,5.159926176071167,59,149,True,True,1.0,"Perfect! The notification number for **Spinal and bulbar muscular atrophy** in NANDO is **""1""**.
+
+This disease is also known as Kennedy disease or SBMA, and it's identified in the NANDO database as `NANDO:1200001` with notification number 1, which indicates it's one of the designated intractable diseases eligible for government support in Japan.",,46.128068923950195,31,1193,11884,171040,"mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\n\nSELECT ?disease ?label ?notificationNumber\nWHERE {\n  ?disease a nando:NANDO_0000001 ;\n           rdfs:label ?label ;\n           nando:hasNotificationNumber ?notificationNumber .\n  FILTER(CONTAINS(LCASE(?label), \""spinal and bulbar muscular atrophy\""))\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\n\nSELECT ?disease ?label ?notificationNumber\nWHERE {\n  ?disease rdfs:label ?label ;\n           nando:hasNotificationNumber ?notificationNumber .\n  FILTER(CONTAINS(LCASE(?label), \""spinal\"") && CONTAINS(LCASE(?label), \""bulbar\""))\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\n\nSELECT ?disease ?label ?notificationNumber\nWHERE {\n  ?disease rdfs:label ?label ;\n           nando:hasNotificationNumber ?notificationNumber .\n  FILTER(CONTAINS(LCASE(?label), \""muscular atrophy\""))\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?disease ?label ?notificationNumber\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           rdfs:label ?label ;\n           nando:hasNotificationNumber ?notificationNumber .\n  FILTER(LANG(?label) = \""en\"")\n  ?label bif:contains \""'Spinal*'\"" option (score ?sc) .\n}\nORDER BY DESC(?sc)\n""}}]",CRITICAL,1,Database: NANDO. Tests Japanese government disease designation system. 88% of NANDO diseases have notification numbers for support eligibility. Baseline has no knowledge of this Japan-specific system. Verified in nando_exploration.md via hasNotificationNumber property.
+34,2026-01-09,Specificity,What evidence type is predominantly used for AMR gene prediction in the AMR Portal?,True,True,False,0.0,"Based on my training knowledge, the AMR (Antimicrobial Resistance) Portal, particularly NCBI's Pathogen Detection system and related AMR resources, predominantly uses **sequence-based evidence** for AMR gene prediction.
+
+More specifically, the primary evidence types include:
+
+1. **Nucleotide sequence similarity** - AMR genes are identified by comparing genomic sequences against curated reference databases of known AMR genes
+
+2. **Reference gene databases** - The system primarily relies on curated databases like:
+   - **NCBI's Reference Gene Catalog** for AMR genes
+   - Other databases integrated into the analysis pipeline
+
+3. **Hierarchical gene family classification** - Genes are classified into AMR gene families based on sequence homology
+
+The prediction is typically done through:
+- **BLAST-based or similar alignment methods** to identify AMR genes in bacterial genomes
+- **Threshold-based calling** using sequence identity and coverage cutoffs
+
+This is distinct from phenotypic evidence (actual antimicrobial susceptibility testing results), though some portals may integrate both genotypic predictions and phenotypic data when available.
+
+The genotypic/sequence-based approach allows for rapid, automated prediction of AMR potential directly from genomic sequence data without requiring laboratory culture and susceptibility testing.",,9.607900142669678,54,286,True,True,1.0,"Based on the AMR Portal database documentation, I can answer your question about the evidence types used for AMR gene prediction.
+
+According to the data quality statistics in the AMR Portal:
+
+**HMM (Hidden Markov Model)** is the **predominant evidence type** used for AMR gene prediction in the AMR Portal, accounting for **approximately 65%** of genotype features that have evidence type specified.
+
+This is clearly stated in the documentation under the data quality section:
+> ""Evidence type in genotype data predominantly HMM (65% of features with evidence type specified)""
+
+The HMM evidence type is used to identify AMR genes through profile-based sequence analysis. When you look at the genotype data structure, each AMR gene feature includes:
+- `amr:evidenceType` - specifying the method (predominantly ""HMM"")
+- `amr:evidenceAccession` - the identifier for the HMM model used (e.g., ""NF000263.1"")
+- `amr:evidenceDescription` - description of the detected feature
+- `amr:evidenceLink` - links to NCBI Pathogen Detection annotation evidence
+
+This approach allows for sensitive and specific detection of AMR genes based on sequence similarity to known resistance determinants, which is why it's the primary method used across the ~1.1 million genotype features in the database.",,19.715474843978882,9,410,10941,52647,mcp__togomcp__get_MIE_file,"[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}]",CRITICAL,HMM (Hidden Markov Model),Database: AMR Portal. Tests understanding of genotype feature annotation methods. 65% of genotypes have HMM evidence. Baseline cannot access AMR Portal metadata. Verified in amrportal_exploration.md showing evidenceType field predominantly HMM.
+35,2026-01-09,Structured Query,Find all neuromuscular diseases in NANDO that have both KEGG Disease links and MONDO mappings.,True,False,True,0.8,"I don't have access to real-time databases or the ability to query NANDO (Nanbyo Disease Ontology) directly. I can only provide information based on my training data.
+
+However, I can tell you that NANDO is a Japanese rare disease ontology that includes neuromuscular diseases and provides cross-references to various databases including:
+- KEGG Disease
+- MONDO (Monarch Disease Ontology)
+
+To find neuromuscular diseases in NANDO with both KEGG Disease links and MONDO mappings, you would need to:
+
+1. Access the NANDO database directly (available at https://nanbyodata.jp/ontology/nando)
+2. Filter for neuromuscular diseases
+3. Check which entries have cross-references to both KEGG Disease (dbXref: KEGG_DISEASE:*) and MONDO (dbXref: MONDO:*)
+
+Common neuromuscular diseases that are typically well-annotated in disease ontologies and would likely have both types of mappings include:
+- Muscular dystrophies (Duchenne, Becker, etc.)
+- Myasthenia gravis
+- Amyotrophic lateral sclerosis (ALS)
+- Spinal muscular atrophy
+- Various myopathies
+
+For the exact current list with specific identifiers, you would need to query the NANDO database directly or use their API/download files.",,9.036513090133667,62,327,True,True,0.8,"Perfect! I found 94 neuromuscular diseases in NANDO that have both KEGG Disease links and MONDO mappings. Let me organize this information for you:
+
+## Neuromuscular Diseases in NANDO with Both KEGG Disease Links and MONDO Mappings
+
+I found **94 unique entries** (some diseases have multiple MONDO mappings). Here's a comprehensive summary organized by disease category:
+
+### Motor Neuron Diseases & Spinal Muscular Atrophy
+1. **Spinal muscular atrophy** (NANDO:1200003) - 脊髄性筋萎縮症
+   - KEGG: ds_ja:H00455 | MONDO: 0001516
+
+### Movement Disorders
+2. **Progressive supranuclear palsy** (NANDO:1200009) - 進行性核上性麻痺
+3. **Parkinson's disease** (NANDO:1200010) - パーキンソン病
+4. **Huntington's disease** (NANDO:1200012) - ハンチントン病
+5. **McLeod syndrome** (NANDO:1200015) - Mcleod症候群
+6. **Multiple system atrophy** (NANDO:1200034) - 多系統萎縮症
+7. **Hereditary dystonia** (NANDO:1200511) - 遺伝性ジストニア
+8. **Neuroferritinopathy** (NANDO:1200542) - 神経フェリチン症
+9. **Perry syndrome** (NANDO:1200547) - ペリー症候群
+10. **Frontotemporal lobar degeneration** (NANDO:1200548) - 前頭側頭葉変性症
+
+### Peripheral Neuropathies
+11. **Charcot-Marie-Tooth disease** (NANDO:1200016) - シャルコー・マリー・トゥース病
+12. **Chronic inflammatory demyelinating polyneuropathy** (NANDO:1200030) - 慢性炎症性脱髄性多発神経炎 (has 3 MONDO mappings)
+13. **Hereditary spastic paraplegia** (NANDO:1200052) - 痙性対麻痺
+
+### Neuromuscular Junction Disorders
+14. **Myasthenia gravis** (NANDO:1200020) - 重症筋無力症
+15. **Congenital myasthenic syndrome** (NANDO:1200021) - 先天性筋無力症候群
+
+### Demyelinating Diseases
+16. **Multiple sclerosis** (NANDO:1200023) - 多発性硬化症
+17. **Neuromyelitis optica spectrum disorders** (NANDO:1200027) - 視神経脊髄炎
+
+### Inflammatory Myopathies
+18. **Sporadic inclusion body myositis** (NANDO:1200032) - 封入体筋炎
+19. **Crow-Fukase syndrome** (NANDO:1200033) - クロウ・深瀬症候群
+
+### Cerebellar Ataxias
+20. **Spinocerebellar degeneration** (NANDO:1200037) - 脊髄小脳変性症
+
+### Muscular Dystrophies
+21. **Dystrophinopathies** (NANDO:1200487) - ジストロフィン異常症
+22. **Duchenne muscular dystrophy** (NANDO:1200488) - デュシェンヌ型筋ジストロフィー
+23. **Becker muscular dystrophy** (NANDO:1200489) - ベッカー型筋ジストロフィー
+24. **Limb-girdle muscular dystrophy** (NANDO:1200490) - 肢帯型筋ジストロフィー
+25. **Facioscapulohumeral muscular dystrophy** (NANDO:1200491) - 顔面肩甲上腕型筋ジストロフィー
+26. **Emery-Dreifuss muscular dystrophy** (NANDO:1200492) - エメリー・ドレイフス型筋ジストロフィー
+27. **Oculopharyngeal muscular dystrophy** (NANDO:1200493) - 眼咽頭筋型筋ジストロフィー
+28. **Fukuyama type congenital muscular dystrophy** (NANDO:1200494) - 福山型先天性筋ジストロフィー
+29. **Ullrich disease** (NANDO:1200215) - ウルリッヒ病 (has 2 MONDO mappings)
+30. **Bethlem Myopathy** (NANDO:1200220) - ベスレムミオパチー
+
+### Congenital Myopathies
+31. **Congenital myopathy** (NANDO:1200477) - 先天性ミオパチー
+32. **Nemaline myopathy** (NANDO:1200478) - ネマリンミオパチー
+33. **Central core disease** (NANDO:1200479) - セントラルコア病
+34. **Centronuclear myopathy** (NANDO:1200482) - 中心核ミオパチー (has 2 MONDO mappings)
+
+### Distal Myopathies
+35. **Distal myopathy** (NANDO:1200216) - 遠位型ミオパチー
+36. **Miyoshi myopathy** (NANDO:1200217) - 三好型ミオパチー
+
+### Myotonic Disorders
+37. **Myotonic dystrophy** (NANDO:1200495) - 筋強直性ジストロフィー
+38. **Non-dystrophic myotonia** (NANDO:1200496) - 非ジストロフィー性ミオトニー症候群
+39. **Myotonia congenita** (NANDO:1200497) - 先天性ミオトニー
+40. **Paramyotonia congenita** (NANDO:1200501) - 先天性パラミオトニー
+41. **Hereditary periodic paralysis** (NANDO:1200502) - 遺伝性周期性四肢麻痺
+42. **Schwartz-Jampel syndrome** (NANDO:1200224) - シュワルツ・ヤンペル症候群
+
+### Channelopathies & Other Neuromuscular Disorders
+43. **Isaacs syndrome** (NANDO:1200510) - アイザックス症候群
+44. **Alternating hemiplegia of childhood** (NANDO:1200525) - 小児交互性片麻痺
+45. **Marinesco-Sjogren syndrome** (NANDO:1200485) - マリネスコ・シェーグレン症候群
+
+### Epilepsy Syndromes
+46. **Dravet syndrome** (NANDO:1200587) - ドラベ症候群
+47. **Lennox-Gastaut syndrome** (NANDO:1200591) - レノックス・ガストー症候群
+48. **West syndrome** (NANDO:1200592) - ウエスト症候群
+49. **Progressive myoclonus epilepsy** (NANDO:1200953) - 進行性ミオクローヌスてんかん
+50. **Lafora disease** (NANDO:1200955) - ラフォラ病
+51. **Benign adult familial myoclonus epilepsy** (NANDO:1200956) - 良性成人型家族性ミオクローヌスてんかん
+
+### Leukodystrophies & White Matter Disorders
+52. **Congenital hypomyelinating leukodystrophy** (NANDO:1200575) - 先天性大脳白質形成不全症
+53. **Alexander disease** (NANDO:1200554) - アレキサンダー病
+54. **Canavan disease** (NANDO:1200948) - カナバン病
+55. **Megaloencephalic leukoencephalopathy with subcortical cysts** (NANDO:1200950) - 皮質下嚢胞をもつ大頭型白質脳症
+
+### Additional Neurological Conditions
+And many more including conditions like:
+- Prion disease
+- Tuberous sclerosis complex
+- Rett syndrome
+- Angelman syndrome
+- Moebius syndrome
+- And various other rare neuromuscular and neurological disorders
+
+### Key Statistics:
+- **Total unique diseases**: 84 distinct diseases
+- **Total entries**: 94 (some diseases have multiple MONDO mappings)
+- **All diseases have**: English labels, Japanese labels, KEGG Disease links, and MONDO ontology mappings
+- **All are classified under**: Neuromuscular disease (NANDO:1100001) or its subcategories
+
+This comprehensive cross-referencing enables integration between Japanese clinical data (NANDO), international disease ontologies (MONDO), and molecular/pathway databases (KEGG).",,51.792689085006714,15,2962,21320,89075,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dct: <http://purl.org/dc/terms/>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?disease ?identifier ?en_label ?ja_label ?kegg ?mondo\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           rdfs:subClassOf+ nando:1100001 ;\n           dct:identifier ?identifier ;\n           rdfs:label ?en_label ;\n           rdfs:label ?ja_label ;\n           rdfs:seeAlso ?kegg ;\n           skos:closeMatch ?mondo .\n  FILTER(LANG(?en_label) = \""en\"")\n  FILTER(LANG(?ja_label) = \""ja\"" && !REGEX(STR(?ja_label), \""^[\u3041-\u3093]+$\""))\n  FILTER(CONTAINS(STR(?kegg), \""kegg.jp\""))\n  FILTER(STRSTARTS(STR(?mondo), \""http://purl.obolibrary.org/obo/MONDO_\""))\n}\nORDER BY ?identifier""}}]",CRITICAL,Multiple diseases with both cross-references,"Database: NANDO, KEGG, MONDO. Tests multi-database integration query. Requires filtering by disease category (NANDO:1100001) and checking for both rdfs:seeAlso (KEGG) and skos:closeMatch (MONDO). Verified query pattern in nando_exploration.md."
+36,2026-01-09,Structured Query,Identify E. coli isolates from Southeast Asia resistant to both ciprofloxacin and ceftriaxone collected after 2020 in the AMR Portal.,True,False,False,0.0,,,3.011251926422119,75,2,True,False,0.25,"Excellent! Now I have comprehensive data. Let me provide a summary of the findings:
+
+## Summary of Findings
+
+Based on my search of the AMR Portal database, I found **E. coli isolates from Asia that are resistant to both ciprofloxacin and ceftriaxone**. However, there is an important limitation:
+
+### **Key Finding: No isolates after 2020**
+
+The AMR Portal database does not contain any E. coli isolates from Southeast Asia (or Asia in general) that were collected after 2020 and showed dual resistance to both ciprofloxacin and ceftriaxone. The most recent isolates with this resistance profile were collected in **2017**.
+
+### **Isolates Found (2012-2017)**
+
+I identified **46 E. coli isolates from Asia** with confirmed resistance to both ciprofloxacin and ceftriaxone:
+
+#### **By Country/Region:**
+1. **Bangladesh** (Southern Asia): 16 isolates (2014-2015)
+   - ETEC isolates from enterotoxigenic E. coli studies
+   
+2. **Pakistan** (Southern Asia): 25 isolates (2012-2017)
+   - Multiple clinical isolates (PH series and EC series)
+   - Most recent: EC_11 (2017)
+   
+3. **India** (Southern Asia): 2 isolates (2016)
+   - Urinary tract infection isolates
+   - One particularly concerning isolate (SAMN11638310) showing **extensive drug resistance** including:
+     - Ciprofloxacin: MIC ≥256 μg/mL
+     - Ceftriaxone: MIC >128 μg/mL
+     - Also resistant to meropenem, colistin, gentamicin, and multiple other antibiotics
+
+4. **China** (Eastern Asia): 1 isolate (2013)
+   - CRE1493 from rectal swab
+   
+5. **Hong Kong** (Eastern Asia): 1 isolate (2014)
+   - CRE1540 from rectal swab
+
+### **Notable Resistance Patterns:**
+
+Several isolates showed **multidrug resistance** beyond ciprofloxacin and ceftriaxone, including resistance to:
+- Other fluoroquinolones (nalidixic acid, norfloxacin, levofloxacin)
+- Other cephalosporins (cefixime, ceftazidime, cefazolin)
+- Trimethoprim-sulfamethoxazole
+- Macrolides (azithromycin, erythromycin)
+- In severe cases: carbapenems (meropenem) and colistin
+
+### **Data Limitation:**
+
+The AMR Portal's coverage for Southeast Asian E. coli isolates is limited to collections made before 2020. The database shows:
+- Thailand: data up to 2016
+- Most Southeast Asian countries: no data after 2017
+
+**For data collected after 2020**, you would need to consult other sources such as:
+- National AMR surveillance programs
+- WHO GLASS (Global Antimicrobial Resistance and Use Surveillance System)
+- Recent published studies in PubMed
+- Regional AMR networks
+
+Would you like me to search for more recent publications about this topic in PubMed?",,184.3248209953308,57,8669,27505,720314,"mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://purl.jp/bio/10/amr/>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?isolate ?isolate_label ?country ?collection_date ?cipro_phenotype ?ceftriaxone_phenotype\nWHERE {\n  # E. coli isolates\n  ?isolate a amr:Isolate ;\n           amr:organism ?organism ;\n           amr:country ?country ;\n           amr:collectionDate ?collection_date .\n  \n  # Organism is E. coli\n  ?organism rdfs:label ?org_label .\n  FILTER(CONTAINS(LCASE(?org_label), \""escherichia coli\""))\n  \n  # Southeast Asian countries\n  FILTER(?country IN (\""Thailand\"", \""Vietnam\"", \""Philippines\"", \""Indonesia\"", \""Malaysia\"", \""Singapore\"", \""Myanmar\"", \""Cambodia\"", \""Laos\"", \""Brunei\""))\n  \n  # Collection date after 2020\n  FILTER(xsd:integer(?collection_date) > 2020)\n  \n  # Ciprofloxacin resistance\n  ?isolate amr:hasPhenotype ?cipro_test .\n  ?cipro_test amr:antimicrobialAgent ?cipro_agent ;\n              amr:resistancePhenotype ?cipro_phenotype .\n  ?cipro_agent rdfs:label ?cipro_label .\n  FILTER(CONTAINS(LCASE(?cipro_label), \""ciprofloxacin\""))\n  FILTER(?cipro_phenotype = \""resistant\"" || ?cipro_phenotype = \""Resistant\"")\n  \n  # Ceftriaxone resistance\n  ?isolate amr:hasPhenotype ?ceftriaxone_test .\n  ?ceftriaxone_test amr:antimicrobialAgent ?ceftriaxone_agent ;\n                    amr:resistancePhenotype ?ceftriaxone_phenotype .\n  ?ceftriaxone_agent rdfs:label ?ceftriaxone_label .\n  FILTER(CONTAINS(LCASE(?ceftriaxone_label), \""ceftriaxone\""))\n  FILTER(?ceftriaxone_phenotype = \""resistant\"" || ?ceftriaxone_phenotype = \""Resistant\"")\n  \n  OPTIONAL { ?isolate rdfs:label ?isolate_label }\n}\nORDER BY ?country ?collection_date\nLIMIT 100\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?collectionYear \n       ?cipro_phenotype ?ceftriaxone_phenotype\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  # Ciprofloxacin resistance\n  ?cipro a amr:PhenotypeMeasurement .\n  ?cipro amr:organism ?organism .\n  ?cipro amr:bioSample ?bioSample .\n  ?cipro amr:antibioticName ?cipro_antibiotic .\n  ?cipro amr:resistancePhenotype ?cipro_phenotype .\n  ?cipro amr:country ?country .\n  ?cipro amr:collectionYear ?collectionYear .\n  OPTIONAL { ?cipro amr:isolateId ?isolateId }\n  \n  # Filter for E. coli\n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  \n  # Filter for ciprofloxacin\n  FILTER(CONTAINS(LCASE(?cipro_antibiotic), \""ciprofloxacin\""))\n  FILTER(?cipro_phenotype = \""resistant\"")\n  \n  # Filter for Southeast Asian countries\n  FILTER(?country IN (\""Thailand\"", \""Viet Nam\"", \""Philippines\"", \""Indonesia\"", \n                      \""Malaysia\"", \""Singapore\"", \""Myanmar\"", \""Cambodia\"", \""Laos\"", \""Brunei\""))\n  \n  # Filter for collection year after 2020\n  FILTER(?collectionYear > 2020)\n  \n  # Ceftriaxone resistance (same bioSample)\n  ?ceftriaxone a amr:PhenotypeMeasurement .\n  ?ceftriaxone amr:bioSample ?bioSample .\n  ?ceftriaxone amr:antibioticName ?ceftriaxone_antibiotic .\n  ?ceftriaxone amr:resistancePhenotype ?ceftriaxone_phenotype .\n  \n  # Filter for ceftriaxone\n  FILTER(CONTAINS(LCASE(?ceftriaxone_antibiotic), \""ceftriaxone\""))\n  FILTER(?ceftriaxone_phenotype = \""resistant\"")\n}\nORDER BY ?country ?collectionYear\nLIMIT 100\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?country ?collectionYear (COUNT(*) as ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:country ?country .\n  ?s amr:collectionYear ?collectionYear .\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(?country IN (\""Thailand\"", \""Viet Nam\"", \""Vietnam\"", \""Philippines\"", \""Indonesia\"", \n                      \""Malaysia\"", \""Singapore\"", \""Myanmar\"", \""Cambodia\"", \""Laos\"", \""Brunei\""))\n  FILTER(?collectionYear > 2020)\n}\nGROUP BY ?country ?collectionYear\nORDER BY ?country ?collectionYear\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?country (MIN(?year) as ?minYear) (MAX(?year) as ?maxYear) (COUNT(*) as ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:country ?country .\n  ?s amr:collectionYear ?year .\n  ?s amr:geographicalSubregion ?subregion .\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(CONTAINS(?subregion, \""Asia\""))\n}\nGROUP BY ?country\nORDER BY DESC(?count)\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?antibiotic (COUNT(*) as ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:antibioticName ?antibiotic .\n  ?s amr:country \""Thailand\"" .\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(CONTAINS(LCASE(?antibiotic), \""cipro\"") || CONTAINS(LCASE(?antibiotic), \""ceft\""))\n}\nGROUP BY ?antibiotic\nORDER BY DESC(?count)\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?collectionYear ?sraAccession\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  # Ciprofloxacin resistance\n  ?cipro a amr:PhenotypeMeasurement .\n  ?cipro amr:organism ?organism .\n  ?cipro amr:bioSample ?bioSample .\n  ?cipro amr:antibioticName \""ciprofloxacin\"" .\n  ?cipro amr:resistancePhenotype \""resistant\"" .\n  ?cipro amr:country ?country .\n  ?cipro amr:collectionYear ?collectionYear .\n  OPTIONAL { ?cipro amr:isolateId ?isolateId }\n  OPTIONAL { ?cipro amr:sraAccession ?sraAccession }\n  \n  # Filter for E. coli\n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  \n  # Filter for Southeast Asian countries\n  FILTER(?country IN (\""Thailand\"", \""Viet Nam\"", \""Vietnam\"", \""Philippines\"", \""Indonesia\"", \n                      \""Malaysia\"", \""Singapore\"", \""Myanmar\"", \""Cambodia\"", \""Laos\"", \""Brunei\""))\n  \n  # Ceftriaxone resistance (same bioSample)\n  ?ceftriaxone a amr:PhenotypeMeasurement .\n  ?ceftriaxone amr:bioSample ?bioSample .\n  ?ceftriaxone amr:antibioticName \""ceftriaxone\"" .\n  ?ceftriaxone amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?country ?collectionYear\nLIMIT 100\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?bioSample ?isolateId ?country ?year\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  # Ciprofloxacin resistance\n  ?cipro a amr:PhenotypeMeasurement .\n  ?cipro amr:organism ?organism .\n  ?cipro amr:bioSample ?bioSample .\n  ?cipro amr:antibioticName \""ciprofloxacin\"" .\n  ?cipro amr:resistancePhenotype \""resistant\"" .\n  ?cipro amr:country ?country .\n  ?cipro amr:collectionYear ?year .\n  ?cipro amr:geographicalSubregion \""South-eastern Asia\"" .\n  OPTIONAL { ?cipro amr:isolateId ?isolateId }\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  \n  # Ceftriaxone resistance (same bioSample)\n  ?ceftriaxone a amr:PhenotypeMeasurement .\n  ?ceftriaxone amr:bioSample ?bioSample .\n  ?ceftriaxone amr:antibioticName \""ceftriaxone\"" .\n  ?ceftriaxone amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?country ?year\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?country ?year ?phenotype (COUNT(*) as ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:antibioticName \""ceftriaxone\"" .\n  ?s amr:resistancePhenotype ?phenotype .\n  ?s amr:country ?country .\n  ?s amr:collectionYear ?year .\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(?country IN (\""Thailand\"", \""Viet Nam\"", \""Vietnam\"", \""Philippines\"", \""Indonesia\"", \n                      \""Malaysia\"", \""Singapore\"", \""Myanmar\"", \""Cambodia\"", \""Laos\"", \""Brunei\""))\n}\nGROUP BY ?country ?year ?phenotype\nORDER BY ?country ?year\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?collectionYear \n       ?isolationSource ?host ?sraAccession ?reference\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  # Ciprofloxacin resistance\n  ?cipro a amr:PhenotypeMeasurement .\n  ?cipro amr:organism ?organism .\n  ?cipro amr:bioSample ?bioSample .\n  ?cipro amr:antibioticName \""ciprofloxacin\"" .\n  ?cipro amr:resistancePhenotype \""resistant\"" .\n  ?cipro amr:country ?country .\n  ?cipro amr:collectionYear ?collectionYear .\n  OPTIONAL { ?cipro amr:isolateId ?isolateId }\n  OPTIONAL { ?cipro amr:isolationSource ?isolationSource }\n  OPTIONAL { ?cipro amr:host ?host }\n  OPTIONAL { ?cipro amr:sraAccession ?sraAccession }\n  OPTIONAL { ?cipro dct:references ?reference }\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(?country = \""Thailand\"")\n  \n  # Ceftriaxone resistance (same bioSample)\n  ?ceftriaxone a amr:PhenotypeMeasurement .\n  ?ceftriaxone amr:bioSample ?bioSample .\n  ?ceftriaxone amr:antibioticName \""ceftriaxone\"" .\n  ?ceftriaxone amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?collectionYear\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?bioSample ?isolateId ?country ?year \n       (GROUP_CONCAT(DISTINCT ?antibiotic; separator=\"", \"") as ?antibiotics)\n       (GROUP_CONCAT(DISTINCT ?phenotype; separator=\"", \"") as ?phenotypes)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:bioSample ?bioSample .\n  ?s amr:antibioticName ?antibiotic .\n  ?s amr:resistancePhenotype ?phenotype .\n  ?s amr:country ?country .\n  ?s amr:collectionYear ?year .\n  OPTIONAL { ?s amr:isolateId ?isolateId }\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(?country = \""Thailand\"")\n  FILTER(?antibiotic IN (\""ciprofloxacin\"", \""ceftriaxone\""))\n  FILTER(?phenotype = \""resistant\"")\n}\nGROUP BY ?bioSample ?isolateId ?country ?year\nHAVING (COUNT(DISTINCT ?antibiotic) = 2)\nORDER BY ?year\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?bioSample ?isolateId ?country ?year \n       (GROUP_CONCAT(DISTINCT ?antibiotic; separator=\"", \"") as ?antibiotics)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:organism ?organism .\n  ?s amr:bioSample ?bioSample .\n  ?s amr:antibioticName ?antibiotic .\n  ?s amr:resistancePhenotype \""resistant\"" .\n  ?s amr:country ?country .\n  ?s amr:collectionYear ?year .\n  ?s amr:geographicalRegion \""Asia\"" .\n  OPTIONAL { ?s amr:isolateId ?isolateId }\n  \n  FILTER(CONTAINS(LCASE(?organism), \""escherichia coli\""))\n  FILTER(?antibiotic IN (\""ciprofloxacin\"", \""ceftriaxone\""))\n  FILTER(?year > 2010)\n}\nGROUP BY ?bioSample ?isolateId ?country ?year\nHAVING (COUNT(DISTINCT ?antibiotic) = 2)\nORDER BY ?year DESC\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?year\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  # Get biosamples with ciprofloxacin resistance\n  {\n    SELECT DISTINCT ?bioSample ?country ?year ?isolateId\n    WHERE {\n      ?s1 a amr:PhenotypeMeasurement .\n      ?s1 amr:organism ?org1 .\n      ?s1 amr:bioSample ?bioSample .\n      ?s1 amr:antibioticName \""ciprofloxacin\"" .\n      ?s1 amr:resistancePhenotype \""resistant\"" .\n      ?s1 amr:country ?country .\n      ?s1 amr:collectionYear ?year .\n      ?s1 amr:geographicalRegion \""Asia\"" .\n      OPTIONAL { ?s1 amr:isolateId ?isolateId }\n      \n      FILTER(CONTAINS(LCASE(?org1), \""escherichia coli\""))\n      FILTER(?year > 2010)\n    }\n  }\n  \n  # Check if same biosample has ceftriaxone resistance\n  ?s2 a amr:PhenotypeMeasurement .\n  ?s2 amr:bioSample ?bioSample .\n  ?s2 amr:antibioticName \""ceftriaxone\"" .\n  ?s2 amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?country ?year\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?year ?isolationSource ?host\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  {\n    SELECT DISTINCT ?bioSample ?country ?year ?isolateId ?isolationSource ?host\n    WHERE {\n      ?s1 a amr:PhenotypeMeasurement .\n      ?s1 amr:organism ?org1 .\n      ?s1 amr:bioSample ?bioSample .\n      ?s1 amr:antibioticName \""ciprofloxacin\"" .\n      ?s1 amr:resistancePhenotype \""resistant\"" .\n      ?s1 amr:country ?country .\n      ?s1 amr:collectionYear ?year .\n      ?s1 amr:geographicalSubregion \""South-eastern Asia\"" .\n      OPTIONAL { ?s1 amr:isolateId ?isolateId }\n      OPTIONAL { ?s1 amr:isolationSource ?isolationSource }\n      OPTIONAL { ?s1 amr:host ?host }\n      \n      FILTER(CONTAINS(LCASE(?org1), \""escherichia coli\""))\n    }\n  }\n  \n  ?s2 a amr:PhenotypeMeasurement .\n  ?s2 amr:bioSample ?bioSample .\n  ?s2 amr:antibioticName \""ceftriaxone\"" .\n  ?s2 amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?country ?year\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?subregion ?year \n       ?isolationSource ?host ?sraAccession\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  {\n    SELECT DISTINCT ?bioSample ?country ?subregion ?year ?isolateId \n                    ?isolationSource ?host ?sraAccession\n    WHERE {\n      ?s1 a amr:PhenotypeMeasurement .\n      ?s1 amr:organism ?org1 .\n      ?s1 amr:bioSample ?bioSample .\n      ?s1 amr:antibioticName \""ciprofloxacin\"" .\n      ?s1 amr:resistancePhenotype \""resistant\"" .\n      ?s1 amr:country ?country .\n      ?s1 amr:collectionYear ?year .\n      ?s1 amr:geographicalRegion \""Asia\"" .\n      OPTIONAL { ?s1 amr:geographicalSubregion ?subregion }\n      OPTIONAL { ?s1 amr:isolateId ?isolateId }\n      OPTIONAL { ?s1 amr:isolationSource ?isolationSource }\n      OPTIONAL { ?s1 amr:host ?host }\n      OPTIONAL { ?s1 amr:sraAccession ?sraAccession }\n      \n      FILTER(CONTAINS(LCASE(?org1), \""escherichia coli\""))\n      FILTER(?year > 2010)\n    }\n  }\n  \n  ?s2 a amr:PhenotypeMeasurement .\n  ?s2 amr:bioSample ?bioSample .\n  ?s2 amr:antibioticName \""ceftriaxone\"" .\n  ?s2 amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?subregion ?country ?year\nLIMIT 100\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?bioSample ?isolateId ?country ?year ?subregion\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  {\n    SELECT DISTINCT ?bioSample ?country ?year ?isolateId ?subregion\n    WHERE {\n      ?s1 a amr:PhenotypeMeasurement .\n      ?s1 amr:organism ?org1 .\n      ?s1 amr:bioSample ?bioSample .\n      ?s1 amr:antibioticName \""ciprofloxacin\"" .\n      ?s1 amr:resistancePhenotype \""resistant\"" .\n      ?s1 amr:country ?country .\n      ?s1 amr:collectionYear ?year .\n      ?s1 amr:geographicalRegion \""Asia\"" .\n      OPTIONAL { ?s1 amr:geographicalSubregion ?subregion }\n      OPTIONAL { ?s1 amr:isolateId ?isolateId }\n      \n      FILTER(CONTAINS(LCASE(?org1), \""escherichia coli\""))\n      FILTER(?year > 2020)\n    }\n  }\n  \n  ?s2 a amr:PhenotypeMeasurement .\n  ?s2 amr:bioSample ?bioSample .\n  ?s2 amr:antibioticName \""ceftriaxone\"" .\n  ?s2 amr:resistancePhenotype \""resistant\"" .\n}\nORDER BY ?year ?country\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""\nPREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?bioSample ?antibioticName ?resistancePhenotype ?measurementValue ?measurementSign\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  VALUES ?bioSample {\n    <https://identifiers.org/biosample/SAMEA104128270>\n    <https://identifiers.org/biosample/SAMEA104128274>\n    <https://identifiers.org/biosample/SAMN03074764>\n    <https://identifiers.org/biosample/SAMN10926011>\n    <https://identifiers.org/biosample/SAMN11638310>\n  }\n  \n  ?s a amr:PhenotypeMeasurement .\n  ?s amr:bioSample ?bioSample .\n  ?s amr:antibioticName ?antibioticName .\n  ?s amr:resistancePhenotype ?resistancePhenotype .\n  OPTIONAL { ?s amr:measurementValue ?measurementValue }\n  OPTIONAL { ?s amr:measurementSign ?measurementSign }\n}\nORDER BY ?bioSample ?antibioticName\n""}}]",CRITICAL,Multiple BioSample IDs meeting all criteria,"Database: AMR Portal. Tests complex multi-criteria filtering: organism, geographic region, multiple antibiotics, temporal filter. Requires multiple resistancePhenotype filters and date comparison. Baseline cannot execute this surveillance query. Pattern verified in amrportal_exploration.md."
