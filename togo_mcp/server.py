@@ -36,37 +36,112 @@ KW_SEARCH_INSTRUCTIONS = CWD + "/kw_search"
 
 
 def load_sparql_endpoints(path: str) -> Dict[str, Dict[str, str]]:
-    """Load SPARQL endpoints from a CSV file."""
+    """Load SPARQL endpoints from a CSV file.
+
+    Returns a dictionary keyed by database name with values containing:
+    - url: The SPARQL endpoint URL
+    - endpoint_name: Short name for the endpoint (e.g., 'ebi', 'sib')
+    - keyword_search: The keyword search API to use
+    """
     endpoints = {}
     with open(path, mode='r', encoding='utf-8') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)  # Skip header
         for row in reader:
-            db_name, endpoint_url, keyword_search_api = row
+            db_name, endpoint_url, endpoint_name, keyword_search_api = row
             key = db_name.lower().replace(' ', '_').replace('-', '')
-            endpoints[key] = {"url": endpoint_url, "keyword_search": keyword_search_api}
+            endpoints[key] = {
+                "url": endpoint_url,
+                "endpoint_name": endpoint_name,
+                "keyword_search": keyword_search_api
+            }
     return endpoints
 
 # The SPARQL endpoints for various RDF databases, loaded from a CSV file.
 SPARQL_ENDPOINT = load_sparql_endpoints(ENDPOINTS_CSV)
 DBNAME_DESCRIPTION = f"Database name: One of {','.join(SPARQL_ENDPOINT.keys())}"
 
-# Making this a @mcp.tool() becomes an error, so we keep it as a function.
-async def execute_sparql(sparql_query: str, dbname: str) -> str:
-    """ Execute a SPARQL query on RDF Portal. 
-    Args:
-        sparql_query (str): The SPARQL query to execute.
-        dbname (str): The name of the database to query. To find the supported databases, use the `get_sparql_endpoints` tool.
-    Returns:
-        dict: The results of the SPARQL query in CSV.
-    """
+# Build reverse lookups for endpoint_name -> url and list of databases per endpoint
+ENDPOINT_NAME_TO_URL: Dict[str, str] = {}
+ENDPOINT_NAME_TO_DATABASES: Dict[str, list] = {}
+for dbname, info in SPARQL_ENDPOINT.items():
+    ep_name = info["endpoint_name"]
+    ENDPOINT_NAME_TO_URL[ep_name] = info["url"]
+    if ep_name not in ENDPOINT_NAME_TO_DATABASES:
+        ENDPOINT_NAME_TO_DATABASES[ep_name] = []
+    ENDPOINT_NAME_TO_DATABASES[ep_name].append(dbname)
 
-    if dbname not in SPARQL_ENDPOINT:
-        raise ValueError(f"Unknown database: {dbname}")
+ENDPOINT_NAMES = list(ENDPOINT_NAME_TO_URL.keys())
+SPARQL_ENDPOINT_KEYS = list(SPARQL_ENDPOINT.keys())
+
+def resolve_endpoint_url(
+    dbname: str = None,
+    endpoint_name: str = None,
+    endpoint_url: str = None
+) -> str:
+    """Resolve the SPARQL endpoint URL from various input options.
+
+    Priority: endpoint_url > endpoint_name > dbname
+
+    Args:
+        dbname: Database name (e.g., 'chembl', 'uniprot')
+        endpoint_name: Short endpoint name (e.g., 'ebi', 'sib')
+        endpoint_url: Direct endpoint URL
+
+    Returns:
+        The resolved SPARQL endpoint URL
+
+    Raises:
+        ValueError: If no valid input is provided or input is invalid
+    """
+    if endpoint_url:
+        return endpoint_url
+    if endpoint_name:
+        if endpoint_name not in ENDPOINT_NAME_TO_URL:
+            raise ValueError(
+                f"Unknown endpoint name: {endpoint_name}. "
+                f"Valid names are: {', '.join(ENDPOINT_NAMES)}"
+            )
+        return ENDPOINT_NAME_TO_URL[endpoint_name]
+    if dbname:
+        if dbname not in SPARQL_ENDPOINT:
+            raise ValueError(
+                f"Unknown database: {dbname}. "
+                f"Valid databases are: {', '.join(SPARQL_ENDPOINT_KEYS)}"
+            )
+        return SPARQL_ENDPOINT[dbname]["url"]
+    raise ValueError(
+        "At least one of dbname, endpoint_name, or endpoint_url must be provided"
+    )
+
+
+# Making this a @mcp.tool() becomes an error, so we keep it as a function.
+async def execute_sparql(
+    sparql_query: str,
+    dbname: str = None,
+    endpoint_name: str = None,
+    endpoint_url: str = None
+) -> str:
+    """Execute a SPARQL query on RDF Portal.
+
+    Args:
+        sparql_query: The SPARQL query to execute.
+        dbname: The name of the database to query (e.g., 'chembl', 'uniprot').
+        endpoint_name: Short endpoint name (e.g., 'ebi', 'sib') for cross-database queries.
+        endpoint_url: Direct SPARQL endpoint URL.
+
+    Returns:
+        The results of the SPARQL query in CSV format.
+
+    Note:
+        Priority: endpoint_url > endpoint_name > dbname
+        For cross-database queries on shared endpoints, use endpoint_name or endpoint_url.
+    """
+    url = resolve_endpoint_url(dbname, endpoint_name, endpoint_url)
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
-            SPARQL_ENDPOINT[dbname]["url"], data={"query": sparql_query}, headers={"Accept": "text/csv"}
+            url, data={"query": sparql_query}, headers={"Accept": "text/csv"}
         )
     response.raise_for_status()
     return response.text

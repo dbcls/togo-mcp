@@ -29,13 +29,25 @@ def togomcp_usage_guide() -> str:
 # --- Tools for RDF Portal --- #
 
 @mcp.tool()
-async def get_sparql_endpoints() -> Dict[str,Dict[str,str]]:
-    """ Get the available SPARQL endpoints for RDF Portal. 
+async def get_sparql_endpoints() -> Dict[str, Any]:
+    """Get the available SPARQL endpoints for RDF Portal.
+
     Returns:
-        Dict[str,Dict[str,str]]: Dictionary of dbname->(endpoint-URL,keyword search API) pair.
+        Dict with two keys:
+        - databases: Dict mapping dbname -> {url, endpoint_name, keyword_search}
+        - endpoints: Dict mapping endpoint_name -> {url, databases}
     """
     toolcall_log("get_sparql_endpoints")
-    return SPARQL_ENDPOINT
+    return {
+        "databases": SPARQL_ENDPOINT,
+        "endpoints": {
+            name: {
+                "url": ENDPOINT_NAME_TO_URL[name],
+                "databases": ENDPOINT_NAME_TO_DATABASES[name]
+            }
+            for name in ENDPOINT_NAMES
+        }
+    }
 
 @mcp.tool(enabled=False)
 async def get_void(
@@ -101,24 +113,41 @@ WHERE {{
 @mcp.tool(
         enabled=True,
         name="run_sparql",
-        description="Run a SPARQL query on a specific RDF database."
+        description="Run a SPARQL query on an RDF database. Specify dbname for single-database queries, or endpoint_name/endpoint_url for cross-database queries on shared endpoints."
 )
 async def run_sparql(
     sparql_query: Annotated[str, Field(description="The SPARQL query to execute")],
-    dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION)]
+    dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION, default=None)] = None,
+    endpoint_name: Annotated[str, Field(
+        description=f"Endpoint name for cross-database queries. One of: {', '.join(ENDPOINT_NAMES)}. "
+                    "Use this when querying multiple databases on the same endpoint.",
+        default=None
+    )] = None,
+    endpoint_url: Annotated[str, Field(
+        description="Direct SPARQL endpoint URL. Use this for explicit control over the endpoint.",
+        default=None
+    )] = None
 ) -> str:
     """
-    Run a SPARQL query on a specific RDF database. Use `get_MIE_file()` to understand the RDF graph structure of the database.
+    Run a SPARQL query on an RDF database.
+
+    Use `get_MIE_file()` to understand the RDF graph structure of each database.
 
     Args:
         sparql_query (str): The SPARQL query to execute.
-        dbname (str): The name of the database to query. Supported values are {', '.join(SPARQL_ENDPOINT_KEYS)}.
+        dbname (str, optional): Database name for single-database queries.
+        endpoint_name (str, optional): Endpoint name for cross-database queries (e.g., 'ebi' for ChEMBL+ChEBI).
+        endpoint_url (str, optional): Direct SPARQL endpoint URL.
+
+    Note:
+        Provide at least one of: dbname, endpoint_name, or endpoint_url.
+        Priority: endpoint_url > endpoint_name > dbname
 
     Returns:
         str: CSV-formatted results of the SPARQL query.
     """
     toolcall_log("run_sparql")
-    return await execute_sparql(sparql_query, dbname)
+    return await execute_sparql(sparql_query, dbname, endpoint_name, endpoint_url)
 
 # --- Tools for exploring RDF databases ---
 @mcp.tool(
