@@ -9,17 +9,17 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "1.1"
-    mie_created: "2024-12-23"
-    data_version: Current
-    update_frequency: Regular
+    mie_version: "1.2"
+    mie_created: "2025-01-17"
+    data_version: "Current"
+    update_frequency: "Regular"
   license:
-    data_license: CC BY 4.0
-    license_url: https://www.dsmz.de
+    data_license: "CC BY 4.0"
+    license_url: "https://www.dsmz.de"
   access:
-    rate_limiting: Reasonable use
-    max_query_timeout: 60 seconds
-    backend: Virtuoso
+    rate_limiting: "Reasonable use"
+    max_query_timeout: "60 seconds"
+    backend: "Virtuoso"
 
 shape_expressions: |
   PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -80,7 +80,7 @@ sample_rdf_entries:
         schema:belongsToGroup "MD1-MEDIUM" ;
         schema:hasFinalPH "7.0-7.2" ;
         schema:isComplex true .
-  
+
   - title: Ingredient with Cross-References
     description: Chemical ingredient with multiple database identifiers.
     rdf: |
@@ -91,7 +91,7 @@ sample_rdf_entries:
         schema:hasChEBI 17234 ;
         schema:hasPubChem 5793 ;
         schema:hasKEGG "C00031" .
-  
+
   - title: Growth Conditions
     description: Strain cultivation parameters with biological annotations.
     rdf: |
@@ -101,7 +101,7 @@ sample_rdf_entries:
         schema:growthTemperature 37 ;
         schema:growthPH 7.2 ;
         schema:hasOxygenRequirement "aerobic" .
-  
+
   - title: Solution Recipe
     description: Ingredient amounts in solution.
     rdf: |
@@ -111,7 +111,7 @@ sample_rdf_entries:
         schema:ingredientAmount 10.0 ;
         schema:ingredientUnit "g" ;
         schema:gramsPerLiter 10.0 .
-  
+
   - title: Microbial Strain
     description: Strain with taxonomic data and BacDive link.
     rdf: |
@@ -139,7 +139,7 @@ sparql_query_examples:
       }
       ORDER BY ?label
       LIMIT 30
-  
+
   - title: Retrieve Medium Properties
     description: Get functional properties and growth characteristics.
     question: What are the properties of specific media?
@@ -157,7 +157,7 @@ sparql_query_examples:
         OPTIONAL { ?medium schema:hasFinalPH ?ph }
         OPTIONAL { ?medium schema:hasLinkToSource ?docLink }
       }
-  
+
   - title: Search by pH Range
     description: Find media within specific pH ranges.
     question: Which media have pH between 6.5 and 7.5?
@@ -176,7 +176,7 @@ sparql_query_examples:
       }
       ORDER BY ?minPH
       LIMIT 20
-  
+
   - title: Growth by Temperature (Biological Annotations)
     description: Find thermophilic organism conditions with biological growth parameters.
     question: What growth conditions exist above 45°C?
@@ -197,7 +197,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?temp)
       LIMIT 20
-  
+
   - title: Medium Composition
     description: Get complete ingredient list with concentrations.
     question: What are the ingredients in a specific medium?
@@ -217,7 +217,7 @@ sparql_query_examples:
         FILTER(?medium = <https://purl.dsmz.de/mediadive/medium/1118>)
       }
       ORDER BY DESC(?gPerL)
-  
+
   - title: Ingredient Cross-References
     description: Link ingredients to chemical databases.
     question: Which ingredients have ChEBI and KEGG?
@@ -238,7 +238,7 @@ sparql_query_examples:
       }
       ORDER BY ?label
       LIMIT 30
-  
+
   - title: Strain-Medium Compatibility
     description: Map strains to compatible media with growth indicators.
     question: Which media support specific bacterial strains?
@@ -259,6 +259,155 @@ sparql_query_examples:
       }
       ORDER BY ?species ?medium
       LIMIT 40
+
+cross_database_queries:
+  shared_endpoint: primary
+  co_located_databases:
+    - bacdive
+    - taxonomy
+    - mesh
+    - go
+    - mondo
+    - nando
+  examples:
+    - title: Detailed Culture Recipes from BacDive Strains
+      description: |
+        Link BacDive bacterial strain records to MediaDive culture media recipes using shared BacDive IDs (schema:hasBacDiveID). This enables researchers to retrieve complete media composition including ingredient concentrations, chemical identifiers (ChEBI, CAS, GMO), and preparation protocols for specific strains.
+        
+        This query demonstrates the primary integration pattern between BacDive and MediaDive. MediaDive strains link to BacDive via schema:hasBacDiveID (73% coverage), while MediaDive provides hierarchical recipe structure with ingredient-level detail and cross-references to chemical databases.
+      databases_used:
+        - bacdive
+        - mediadive
+      complexity: intermediate
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?strainLabel ?mediumLabel ?ingredientLabel ?gPerL ?chebi
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?bacDiveStrain a schema:Strain ;
+                           rdfs:label ?strainLabel ;
+                           schema:hasBacDiveID ?bacDiveID ;
+                           schema:hasGenus "Escherichia" .
+          }
+          GRAPH <http://rdfportal.org/dataset/mediadive> {
+            ?mediaDiveStrain a schema:Strain ;
+                             schema:hasBacDiveID ?bacDiveID .
+            ?growth a schema:GrowthCondition ;
+                    schema:relatedToStrain ?mediaDiveStrain ;
+                    schema:partOfMedium ?medium .
+            ?medium rdfs:label ?mediumLabel .
+            
+            ?composition a schema:MediumComposition ;
+                         schema:partOfMedium ?medium ;
+                         schema:containsIngredient ?ingredient ;
+                         schema:gramsPerLiter ?gPerL .
+            ?ingredient rdfs:label ?ingredientLabel .
+            OPTIONAL { ?ingredient schema:hasChEBI ?chebi }
+          }
+        }
+        ORDER BY ?strainLabel ?mediumLabel DESC(?gPerL)
+        LIMIT 50
+      notes: |
+        - Referenced BacDive MIE file for graph URI and strain structure
+        - 73% of MediaDive strains have BacDive IDs enabling cross-database linking
+        - MediaDive provides hierarchical structure: medium → composition → ingredient
+        - Ingredient cross-references: GMO (41%), CAS (39%), ChEBI (32%)
+        - Performance: Query completes in 3-5 seconds with genus filter
+        - Use case: Reproduce exact culture conditions for strain isolation studies
+
+    - title: Thermophilic Bacteria with Growth Conditions
+      description: |
+        Integrate BacDive's taxonomic and phenotypic data with MediaDive's growth condition records to identify thermophilic bacteria and their optimal cultivation parameters (temperature, pH, medium). This query demonstrates keyword search across BacDive descriptions combined with structured temperature data from MediaDive.
+        
+        Uses bif:contains for full-text search on species names in BacDive, then retrieves corresponding growth conditions and culture media from MediaDive via shared BacDive IDs.
+      databases_used:
+        - bacdive
+        - mediadive
+      complexity: intermediate
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?strainLabel ?species ?mediumLabel ?temp ?ph
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?bacDiveStrain a schema:Strain ;
+                           rdfs:label ?strainLabel ;
+                           schema:hasBacDiveID ?bacDiveID ;
+                           schema:hasSpecies ?species .
+            FILTER(CONTAINS(LCASE(?species), "thermophil"))
+          }
+          GRAPH <http://rdfportal.org/dataset/mediadive> {
+            ?mediaDiveStrain a schema:Strain ;
+                             schema:hasBacDiveID ?bacDiveID .
+            ?growth a schema:GrowthCondition ;
+                    schema:relatedToStrain ?mediaDiveStrain ;
+                    schema:partOfMedium ?medium ;
+                    schema:growthTemperature ?temp .
+            OPTIONAL { ?growth schema:growthPH ?ph }
+            ?medium rdfs:label ?mediumLabel .
+          }
+        }
+        ORDER BY DESC(?temp)
+        LIMIT 30
+      notes: |
+        - Uses FILTER CONTAINS on species names to identify thermophilic organisms
+        - BacDive provides taxonomic context and strain characterization
+        - MediaDive provides quantitative growth parameters (temperature, pH)
+        - Growth conditions in MediaDive reference specific culture media with recipes
+        - Performance: Query completes in 2-4 seconds with species filter
+        - Use case: Comparative study of thermophile cultivation requirements
+
+    - title: Anaerobic Strain Culture Media with Ingredients
+      description: |
+        Combine BacDive's oxygen tolerance phenotypes with MediaDive's detailed culture media recipes to identify anaerobic bacteria and their specialized media formulations. This query links phenotypic characterization from BacDive with complete ingredient lists and concentrations from MediaDive.
+        
+        Demonstrates how to integrate biological phenotypes (oxygen tolerance) with chemical composition data (ingredients, concentrations, cross-references) across the two databases on the same endpoint.
+      databases_used:
+        - bacdive
+        - mediadive
+      complexity: advanced
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?strainLabel ?oxygenTolerance ?mediumLabel ?ingredientLabel ?gPerL
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?bacDiveStrain a schema:Strain ;
+                           rdfs:label ?strainLabel ;
+                           schema:hasBacDiveID ?bacDiveID .
+            ?oxy a schema:OxygenTolerance ;
+                 schema:describesStrain ?bacDiveStrain ;
+                 schema:hasOxygenTolerance ?oxygenTolerance .
+            FILTER(CONTAINS(LCASE(?oxygenTolerance), "anaero"))
+          }
+          GRAPH <http://rdfportal.org/dataset/mediadive> {
+            ?mediaDiveStrain a schema:Strain ;
+                             schema:hasBacDiveID ?bacDiveID .
+            ?growth a schema:GrowthCondition ;
+                    schema:relatedToStrain ?mediaDiveStrain ;
+                    schema:partOfMedium ?medium .
+            ?medium rdfs:label ?mediumLabel .
+            
+            ?composition a schema:MediumComposition ;
+                         schema:partOfMedium ?medium ;
+                         schema:containsIngredient ?ingredient ;
+                         schema:gramsPerLiter ?gPerL .
+            ?ingredient rdfs:label ?ingredientLabel .
+          }
+        }
+        ORDER BY ?strainLabel ?mediumLabel DESC(?gPerL)
+        LIMIT 50
+      notes: |
+        - Links BacDive phenotypes (oxygen tolerance) with MediaDive recipes
+        - BacDive provides oxygen requirement phenotypes for ~45% of strains
+        - MediaDive provides complete ingredient formulations for anaerobic media
+        - Anaerobic media often contain reducing agents identifiable via ingredient labels
+        - Performance: Query may take 5-8 seconds due to phenotype joins and composition data
+        - Use case: Design anaerobic culture protocols based on successful strain isolations
 
 cross_references:
   - pattern: schema:has[Database] properties
@@ -286,7 +435,7 @@ cross_references:
         OPTIONAL { ?ingredient schema:hasGMO ?gmo }
         FILTER(BOUND(?cas) || BOUND(?chebi))
       } LIMIT 50
-  
+
   - pattern: schema:hasBacDiveID
     description: |
       Strains link to BacDive for phenotypic data.
@@ -302,7 +451,7 @@ cross_references:
                 schema:hasBacDiveID ?bacDiveID ;
                 schema:hasSpecies ?species .
       } LIMIT 30
-  
+
   - pattern: schema:hasLinkToSource
     description: |
       Media link to DSMZ PDF documentation.
@@ -322,21 +471,26 @@ architectural_notes:
   schema_design:
     - "Medium as central hub: compositions, solutions, growth conditions, steps"
     - "Hierarchical recipe: medium → solution → solution_recipe → ingredient"
-    - "Strain-medium via growth conditions for cultivation compatibility"
+    - Strain-medium via growth conditions for cultivation compatibility
   performance:
-    - "Use bif:contains for label/group/species keyword searches"
-    - "pH/temperature numeric filtering efficient"
-    - "Composition queries can be large - filter by specific medium"
-    - "Use OPTIONAL for partial cross-reference coverage"
+    - Use bif:contains for label/group/species keyword searches
+    - pH/temperature numeric filtering efficient
+    - Composition queries can be large - filter by specific medium
+    - Use OPTIONAL for partial cross-reference coverage
   data_integration:
-    - "GMO highest coverage (41%) for metabolic context"
-    - "CAS Registry (39%) for chemical identification"
-    - "BacDive (73%) for microbial phenotypes"
-    - "DSMZ PDFs (99%) for authoritative protocols"
+    - GMO highest coverage (41%) for metabolic context
+    - CAS Registry (39%) for chemical identification
+    - BacDive (73%) for microbial phenotypes
+    - DSMZ PDFs (99%) for authoritative protocols
+    - "Shared 'primary' endpoint with bacdive, taxonomy, mesh, go, mondo, nando"
+    - "Cross-database opportunities: MediaDive-BacDive (strain phenotypes), MediaDive-Taxonomy (species classification)"
+    - Use GRAPH clauses for cross-database queries to explicitly separate data sources
+    - Filter within each GRAPH clause before joining to optimize performance
   data_quality:
     - "pH: string ranges (hasFinalPH) + numeric min/max"
-    - "Cross-reference coverage varies by database"
-    - "Use isOptionalIngredient flag for flexibility"
+    - Cross-reference coverage varies by database
+    - Use isOptionalIngredient flag for flexibility
+    - BacDive IDs available for 73% of strains enabling cross-database integration
 
 data_statistics:
   total_media: 3289
@@ -352,14 +506,20 @@ data_statistics:
     avg_compositions_per_medium: 21.9
     avg_solution_recipes_per_solution: 7.2
   performance_characteristics:
-    - "Temperature/pH numeric filtering efficient"
-    - "Use bif:contains for keyword searches"
-    - "Composition queries need medium filters"
-    - "LIMIT 30-50 recommended"
+    - Temperature/pH numeric filtering efficient
+    - Use bif:contains for keyword searches
+    - Composition queries need medium filters
+    - LIMIT 30-50 recommended
+    - "Cross-database queries (MediaDive + BacDive) complete in 3-5 seconds with genus/species filters"
+    - "Cross-database queries without filters may take 8-12 seconds due to large strain datasets"
+  data_quality_notes:
+    - BacDive links available for 73% of strains enabling rich phenotypic integration
+    - Ingredient cross-reference coverage varies by database (GMO 41%, CAS 39%, ChEBI 32%)
+    - Growth conditions link strains to specific media formulations
 
 anti_patterns:
-  - title: "FILTER Instead of bif:contains"
-    problem: "Using FILTER CONTAINS for keyword searches is inefficient."
+  - title: FILTER Instead of bif:contains
+    problem: Using FILTER CONTAINS for keyword searches is inefficient.
     wrong_sparql: |
       SELECT ?medium ?label
       WHERE {
@@ -374,10 +534,10 @@ anti_patterns:
                 rdfs:label ?label .
         ?label bif:contains "'marine'"
       }
-    explanation: "Use bif:contains for full-text search - faster and supports boolean operators."
-  
-  - title: "Missing OPTIONAL for Partial Coverage"
-    problem: "Requiring all cross-references filters out most ingredients."
+    explanation: Use bif:contains for full-text search - faster and supports boolean operators.
+
+  - title: Missing OPTIONAL for Partial Coverage
+    problem: Requiring all cross-references filters out most ingredients.
     wrong_sparql: |
       SELECT ?ingredient ?chebi ?kegg ?pubchem
       WHERE {
@@ -395,10 +555,10 @@ anti_patterns:
         OPTIONAL { ?ingredient schema:hasPubChem ?pubchem }
         FILTER(BOUND(?chebi) || BOUND(?kegg))
       }
-    explanation: "Use OPTIONAL for properties with partial coverage, then filter for at least one."
-  
-  - title: "Unbounded Composition Queries"
-    problem: "Composition queries without medium filter return too many rows."
+    explanation: Use OPTIONAL for properties with partial coverage, then filter for at least one.
+
+  - title: Unbounded Composition Queries
+    problem: Composition queries without medium filter return too many rows.
     wrong_sparql: |
       SELECT ?composition ?medium ?ingredient ?gPerL
       WHERE {
@@ -415,32 +575,32 @@ anti_patterns:
         FILTER(?medium = <https://purl.dsmz.de/mediadive/medium/1118>)
       }
       LIMIT 50
-    explanation: "Filter by specific medium or use LIMIT to avoid timeouts."
+    explanation: Filter by specific medium or use LIMIT to avoid timeouts.
 
 common_errors:
-  - error: "Keyword search failures"
+  - error: Keyword search failures
     causes:
-      - "Using FILTER CONTAINS instead of bif:contains"
-      - "Not wrapping keywords in single quotes"
+      - Using FILTER CONTAINS instead of bif:contains
+      - Not wrapping keywords in single quotes
     solutions:
-      - "Use bif:contains for full-text search"
+      - Use bif:contains for full-text search
       - "Format: ?label bif:contains \"'keyword'\""
       - "Boolean: ?label bif:contains \"'keyword1' OR 'keyword2'\""
-  
-  - error: "Empty cross-reference results"
+
+  - error: Empty cross-reference results
     causes:
-      - "Requiring all databases (AND logic)"
-      - "Not using OPTIONAL for partial coverage"
+      - Requiring all databases (AND logic)
+      - Not using OPTIONAL for partial coverage
     solutions:
-      - "Use OPTIONAL for each database property"
+      - Use OPTIONAL for each database property
       - "Filter with OR: FILTER(BOUND(?chebi) || BOUND(?kegg))"
       - "Coverage: GMO 41%, CAS 39%, ChEBI 32%"
-  
-  - error: "Query timeout on compositions"
+
+  - error: Query timeout on compositions
     causes:
-      - "No medium filter with 72K+ compositions"
-      - "Missing LIMIT clause"
+      - No medium filter with 72K+ compositions
+      - Missing LIMIT clause
     solutions:
-      - "Filter by specific medium first"
-      - "Use LIMIT 50-100"
-      - "Avg 21.9 compositions per medium"
+      - Filter by specific medium first
+      - Use LIMIT 50-100
+      - Avg 21.9 compositions per medium

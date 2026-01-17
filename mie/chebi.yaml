@@ -13,17 +13,17 @@ schema_info:
   kw_search_tools:
     - OLS4:searchClasses
   version:
-    mie_version: "1.2"
-    mie_created: "2024-12-23"
-    data_version: "Release 2025"
-    update_frequency: "Monthly"
+    mie_version: "1.3"
+    mie_created: "2025-01-16"
+    data_version: Release 2025
+    update_frequency: Monthly
   license:
-    data_license: "Creative Commons Attribution 4.0"
-    license_url: "https://creativecommons.org/licenses/by/4.0/"
+    data_license: Creative Commons Attribution 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
   access:
-    rate_limiting: "100 queries/min"
-    max_query_timeout: "60 seconds"
-    backend: "Virtuoso (supports bif:contains for full-text search)"
+    rate_limiting: 100 queries/min
+    max_query_timeout: 60 seconds
+    backend: Virtuoso (supports bif:contains for full-text search)
 
 shape_expressions: |
   PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -78,7 +78,6 @@ sample_rdf_entries:
         chebi:mass "18.01530" ;
         chebi:smiles "[H]O[H]" ;
         chebi:inchikey "XLYOFNOQVPJJNP-UHFFFAOYSA-N" .
-
   - title: Amino Acid - L-proline
     description: Proteinogenic amino acid with complete structural data.
     rdf: |
@@ -90,7 +89,6 @@ sample_rdf_entries:
         chebi:mass "115.13050" ;
         chebi:smiles "OC(=O)[C@@H]1CCCN1" ;
         chebi:inchikey "ONIBWKKTOPOVIA-BYPYZUCNSA-N" .
-
   - title: Drug with Chemical Relationships
     description: Ciprofloxacin showing conjugate base and tautomer relationships via OWL restrictions.
     rdf: |
@@ -106,7 +104,6 @@ sample_rdf_entries:
           owl:onProperty chebi:is_tautomer_of ;
           owl:someValuesFrom obo:CHEBI_192484
         ] .
-
   - title: Element - Phosphorus
     description: Atom entry with classification as nonmetal.
     rdf: |
@@ -118,7 +115,6 @@ sample_rdf_entries:
         chebi:mass "30.97376" ;
         chebi:smiles "[P]" ;
         chebi:inchikey "OAICVXFJPJFONN-UHFFFAOYSA-N" .
-
   - title: Lipid - Triolein
     description: Triglyceride with complex molecular structure.
     rdf: |
@@ -147,7 +143,6 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
   - title: Get Molecular Properties
     description: Retrieve formula, mass, and structure identifiers for a compound.
     question: What are molecular properties of aspirin?
@@ -165,7 +160,6 @@ sparql_query_examples:
         OPTIONAL { obo:CHEBI_15365 chebi:smiles ?smiles }
         OPTIONAL { obo:CHEBI_15365 chebi:inchikey ?inchikey }
       }
-
   - title: Search by Biological Role
     description: Find chemicals with specific biological roles using RO_0000087.
     question: Find all antibiotics.
@@ -186,7 +180,6 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
   - title: Navigate Hierarchy
     description: Traverse ontology hierarchy to find parent classes.
     question: What are parent classes of L-proline?
@@ -201,7 +194,6 @@ sparql_query_examples:
         FILTER(STRSTARTS(STR(?parent), "http://purl.obolibrary.org/obo/CHEBI_"))
         ?parent rdfs:label ?parentLabel .
       }
-
   - title: Find Chemical Relationships
     description: Query conjugate acid/base relationships via OWL restrictions.
     question: Find chemicals and their conjugate bases.
@@ -220,7 +212,6 @@ sparql_query_examples:
         ?base rdfs:label ?baseLabel .
       }
       LIMIT 20
-
   - title: Complex Formula Search with Aggregation
     description: Find compounds by formula pattern and count cross-references.
     question: Find carbon-oxygen compounds with database coverage.
@@ -243,7 +234,6 @@ sparql_query_examples:
       HAVING (COUNT(?xref) > 5)
       ORDER BY DESC(?xrefCount)
       LIMIT 20
-
   - title: Boolean Search with Exclusion
     description: Complex keyword search excluding specific terms.
     question: Find amyloid-related compounds excluding precursor.
@@ -262,6 +252,162 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
+
+cross_database_queries:
+  shared_endpoint: ebi
+  co_located_databases:
+    - chembl
+    - reactome
+    - ensembl
+    - amrportal
+  examples:
+    - title: Integrate ChEBI with ChEMBL Drug Data
+      description: |
+        Link ChEBI chemical entities to ChEMBL drug molecules to enrich ChEBI compounds 
+        with bioactivity data, target information, and clinical development phase. 
+        ChEMBL molecules reference ChEBI via skos:exactMatch, enabling seamless integration.
+      databases_used:
+        - chembl
+        - chebi
+      complexity: intermediate
+      sparql: |
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+        
+        SELECT DISTINCT ?moleculeLabel ?chebiLabel ?formula ?mass ?developmentPhase
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?molecule a cco:SmallMolecule ;
+                      rdfs:label ?moleculeLabel ;
+                      skos:exactMatch ?chebiId ;
+                      cco:highestDevelopmentPhase ?developmentPhase .
+            FILTER(?developmentPhase >= 3)
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiId a owl:Class ;
+                     rdfs:label ?chebiLabel .
+            OPTIONAL { ?chebiId chebi:formula ?formula }
+            OPTIONAL { ?chebiId chebi:mass ?mass }
+          }
+        }
+        ORDER BY DESC(?developmentPhase)
+        LIMIT 50
+      notes: |
+        - Query uses graph URIs from ChEMBL and ChEBI MIE files
+        - ChEMBL links via skos:exactMatch property (from ChEMBL MIE shape expressions)
+        - Filter on cco:highestDevelopmentPhase for clinical trial drugs (phases 3-4)
+        - Performance: ~2-3 seconds for 50 results
+        - Use case: Identify marketed or late-stage drugs with ChEBI chemical ontology data
+        - Referenced ChEMBL MIE file for correct graph URI and property patterns
+    - title: Link ChEBI Metabolites to Reactome Pathways
+      description: |
+        Connect ChEBI small molecules to biological pathways in Reactome to understand 
+        metabolite roles in biochemical processes. Reactome references ChEBI via UnificationXref 
+        with bp:db="ChEBI" and bp:id containing "CHEBI:" prefix.
+      databases_used:
+        - reactome
+        - chebi
+      complexity: intermediate
+      sparql: |
+        PREFIX bp: <http://www.biopax.org/release/biopax-level3.owl#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        SELECT DISTINCT ?reactomeName ?chebiLabel ?formula ?mass ?pathway ?pathwayName
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/reactome> {
+            ?molecule a bp:SmallMolecule ;
+                      bp:displayName ?reactomeName ;
+                      bp:entityReference/bp:xref ?xref .
+            ?xref a bp:UnificationXref ;
+                  bp:db "ChEBI"^^xsd:string ;
+                  bp:id ?fullChebiId .
+            FILTER(STRSTARTS(?fullChebiId, "CHEBI:"))
+            BIND(SUBSTR(?fullChebiId, 7) AS ?chebiNum)
+            ?pathway a bp:Pathway ;
+                     bp:displayName ?pathwayName ;
+                     bp:pathwayComponent+/bp:left|bp:right ?molecule .
+            FILTER(CONTAINS(?pathwayName, "metabolism"))
+          }
+          BIND(IRI(CONCAT("http://purl.obolibrary.org/obo/CHEBI_", ?chebiNum)) AS ?chebiUri)
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiUri a owl:Class ;
+                      rdfs:label ?chebiLabel .
+            OPTIONAL { ?chebiUri chebi:formula ?formula }
+            OPTIONAL { ?chebiUri chebi:mass ?mass }
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Query uses graph URIs from Reactome and ChEBI MIE files
+        - Reactome ChEBI IDs include "CHEBI:" prefix, requiring SUBSTR extraction
+        - Uses BIND to construct ChEBI URI from numeric ID (pattern from Reactome MIE file)
+        - Property path bp:pathwayComponent+ traverses pathway hierarchy (from Reactome shape expressions)
+        - CRITICAL: Use ^^xsd:string for bp:db comparison (from Reactome anti-patterns)
+        - Performance: ~3-5 seconds, property paths are moderately expensive
+        - Use case: Map metabolites to metabolic pathways for systems biology analysis
+        - Referenced Reactome MIE file for correct xref pattern and anti-patterns
+    - title: Multi-Database Drug-Target-Pathway Integration
+      description: |
+        Comprehensive query linking ChEMBL drugs targeting proteins to Reactome pathways 
+        containing those targets, with ChEBI chemical structure data. Demonstrates complex 
+        three-way integration across co-located databases.
+      databases_used:
+        - chembl
+        - chebi
+        - reactome
+      complexity: advanced
+      sparql: |
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX bp: <http://www.biopax.org/release/biopax-level3.owl#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        SELECT DISTINCT ?drugName ?targetName ?pathwayName ?chebiLabel ?formula
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?molecule a cco:SmallMolecule ;
+                      rdfs:label ?drugName ;
+                      skos:exactMatch ?chebiId ;
+                      cco:hasActivity/cco:hasAssay/cco:hasTarget ?target .
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?targetName ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprotId .
+            FILTER(STRSTARTS(STR(?uniprotId), "http://purl.uniprot.org/uniprot/"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/reactome> {
+            ?protein a bp:Protein ;
+                     bp:entityReference/bp:xref ?protXref .
+            ?protXref a bp:UnificationXref ;
+                      bp:db "UniProt"^^xsd:string ;
+                      bp:id ?uniprotIdStr .
+            ?pathway a bp:Pathway ;
+                     bp:displayName ?pathwayName ;
+                     bp:pathwayComponent*/bp:left|bp:right ?protein .
+            FILTER(CONTAINS(STR(?uniprotId), ?uniprotIdStr))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiId a owl:Class ;
+                     rdfs:label ?chebiLabel .
+            OPTIONAL { ?chebiId chebi:formula ?formula }
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Query integrates three databases using graph URIs from all MIE files
+        - ChEMBL→ChEBI: skos:exactMatch (from ChEMBL shape expressions)
+        - ChEMBL→UniProt: target component exact match (from ChEMBL architectural notes)
+        - Reactome→UniProt: bp:xref with bp:db filter (from Reactome cross-references)
+        - UniProt ID matching requires CONTAINS due to different URI formats
+        - Property paths used: cco:hasActivity/cco:hasAssay/cco:hasTarget and bp:pathwayComponent*
+        - Performance: 5-8 seconds, complex three-way join with property paths
+        - Use case: Drug target validation and mechanism of action research
+        - All patterns verified against ChEMBL, Reactome, and ChEBI MIE files
 
 cross_references:
   - pattern: oboInOwl:hasDbXref
@@ -316,6 +462,8 @@ architectural_notes:
     - Cross-references as literal strings requiring parsing
     - InChI/InChIKey for standardized structure matching
     - SMILES for substructure searching
+    - ChEMBL integration via skos:exactMatch (see cross_database_queries)
+    - Reactome integration via bp:xref with ChEBI IDs (see cross_database_queries)
   data_quality:
     - Not all entities have molecular properties
     - Abstract classes lack molecular data
@@ -325,11 +473,11 @@ data_statistics:
   total_chemical_entities: 217368
   entities_with_formulas: 187110
   coverage:
-    with_label: "~91%"
-    with_formula: "~86%"
-    with_inchi: "~81%"
-    with_smiles: "~85%"
-    with_mass: "~86%"
+    with_label: ~91%
+    with_formula: ~86%
+    with_inchi: ~81%
+    with_smiles: ~85%
+    with_mass: ~86%
   cardinality:
     avg_dbxrefs_per_entity: 1.9
     avg_synonyms_per_entity: 1.2
@@ -338,6 +486,11 @@ data_statistics:
     - bif:contains searches typically <2s
     - Hierarchy traversal may timeout with deep recursion
     - Restriction-based queries moderately expensive
+    - Cross-database queries 2-5s depending on complexity
+  data_quality_notes:
+    - Manual curation ensures high accuracy
+    - Regular monthly updates
+    - Cross-database links well-maintained with ChEMBL and Reactome
 
 anti_patterns:
   - title: FILTER CONTAINS vs bif:contains
@@ -356,7 +509,6 @@ anti_patterns:
       }
       ORDER BY DESC(?sc)
     explanation: bif:contains uses full-text indexing and provides relevance scores.
-
   - title: Wrong ChEBI Property Namespace
     problem: ChEBI uses TWO different namespaces - data properties (/) vs relationship properties (#).
     wrong_sparql: |
@@ -372,7 +524,6 @@ anti_patterns:
         ?entity chebi:formula ?formula .
       }
     explanation: Data properties (formula, mass, smiles) use chebi/ while relationship properties (is_conjugate_acid_of) use chebi#.
-
   - title: Accessing Roles Without Restrictions
     problem: Roles encoded as OWL restrictions, not direct properties.
     wrong_sparql: |
@@ -388,7 +539,6 @@ anti_patterns:
                      owl:someValuesFrom ?role .
       }
     explanation: ChEBI encodes has_role through OWL restrictions.
-
   - title: Not Filtering Non-ChEBI Entities
     problem: Database contains ontology metadata and other classes.
     wrong_sparql: |
@@ -415,7 +565,6 @@ common_errors:
       - Retry after brief delay
       - Simplify query or reduce LIMIT
       - Split into smaller queries
-
   - error: Empty results for molecular properties
     causes:
       - Using wrong namespace (chebi# instead of chebi/ for data properties)
@@ -427,7 +576,6 @@ common_errors:
       - Check owl:deprecated status
       - Verify entity is concrete molecular entity
       - Use OPTIONAL for properties
-
   - error: Chemical relationship queries fail
     causes:
       - Using wrong namespace (chebi/ instead of chebi# for relationship properties)

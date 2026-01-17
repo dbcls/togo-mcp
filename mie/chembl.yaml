@@ -10,17 +10,17 @@ schema_info:
     - search_chembl_molecule
     - search_chembl_target
   version:
-    mie_version: "1.3"
-    mie_created: "2024-12-23"
-    data_version: "ChEMBL 33.0"
-    update_frequency: "Quarterly"
+    mie_version: "1.4"
+    mie_created: "2025-01-17"
+    data_version: ChEMBL 33.0
+    update_frequency: Quarterly
   license:
-    data_license: "CC BY-SA 3.0"
-    license_url: "https://creativecommons.org/licenses/by-sa/3.0/"
+    data_license: CC BY-SA 3.0
+    license_url: https://creativecommons.org/licenses/by-sa/3.0/
   access:
-    rate_limiting: "No strict limit, reasonable use expected"
-    max_query_timeout: "60 seconds"
-    backend: "Virtuoso (supports bif:contains)"
+    rate_limiting: No strict limit, reasonable use expected
+    max_query_timeout: 60 seconds
+    backend: Virtuoso (supports bif:contains)
 
 shape_expressions: |
   PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
@@ -92,8 +92,8 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: "Small Molecule with Drug Development"
-    description: "Marketed drug with ATC classification, cross-references, and drug indications."
+  - title: Small Molecule with Drug Development
+    description: Marketed drug with ATC classification, cross-references, and drug indications.
     rdf: |
       chembl_molecule:CHEMBL1004
         a cco:SmallMolecule ;
@@ -105,9 +105,8 @@ sample_rdf_entries:
         cco:moleculeXref <http://www.drugbank.ca/drugs/DB00366> ;
         cco:moleculeXref <http://pubchem.ncbi.nlm.nih.gov/compound/3162> ;
         skos:exactMatch <http://purl.obolibrary.org/obo/CHEBI_51380> .
-  
-  - title: "Bioactivity Measurement"
-    description: "Ki binding measurement linking molecule, assay, and document."
+  - title: Bioactivity Measurement
+    description: Ki binding measurement linking molecule, assay, and document.
     rdf: |
       chembl_activity:CHEMBL_ACT_1000385
         a cco:Activity ;
@@ -117,9 +116,8 @@ sample_rdf_entries:
         cco:standardUnits "nM" ;
         cco:hasMolecule chembl_molecule:CHEMBL331696 ;
         cco:hasAssay chembl_assay:CHEMBL696974 .
-  
-  - title: "Target with UniProt Link"
-    description: "Single protein target with organism and UniProt cross-reference."
+  - title: Target with UniProt Link
+    description: Single protein target with organism and UniProt cross-reference.
     rdf: |
       chembl_target:CHEMBL1808
         a cco:SingleProtein ;
@@ -131,18 +129,16 @@ sample_rdf_entries:
       
       chembl_target_cmpt:CHEMBL_TC_1332
         skos:exactMatch <http://purl.uniprot.org/uniprot/P12527> .
-  
-  - title: "Drug Mechanism"
-    description: "Inhibitor mechanism linking molecule and target."
+  - title: Drug Mechanism
+    description: Inhibitor mechanism linking molecule and target.
     rdf: |
       chembl_drug_mechanism:CHEMBL_MEC_100
         a cco:Mechanism ;
         cco:mechanismActionType "INHIBITOR" ;
         cco:hasMolecule chembl_molecule:CHEMBL1200475 ;
         cco:hasTarget chembl_target:CHEMBL1806 .
-  
-  - title: "Drug Indication"
-    description: "Clinical indication with MeSH disease term and development phase."
+  - title: Drug Indication
+    description: Clinical indication with MeSH disease term and development phase.
     rdf: |
       chembl_drug_indication:CHEMBL_IND_107436
         a cco:DrugIndication ;
@@ -152,10 +148,10 @@ sample_rdf_entries:
         cco:highestDevelopmentPhase 1 .
 
 sparql_query_examples:
-  - title: "Search Molecules with bif:contains"
-    description: "Find molecules by name using full-text search with relevance ranking."
-    question: "Find molecules containing aspirin."
-    complexity: "basic"
+  - title: Search Molecules with bif:contains
+    description: Find molecules by name using full-text search with relevance ranking.
+    question: Find molecules containing aspirin.
+    complexity: basic
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -168,11 +164,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 100
-  
-  - title: "Get Human Protein Targets"
-    description: "Find all human protein targets."
-    question: "What are human protein targets?"
-    complexity: "basic"
+  - title: Get Human Protein Targets
+    description: Find all human protein targets.
+    question: What are human protein targets?
+    complexity: basic
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -185,11 +180,10 @@ sparql_query_examples:
                 cco:organismName "Homo sapiens" .
       }
       LIMIT 100
-  
-  - title: "Find Bioactivities for Molecule"
-    description: "Retrieve activity measurements with assay and target information."
-    question: "What are bioactivities for CHEMBL1004?"
-    complexity: "intermediate"
+  - title: Find Bioactivities for Molecule
+    description: Retrieve activity measurements with assay and target information.
+    question: What are bioactivities for CHEMBL1004?
+    complexity: intermediate
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -204,11 +198,10 @@ sparql_query_examples:
         OPTIONAL { ?activity cco:standardUnits ?units }
       }
       LIMIT 100
-  
-  - title: "Keyword Search with Boolean Operators"
-    description: "Find serine/threonine kinases excluding tyrosine kinases."
-    question: "Find kinases that are not tyrosine kinases."
-    complexity: "intermediate"
+  - title: Keyword Search with Boolean Operators
+    description: Find serine/threonine kinases excluding tyrosine kinases.
+    question: Find kinases that are not tyrosine kinases.
+    complexity: intermediate
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -222,11 +215,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 100
-  
-  - title: "Drug Indications in Clinical Trials"
-    description: "Get disease indications for molecules in advanced clinical development."
-    question: "What are drug indications in phase 3+?"
-    complexity: "intermediate"
+  - title: Drug Indications in Clinical Trials
+    description: Get disease indications for molecules in advanced clinical development.
+    question: What are drug indications in phase 3+?
+    complexity: intermediate
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -242,11 +234,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?phase)
       LIMIT 100
-  
-  - title: "Potent Kinase Inhibitors"
-    description: "Find potent inhibitors (IC50 < 100 nM) tested against kinase targets."
-    question: "What are potent kinase inhibitors?"
-    complexity: "advanced"
+  - title: Potent Kinase Inhibitors
+    description: Find potent inhibitors (IC50 < 100 nM) tested against kinase targets.
+    question: What are potent kinase inhibitors?
+    complexity: advanced
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
       
@@ -266,46 +257,217 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 100
-  
-  - title: "Cross-Database Integration"
-    description: "Link ChEMBL molecules to DrugBank and UniProt targets."
-    question: "How to link ChEMBL to DrugBank and UniProt?"
-    complexity: "advanced"
+  - title: Mechanism of Action Analysis
+    description: Find drug mechanisms with target information and biological annotations.
+    question: What are inhibitor mechanisms for approved drugs?
+    complexity: advanced
     sparql: |
       PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       
-      SELECT ?molecule ?moleculeLabel ?drugbankId ?uniprot ?targetLabel
+      SELECT ?molecule ?moleculeLabel ?target ?targetLabel ?mechanismType ?phase
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
       WHERE {
-        ?molecule a cco:SmallMolecule ;
-                  rdfs:label ?moleculeLabel ;
-                  cco:moleculeXref ?drugbankId ;
-                  cco:hasActivity/cco:hasAssay/cco:hasTarget ?target .
-        ?target cco:hasTargetComponent/skos:exactMatch ?uniprot ;
-                rdfs:label ?targetLabel .
-        FILTER(STRSTARTS(STR(?drugbankId), "http://www.drugbank.ca/drugs/"))
-        FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/uniprot/"))
+        ?mechanism a cco:Mechanism ;
+                   cco:mechanismActionType ?mechanismType ;
+                   cco:hasMolecule ?molecule ;
+                   cco:hasTarget ?target .
+        ?molecule rdfs:label ?moleculeLabel ;
+                  cco:highestDevelopmentPhase ?phase .
+        ?target rdfs:label ?targetLabel ;
+                cco:organismName "Homo sapiens" .
+        FILTER(?phase = 4)
+        FILTER(CONTAINS(?mechanismType, "INHIBITOR"))
       }
       LIMIT 100
 
+cross_database_queries:
+  shared_endpoint: ebi
+  co_located_databases:
+    - chebi
+    - reactome
+    - ensembl
+    - amrportal
+  examples:
+    - title: Integrate ChEMBL Drugs with ChEBI Chemical Structure Data
+      description: |
+        Link ChEMBL drug molecules to ChEBI chemical entities to enrich drug data with 
+        comprehensive chemical ontology information including molecular formulas, mass, 
+        InChI keys, and hierarchical chemical classification. ChEMBL molecules reference 
+        ChEBI via skos:exactMatch, enabling seamless two-way integration.
+      databases_used:
+        - chembl
+        - chebi
+      complexity: intermediate
+      sparql: |
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+        
+        SELECT DISTINCT ?moleculeLabel ?chebiLabel ?formula ?mass ?developmentPhase
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?molecule a cco:SmallMolecule ;
+                      rdfs:label ?moleculeLabel ;
+                      skos:exactMatch ?chebiId ;
+                      cco:highestDevelopmentPhase ?developmentPhase .
+            FILTER(?developmentPhase >= 3)
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiId a owl:Class ;
+                     rdfs:label ?chebiLabel .
+            OPTIONAL { ?chebiId chebi:formula ?formula }
+            OPTIONAL { ?chebiId chebi:mass ?mass }
+          }
+        }
+        ORDER BY DESC(?developmentPhase)
+        LIMIT 50
+      notes: |
+        - Query uses graph URIs from ChEMBL and ChEBI MIE files (schema_info.graphs)
+        - ChEMBL links to ChEBI via skos:exactMatch property (from ChEMBL shape expressions)
+        - Filter on cco:highestDevelopmentPhase for late-stage clinical trials (phases 3-4)
+        - OPTIONAL for formula/mass as not all ChEBI entities have complete molecular data
+        - Performance: ~1-2 seconds for 50 results
+        - Use case: Identify marketed/late-stage drugs with ChEBI chemical ontology classification
+        - Referenced ChEBI MIE file for correct graph URI and property patterns
+        - Note: ChEBI uses chebi/ namespace for data properties (formula, mass)
+    - title: Link ChEMBL Drug Targets to Reactome Biological Pathways
+      description: |
+        Connect ChEMBL drug targets to Reactome biological pathways to understand drug 
+        mechanism of action in systems biology context. ChEMBL targets link to UniProt, 
+        which Reactome also references through bp:xref with bp:db="UniProt"^^xsd:string, 
+        enabling protein-centric integration.
+      databases_used:
+        - chembl
+        - reactome
+      complexity: advanced
+      sparql: |
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX bp: <http://www.biopax.org/release/biopax-level3.owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        SELECT DISTINCT ?drugName ?targetName ?pathwayName
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?molecule a cco:SmallMolecule ;
+                      rdfs:label ?drugName ;
+                      cco:highestDevelopmentPhase ?phase ;
+                      cco:hasActivity/cco:hasAssay/cco:hasTarget ?target .
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?targetName ;
+                    cco:organismName "Homo sapiens" ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprotId .
+            FILTER(?phase >= 3)
+            FILTER(STRSTARTS(STR(?uniprotId), "http://purl.uniprot.org/uniprot/"))
+            FILTER(?drugName = "ASPIRIN")
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/reactome> {
+            ?protein a bp:Protein ;
+                     bp:entityReference/bp:xref ?protXref .
+            ?protXref a bp:UnificationXref ;
+                      bp:db "UniProt"^^xsd:string ;
+                      bp:id ?uniprotIdStr .
+            ?pathway a bp:Pathway ;
+                     bp:displayName ?pathwayName ;
+                     bp:pathwayComponent/bp:left|bp:right ?protein .
+            FILTER(CONTAINS(STR(?uniprotId), ?uniprotIdStr))
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Query uses graph URIs from ChEMBL and Reactome MIE files
+        - ChEMBL targets link to UniProt via skos:exactMatch (from ChEMBL architectural notes)
+        - Reactome uses bp:xref with bp:db="UniProt"^^xsd:string (CRITICAL type restriction!)
+        - CONTAINS used for URI matching due to different URI formats between databases
+        - Property path bp:pathwayComponent/bp:left|bp:right finds pathway participants
+        - Performance: ~3-5 seconds due to cross-database join and property paths
+        - Use case: Drug target validation and mechanism of action in pathway context
+        - Referenced Reactome MIE file for correct xref pattern and anti-patterns
+        - IMPORTANT: ^^xsd:string type restriction prevents datatype mismatch errors
+    - title: Multi-Database Drug-Target-Pathway-Chemical Integration
+      description: |
+        Comprehensive three-way integration linking ChEMBL approved drugs to their protein 
+        targets, mapping those targets to Reactome biological pathways, and enriching with 
+        ChEBI chemical structure data. Demonstrates the power of co-located databases for 
+        systems pharmacology research.
+      databases_used:
+        - chembl
+        - chebi
+        - reactome
+      complexity: advanced
+      sparql: |
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX bp: <http://www.biopax.org/release/biopax-level3.owl#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+        
+        SELECT DISTINCT ?drugName ?targetName ?pathwayName ?formula ?mass
+        WHERE {
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?molecule a cco:SmallMolecule ;
+                      rdfs:label ?drugName ;
+                      skos:exactMatch ?chebiId ;
+                      cco:highestDevelopmentPhase 4 ;
+                      cco:hasActivity/cco:hasAssay/cco:hasTarget ?target .
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?targetName ;
+                    cco:organismName "Homo sapiens" ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprotId .
+            FILTER(STRSTARTS(STR(?uniprotId), "http://purl.uniprot.org/uniprot/"))
+            ?targetName bif:contains "'kinase'" option (score ?sc)
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/reactome> {
+            ?protein a bp:Protein ;
+                     bp:entityReference/bp:xref ?protXref .
+            ?protXref a bp:UnificationXref ;
+                      bp:db "UniProt"^^xsd:string ;
+                      bp:id ?uniprotIdStr .
+            ?pathway a bp:Pathway ;
+                     bp:displayName ?pathwayName ;
+                     bp:pathwayComponent/bp:left|bp:right ?protein .
+            FILTER(CONTAINS(STR(?uniprotId), ?uniprotIdStr))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiId a owl:Class .
+            OPTIONAL { ?chebiId chebi:formula ?formula }
+            OPTIONAL { ?chebiId chebi:mass ?mass }
+          }
+        }
+        ORDER BY DESC(?sc)
+        LIMIT 10
+      notes: |
+        - Query integrates three databases using graph URIs from all MIE files
+        - ChEMBL→ChEBI: skos:exactMatch for chemical structure data
+        - ChEMBL→UniProt: target component exact match for protein identifiers
+        - Reactome→UniProt: bp:xref with CRITICAL ^^xsd:string type restriction
+        - UniProt matching via CONTAINS due to different URI formats
+        - Property paths: cco:hasActivity/cco:hasAssay/cco:hasTarget and bp:pathwayComponent/bp:left|bp:right
+        - bif:contains for kinase filtering with relevance scoring
+        - Performance: 5-10 seconds due to complex three-way join with property paths
+        - Use case: Systems pharmacology - marketed kinase inhibitors in biological context
+        - All patterns verified against ChEMBL, ChEBI, and Reactome MIE files
+        - Consider simplifying query if timeout occurs (remove one database or add more filters)
+
 cross_references:
-  - pattern: "cco:moleculeXref"
+  - pattern: cco:moleculeXref
     description: |
       Molecules link to external databases via cco:moleculeXref using database-specific URI patterns.
     databases:
       chemical:
-        - "PubChem (2.2M+)"
-        - "ZINC (1.2M+)"
-        - "ChEBI (35k)"
+        - PubChem (2.2M+)
+        - ZINC (1.2M+)
+        - ChEBI (35k)
       drug:
-        - "DrugBank (8.4k)"
-        - "FDA SRS (32k)"
-        - "HMDB (12k)"
+        - DrugBank (8.4k)
+        - FDA SRS (32k)
+        - HMDB (12k)
       research:
-        - "LINCS (16k)"
-        - "SureChEMBL (540k)"
-        - "Wikipedia"
+        - LINCS (16k)
+        - SureChEMBL (540k)
+        - Wikipedia
     sparql: |
       SELECT ?molecule ?xref
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
@@ -314,15 +476,14 @@ cross_references:
                   cco:moleculeXref ?xref .
         FILTER(STRSTARTS(STR(?xref), "http://www.drugbank.ca/"))
       } LIMIT 100
-  
-  - pattern: "skos:exactMatch"
+  - pattern: skos:exactMatch
     description: |
       Target components link to UniProt proteins for sequence and functional data.
     databases:
       protein:
-        - "UniProt (11k)"
-        - "Ensembl"
-        - "PDB (64k)"
+        - UniProt (11k)
+        - Ensembl
+        - PDB (64k)
     sparql: |
       SELECT ?targetComponent ?uniprot
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
@@ -331,14 +492,13 @@ cross_references:
                          skos:exactMatch ?uniprot .
         FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/"))
       } LIMIT 100
-  
-  - pattern: "cco:hasMesh / cco:hasEFO"
+  - pattern: cco:hasMesh / cco:hasEFO
     description: |
       Drug indications link to MeSH and EFO disease ontologies.
     databases:
       disease:
-        - "MeSH (51k indications)"
-        - "EFO (subset)"
+        - MeSH (51k indications)
+        - EFO (subset)
     sparql: |
       SELECT ?indication ?mesh ?meshHeading ?efo
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
@@ -348,14 +508,13 @@ cross_references:
                     cco:hasMeshHeading ?meshHeading .
         OPTIONAL { ?indication cco:hasEFO ?efo }
       } LIMIT 100
-  
-  - pattern: "bibo:pmid"
+  - pattern: bibo:pmid
     description: |
       Documents link to PubMed for literature tracking.
     databases:
       literature:
-        - "PubMed (88k docs)"
-        - "DOI"
+        - PubMed (88k docs)
+        - DOI
     sparql: |
       SELECT ?document ?pmid ?doi
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
@@ -364,13 +523,12 @@ cross_references:
                   bibo:pmid ?pmid .
         OPTIONAL { ?document bibo:doi ?doi }
       } LIMIT 100
-  
-  - pattern: "cco:taxonomy"
+  - pattern: cco:taxonomy
     description: |
       NCBI Taxonomy links for organism information on targets, assays, and cell lines.
     databases:
       taxonomy:
-        - "NCBI Taxonomy"
+        - NCBI Taxonomy
     sparql: |
       SELECT ?target ?organism ?taxonomy
       FROM <http://rdf.ebi.ac.uk/dataset/chembl>
@@ -382,26 +540,29 @@ cross_references:
 
 architectural_notes:
   schema_design:
-    - "Molecule-Activity-Assay-Target core model for bioactivity measurements"
-    - "TargetComponent bridges Targets to UniProt identifiers"
-    - "Drug mechanisms separate molecular interactions from bioactivities"
-    - "Hierarchical protein classification using SKOS"
+    - Molecule-Activity-Assay-Target core model for bioactivity measurements
+    - TargetComponent bridges Targets to UniProt identifiers
+    - Drug mechanisms separate molecular interactions from bioactivities
+    - Hierarchical protein classification using SKOS
   performance:
-    - "Always specify FROM graph clause"
-    - "Use bif:contains for keyword searches (faster than FILTER/REGEX)"
-    - "Boolean operators in bif:contains work efficiently (AND, OR, NOT)"
-    - "Filter on development phase, assay type, or activity type well-indexed"
-    - "Start with specific target types (cco:SingleProtein)"
+    - Always specify FROM graph clause
+    - Use bif:contains for keyword searches (faster than FILTER/REGEX)
+    - Boolean operators in bif:contains work efficiently (AND, OR, NOT)
+    - Filter on development phase, assay type, or activity type well-indexed
+    - Start with specific target types (cco:SingleProtein)
   data_integration:
-    - "UniProt mappings via TargetComponent for protein data"
-    - "PubChem/DrugBank/ChEBI for chemical structure enrichment"
-    - "MeSH/EFO for disease ontology queries"
-    - "NCBI Taxonomy for organism-specific filtering"
+    - UniProt mappings via TargetComponent for protein data
+    - PubChem/DrugBank/ChEBI for chemical structure enrichment
+    - MeSH/EFO for disease ontology queries
+    - NCBI Taxonomy for organism-specific filtering
+    - Cross-database queries with co-located databases (ChEBI, Reactome) on EBI endpoint
+    - ChEBI integration via skos:exactMatch for chemical ontology
+    - Reactome integration via UniProt bridge for pathway context
   data_quality:
-    - "Not all molecules have chemical descriptors"
-    - "Activity values may lack units - always check cco:standardUnits"
-    - "Some targets lack UniProt mappings (non-human organisms)"
-    - "Development phase most complete for marketed drugs"
+    - Not all molecules have chemical descriptors
+    - Activity values may lack units - always check cco:standardUnits
+    - Some targets lack UniProt mappings (non-human organisms)
+    - Development phase most complete for marketed drugs
 
 data_statistics:
   total_molecules: 2400000
@@ -409,10 +570,10 @@ data_statistics:
   total_assays: 1600000
   total_targets: 13000
   coverage:
-    molecules_with_activities: "~80%"
-    targets_with_uniprot: "~85%"
-    activities_with_standard_values: "~70%"
-    molecules_with_pubchem: "~90%"
+    molecules_with_activities: ~80%
+    targets_with_uniprot: ~85%
+    activities_with_standard_values: ~70%
+    molecules_with_pubchem: ~90%
   cardinality:
     avg_activities_per_molecule: 8.5
     avg_assays_per_target: 120
@@ -421,10 +582,13 @@ data_statistics:
     - "Simple lookups: <1s for 100 results"
     - "Activity queries with filters: 2-5s"
     - "bif:contains keyword search: very fast"
+    - "Cross-database queries (ChEBI): 1-2s"
+    - "Cross-database queries (Reactome): 3-5s"
+    - "Three-way integration queries: 5-10s"
 
 anti_patterns:
-  - title: "FILTER/REGEX vs bif:contains"
-    problem: "FILTER/REGEX is slow and not optimized for large text searches."
+  - title: FILTER/REGEX vs bif:contains
+    problem: FILTER/REGEX is slow and not optimized for large text searches.
     wrong_sparql: |
       SELECT ?molecule ?label
       WHERE {
@@ -440,10 +604,9 @@ anti_patterns:
         ?label bif:contains "'kinase'" option (score ?sc)
       }
       ORDER BY DESC(?sc)
-    explanation: "Use bif:contains for Virtuoso-optimized full-text search with relevance ranking and Boolean operators."
-  
-  - title: "Forgetting Activity Units"
-    problem: "Comparing activity values without checking units leads to incorrect conclusions."
+    explanation: Use bif:contains for Virtuoso-optimized full-text search with relevance ranking and Boolean operators.
+  - title: Forgetting Activity Units
+    problem: Comparing activity values without checking units leads to incorrect conclusions.
     wrong_sparql: |
       SELECT ?molecule ?value
       WHERE {
@@ -459,10 +622,9 @@ anti_patterns:
                   cco:standardUnits ?units .
         FILTER(xsd:decimal(?value) < 100 && ?units = "nM")
       }
-    explanation: "Always filter by cco:standardUnits when comparing activity values (nM, uM, %, etc.)."
-  
-  - title: "Inefficient Target Component Queries"
-    problem: "Querying target components without specifying target type is slow."
+    explanation: Always filter by cco:standardUnits when comparing activity values (nM, uM, %, etc.).
+  - title: Inefficient Target Component Queries
+    problem: Querying target components without specifying target type is slow.
     wrong_sparql: |
       SELECT ?component ?uniprot
       WHERE {
@@ -478,37 +640,46 @@ anti_patterns:
         ?component skos:exactMatch ?uniprot .
         FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/uniprot/"))
       }
-    explanation: "Start from specific target types and use precise FILTER patterns."
+    explanation: Start from specific target types and use precise FILTER patterns.
 
 common_errors:
-  - error: "Query timeout"
+  - error: Query timeout
     causes:
-      - "Missing FROM clause or GRAPH specification"
-      - "Using FILTER/REGEX instead of bif:contains"
-      - "Missing LIMIT clause"
+      - Missing FROM clause or GRAPH specification
+      - Using FILTER/REGEX instead of bif:contains
+      - Missing LIMIT clause
     solutions:
-      - "Always include FROM <http://rdf.ebi.ac.uk/dataset/chembl>"
-      - "Use bif:contains for text searches"
-      - "Add type constraints before text filtering"
-      - "Use LIMIT appropriately (100-10000)"
-  
-  - error: "Empty results for cross-references"
+      - Always include FROM <http://rdf.ebi.ac.uk/dataset/chembl>
+      - Use bif:contains for text searches
+      - Add type constraints before text filtering
+      - Use LIMIT appropriately (100-10000)
+  - error: Empty results for cross-references
     causes:
-      - "Incorrect URI pattern for external database"
-      - "Querying wrong entity type"
+      - Incorrect URI pattern for external database
+      - Querying wrong entity type
     solutions:
-      - "Check sample data for exact URI patterns"
-      - "Use STRSTARTS for URI matching"
-      - "Verify entity type supports cross-reference property"
-      - "Use OPTIONAL for cross-references that may not exist"
-  
-  - error: "Incorrect activity comparisons"
+      - Check sample data for exact URI patterns
+      - Use STRSTARTS for URI matching
+      - Verify entity type supports cross-reference property
+      - Use OPTIONAL for cross-references that may not exist
+  - error: Incorrect activity comparisons
     causes:
-      - "Comparing without checking standardType"
-      - "Missing units check (mixing nM and uM)"
-      - "Not handling NULL values"
+      - Comparing without checking standardType
+      - Missing units check (mixing nM and uM)
+      - Not handling NULL values
     solutions:
-      - "Always filter by cco:standardType (IC50, EC50, Ki)"
-      - "Include cco:standardUnits in WHERE and filter"
-      - "Use OPTIONAL with FILTER for numeric values"
-      - "Consider cco:pChembl for normalized comparison"
+      - Always filter by cco:standardType (IC50, EC50, Ki)
+      - Include cco:standardUnits in WHERE and filter
+      - Use OPTIONAL with FILTER for numeric values
+      - Consider cco:pChembl for normalized comparison
+  - error: Cross-database query fails or returns empty results
+    causes:
+      - Missing ^^xsd:string type restriction for Reactome bp:db comparisons
+      - Incorrect graph URIs from co-located databases
+      - Wrong property patterns from co-database schemas
+    solutions:
+      - Always use ^^xsd:string for bp:db comparisons in Reactome queries
+      - Verify graph URIs match those in co-database MIE files
+      - Use CONTAINS for UniProt ID matching due to different URI formats
+      - Start with simpler two-database queries before three-way integration
+      - Add more specific filters if query times out

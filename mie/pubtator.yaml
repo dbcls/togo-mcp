@@ -8,18 +8,20 @@ schema_info:
     - http://rdfportal.org/dataset/pubtator_central
     - http://rdfportal.org/dataset/pubmed
   kw_search_tools:
-    - ncbi_esearch # database="pubmed"
+    - sparql
   version:
-    mie_version: "1.2"
+    mie_version: "1.3"
     mie_created: "2024-12-24"
-    data_version: "PubTator Central 2024"
-    update_frequency: "Regularly updated"
+    mie_updated: "2026-01-18"
+    data_version: PubTator Central 2024
+    update_frequency: Regularly updated
   license:
-    data_license: "Public Domain"
-    license_url: "https://www.ncbi.nlm.nih.gov/home/about/policies/"
+    data_license: Public Domain
+    license_url: https://www.ncbi.nlm.nih.gov/home/about/policies/
   access:
-    rate_limiting: "Reasonable use policy"
-    max_query_timeout: "60 seconds"
+    rate_limiting: Reasonable use policy
+    max_query_timeout: 60 seconds
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -262,6 +264,142 @@ sparql_query_examples:
       ORDER BY DESC(?cooccurrence)
       LIMIT 50
 
+cross_database_queries:
+  shared_endpoint: ncbi
+  co_located_databases:
+    - clinvar
+    - pubmed
+    - ncbigene
+    - medgen
+  examples:
+    - title: Link PubTator Gene Annotations to PubMed Article Metadata
+      description: |
+        Integrates PubTator gene annotations with PubMed article metadata to provide complete research context.
+        Retrieves articles with gene annotations, including article titles, publication details, and gene identifiers.
+        Enables comprehensive literature review showing which genes are mentioned in publications with specific keywords or topics.
+      databases_used:
+        - pubtator
+        - pubmed
+      complexity: intermediate
+      sparql: |
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX bibo: <http://purl.org/ontology/bibo/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        
+        SELECT ?pmid ?title ?geneId ?count
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubmed> {
+            ?article bibo:pmid ?pmid ;
+                     dct:title ?title .
+            ?title bif:contains "'BRCA1' AND 'cancer'" .
+          }
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?ann dcterms:subject "Gene" ;
+                 oa:hasBody ?geneId ;
+                 oa:hasTarget ?article ;
+                 pubtator:annotation_count ?count .
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Links via shared PubMed URI: http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid}
+        - PubMed keyword search with bif:contains for efficient title filtering
+        - PubTator provides structured gene annotations from text mining
+        - Performance: ~3-8 seconds due to keyword search and cross-graph joins
+        - Use case: Gene-centric literature review, discovering gene mentions in specific research areas
+        - Referenced PubMed MIE file for correct bibo:pmid and dct:title properties
+
+    - title: Enrich Gene Annotations with NCBI Gene Metadata
+      description: |
+        Three-way integration linking PubTator annotations to PubMed articles and enriching with NCBI Gene metadata.
+        Retrieves gene symbols, descriptions, and functional information for genes mentioned in literature.
+        Provides comprehensive view combining text mining annotations with standardized gene nomenclature and biological context.
+      databases_used:
+        - pubtator
+        - pubmed
+        - ncbigene
+      complexity: advanced
+      sparql: |
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX bibo: <http://purl.org/ontology/bibo/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?pmid ?title ?geneId ?gene_symbol ?gene_desc
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubmed> {
+            ?article bibo:pmid ?pmid ;
+                     dct:title ?title .
+            ?title bif:contains "'Alzheimer' AND 'genetics'" .
+          }
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?ann dcterms:subject "Gene" ;
+                 oa:hasBody ?geneId ;
+                 oa:hasTarget ?article .
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?geneId a insdc:Gene ;
+                    rdfs:label ?gene_symbol .
+            OPTIONAL { ?geneId dct:description ?gene_desc }
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Three-database integration: PubMed (articles) → PubTator (annotations) → NCBI Gene (metadata)
+        - PubTator uses identifiers.org/ncbigene URIs directly compatible with NCBI Gene database
+        - Enriches text-mined gene mentions with official symbols and functional descriptions
+        - Performance: ~10-20 seconds due to complex multi-database joins
+        - Use case: Comprehensive gene-literature analysis, systematic literature review with gene metadata
+        - Referenced both PubMed and NCBI Gene MIE files for correct property patterns
+        - NCBI Gene provides standardized nomenclature and biological context for text-mined entities
+
+    - title: Discover Disease-Gene Associations Across Literature
+      description: |
+        Advanced query identifying gene-disease co-mentions across all PubTator annotations.
+        Aggregates co-occurrence frequencies to discover potential disease-gene associations from literature.
+        Useful for hypothesis generation, systematic reviews, and identifying understudied gene-disease relationships.
+      databases_used:
+        - pubtator
+        - ncbigene
+      complexity: advanced
+      sparql: |
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX mesh: <http://identifiers.org/mesh/>
+        
+        SELECT ?diseaseId ?geneId ?gene_symbol (COUNT(DISTINCT ?article) AS ?cooccurrence)
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?diseaseAnn dcterms:subject "Disease" ;
+                        oa:hasBody ?diseaseId ;
+                        oa:hasTarget ?article .
+            FILTER(?diseaseId = mesh:D003920)
+            ?geneAnn dcterms:subject "Gene" ;
+                     oa:hasBody ?geneId ;
+                     oa:hasTarget ?article .
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?geneId a insdc:Gene ;
+                    rdfs:label ?gene_symbol .
+          }
+        }
+        GROUP BY ?diseaseId ?geneId ?gene_symbol
+        ORDER BY DESC(?cooccurrence)
+        LIMIT 50
+      notes: |
+        - Uses Diabetes Mellitus (mesh:D003920) as example disease
+        - Aggregates gene-disease co-mentions across entire literature corpus
+        - Enriches results with gene symbols from NCBI Gene for interpretability
+        - Performance: ~15-25 seconds due to aggregation across large annotation sets
+        - Use case: Disease genetics research, identifying candidate genes, literature-based discovery
+        - Higher co-occurrence counts suggest stronger gene-disease associations in literature
+        - Can be adapted for any MeSH disease term or gene of interest
+
 cross_references:
   - pattern: oa:hasBody with identifiers.org
     description: |
@@ -317,6 +455,9 @@ architectural_notes:
     - PubMed URIs follow NCBI RDF conventions for seamless cross-database queries
     - ClinVar, PubTator3, and dbSNP source attribution available via dcterms:source
     - Can be joined with PubMed graph for title/abstract keyword searches
+    - Shares NCBI endpoint with ClinVar, PubMed, NCBI Gene, and MedGen
+    - Article URIs (http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid}) enable seamless joins across all NCBI endpoint databases
+    - Gene annotations use identifiers.org/ncbigene URIs directly compatible with NCBI Gene database
   data_quality:
     - Some annotations lack dcterms:source (provenance not always recorded)
     - Annotation counts represent frequency within individual articles, not across corpus
@@ -326,25 +467,27 @@ architectural_notes:
 data_statistics:
   total_annotations: ">10 million (estimated)"
   entity_types:
-    disease_annotations: "Majority"
-    gene_annotations: "Substantial coverage"
+    disease_annotations: Majority
+    gene_annotations: Substantial coverage
   coverage:
-    mesh_disease_coverage: "Extensive MeSH disease term coverage"
-    ncbi_gene_coverage: "Broad gene identifier coverage"
+    mesh_disease_coverage: Extensive MeSH disease term coverage
+    ncbi_gene_coverage: Broad gene identifier coverage
     provenance_coverage: "~50% of annotations include dcterms:source"
   cardinality:
-    avg_annotations_per_article: "Variable, typically 1-5"
-    annotation_count_range: "Typically 1-2, occasionally up to 9+ for highly mentioned entities"
+    avg_annotations_per_article: Variable, typically 1-5
+    annotation_count_range: Typically 1-2, occasionally up to 9+ for highly mentioned entities
   performance_characteristics:
     - "Simple lookups by annotation ID: Fast (<1s)"
     - "Entity-specific queries with filters: Moderate (1-5s)"
     - "Large aggregations without LIMIT: May timeout"
     - "Cross-graph queries with PubMed: Moderate (2-10s)"
+    - "Cross-database queries (2 databases): ~5-10 seconds"
+    - "Three-way integration (PubTator-PubMed-NCBI Gene): ~10-20 seconds"
   data_quality_notes:
-    - "Provenance (dcterms:source) not available for all annotations"
-    - "Gene annotations appear less frequently than disease annotations"
-    - "Data primarily focused on Disease and Gene entity types"
-    - "Source attribution includes PubTator3, ClinVar, and dbSNP"
+    - Provenance (dcterms:source) not available for all annotations
+    - Gene annotations appear less frequently than disease annotations
+    - Data primarily focused on Disease and Gene entity types
+    - Source attribution includes PubTator3, ClinVar, and dbSNP
 
 anti_patterns:
   - title: Querying without LIMIT causes timeouts

@@ -9,9 +9,9 @@ schema_info:
   kw_search_tools:
     - ncbi_esearch
   version:
-    mie_version: "1.1"
+    mie_version: "1.2"
     mie_created: "2024-12-08"
-    mie_updated: "2024-12-23"
+    mie_updated: "2025-01-18"
     data_version: "Release 2025.01"
     update_frequency: "Monthly"
   license:
@@ -83,7 +83,7 @@ sample_rdf_entries:
         cvo:date_created "2022-05-16"^^xsd:date ;
         cvo:number_of_submitters 1 ;
         med2rdf:disease _:disease1 .
-  
+
   - title: "Gene with Genomic Location"
     description: "SLCO1B1 gene on chromosome 12p12.1 with HGNC and OMIM identifiers."
     rdf: |
@@ -96,7 +96,7 @@ sample_rdf_entries:
         cvo:omim 604843 ;
         cvo:cytogenetic_location "12p12.1" ;
         faldo:location _:loc1 .
-  
+
   - title: "Single Nucleotide Variant"
     description: "Missense variant in SLC9A4 with clinical significance classification."
     rdf: |
@@ -108,7 +108,7 @@ sample_rdf_entries:
         cvo:species "Homo sapiens" ;
         cvo:record_status "current" ;
         cvo:classified_record _:classrec1 .
-  
+
   - title: "Disease Association"
     description: "Clinical trait representing disease condition with MedGen cross-reference."
     rdf: |
@@ -117,7 +117,7 @@ sample_rdf_entries:
         cvo:type "Disease" ;
         cvo:id 16789 ;
         dct:references <http://ncbi.nlm.nih.gov/medgen/C3150901> .
-  
+
   - title: "Classified Record"
     description: "Clinical classification with germline significance assessment."
     rdf: |
@@ -133,7 +133,7 @@ sparql_query_examples:
   - title: "Search Variants by Gene with bif:contains"
     description: "Find all variants for BRCA1 gene using full-text search."
     question: "What variants are recorded for BRCA1?"
-    complexity: basic
+    complexity: "basic"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -147,11 +147,11 @@ sparql_query_examples:
         ?label bif:contains "'BRCA1'" .
       }
       LIMIT 100
-  
+
   - title: "Get Variant by Accession"
     description: "Retrieve variant details using ClinVar accession number."
     question: "What are details of variant VCV000856461?"
-    complexity: basic
+    complexity: "basic"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -161,11 +161,11 @@ sparql_query_examples:
         ?variant cvo:accession "VCV000856461" ;
                  ?property ?value .
       }
-  
+
   - title: "Find Variants with Clinical Significance"
     description: "Retrieve variants with their clinical significance classifications."
     question: "Which variants have clinical significance classifications?"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -178,11 +178,11 @@ sparql_query_examples:
         ?classrec cvo:classifications/cvo:germline_classification/cvo:description ?significance .
       }
       LIMIT 100
-  
+
   - title: "Count Variants by Type"
     description: "Group and count variants by their variation types."
     question: "What types of variations exist and how many?"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -196,11 +196,11 @@ sparql_query_examples:
       GROUP BY ?variation_type
       ORDER BY DESC(?count)
       LIMIT 50
-  
+
   - title: "Gene-Disease Associations via Variants"
     description: "Find gene-disease associations through variant annotations using keyword search."
     question: "What diseases are associated with TP53 variants?"
-    complexity: intermediate
+    complexity: "intermediate"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       PREFIX med2rdf: <http://med2rdf.org/ontology/med2rdf#>
@@ -218,11 +218,11 @@ sparql_query_examples:
         ?label bif:contains "'TP53'" .
       }
       LIMIT 100
-  
+
   - title: "Well-Studied Recent Variants"
     description: "Identify variants with multiple submitters and recent updates."
     question: "Which variants have multiple submissions and were recently updated?"
-    complexity: advanced
+    complexity: "advanced"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -240,11 +240,11 @@ sparql_query_examples:
       }
       ORDER BY DESC(?num_submitters) DESC(?last_updated)
       LIMIT 100
-  
+
   - title: "Genes with Chromosomal Locations"
     description: "Retrieve genes with cytogenetic locations and external identifiers."
     question: "What genes have chromosomal locations and HGNC identifiers?"
-    complexity: advanced
+    complexity: "advanced"
     sparql: |
       PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
       
@@ -262,6 +262,136 @@ sparql_query_examples:
       ORDER BY ?cyto_loc
       LIMIT 100
 
+cross_database_queries:
+  shared_endpoint: "ncbi"
+  co_located_databases:
+    - "medgen"
+    - "ncbigene"
+    - "pubmed"
+    - "pubtator"
+  examples:
+    - title: "Enrich ClinVar Variants with NCBI Gene Annotations"
+      description: |
+        Links ClinVar genetic variants to comprehensive gene annotations from NCBI Gene database, providing full gene descriptions, types (protein-coding, ncRNA, etc.), and additional metadata. This integration enables researchers to understand the functional context of variants by accessing detailed gene information.
+      databases_used:
+        - "clinvar"
+        - "ncbigene"
+      complexity: "intermediate"
+      sparql: |
+        PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        
+        SELECT ?cv_symbol ?gene_id ?ncbi_label ?description ?type
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/clinvar> {
+            ?cv_gene a cvo:Gene ;
+                     cvo:gene_id ?gene_id_int ;
+                     cvo:symbol ?cv_symbol .
+            BIND(STR(?gene_id_int) AS ?gene_id)
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?ncbi_gene a insdc:Gene ;
+                       dct:identifier ?gene_id ;
+                       rdfs:label ?ncbi_label ;
+                       ncbio:typeOfGene ?type .
+            OPTIONAL { ?ncbi_gene dct:description ?description }
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Query uses gene IDs to link ClinVar genes to NCBI Gene database
+        - ClinVar uses http://ncbi.nlm.nih.gov/gene/ URIs while NCBI Gene uses http://identifiers.org/ncbigene/ URIs
+        - URI mismatch resolved by matching on gene_id integer values (converted to string for NCBI Gene)
+        - Provides gene type (protein-coding, ncRNA, pseudo) and full descriptions
+        - Performance: ~2-5 seconds for 50 results
+        - Use case: Variant interpretation requiring gene function context
+
+    - title: "Find Gene Variants with Full Genetic Context"
+      description: |
+        Combines ClinVar variant records with detailed NCBI Gene information to create comprehensive genetic variant profiles. Retrieves variant types, clinical significance, and enriches with chromosomal locations, gene descriptions, and cross-references. Useful for variant prioritization and clinical genomics workflows.
+      databases_used:
+        - "clinvar"
+        - "ncbigene"
+      complexity: "advanced"
+      sparql: |
+        PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX ncbio: <https://dbcls.github.io/ncbigene-rdf/ontology.ttl#>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        
+        SELECT ?variant ?var_label ?var_type ?significance 
+               ?gene_symbol ?gene_desc ?gene_type ?chromosome
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/clinvar> {
+            ?variant a cvo:VariationArchiveType ;
+                     rdfs:label ?var_label ;
+                     cvo:variation_type ?var_type ;
+                     cvo:classified_record ?classrec .
+            ?classrec sio:SIO_000628 ?cv_gene ;
+                      cvo:classifications/cvo:germline_classification/cvo:description ?significance .
+            ?cv_gene cvo:gene_id ?gene_id_int ;
+                     cvo:symbol ?gene_symbol .
+            BIND(STR(?gene_id_int) AS ?gene_id)
+            ?var_label bif:contains "'BRCA1'" .
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?ncbi_gene a insdc:Gene ;
+                       dct:identifier ?gene_id ;
+                       ncbio:typeOfGene ?gene_type .
+            OPTIONAL { ?ncbi_gene dct:description ?gene_desc }
+            OPTIONAL { ?ncbi_gene insdc:chromosome ?chromosome }
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Integrates clinical variant data with comprehensive gene annotations
+        - Uses keyword search (bif:contains) for gene-specific variant discovery
+        - Links through gene_id matching (integer to string conversion)
+        - Provides clinical significance from ClinVar alongside gene context from NCBI Gene
+        - Performance: ~5-10 seconds due to keyword search and cross-database joins
+        - Use case: Clinical variant interpretation, genetic counseling, variant pathogenicity assessment
+        - Referenced NCBI Gene MIE file for correct property paths and entity types
+
+    - title: "Compare ClinVar Gene Symbols with Official NCBI Gene Nomenclature"
+      description: |
+        Cross-references gene symbols between ClinVar and NCBI Gene to identify naming discrepancies, synonyms, or alternative gene names. Useful for data reconciliation and ensuring consistent gene nomenclature across databases.
+      databases_used:
+        - "clinvar"
+        - "ncbigene"
+      complexity: "intermediate"
+      sparql: |
+        PREFIX cvo: <http://purl.jp/bio/10/clinvar/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        
+        SELECT ?gene_id ?cv_symbol ?ncbi_label ?matches
+               (GROUP_CONCAT(DISTINCT ?synonym; separator="; ") AS ?synonyms)
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/clinvar> {
+            ?cv_gene a cvo:Gene ;
+                     cvo:gene_id ?gene_id_int ;
+                     cvo:symbol ?cv_symbol .
+            BIND(STR(?gene_id_int) AS ?gene_id)
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?ncbi_gene a insdc:Gene ;
+                       dct:identifier ?gene_id ;
+                       rdfs:label ?ncbi_label .
+            OPTIONAL { ?ncbi_gene insdc:gene_synonym ?synonym }
+            BIND(IF(?cv_symbol = ?ncbi_label, "MATCH", "MISMATCH") AS ?matches)
+          }
+        }
+        GROUP BY ?gene_id ?cv_symbol ?ncbi_label ?matches
+        LIMIT 100
+      notes: |
+        - Compares gene symbols between databases for nomenclature consistency
+        - Identifies genes where ClinVar and NCBI Gene use different symbols
+        - Aggregates all synonyms from NCBI Gene for comprehensive naming information
+        - Performance: ~3-5 seconds for 100 results
+        - Use case: Data integration, gene name standardization, database quality control
+
 cross_references:
   - pattern: "rdfs:seeAlso"
     description: |
@@ -278,7 +408,7 @@ cross_references:
                  cvo:accession ?accession ;
                  rdfs:seeAlso ?url .
       } LIMIT 10
-  
+
   - pattern: "dct:references"
     description: |
       Disease/trait annotations reference MedGen, OMIM, and MeSH.
@@ -295,7 +425,7 @@ cross_references:
                  dct:references ?ref .
         FILTER(CONTAINS(STR(?ref), "medgen") || CONTAINS(STR(?ref), "omim"))
       } LIMIT 50
-  
+
   - pattern: "cvo:hgnc_id"
     description: |
       Gene entities have HGNC identifiers for official gene symbols.
@@ -310,7 +440,7 @@ cross_references:
               cvo:symbol ?symbol ;
               cvo:hgnc_id ?hgnc_id .
       } LIMIT 20
-  
+
   - pattern: "cvo:omim"
     description: |
       Direct OMIM identifiers on Gene entities linking to disease entries.
@@ -343,11 +473,14 @@ architectural_notes:
     - "Complex joins through blank nodes may be slow"
     - "Always use LIMIT for exploratory queries"
     - "Counting queries complete in ~1-3 seconds"
+    - "Cross-database queries typically 2-10 seconds depending on complexity"
   data_integration:
     - "MedGen for standardized disease concepts"
     - "HGNC for gene symbol standardization"
     - "OMIM for Mendelian inheritance"
     - "MeSH for clinical concept mapping"
+    - "NCBI Gene for comprehensive gene annotations (via shared endpoint)"
+    - "Cross-database integration uses gene_id matching between ClinVar and NCBI Gene"
   data_quality:
     - "Record_status 'current' filters deprecated entries"
     - "Number of submitters indicates evidence strength"
@@ -371,6 +504,7 @@ data_statistics:
     - "bif:contains searches: 1-3s"
     - "Complex blank node joins: 3-10s"
     - "Aggregation queries: 5-15s"
+    - "Cross-database queries: 2-10s"
   data_quality_notes:
     - "90% of variants have clinical significance"
     - "Most variants from single submitter (70%)"
@@ -393,7 +527,7 @@ anti_patterns:
         ?s ?p ?o .
       } LIMIT 10
     explanation: "Always specify FROM <http://rdfportal.org/dataset/clinvar>."
-  
+
   - title: "FILTER CONTAINS vs bif:contains"
     problem: "FILTER CONTAINS is slower than bif:contains."
     wrong_sparql: |
@@ -411,7 +545,7 @@ anti_patterns:
         ?label bif:contains "'BRCA1'" .
       }
     explanation: "Use bif:contains with single-quoted keywords for better performance."
-  
+
   - title: "Blank Node Chains Without OPTIONAL"
     problem: "Inner joins through blank nodes filter out variants lacking annotations."
     wrong_sparql: |
@@ -431,6 +565,33 @@ anti_patterns:
       }
     explanation: "Use OPTIONAL for blank node chains to include variants with missing data."
 
+  - title: "Cross-Database URI Mismatch"
+    problem: "Attempting to join ClinVar and NCBI Gene using URI equality fails due to different URI patterns."
+    wrong_sparql: |
+      SELECT ?cv_gene ?ncbi_gene
+      WHERE {
+        GRAPH <http://rdfportal.org/dataset/clinvar> {
+          ?cv_gene a cvo:Gene .
+        }
+        GRAPH <http://rdfportal.org/dataset/ncbigene> {
+          ?cv_gene a insdc:Gene .
+        }
+      }
+    correct_sparql: |
+      SELECT ?cv_gene ?ncbi_gene ?gene_id
+      WHERE {
+        GRAPH <http://rdfportal.org/dataset/clinvar> {
+          ?cv_gene a cvo:Gene ;
+                   cvo:gene_id ?gene_id_int .
+          BIND(STR(?gene_id_int) AS ?gene_id)
+        }
+        GRAPH <http://rdfportal.org/dataset/ncbigene> {
+          ?ncbi_gene a insdc:Gene ;
+                     dct:identifier ?gene_id .
+        }
+      }
+    explanation: "Link databases using gene_id values, not URIs. ClinVar uses http://ncbi.nlm.nih.gov/gene/ while NCBI Gene uses http://identifiers.org/ncbigene/."
+
 common_errors:
   - error: "Query timeout on aggregation"
     causes:
@@ -441,7 +602,7 @@ common_errors:
       - "Add filters (variation_type, record_status, dates)"
       - "Use LIMIT even on COUNT queries"
       - "Break complex queries into smaller steps"
-  
+
   - error: "Empty results for cross-references"
     causes:
       - "Querying external URIs not in graph as subjects"
@@ -450,7 +611,7 @@ common_errors:
       - "Use disease/trait blank nodes to find dct:references"
       - "Check rdfs:seeAlso on main entities"
       - "Sample data first to understand URI patterns"
-  
+
   - error: "Inconsistent date filtering"
     causes:
       - "Mixed xsd:date and xsd:string datatypes"
@@ -459,3 +620,14 @@ common_errors:
       - "Use cvo:date_created (xsd:date) not dct:created (xsd:string)"
       - "Check datatype with sample queries first"
       - "Cast or convert when necessary"
+
+  - error: "Cross-database query returns no results"
+    causes:
+      - "URI pattern mismatch between databases"
+      - "Using wrong graph URIs"
+      - "Missing BIND for datatype conversion"
+    solutions:
+      - "Link databases using shared identifier values (gene_id), not URIs"
+      - "Convert ClinVar integer gene_id to string using STR() function"
+      - "Verify graph URIs from respective MIE files before querying"
+      - "Test each GRAPH clause independently before combining"

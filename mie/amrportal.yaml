@@ -9,16 +9,17 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "1.0"
-    mie_created: "2025-01-02"
-    data_version: "Current as of 2025"
-    update_frequency: "Irregular updates from source databases"
+    mie_version: "1.2"
+    mie_created: "2025-01-16"
+    data_version: Current as of 2025
+    update_frequency: Irregular updates from source databases
   license:
-    data_license: "Public domain data from NCBI and EBI resources"
-    license_url: "https://www.ebi.ac.uk/about/terms-of-use"
+    data_license: Public domain data from NCBI and EBI resources
+    license_url: https://www.ebi.ac.uk/about/terms-of-use
   access:
-    rate_limiting: "Standard SPARQL endpoint rate limits apply"
-    max_query_timeout: "60 seconds for complex queries"
+    rate_limiting: Standard SPARQL endpoint rate limits apply
+    max_query_timeout: 60 seconds for complex queries
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -93,7 +94,8 @@ shape_expressions: |
 
 sample_rdf_entries:
   - title: Phenotypic AMR Measurement
-    description: Antimicrobial susceptibility test result showing trimethoprim-sulfamethoxazole resistance in Streptococcus pneumoniae from Thailand.
+    description: |
+      Antimicrobial susceptibility test result showing trimethoprim-sulfamethoxazole resistance in Streptococcus pneumoniae from Thailand.
     rdf: |
       @prefix amr: <http://example.org/ebiamr#> .
       @prefix dct: <http://purl.org/dc/terms/> .
@@ -123,9 +125,10 @@ sample_rdf_entries:
         amr:astStandard "CLSI" ;
         amr:database "CABBAGE_PubMed_data" ;
         dct:references <http://rdf.ncbi.nlm.nih.gov/pubmed/24509479> .
-  
+
   - title: Genotypic AMR Feature
-    description: Efflux pump gene norM detected in Neisseria gonorrhoeae genome assembly with genomic coordinates.
+    description: |
+      Efflux pump gene norM detected in Neisseria gonorrhoeae genome assembly with genomic coordinates.
     rdf: |
       @prefix amr: <http://example.org/ebiamr#> .
       @prefix obo: <http://purl.obolibrary.org/obo/> .
@@ -154,9 +157,10 @@ sample_rdf_entries:
         amr:evidenceLink <https://www.ncbi.nlm.nih.gov/genome/annotation_prok/evidence/NF000263/> ;
         amr:bin "9363" ;
         obo:RO_0002162 <http://identifiers.org/taxonomy/485> .
-  
+
   - title: Linked Phenotype-Genotype Data
-    description: Acinetobacter baumannii isolate with both amikacin resistance phenotype and macrolide resistance gene msr(E).
+    description: |
+      Acinetobacter baumannii isolate with both amikacin resistance phenotype and macrolide resistance gene msr(E).
     rdf: |
       @prefix amr: <http://example.org/ebiamr#> .
       @prefix dct: <http://purl.org/dc/terms/> .
@@ -185,9 +189,10 @@ sample_rdf_entries:
         amr:regionEnd 6634 ;
         amr:antibioticName "erythromycin" ;
         obo:RO_0002162 <http://identifiers.org/taxonomy/470> .
-  
+
   - title: Geographic Metadata
-    description: Resistance measurement with detailed geographic classification including region, subregion, country and ISO code.
+    description: |
+      Resistance measurement with detailed geographic classification including region, subregion, country and ISO code.
     rdf: |
       @prefix amr: <http://example.org/ebiamr#> .
       @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -204,9 +209,10 @@ sample_rdf_entries:
         amr:isolationSource "urine" ;
         amr:isolationCategory "urinary tract" ;
         amr:host "Homo sapiens" .
-  
+
   - title: Measurement Details
-    description: Quantitative MIC measurement with value, sign and units for broth dilution testing.
+    description: |
+      Quantitative MIC measurement with value, sign and units for broth dilution testing.
     rdf: |
       @prefix amr: <http://example.org/ebiamr#> .
       @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -224,7 +230,8 @@ sample_rdf_entries:
 
 sparql_query_examples:
   - title: Basic keyword search for organism
-    description: Find resistance measurements for E. coli using keyword search with bif:contains
+    description: |
+      Find resistance measurements for E. coli using keyword search with bif:contains
     question: What resistance data is available for Escherichia coli?
     complexity: basic
     sparql: |
@@ -241,9 +248,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 10
-  
+
   - title: Filter by specific resistance phenotype
-    description: Retrieve all resistant isolates for a specific organism
+    description: |
+      Retrieve all resistant isolates for a specific organism
     question: What antibiotics show resistance in Pseudomonas aeruginosa?
     complexity: basic
     sparql: |
@@ -260,9 +268,10 @@ sparql_query_examples:
       GROUP BY ?antibiotic
       ORDER BY DESC(?count)
       LIMIT 20
-  
+
   - title: Geographic distribution analysis
-    description: Analyze resistance patterns by geographic region and country
+    description: |
+      Analyze resistance patterns by geographic region and country
     question: Which countries have the most ciprofloxacin-resistant E. coli isolates?
     complexity: intermediate
     sparql: |
@@ -281,26 +290,31 @@ sparql_query_examples:
       GROUP BY ?country ?region
       ORDER BY DESC(?resistantCount)
       LIMIT 20
-  
+
   - title: AMR gene class distribution
-    description: Identify prevalence of different AMR gene classes in genotype data
-    question: What are the most common AMR gene classes detected?
+    description: |
+      Identify prevalence of different AMR gene classes in genotype data with biological annotations
+    question: What are the most common AMR gene classes detected in different bacterial species?
     complexity: intermediate
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
+      PREFIX obo: <http://purl.obolibrary.org/obo/>
       
-      SELECT ?amrClass (COUNT(*) as ?geneCount)
+      SELECT ?amrClass ?species (COUNT(*) as ?geneCount)
       FROM <http://rdfportal.org/dataset/amrportal>
       WHERE {
         ?s a amr:GenotypeFeature .
         ?s amr:amrClass ?amrClass .
+        ?s amr:species ?species .
+        ?s obo:RO_0002162 ?taxonId .
       }
-      GROUP BY ?amrClass
+      GROUP BY ?amrClass ?species
       ORDER BY DESC(?geneCount)
       LIMIT 20
-  
+
   - title: Temporal trend analysis
-    description: Track resistance trends over time for specific organism-antibiotic combinations
+    description: |
+      Track resistance trends over time for specific organism-antibiotic combinations
     question: How has ampicillin resistance in E. coli changed over the years?
     complexity: intermediate
     sparql: |
@@ -319,9 +333,10 @@ sparql_query_examples:
       }
       GROUP BY ?year
       ORDER BY ?year
-  
+
   - title: Genotype-phenotype correlation
-    description: Link AMR genes with resistance phenotypes in same isolates
+    description: |
+      Link AMR genes with resistance phenotypes in same isolates
     question: Which beta-lactam resistance genes are found in carbapenem-resistant isolates?
     complexity: advanced
     sparql: |
@@ -345,9 +360,10 @@ sparql_query_examples:
       GROUP BY ?geneSymbol ?amrClass
       ORDER BY DESC(?isolateCount)
       LIMIT 20
-  
+
   - title: Multi-drug resistance profiling
-    description: Identify isolates with resistance to multiple antibiotic classes
+    description: |
+      Identify isolates with resistance to multiple antibiotic classes
     question: Find isolates resistant to antibiotics from at least 3 different classes
     complexity: advanced
     sparql: |
@@ -368,13 +384,143 @@ sparql_query_examples:
       ORDER BY DESC(?resistantDrugCount)
       LIMIT 20
 
+cross_database_queries:
+  shared_endpoint: ebi
+  co_located_databases:
+    - chembl
+    - chebi
+    - reactome
+    - ensembl
+  examples:
+    - title: Link AMR surveillance to ChEMBL compound properties
+      description: |
+        Integrate AMR Portal resistance data with ChEMBL to enrich antibiotic surveillance with chemical properties, mechanism data, and development phases. This query demonstrates how to match antibiotic names between databases using case-insensitive comparison and retrieve ChEMBL compound identifiers for further analysis of structure-activity relationships and clinical development status.
+      databases_used:
+        - amrportal
+        - chembl
+      complexity: intermediate
+      sparql: |
+        PREFIX amr: <http://example.org/ebiamr#>
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT DISTINCT ?antibioticName ?chemblMolecule ?chemblLabel 
+               (COUNT(DISTINCT ?measurement) as ?resistanceCount)
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/amrportal> {
+            ?measurement a amr:PhenotypeMeasurement ;
+                         amr:antibioticName ?antibioticName ;
+                         amr:organism "Escherichia coli" ;
+                         amr:resistancePhenotype "resistant" .
+            FILTER(?antibioticName IN ("ciprofloxacin", "meropenem", "ampicillin", "gentamicin"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?chemblMolecule a cco:SmallMolecule ;
+                            rdfs:label ?chemblLabel .
+            FILTER(LCASE(?chemblLabel) = LCASE(?antibioticName))
+          }
+        }
+        GROUP BY ?antibioticName ?chemblMolecule ?chemblLabel
+        ORDER BY DESC(?resistanceCount)
+        LIMIT 20
+      notes: |
+        - Query references ChEMBL MIE file for correct graph URI and entity types
+        - Uses LCASE() for case-insensitive matching (AMR Portal uses lowercase, ChEMBL uppercase)
+        - Filter by specific organism first to reduce result set before cross-database join
+        - Some combination antibiotics may not have exact matches in ChEMBL
+        - Performance: ~10-15 seconds depending on filtered organism scope
+        - ChEMBL molecule shape from chembl MIE: cco:SmallMolecule with rdfs:label property
+
+    - title: Analyze resistance patterns with ChEMBL target information
+      description: |
+        Explore relationships between antimicrobial resistance phenotypes and known ChEMBL bioactivity targets. This advanced integration enables hypothesis generation about resistance mechanisms by linking observed clinical resistance patterns to documented molecular targets and their activities. Useful for understanding which protein targets are associated with antibiotics showing high resistance rates.
+      databases_used:
+        - amrportal
+        - chembl
+      complexity: advanced
+      sparql: |
+        PREFIX amr: <http://example.org/ebiamr#>
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?antibioticName ?chemblMolecule ?target ?targetLabel 
+               (COUNT(DISTINCT ?measurement) as ?resistanceEvents)
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/amrportal> {
+            ?measurement a amr:PhenotypeMeasurement ;
+                         amr:antibioticName ?antibioticName ;
+                         amr:resistancePhenotype "resistant" ;
+                         amr:collectionYear ?year .
+            FILTER(?year >= 2020 && ?antibioticName = "ciprofloxacin")
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?chemblMolecule a cco:SmallMolecule ;
+                            rdfs:label "CIPROFLOXACIN" ;
+                            cco:hasActivity/cco:hasAssay/cco:hasTarget ?target .
+            ?target rdfs:label ?targetLabel .
+          }
+        }
+        GROUP BY ?antibioticName ?chemblMolecule ?target ?targetLabel
+        ORDER BY DESC(?resistanceEvents)
+        LIMIT 20
+      notes: |
+        - Query uses ChEMBL Activity-Assay-Target path from chembl MIE shape expressions
+        - Temporal filtering improves performance by reducing AMR Portal result set
+        - ChEMBL target types include cco:SingleProtein, cco:ProteinComplex (from chembl MIE)
+        - Performance: ~15-25 seconds depending on temporal range
+        - Consider breaking into smaller time periods if timeout occurs
+        - Property paths (/) traverse relationships efficiently per ChEMBL schema design
+
+    - title: Geographic AMR patterns with ChEBI compound classification
+      description: |
+        Combine AMR Portal geographic surveillance with ChEBI ontology classifications to analyze resistance distribution by compound chemical classes. This query demonstrates cross-database integration between AMR Portal and ChEBI (both on EBI endpoint) to understand how different chemical classes of antibiotics show varying resistance patterns across geographic regions.
+      databases_used:
+        - amrportal
+        - chebi
+      complexity: advanced
+      sparql: |
+        PREFIX amr: <http://example.org/ebiamr#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        
+        SELECT ?region ?antibioticName ?chebiLabel 
+               (COUNT(*) as ?totalTests) 
+               (SUM(IF(?phenotype = "resistant", 1, 0)) as ?resistantCount)
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/amrportal> {
+            ?measurement a amr:PhenotypeMeasurement ;
+                         amr:antibioticName ?antibioticName ;
+                         amr:resistancePhenotype ?phenotype ;
+                         amr:geographicalRegion ?region ;
+                         amr:antibioticOntologyId ?aroId .
+            FILTER(?antibioticName IN ("ciprofloxacin", "meropenem", "ampicillin"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chebi> {
+            ?chebiId a owl:Class ;
+                     rdfs:label ?chebiLabel .
+            FILTER(CONTAINS(LCASE(?chebiLabel), LCASE(?antibioticName)))
+          }
+        }
+        GROUP BY ?region ?antibioticName ?chebiLabel
+        HAVING (?totalTests > 10)
+        ORDER BY ?region DESC(?resistantCount)
+        LIMIT 30
+      notes: |
+        - Query references ChEBI MIE for owl:Class entity type and rdfs:label property
+        - AMR Portal links to ARO (Antibiotic Resistance Ontology) via amr:antibioticOntologyId
+        - HAVING clause filters regions with insufficient data for statistical significance
+        - ChEBI provides chemical structure classifications beyond ChEMBL's drug focus
+        - Performance: ~10-20 seconds, uses FILTER to limit scope
+        - Some antibiotics may not have direct ChEBI matches; consider CONTAINS for fuzzy matching
+
 cross_references:
   - pattern: amr:bioSample
     description: |
       Links to NCBI BioSample database providing sample metadata including collection details, host information, and isolation source.
     databases:
       sequence_archives:
-        - BioSample: "~1.4M unique samples linked from phenotype and genotype data"
+        - "BioSample: ~1.4M unique samples linked from phenotype and genotype data"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       
@@ -384,13 +530,13 @@ cross_references:
         ?s amr:bioSample ?bioSample .
       }
       LIMIT 100
-  
+
   - pattern: amr:sraAccession
     description: |
       Links to NCBI Sequence Read Archive (SRA) for raw sequencing data associated with isolates.
     databases:
       sequence_archives:
-        - SRA: "~870K SRA accessions linked from phenotype data"
+        - "SRA: ~870K SRA accessions linked from phenotype data"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       
@@ -401,13 +547,13 @@ cross_references:
         ?s amr:sraAccession ?sraAccession .
       }
       LIMIT 100
-  
+
   - pattern: amr:assemblyId
     description: |
       Links to INSDC genome assemblies (GenBank GCA or SRA ERZ accessions) containing assembled genome sequences.
     databases:
       sequence_archives:
-        - INSDC/GenBank: "~890K assembly identifiers"
+        - "INSDC/GenBank: ~890K assembly identifiers"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       
@@ -417,13 +563,13 @@ cross_references:
         ?s amr:assemblyId ?assemblyId .
       }
       LIMIT 100
-  
+
   - pattern: dct:references
     description: |
       Citations to PubMed literature from which resistance data was extracted or published.
     databases:
       literature:
-        - PubMed: "Multiple publications referenced per study"
+        - "PubMed: Multiple publications referenced per study"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       PREFIX dct: <http://purl.org/dc/terms/>
@@ -435,13 +581,13 @@ cross_references:
         ?s dct:references ?pubmed .
       }
       LIMIT 100
-  
+
   - pattern: amr:antibioticOntologyId
     description: |
       Links to Antibiotic Resistance Ontology (ARO) terms for standardized antibiotic classification.
     databases:
       ontologies:
-        - ARO: "Standardized antibiotic terms from CARD database"
+        - "ARO: Standardized antibiotic terms from CARD database"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       
@@ -453,13 +599,13 @@ cross_references:
         ?s amr:antibioticOntologyId ?aroTerm .
       }
       LIMIT 100
-  
+
   - pattern: obo:RO_0002162 (in taxon)
     description: |
       Links genotype features to NCBI Taxonomy identifiers for organism classification.
     databases:
       taxonomy:
-        - NCBI Taxonomy: "Organism identifiers for all genotype features"
+        - "NCBI Taxonomy: Organism identifiers for all genotype features"
     sparql: |
       PREFIX amr: <http://example.org/ebiamr#>
       PREFIX obo: <http://purl.obolibrary.org/obo/>
@@ -481,7 +627,6 @@ architectural_notes:
     - Geographic hierarchy (region → subregion → country → ISO code) enables multi-level spatial analysis
     - Temporal coverage spans 1911-2025 with 92 distinct collection years
     - Antibiotic names use free text with optional links to ARO ontology for standardization
-  
   performance:
     - Large dataset (1.7M phenotype + 1.1M genotype records) requires careful query design
     - Use LIMIT clauses for exploratory queries to avoid timeouts
@@ -489,13 +634,15 @@ architectural_notes:
     - Geographic and temporal filters significantly reduce result sets
     - bif:contains enables efficient keyword search on organism names and other text fields
     - SPARQL queries over 60 seconds may timeout - optimize with selective filters
-  
   data_integration:
     - Links to BioSample (NCBI), SRA (sequence data), INSDC assemblies, PubMed literature, and ARO ontology
     - Phenotype-genotype linkage via shared bioSample IRIs enables correlation studies
     - Evidence links point to NCBI Pathogen Detection annotation for gene predictions
     - Database field tracks data source (PATRIC, CABBAGE_PubMed_data, NCBI)
-  
+    - Cross-database integration with ChEMBL enables compound property enrichment via antibiotic name matching
+    - Co-located with chembl, chebi, reactome, ensembl on EBI endpoint for multi-database queries
+    - ChEBI provides chemical ontology classifications for antibiotics
+    - ChEMBL target and bioactivity data enables resistance mechanism exploration
   data_quality:
     - Resistance phenotype values use controlled vocabulary (resistant, susceptible, intermediate, non-susceptible, susceptible-dose dependent)
     - Laboratory typing methods include broth dilution (56%), agar dilution (8%), disk diffusion (7%), E-test (2%)
@@ -507,23 +654,26 @@ architectural_notes:
 data_statistics:
   total_phenotype_measurements: 1714486
   total_genotype_features: 1164007
-  total_unique_biosamples: "~1.4 million"
-  total_organisms: "20+ bacterial species with major representation"
+  total_unique_biosamples: ~1.4 million
+  total_organisms: 20+ bacterial species with major representation
   coverage:
-    phenotype_with_geographic_data: "~80%"
-    phenotype_with_temporal_data: "~85%"
-    phenotype_with_quantitative_mic: "~30%"
-    genotype_with_evidence: "~65%"
+    phenotype_with_geographic_data: ~80%
+    phenotype_with_temporal_data: ~85%
+    phenotype_with_quantitative_mic: ~30%
+    genotype_with_evidence: ~65%
+    genotype_with_antibiotic_name: ~35%
   cardinality:
-    avg_phenotypes_per_biosample: "~1.2"
-    avg_genotypes_per_biosample: "~0.8"
-    resistance_distribution: "18% resistant, 61% susceptible, 2% intermediate"
-    geographic_coverage: "150+ countries across all continents"
+    avg_phenotypes_per_biosample: ~1.2
+    avg_genotypes_per_biosample: ~0.8
+    resistance_distribution: 18% resistant, 61% susceptible, 2% intermediate
+    geographic_coverage: 150+ countries across all continents
   performance_characteristics:
     - Queries filtering on organism + antibiotic return results in <5 seconds
     - Aggregations over full dataset may timeout without LIMIT
     - bif:contains keyword search performs well with score-based ranking
     - JOIN operations between phenotype and genotype by bioSample are feasible for targeted queries
+    - Cross-database queries with ChEMBL add 10-20 seconds overhead depending on complexity
+    - Cross-database queries with ChEBI add 5-15 seconds overhead for ontology lookups
   data_quality_notes:
     - Inconsistent text capitalization in isolation sources and some fields
     - Geographic hierarchy incomplete for some records
@@ -532,7 +682,8 @@ data_statistics:
 
 anti_patterns:
   - title: Querying without organism or antibiotic filter
-    problem: Attempting broad aggregations without filters leads to timeouts on large dataset
+    problem: |
+      Attempting broad aggregations without filters leads to timeouts on large dataset
     wrong_sparql: |
       SELECT ?antibiotic (COUNT(*) as ?count)
       WHERE {
@@ -552,10 +703,12 @@ anti_patterns:
       }
       GROUP BY ?antibiotic
       LIMIT 50
-    explanation: Always filter by organism or other selective criteria before aggregating, and use LIMIT to prevent timeouts. Specify FROM clause for graph context.
-  
+    explanation: |
+      Always filter by organism or other selective criteria before aggregating, and use LIMIT to prevent timeouts. Specify FROM clause for graph context.
+
   - title: Case-sensitive text matching for organism names
-    problem: Using exact string match fails to find variations in organism naming
+    problem: |
+      Using exact string match fails to find variations in organism naming
     wrong_sparql: |
       SELECT ?s
       WHERE {
@@ -573,10 +726,12 @@ anti_patterns:
       }
       ORDER BY DESC(?sc)
       LIMIT 100
-    explanation: Use bif:contains for flexible keyword matching rather than exact string equality. This handles variations and returns scored results.
-  
+    explanation: |
+      Use bif:contains for flexible keyword matching rather than exact string equality. This handles variations and returns scored results.
+
   - title: Forgetting FROM clause
-    problem: Query without FROM clause may search across all graphs causing slowdown or unexpected results
+    problem: |
+      Query without FROM clause may search across all graphs causing slowdown or unexpected results
     wrong_sparql: |
       SELECT ?s ?antibiotic
       WHERE {
@@ -592,7 +747,8 @@ anti_patterns:
         ?s amr:antibioticName ?antibiotic .
       }
       LIMIT 100
-    explanation: Always specify FROM <http://rdfportal.org/dataset/amrportal> to target the correct graph and improve query performance.
+    explanation: |
+      Always specify FROM <http://rdfportal.org/dataset/amrportal> to target the correct graph and improve query performance.
 
 common_errors:
   - error: Query timeout on complex aggregations
@@ -600,11 +756,13 @@ common_errors:
       - Attempting to aggregate over full 1.7M phenotype dataset without filters
       - Multiple JOINs between phenotype and genotype without selective criteria
       - Missing LIMIT clause on exploratory queries
+      - Cross-database queries without filtering in individual GRAPH clauses
     solutions:
       - Add organism or antibiotic filters to reduce result set
       - Use LIMIT 100 or similar for initial data exploration
       - Break complex queries into smaller targeted queries
       - Apply geographic or temporal filters to narrow scope
+      - For cross-database queries, filter within each GRAPH clause before joining
     example_fix: |
       # Instead of:
       SELECT ?organism (COUNT(*) as ?count) WHERE { ?s a amr:PhenotypeMeasurement ; amr:organism ?organism . } GROUP BY ?organism
@@ -620,16 +778,18 @@ common_errors:
       }
       GROUP BY ?organism
       LIMIT 50
-  
+
   - error: Empty results when matching text values
     causes:
       - Case sensitivity in organism or isolation source values
       - Spelling variations (e.g., "Stool" vs "stool")
       - Using abbreviated organism names not in database
+      - Antibiotic name mismatch between AMR Portal and ChEMBL (lowercase vs uppercase)
     solutions:
       - Use bif:contains for flexible text matching
       - Check actual values with DISTINCT queries first
       - Apply FILTER with CONTAINS or regex for partial matching
+      - Use LCASE() for case-insensitive cross-database matching
     example_fix: |
       # Instead of exact match that might fail:
       FILTER(?source = "stool")
@@ -639,17 +799,23 @@ common_errors:
       
       # Or case-insensitive filter:
       FILTER(CONTAINS(LCASE(?source), "stool"))
-  
+      
+      # For cross-database ChEMBL matching:
+      FILTER(LCASE(?chemblLabel) = LCASE(?antibioticName))
+
   - error: Incomplete genotype-phenotype linkage
     causes:
       - Not all bioSamples have both phenotype and genotype data
       - Using OPTIONAL incorrectly causing Cartesian products
       - Expecting genotype features for all organisms
+      - Cross-database joins expecting all AMR antibiotics in ChEMBL
     solutions:
       - Check data coverage before assuming complete linkage
       - Use specific bioSample filters for known linked samples
       - Verify existence with COUNT queries before complex joins
       - Genotype data coverage is ~65% of phenotype samples
+      - Only ~35% of genotype features have antibiotic names
+      - Some combination antibiotics in AMR Portal don't match ChEMBL compound names
     example_fix: |
       # Verify linkage exists first:
       PREFIX amr: <http://example.org/ebiamr#>

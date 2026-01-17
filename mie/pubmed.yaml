@@ -11,8 +11,9 @@ schema_info:
   kw_search_tools:
     - ncbi_esearch
   version:
-    mie_version: "1.2"
+    mie_version: "1.3"
     mie_created: "2025-12-23"
+    mie_updated: "2026-01-18"
     data_version: Updated continuously
     update_frequency: Daily
   license:
@@ -21,6 +22,7 @@ schema_info:
   access:
     rate_limiting: 100 queries/min
     max_query_timeout: 60 seconds
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -102,7 +104,7 @@ sample_rdf_entries:
         fabio:hasNLMJournalTitleAbbreviation "Eur J Hum Genet" ;
         fabio:hasPrimarySubjectTerm mesh:D020641 ;
         rdfs:seeAlso mesh:D016428, mesh:D000426 .
-  
+
   - title: Author Information with Affiliation
     description: Author metadata including name and institutional affiliation within ordered author list.
     rdf: |
@@ -116,7 +118,7 @@ sample_rdf_entries:
       _:author1 a foaf:Person ;
                 foaf:name "Sakaue S" ;
                 org:memberOf "Laboratory for Statistical Analysis, RIKEN Center for Integrative Medical Sciences, Yokohama, Japan." .
-  
+
   - title: Journal Metadata
     description: Publication venue information including journal name, ISSN, and NLM identifier.
     rdf: |
@@ -134,7 +136,7 @@ sample_rdf_entries:
         prism:eISSN "1476-5438" ;
         fabio:hasIssnL "1018-4813" ;
         fabio:hasNationalLibraryOfMedicineJournalId "9302235" .
-  
+
   - title: MeSH Term Annotation with Qualifiers
     description: MeSH descriptor-qualifier pair indicating specific aspect of subject indexing.
     rdf: |
@@ -147,7 +149,7 @@ sample_rdf_entries:
         fabio:hasPrimarySubjectTerm mesh:D020641 ;
         fabio:hasSubjectTerm mesh:D000428Q000453Q000235 ;
         fabio:hasSubjectTerm mesh:D005260 .
-  
+
   - title: Cross-References to MeSH Terms
     description: Links to MeSH descriptors for topical indexing and supplementary chemical concepts.
     rdf: |
@@ -183,7 +185,7 @@ sparql_query_examples:
                  prism:publicationName ?journal ;
                  dct:issued ?issued .
       }
-  
+
   - title: Search Articles by Keyword
     description: Find articles matching keyword terms using full-text search on titles with bif:contains.
     question: Find articles about cancer screening.
@@ -200,7 +202,7 @@ sparql_query_examples:
         ?title bif:contains "'cancer' AND 'screening'" .
       }
       LIMIT 20
-  
+
   - title: Find Articles with MeSH Terms
     description: Retrieve articles annotated with specific MeSH descriptor terms for biological concepts like Alzheimer Disease (D016428).
     question: What articles are indexed with the MeSH term for Alzheimer Disease?
@@ -221,7 +223,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?issued)
       LIMIT 50
-  
+
   - title: Get Authors and Affiliations
     description: Extract author names and institutional affiliations from article metadata using ordered lists.
     question: Who are the authors and their affiliations for a specific article?
@@ -246,7 +248,7 @@ sparql_query_examples:
         FILTER(?pmid = "31558841")
       }
       ORDER BY ?index
-  
+
   - title: Search by Keywords and Filter by Publication Year
     description: Combine keyword filtering with temporal constraints using publication dates and string-based year filtering.
     question: Find COVID-19 research from recent years.
@@ -266,7 +268,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?issued)
       LIMIT 100
-  
+
   - title: Find Articles by Journal and Subject
     description: Complex query combining journal filtering with MeSH term annotation and keyword analysis.
     question: What neuroscience articles were published in Nature journals?
@@ -289,7 +291,7 @@ sparql_query_examples:
         ?title bif:contains "'neuroscience' OR 'neurological'" .
       }
       LIMIT 100
-  
+
   - title: Analyze Co-authorship Patterns
     description: Advanced query identifying publications with shared authors across multiple articles using property paths.
     question: Find articles that share common authors with a reference article.
@@ -320,6 +322,140 @@ sparql_query_examples:
       }
       LIMIT 50
 
+cross_database_queries:
+  shared_endpoint: ncbi
+  co_located_databases:
+    - clinvar
+    - pubtator
+    - ncbigene
+    - medgen
+  examples:
+    - title: Link PubMed Articles to Gene Annotations via PubTator
+      description: |
+        Integrates PubMed literature with PubTator Central gene annotations to discover which genes are discussed in articles. 
+        Retrieves articles matching keywords and identifies all genes mentioned in those articles using text mining annotations. 
+        Useful for gene-centric literature review, finding research on specific genes, and discovering gene-disease associations in published literature.
+      databases_used:
+        - pubmed
+        - pubtator
+      complexity: intermediate
+      sparql: |
+        PREFIX bibo: <http://purl.org/ontology/bibo/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        
+        SELECT ?pmid ?title ?geneId
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubmed> {
+            ?article bibo:pmid ?pmid ;
+                     dct:title ?title .
+            ?title bif:contains "'BRCA1'" .
+          }
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?ann dcterms:subject "Gene" ;
+                 oa:hasBody ?geneId ;
+                 oa:hasTarget ?article .
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Links articles via shared URI: http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid}
+        - PubMed keyword search with bif:contains for efficient title matching
+        - PubTator provides structured gene annotations from text mining
+        - Performance: ~3-8 seconds due to keyword search and cross-graph joins
+        - Use case: Gene-centric literature review, finding research on specific genes
+        - Referenced PubTator MIE file for oa:hasBody and dcterms:subject patterns
+
+    - title: Find Disease Annotations in Articles with MeSH Terms
+      description: |
+        Combines PubMed's controlled MeSH vocabulary with PubTator's disease text mining annotations. 
+        Retrieves articles indexed with specific MeSH disease terms and identifies all disease entities mentioned via automated annotation. 
+        Useful for comprehensive disease literature analysis, comparing curated MeSH indexing with text-mined disease mentions.
+      databases_used:
+        - pubmed
+        - pubtator
+      complexity: intermediate
+      sparql: |
+        PREFIX bibo: <http://purl.org/ontology/bibo/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX mesh: <http://id.nlm.nih.gov/mesh/>
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        
+        SELECT ?pmid ?title ?diseaseId
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubmed> {
+            ?article bibo:pmid ?pmid ;
+                     dct:title ?title ;
+                     rdfs:seeAlso mesh:D016428 .
+          }
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?ann dcterms:subject "Disease" ;
+                 oa:hasBody ?diseaseId ;
+                 oa:hasTarget ?article .
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Alzheimer Disease (mesh:D016428) used as example MeSH term
+        - Combines curated MeSH indexing with automated text mining annotations
+        - Both databases use identifiers.org/mesh/ for disease concepts
+        - Performance: ~5-10 seconds due to MeSH term filtering and joins
+        - Use case: Disease literature analysis, comparing curation vs text mining
+        - PubTator annotations may include additional disease mentions beyond MeSH indexing
+
+    - title: Comprehensive Gene-Literature-Disease Integration
+      description: |
+        Three-way integration across PubMed articles, PubTator annotations, and NCBI Gene metadata. 
+        Retrieves articles matching keywords, identifies annotated genes and diseases, and enriches with gene symbols and descriptions. 
+        Provides complete research context linking publications to biological entities with standardized identifiers and functional annotations.
+      databases_used:
+        - pubmed
+        - pubtator
+        - ncbigene
+      complexity: advanced
+      sparql: |
+        PREFIX bibo: <http://purl.org/ontology/bibo/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX oa: <http://www.w3.org/ns/oa#>
+        PREFIX dcterms: <http://purl.org/dc/terms/>
+        PREFIX insdc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?pmid ?title ?geneId ?gene_symbol ?gene_desc ?diseaseId
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/pubmed> {
+            ?article bibo:pmid ?pmid ;
+                     dct:title ?title .
+            ?title bif:contains "'cancer' AND 'therapy'" .
+          }
+          GRAPH <http://rdfportal.org/dataset/pubtator_central> {
+            ?gene_ann dcterms:subject "Gene" ;
+                      oa:hasBody ?geneId ;
+                      oa:hasTarget ?article .
+            ?disease_ann dcterms:subject "Disease" ;
+                         oa:hasBody ?diseaseId ;
+                         oa:hasTarget ?article .
+          }
+          GRAPH <http://rdfportal.org/dataset/ncbigene> {
+            ?geneId a insdc:Gene ;
+                    rdfs:label ?gene_symbol .
+            OPTIONAL { ?geneId dct:description ?gene_desc }
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Three-database join: PubMed (articles) → PubTator (annotations) → NCBI Gene (metadata)
+        - Uses keyword search on PubMed titles for initial filtering
+        - PubTator provides entity recognition linking to standardized IDs
+        - NCBI Gene enriches with official symbols and functional descriptions
+        - Performance: ~10-20 seconds due to complex multi-database joins
+        - Use case: Comprehensive biomedical knowledge graph construction
+        - All three databases share identifiers.org namespace for seamless integration
+        - Referenced PubTator and NCBI Gene MIE files for correct property patterns
+
 cross_references:
   - pattern: rdfs:seeAlso
     description: |
@@ -342,7 +478,7 @@ cross_references:
         FILTER(STRSTARTS(STR(?mesh_term), "http://id.nlm.nih.gov/mesh/"))
       }
       LIMIT 100
-  
+
   - pattern: fabio:hasSubjectTerm / fabio:hasPrimarySubjectTerm
     description: |
       Primary and secondary subject indexing using MeSH descriptor-qualifier pairs. Format: {descriptor_id}Q{qualifier_id}, where qualifiers specify aspects like genetics (Q000235), metabolism (Q000378), or therapeutic use (Q000627). Multiple qualifiers can be chained.
@@ -382,6 +518,8 @@ architectural_notes:
     - "Related datasets available: NLM Catalog (journals), PubTator Central (text mining annotations)"
     - Journal identifiers include ISSN, eISSN, and NLM Journal ID for cross-referencing
     - DOI and PII available for external article resolution
+    - Shares NCBI endpoint with ClinVar, PubTator, NCBI Gene, and MedGen for cross-database queries
+    - Article URIs (http://rdf.ncbi.nlm.nih.gov/pubmed/{pmid}) enable seamless joins with PubTator annotations
   data_quality:
     - Not all articles have abstracts; check for optional abstract property
     - Author affiliations may be concatenated strings with multiple institutions
@@ -393,10 +531,10 @@ architectural_notes:
 data_statistics:
   total_articles: 37+ million citations (exact count varies with updates)
   coverage:
-    abstracts: "~85% of articles"
-    doi: "~70% of articles"
-    mesh_annotations: "~95% of articles"
-    author_affiliations: "~60% of authors"
+    abstracts: ~85% of articles
+    doi: ~70% of articles
+    mesh_annotations: ~95% of articles
+    author_affiliations: ~60% of authors
   cardinality:
     avg_authors_per_article: 5.2
     avg_mesh_terms_per_article: 12.8
@@ -406,6 +544,8 @@ data_statistics:
     - "Keyword searches (20 results): 2-5 seconds"
     - "Author list extraction: 1-3 seconds"
     - "Complex joins across authors and MeSH: 10-30 seconds"
+    - "Cross-database queries with PubTator: 5-10 seconds"
+    - "Three-way integration (PubMed-PubTator-NCBI Gene): 10-20 seconds"
     - Count queries often timeout; use sampling
   data_quality_notes:
     - Historical articles may have incomplete metadata
@@ -431,7 +571,7 @@ anti_patterns:
         FILTER(?pmid < "10000")
       }
     explanation: Use sampling with FILTER limits or rely on documented counts rather than counting entire dataset
-  
+
   - title: Use bif:contains Instead of FILTER REGEX
     problem: String filtering with REGEX is inefficient for keyword search
     wrong_sparql: |
@@ -455,7 +595,7 @@ anti_patterns:
       }
       LIMIT 20
     explanation: Virtuoso's bif:contains uses indexed full-text search, dramatically faster than REGEX pattern matching
-  
+
   - title: Query Authors Only After Filtering Articles
     problem: Joining authors without article filtering causes cartesian explosion
     wrong_sparql: |
@@ -494,7 +634,7 @@ common_errors:
       - Use FILTER to restrict to specific PMIDs or date ranges first
       - Replace REGEX with bif:contains for keyword searches
       - Break complex queries into smaller, filtered steps
-  
+
   - error: No Results for MeSH Term Query
     causes:
       - Incorrect MeSH term URI format
@@ -523,7 +663,7 @@ common_errors:
         FILTER(STRSTARTS(STR(?mesh_term), "http://id.nlm.nih.gov/mesh/"))
       }
       LIMIT 10
-  
+
   - error: Missing or Unexpected Date Format
     causes:
       - Dates stored as gYearMonth, date, or string depending on precision

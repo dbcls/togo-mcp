@@ -44,7 +44,7 @@ async def get_shex(
     except Exception as e:
         return f"Error reading shex file for '{dbname}': {e}"
 
-@mcp.prompt(enabled=True, name="Generate RDF-Config file")
+@mcp.prompt(enabled=False, name="Generate RDF-Config file")
 def generate_rdf_config(
         dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION)]
 ) -> str:

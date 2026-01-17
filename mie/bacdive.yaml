@@ -1,7 +1,11 @@
 schema_info:
   title: BacDive - The Bacterial Diversity Metadatabase
   description: |
-    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,000+ strain records with phenotypic and genotypic characterizations. Major entities include Strains (core records), Enzymes (enzyme activities), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), CultureCollectionNumbers (strain repository links), and GeographicOrigin (isolation locations). Cross-referenced to NCBI Taxonomy, culture collections (DSMZ, JCM, KCTC), and sequence databases (ENA, GenBank).
+    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,000+ strain records with phenotypic and genotypic characterizations.
+    
+    Major entities include Strains (core records with full taxonomic hierarchy), Enzymes (enzyme activities), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), CultureCollectionNumbers (strain repository links), and GeographicOrigin (isolation locations).
+    
+    Cross-referenced to NCBI Taxonomy, culture collections (DSMZ, JCM, KCTC), sequence databases (ENA, GenBank), and MediaDive for culture media recipes. Part of the "primary" endpoint with mediadive, taxonomy, mesh, go, mondo, and nando databases enabling powerful cross-database queries.
   endpoint: https://rdfportal.org/primary/sparql
   base_uri: https://purl.dsmz.de/
   graphs:
@@ -9,17 +13,17 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "1.3"
-    mie_created: "2024-12-23"
-    data_version: "BacDive 2024"
-    update_frequency: "Quarterly"
+    mie_version: "1.5"
+    mie_created: "2025-01-16"
+    data_version: BacDive 2024
+    update_frequency: Quarterly
   license:
-    data_license: "CC BY 4.0"
-    license_url: "https://bacdive.dsmz.de/about"
+    data_license: CC BY 4.0
+    license_url: https://bacdive.dsmz.de/about
   access:
-    rate_limiting: "100 queries/min"
-    max_query_timeout: "60 seconds"
-    backend: "Virtuoso (supports bif:contains)"
+    rate_limiting: 100 queries/min
+    max_query_timeout: 60 seconds
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -130,8 +134,8 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: "Strain with Complete Taxonomic Hierarchy"
-    description: "Core strain entry with full taxonomic classification from domain to species."
+  - title: Strain with Complete Taxonomic Hierarchy
+    description: Core strain entry with full taxonomic classification from domain to species.
     rdf: |
       strain:1 a schema:Strain ;
         rdfs:label "Acetobacter aceti 1" ;
@@ -146,17 +150,17 @@ sample_rdf_entries:
         schema:hasPhylum "Proteobacteria" ;
         schema:hasDomain "Bacteria" ;
         schema:isTypeStrain true .
-
-  - title: "Enzyme Activity Phenotype"
-    description: "Enzyme with positive activity linked to strain record."
+  
+  - title: Enzyme Activity Phenotype
+    description: Enzyme with positive activity linked to strain record.
     rdf: |
       enzyme:10 a schema:Enzyme, schema:Protein, schema:GeneProduct ;
         rdfs:label "gelatinase" ;
         schema:describesStrain strain:1290 ;
         schema:hasActivity "+" .
-
-  - title: "16S rRNA Sequence with External Accession"
-    description: "Ribosomal RNA sequence with ENA database accession."
+  
+  - title: 16S rRNA Sequence with External Accession
+    description: Ribosomal RNA sequence with ENA database accession.
     rdf: |
       sequence_16S:JN000316 a schema:16SSequence, schema:NucleotideSequence ;
         rdfs:label "Compostimonas suwonensis 16S rRNA gene" ;
@@ -164,17 +168,17 @@ sample_rdf_entries:
         schema:fromSequenceDB "ena" ;
         schema:hasSequenceAccession "JN000316" ;
         schema:hasSequenceLength 1422 .
-
-  - title: "Culture Collection with Institutional Link"
-    description: "External culture collection identifier with DSMZ URL."
+  
+  - title: Culture Collection with Institutional Link
+    description: External culture collection identifier with DSMZ URL.
     rdf: |
       culture_collection_number:2749 a schema:CultureCollectionNumber, schema:StrainNumber ;
         rdfs:label "DSM 30652" ;
         schema:describesStrain strain:XXX ;
         schema:hasLink <https://www.dsmz.de/collection/catalogue/details/culture/DSM-30652> .
-
-  - title: "Geographic Isolation Location"
-    description: "Origin location with country name and GPS coordinates."
+  
+  - title: Geographic Isolation Location
+    description: Origin location with country name and GPS coordinates.
     rdf: |
       location:12345 a schema:LocationOfOrigin, schema:IsolationSource ;
         rdfs:label "Japan" ;
@@ -184,9 +188,9 @@ sample_rdf_entries:
         schema:hasLongitude 126.9780 .
 
 sparql_query_examples:
-  - title: "Search Strains with bif:contains"
-    description: "Demonstrate full-text keyword search using bif:contains with boolean operators."
-    question: "Find Escherichia coli strains."
+  - title: Search Strains with bif:contains
+    description: Demonstrate full-text keyword search using bif:contains with boolean operators.
+    question: Find Escherichia coli strains.
     complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -200,10 +204,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 100
-
-  - title: "Complex Boolean Keyword Search"
-    description: "Search descriptions using AND/NOT operators for precise filtering."
-    question: "Find aerobic Gram-negative bacteria excluding plant pathogens."
+  
+  - title: Complex Boolean Keyword Search
+    description: Search descriptions using AND/NOT operators for precise filtering.
+    question: Find aerobic Gram-negative bacteria excluding plant pathogens.
     complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -218,10 +222,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 50
-
-  - title: "Strains with 16S Sequences"
-    description: "Retrieve strains having 16S rRNA sequence data with accessions."
-    question: "Which strains have 16S sequences available?"
+  
+  - title: Strains with 16S Sequences
+    description: Retrieve strains having 16S rRNA sequence data with accessions.
+    question: Which strains have 16S sequences available?
     complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -237,10 +241,10 @@ sparql_query_examples:
              schema:hasSequenceLength ?length .
       }
       LIMIT 100
-
-  - title: "Positive Enzyme Activities"
-    description: "Query strains showing positive enzyme test results."
-    question: "What enzymes show positive activity in strains?"
+  
+  - title: Positive Enzyme Activities
+    description: Query strains showing positive enzyme test results.
+    question: What enzymes show positive activity in strains?
     complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -257,10 +261,10 @@ sparql_query_examples:
         FILTER(?activity = "+")
       }
       LIMIT 100
-
-  - title: "Keyword Search with Phenotypes"
-    description: "Combine full-text search with structured phenotype data retrieval."
-    question: "Find thermophilic bacteria with Gram stain and temperature data."
+  
+  - title: Keyword Search with Phenotypes
+    description: Combine full-text search with structured phenotype data retrieval.
+    question: Find thermophilic bacteria with Gram stain and temperature data.
     complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -287,10 +291,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 50
-
-  - title: "Complete Growth Conditions Profile"
-    description: "Aggregate culture medium, temperature, and pH requirements."
-    question: "What are the complete growth conditions for Bacillus strains?"
+  
+  - title: Complete Growth Conditions Profile
+    description: Aggregate culture medium, temperature, and pH requirements.
+    question: What are the complete growth conditions for Bacillus strains?
     complexity: advanced
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -322,10 +326,10 @@ sparql_query_examples:
         }
       }
       LIMIT 50
-
-  - title: "Multi-Phenotype with Complex Keywords"
-    description: "Advanced boolean search combined with multiple phenotypic attributes."
-    question: "Find human pathogens with complete phenotypic profiles."
+  
+  - title: Multi-Phenotype with Complex Keywords
+    description: Advanced boolean search combined with multiple phenotypic attributes.
+    question: Find human pathogens with complete phenotypic profiles.
     complexity: advanced
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -353,16 +357,141 @@ sparql_query_examples:
       ORDER BY DESC(?sc)
       LIMIT 50
 
+cross_database_queries:
+  shared_endpoint: primary
+  co_located_databases:
+    - mediadive
+    - taxonomy
+    - mesh
+    - go
+    - mondo
+    - nando
+  examples:
+    - title: Strains with Detailed Culture Media Recipes
+      description: |
+        Link BacDive strains to MediaDive culture media database to access detailed preparation protocols, ingredient lists, and chemical cross-references. This enables researchers to retrieve complete growth recipes including exact concentrations, pH adjustments, and sterilization methods.
+        
+        This query demonstrates integration between BacDive's schema:hasMediaLink property and MediaDive's culture media entities. MediaDive provides hierarchical structure (medium → solution → recipe → ingredient) with ChEBI, CAS, and GMO cross-references for each ingredient.
+      databases_used:
+        - bacdive
+        - mediadive
+      complexity: intermediate
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?strainLabel ?mediumLabel ?mediaLink ?mediumName
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?strain a schema:Strain ;
+                    rdfs:label ?strainLabel ;
+                    schema:hasGenus "Bacillus" .
+            ?medium a schema:CultureMedium ;
+                    schema:describesStrain ?strain ;
+                    rdfs:label ?mediumLabel ;
+                    schema:hasMediaLink ?mediaLink .
+            FILTER(CONTAINS(STR(?mediaLink), "mediadive"))
+          }
+          GRAPH <http://rdfportal.org/dataset/mediadive> {
+            ?mediaLink rdfs:label ?mediumName .
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Referenced MediaDive MIE file for graph URI and entity structure
+        - MediaDive links available for ~20% of BacDive culture media
+        - MediaDive provides hierarchical structure: medium → solution → recipe → ingredient
+        - Ingredient data includes ChEBI, CAS, GMO cross-references
+        - Performance: Query completes in 3-5 seconds with genus filter
+        - Use case: Reproduce exact culture conditions for strain isolation
+    
+    - title: Taxonomic Context for Strain Collections
+      description: |
+        Integrate BacDive strain data with NCBI Taxonomy ontology to retrieve complete taxonomic lineage, scientific names, and alternative names. Useful for phylogenetic studies and systematic comparison across different taxonomic groups.
+        
+        This query uses BacDive's schema:hasTaxID property to link strains with NCBI Taxonomy entities, accessing the full taxonomic hierarchy and nomenclature information from the taxonomy ontology graph.
+      databases_used:
+        - bacdive
+        - taxonomy
+      complexity: intermediate
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX up: <http://purl.uniprot.org/core/>
+        PREFIX taxon: <http://purl.uniprot.org/taxonomy/>
+        
+        SELECT ?strain ?strainLabel ?taxID ?scientificName ?rank
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?strain a schema:Strain ;
+                    rdfs:label ?strainLabel ;
+                    schema:hasTaxID ?taxID .
+            FILTER(?taxID IN (562, 1392, 1428))
+          }
+          GRAPH <http://rdfportal.org/ontology/taxonomy> {
+            ?taxonNode up:scientificName ?scientificName ;
+                       up:rank ?rank .
+            FILTER(CONTAINS(STR(?taxonNode), STR(?taxID)))
+          }
+        }
+        LIMIT 100
+      notes: |
+        - Referenced Taxonomy ontology graph from endpoint configuration
+        - All BacDive strains have NCBI Taxonomy IDs (100% coverage)
+        - Taxonomy graph provides additional metadata: common names, synonyms, genetic code
+        - Performance: Taxonomy lookups are fast (<2s) with specific TaxID filters
+        - Use IN clause for multiple TaxIDs to batch lookup related strains
+        - Use case: Phylogenetic analysis and taxonomic verification
+    
+    - title: Disease-Associated Bacterial Strains
+      description: |
+        Cross-reference BacDive pathogenic strain descriptions with MONDO disease ontology to identify strains associated with specific diseases. Combines keyword search on strain descriptions with disease classification for biomedical research.
+        
+        This query demonstrates advanced text matching across both databases using bif:contains, linking BacDive's clinical annotations with MONDO's standardized disease terminology and hierarchy.
+      databases_used:
+        - bacdive
+        - mondo
+      complexity: advanced
+      sparql: |
+        PREFIX schema: <https://purl.dsmz.de/schema/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        
+        SELECT ?strainLabel ?description ?diseaseLabel ?sc
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/bacdive> {
+            ?strain a schema:Strain ;
+                    rdfs:label ?strainLabel ;
+                    dct:description ?description .
+            ?description bif:contains "('tuberculosis' OR 'pneumonia')" option (score ?sc) .
+          }
+          GRAPH <http://rdfportal.org/ontology/mondo> {
+            ?disease a owl:Class ;
+                     rdfs:label ?diseaseLabel .
+            ?diseaseLabel bif:contains "('tuberculosis' OR 'pneumonia')" option (score ?sc2) .
+          }
+        }
+        ORDER BY DESC(?sc)
+        LIMIT 50
+      notes: |
+        - Referenced MONDO ontology graph URI and entity structure from ontology configuration
+        - Linking is based on shared disease terminology in descriptions
+        - MONDO provides disease ontology with 30,000+ classes
+        - MONDO cross-references to OMIM, Orphanet, MeSH enable further integration
+        - Performance: May take 5-10 seconds due to complex text matching across both graphs
+        - Consider filtering by disease category in MONDO first for better performance
+        - Use case: Clinical microbiology research and pathogen identification
+
 cross_references:
   - pattern: schema:hasLink
     description: |
       Culture collection links through CultureCollectionNumber entities connecting to institutional databases like DSMZ, JCM, KCTC, and CCUG.
     databases:
       collections:
-        - "DSMZ (>90%)"
-        - "JCM (~40%)"
-        - "KCTC (~30%)"
-        - "CCUG (~25%)"
+        - DSMZ (>90%)
+        - JCM (~40%)
+        - KCTC (~30%)
+        - CCUG (~25%)
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -375,13 +504,13 @@ cross_references:
              rdfs:label ?collectionLabel ;
              schema:hasLink ?link .
       } LIMIT 50
-
+  
   - pattern: schema:hasTaxID
     description: |
-      NCBI Taxonomy IDs on all strain and sequence entities enabling standardized taxonomic classification and cross-database integration.
+      NCBI Taxonomy IDs on all strain and sequence entities enabling standardized taxonomic classification and cross-database integration with taxonomy ontology on the same endpoint.
     databases:
       taxonomy:
-        - "NCBI Taxonomy (100% of strains)"
+        - NCBI Taxonomy (100% of strains)
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -393,14 +522,14 @@ cross_references:
                 schema:hasGenus ?genus ;
                 schema:hasSpecies ?species .
       } LIMIT 50
-
+  
   - pattern: schema:hasSequenceAccession
     description: |
       Sequence accessions from ENA/NCBI databases with source indicator, covering 16S rRNA and genome sequences.
     databases:
       sequence:
-        - "ENA (~60% of 16S sequences)"
-        - "NCBI GenBank (~40% of genomes)"
+        - ENA (~60% of 16S sequences)
+        - NCBI GenBank (~40% of genomes)
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -421,14 +550,14 @@ cross_references:
           BIND("Genome" as ?seqType)
         }
       } LIMIT 50
-
+  
   - pattern: schema:hasMediaLink
     description: |
-      Links to MediaDive and other media databases for detailed culture medium recipes and preparation protocols.
+      Links to MediaDive and other media databases for detailed culture medium recipes and preparation protocols. Enables cross-database queries with MediaDive on the same endpoint.
     databases:
       media:
-        - "MediaDive (~20%)"
-        - "CIP Media (~10%)"
+        - MediaDive (~20%)
+        - CIP Media (~10%)
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -444,24 +573,36 @@ cross_references:
 
 architectural_notes:
   schema_design:
-    - "Hub-and-spoke architecture with Strain as central entity"
-    - "Phenotypes and conditions connect via schema:describesStrain property"
-    - "Multiple inheritance for entity types (e.g., Enzyme is also Protein and GeneProduct)"
-    - "Full taxonomic lineage embedded in Strain entities from domain to species"
+    - Hub-and-spoke architecture with Strain as central entity
+    - Phenotypes and conditions connect via schema:describesStrain property
+    - Multiple inheritance for entity types (e.g., Enzyme is also Protein and GeneProduct)
+    - Full taxonomic lineage embedded in Strain entities from domain to species
+  
   performance:
-    - "Use bif:contains for keyword search with boolean operators (AND, OR, NOT, parentheses)"
-    - "bif:contains must be triple pattern with option (score ?var) for relevance scoring"
-    - "Genus/species text filters using CONTAINS or FILTER are efficient"
-    - "Use OPTIONAL blocks for phenotypes since coverage is incomplete (~40%)"
-    - "Always include LIMIT to prevent query timeouts on large result sets"
+    - Use bif:contains for keyword search with boolean operators (AND, OR, NOT, parentheses)
+    - bif:contains must be triple pattern with option (score ?var) for relevance scoring
+    - Never use ?score as variable name - it conflicts with the score keyword
+    - Genus/species text filters using CONTAINS or FILTER are efficient
+    - Use OPTIONAL blocks for phenotypes since coverage is incomplete (~40%)
+    - Always include LIMIT to prevent query timeouts on large result sets
+    - Single-database queries: Always specify FROM <http://rdfportal.org/dataset/bacdive>
+    - Cross-database queries: Use GRAPH clauses without FROM for endpoint-level queries
+  
   data_integration:
-    - "NCBI Taxonomy IDs (schema:hasTaxID) enable joins to taxonomy databases"
-    - "Culture collection numbers link to strain repositories (DSMZ, JCM, KCTC)"
-    - "Sequence accessions (schema:hasSequenceAccession) connect to ENA/GenBank"
+    - NCBI Taxonomy IDs (schema:hasTaxID) enable joins to taxonomy ontology on same endpoint
+    - Culture collection numbers link to strain repositories (DSMZ, JCM, KCTC)
+    - Sequence accessions (schema:hasSequenceAccession) connect to ENA/GenBank
+    - MediaDive links (schema:hasMediaLink) provide detailed culture media recipes via same endpoint
+    - Shared "primary" endpoint with mediadive, taxonomy, mesh, go, mondo, nando
+    - Cross-database opportunities: BacDive-MediaDive (culture protocols), BacDive-Taxonomy (phylogeny), BacDive-MONDO (disease associations)
+    - Use GRAPH clauses for cross-database queries to explicitly separate data sources
+    - Filter within each GRAPH clause before joining to optimize performance
+  
   data_quality:
-    - "Phenotype coverage varies: ~40% Gram stain, ~35% 16S sequences, ~55% enzyme data"
-    - "Type strains generally have more complete phenotypic characterization"
-    - "Use OPTIONAL clauses for all phenotypes to avoid excluding strains with missing data"
+    - Phenotype coverage varies - ~40% Gram stain, ~35% 16S sequences, ~55% enzyme data
+    - Type strains generally have more complete phenotypic characterization
+    - Use OPTIONAL clauses for all phenotypes to avoid excluding strains with missing data
+    - MediaDive links primarily for DSMZ media, lower coverage for other collections
 
 data_statistics:
   total_strains: 97334
@@ -469,25 +610,38 @@ data_statistics:
   total_16s_sequences: 87045
   total_culture_collections: 149377
   total_references: 123819
+  
   coverage:
-    strains_with_gram_stain: "~40%"
-    strains_with_16s_sequence: "~35%"
-    strains_with_culture_collections: "~60%"
-    strains_with_enzyme_data: "~55%"
+    strains_with_gram_stain: ~40%
+    strains_with_16s_sequence: ~35%
+    strains_with_culture_collections: ~60%
+    strains_with_enzyme_data: ~55%
+    strains_with_mediadive_links: ~20%
+    strains_with_taxonomy_ids: 100%
+  
   cardinality:
     avg_enzymes_per_strain: 5.9
     avg_culture_collections_per_strain: 1.5
+  
   performance_characteristics:
-    - "Simple strain queries (<5 properties) complete in <2s"
-    - "bif:contains keyword searches are very fast with complex boolean logic"
-    - "Multi-join phenotype queries (3+ optional blocks) may take 5-10s"
+    - Simple strain queries (<5 properties) complete in <2s
+    - bif:contains keyword searches are very fast with complex boolean logic
+    - Multi-join phenotype queries (3+ optional blocks) may take 5-10s
+    - Cross-database queries (BacDive + MediaDive) complete in 3-5s with genus/family filters
+    - Cross-database queries (BacDive + Taxonomy) complete in <2s with specific TaxID filters
+    - Cross-database queries (BacDive + MONDO) may take 5-10s due to complex text matching across graphs
+    - Always use filtering within GRAPH clauses for optimal cross-database performance
+  
   data_quality_notes:
-    - "All strains have taxonomic IDs but phenotype completeness varies"
-    - "Type strains have higher data completeness"
+    - All strains have taxonomic IDs but phenotype completeness varies significantly
+    - Type strains have higher data completeness across all phenotype categories
+    - MediaDive links primarily for DSMZ media, coverage lower for other culture collections
+    - 16S sequences favor well-characterized strains from major collections
+    - Recent isolates may have limited phenotypic characterization
 
 anti_patterns:
-  - title: "bif:contains in FILTER"
-    problem: "bif:contains must be used as triple pattern, not inside FILTER clause."
+  - title: bif:contains in FILTER
+    problem: bif:contains must be used as triple pattern, not inside FILTER clause.
     wrong_sparql: |
       SELECT ?strain ?description
       WHERE {
@@ -501,10 +655,10 @@ anti_patterns:
         ?description bif:contains "'thermophilic'" option (score ?sc) .
       }
       ORDER BY DESC(?sc)
-    explanation: "Use as triple pattern (?var bif:contains 'keywords') with single-quoted keywords and option (score ?var) for relevance."
-
-  - title: "Using Reserved Variable ?score"
-    problem: "Variable name ?score conflicts with the score keyword in bif:contains."
+    explanation: Use as triple pattern (?var bif:contains 'keywords') with single-quoted keywords and option (score ?var) for relevance.
+  
+  - title: Using Reserved Variable ?score
+    problem: Variable name ?score conflicts with the score keyword in bif:contains.
     wrong_sparql: |
       SELECT ?strain ?score
       WHERE {
@@ -517,10 +671,10 @@ anti_patterns:
         ?strain rdfs:label ?label .
         ?label bif:contains "'escherichia'" option (score ?sc) .
       }
-    explanation: "Never use ?score as variable name - use ?sc, ?relevance, or any other non-reserved name."
-
-  - title: "Required Phenotypes Excluding Data"
-    problem: "Requiring phenotypes without OPTIONAL excludes strains with missing phenotypic data."
+    explanation: Never use ?score as variable name - use ?sc, ?relevance, or any other non-reserved name.
+  
+  - title: Required Phenotypes Excluding Data
+    problem: Requiring phenotypes without OPTIONAL excludes strains with missing phenotypic data.
     wrong_sparql: |
       SELECT ?strain ?gramStain ?motile
       WHERE {
@@ -543,38 +697,42 @@ anti_patterns:
               schema:isMotile ?motile .
         }
       }
-    explanation: "Use OPTIONAL for all phenotypes since coverage is incomplete (~40% for most phenotypes)."
+    explanation: Use OPTIONAL for all phenotypes since coverage is incomplete (~40% for most phenotypes).
 
 common_errors:
-  - error: "400 Bad Request with bif:contains"
+  - error: 400 Bad Request with bif:contains
     causes:
-      - "Using bif:contains inside FILTER instead of as triple pattern"
-      - "Using ?score as variable name (reserved keyword)"
-      - "Missing single quotes around keywords"
-      - "Incorrect boolean syntax"
+      - Using bif:contains inside FILTER instead of as triple pattern
+      - Using ?score as variable name (reserved keyword)
+      - Missing single quotes around keywords
+      - Incorrect boolean syntax
     solutions:
       - "Use as triple: ?var bif:contains \"'keyword'\" option (score ?sc)"
-      - "Never use ?score - use ?sc or other non-reserved names"
+      - Never use ?score - use ?sc or other non-reserved names
       - "Always wrap keywords in single quotes: 'keyword'"
       - "Boolean syntax: \"'keyword1' AND 'keyword2'\", \"'keyword1' OR 'keyword2'\", \"NOT 'keyword'\""
-
-  - error: "Empty results with phenotypes"
+  
+  - error: Empty results with phenotypes
     causes:
-      - "Assuming all strains have complete phenotypic data"
-      - "Missing OPTIONAL clauses for phenotype properties"
+      - Assuming all strains have complete phenotypic data
+      - Missing OPTIONAL clauses for phenotype properties
     solutions:
-      - "Always use OPTIONAL for phenotype properties (Gram stain, motility, enzymes, etc.)"
-      - "Check coverage statistics: ~40% Gram stain, ~35% 16S, ~55% enzyme data"
-      - "Use FILTER(BOUND(?var)) to explicitly require specific data when needed"
-
-  - error: "Query timeout"
+      - Always use OPTIONAL for phenotype properties (Gram stain, motility, enzymes, etc.)
+      - Check coverage statistics - ~40% Gram stain, ~35% 16S, ~55% enzyme data
+      - Use FILTER(BOUND(?var)) to explicitly require specific data when needed
+  
+  - error: Query timeout
     causes:
-      - "Joining many phenotypes without LIMIT"
-      - "Querying all strains without filters"
-      - "Missing FROM clause causing cross-graph queries"
+      - Joining many phenotypes without LIMIT
+      - Querying all strains without filters
+      - Missing FROM clause causing cross-graph queries
+      - Cross-database queries without proper filtering
+      - Using FROM clause instead of GRAPH in cross-database queries
     solutions:
-      - "Always add LIMIT to prevent processing entire database"
-      - "Use bif:contains to filter by keywords before joining phenotypes"
-      - "Filter by genus/family using CONTAINS(LCASE(?genus), 'name') to reduce scope"
-      - "Query phenotypes separately rather than joining all at once"
-      - "Always specify FROM <http://rdfportal.org/dataset/bacdive> clause"
+      - Always add LIMIT to prevent processing entire database
+      - Use bif:contains to filter by keywords before joining phenotypes
+      - Filter by genus/family using CONTAINS(LCASE(?genus), 'name') to reduce scope
+      - Query phenotypes separately rather than joining all at once
+      - "Single-database: Always specify FROM <http://rdfportal.org/dataset/bacdive>"
+      - "Cross-database: Use GRAPH clauses instead of FROM"
+      - For cross-database queries, filter within each GRAPH clause before joining

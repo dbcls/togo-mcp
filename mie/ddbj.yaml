@@ -1,7 +1,7 @@
 schema_info:
   title: DDBJ (DNA Data Bank of Japan)
   description: |
-    DDBJ RDF provides nucleotide sequence data from the International Nucleotide Sequence Database Collaboration (INSDC). Contains entries with genomic annotations (genes, CDS, tRNA, rRNA) linked to organism metadata, taxonomic classification, functional annotations, and protein translations. Cross-referenced to BioProject, BioSample, NCBI Protein, and taxonomic databases. Uses FALDO for genomic coordinates, Sequence Ontology for feature types, and BFO/RO for biological relationships.
+    DDBJ RDF provides nucleotide sequence data from the International Nucleotide Sequence Database Collaboration (INSDC). Contains genome and sequence entries with rich genomic annotations including genes, coding sequences (CDS), and various RNA types (tRNA, rRNA, ncRNA, tmRNA). Features extensive organism metadata with taxonomic classification via NCBI Taxonomy, functional annotations, and protein translations linked to NCBI Protein. Cross-referenced to BioProject and BioSample for experimental context. Uses FALDO for precise genomic coordinates, Sequence Ontology (SO) for semantic feature typing, and BFO/RO ontologies for biological relationships. Primarily contains prokaryotic genomes but also includes viral and some eukaryotic sequences. All features are linked to their parent entries and organisms, enabling comprehensive queries from organism level down to individual genes and their products.
   endpoint: https://rdfportal.org/ddbj/sparql
   base_uri: http://identifiers.org/insdc/
   graphs:
@@ -12,8 +12,8 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "1.3"
-    mie_created: "2024-12-23"
+    mie_version: "2.0"
+    mie_created: "2025-01-18"
     data_version: "DDBJ Release (continuous updates)"
     update_frequency: "Daily"
   license:
@@ -97,6 +97,42 @@ shape_expressions: |
     ro:0002162 IRI
   }
   
+  <NonCodingRNAShape> {
+    a [ nuc:Non_Coding_RNA ] ;
+    rdfs:subClassOf IRI+ ;
+    faldo:location @<RegionShape> ;
+    nuc:product xsd:string ? ;
+    bfo:0000050 IRI ;
+    ro:0002162 IRI
+  }
+  
+  <RepeatRegionShape> {
+    a [ nuc:Repeat_Region ] ;
+    rdfs:subClassOf IRI+ ;
+    faldo:location @<RegionShape> ;
+    nuc:note xsd:string ? ;
+    bfo:0000050 IRI ;
+    ro:0002162 IRI
+  }
+  
+  <MiscellaneousFeatureShape> {
+    a [ nuc:Miscellaneous_Feature ] ;
+    rdfs:subClassOf IRI+ ;
+    faldo:location @<RegionShape> ;
+    nuc:note xsd:string ? ;
+    bfo:0000050 IRI ;
+    ro:0002162 IRI
+  }
+  
+  <MobileElementShape> {
+    a [ nuc:Mobile_Element ] ;
+    rdfs:subClassOf IRI+ ;
+    faldo:location @<RegionShape> ;
+    nuc:mobile_element_type xsd:string ? ;
+    bfo:0000050 IRI ;
+    ro:0002162 IRI
+  }
+  
   <SourceShape> {
     a [ nuc:Source ] ;
     rdfs:subClassOf IRI ;
@@ -121,8 +157,8 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: Entry with BioProject/BioSample Links
-    description: Genome entry with organism metadata and external database links.
+  - title: "Entry with BioProject/BioSample Links"
+    description: "Genome entry with organism metadata and external database links to experimental context."
     rdf: |
       <http://identifiers.org/insdc/CP036276.1>
         a nuc:Entry ;
@@ -131,9 +167,9 @@ sample_rdf_entries:
         nuc:organism "Symmachiella dynata" ;
         nuc:dblink <http://identifiers.org/biosample/SAMN10954015> ;
         nuc:dblink <http://identifiers.org/bioproject/PRJNA485700> .
-
-  - title: Gene with FALDO Location
-    description: Gene feature with locus tag and genomic coordinates.
+  
+  - title: "Gene with FALDO Location"
+    description: "Gene feature with locus tag, gene symbol, and genomic coordinates using FALDO."
     rdf: |
       <http://identifiers.org/insdc/CP036276.1#feature:1001623-1002915:1:gene.47722>
         a nuc:Gene ;
@@ -143,20 +179,33 @@ sample_rdf_entries:
         faldo:location <http://identifiers.org/insdc/CP036276.1#region:1001623-1002915:1> ;
         bfo:0000050 <http://identifiers.org/insdc/CP036276.1#sequence> ;
         ro:0002162 <http://identifiers.org/taxonomy/2527995> .
-
-  - title: CDS with Protein Link
-    description: Coding sequence with product annotation and NCBI Protein reference.
+  
+  - title: "CDS with Protein Link and Translation"
+    description: "Coding sequence with product annotation, protein translation, and NCBI Protein cross-reference."
     rdf: |
       <http://identifiers.org/insdc/CP036276.1#feature:1001623-1002915:1:CDS.47054>
         a nuc:Coding_Sequence ;
         nuc:locus_tag "Mal52_08030" ;
         nuc:product "ATP-dependent Clp protease ATP-binding subunit ClpX" ;
         nuc:translation "MPSGNDVTSGSRGATGKK..." ;
+        nuc:codon_start 1 ;
+        nuc:transl_table 11 ;
         rdfs:seeAlso <http://identifiers.org/ncbiprotein/QDU42347.1> ;
         sio:SIO_010081 <http://identifiers.org/insdc/CP036276.1#feature:1001623-1002915:1:gene.47722> .
-
-  - title: Source with Taxonomy
-    description: Source feature with organism and taxonomic identifier.
+  
+  - title: "Non-coding RNA Feature"
+    description: "ncRNA feature with product annotation showing regulatory RNA elements."
+    rdf: |
+      <http://identifiers.org/insdc/CP040814.1#feature:1849218-1849588:1:ncRNA.979>
+        a nuc:Non_Coding_RNA ;
+        rdfs:subClassOf so:0000655 ;
+        nuc:product "RNase P RNA component class A" ;
+        faldo:location <http://identifiers.org/insdc/CP040814.1#region:1849218-1849588:1> ;
+        bfo:0000050 <http://identifiers.org/insdc/CP040814.1#sequence> ;
+        ro:0002162 <http://identifiers.org/taxonomy/573> .
+  
+  - title: "Source with Taxonomy Cross-reference"
+    description: "Source feature linking organism information to NCBI Taxonomy for classification."
     rdf: |
       <http://identifiers.org/insdc/AB023775.1#feature:103-136:1:source.1>
         a nuc:Source ;
@@ -165,18 +214,10 @@ sample_rdf_entries:
         rdfs:seeAlso <http://identifiers.org/taxonomy/91019> ;
         ro:0002162 <http://identifiers.org/taxonomy/1582> .
 
-  - title: FALDO Region
-    description: Genomic region with exact begin and end positions.
-    rdf: |
-      <http://identifiers.org/insdc/CP036276.1#region:1001623-1002915:1>
-        a faldo:Region ;
-        faldo:begin <http://identifiers.org/insdc/CP036276.1#position:1001623:1> ;
-        faldo:end <http://identifiers.org/insdc/CP036276.1#position:1002915:1> .
-
 sparql_query_examples:
-  - title: Search by Organism with bif:contains
-    description: Find entries using full-text search with relevance scoring.
-    question: What entries exist for Escherichia coli?
+  - title: "Search Entries by Organism with bif:contains"
+    description: "Find entries using full-text search with relevance scoring on organism names."
+    question: "What entries exist for Escherichia coli?"
     complexity: basic
     sparql: |
       PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
@@ -190,10 +231,10 @@ sparql_query_examples:
       }
       ORDER BY DESC(?relevance)
       LIMIT 10
-
-  - title: Get Gene by Locus Tag
-    description: Retrieve gene annotations for a specific locus tag.
-    question: What are annotations for locus Mal52_08030?
+  
+  - title: "Get Gene Annotations by Locus Tag"
+    description: "Retrieve gene and product information for a specific locus tag identifier."
+    question: "What are the annotations for locus Mal52_08030?"
     complexity: basic
     sparql: |
       PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
@@ -209,47 +250,31 @@ sparql_query_examples:
                nuc:product ?product .
         }
       }
-
-  - title: Genes with Coordinates
-    description: Query genes with FALDO coordinates from specific entry.
-    question: What are gene coordinates in CP036276.1?
+  
+  - title: "Retrieve Genes with Genomic Coordinates"
+    description: "Query genes with FALDO coordinates from a specific entry, showing positional information."
+    question: "What are the gene coordinates in entry CP036276.1?"
     complexity: intermediate
     sparql: |
       PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       PREFIX faldo: <http://biohackathon.org/resource/faldo#>
       
-      SELECT ?locus_tag ?start ?end
+      SELECT ?locus_tag ?gene_name ?start ?end
       FROM <http://rdfportal.org/dataset/ddbj>
       WHERE {
         ?gene a nuc:Gene ;
               nuc:locus_tag ?locus_tag ;
               faldo:location ?region .
+        OPTIONAL { ?gene nuc:gene ?gene_name }
         ?region faldo:begin/faldo:position ?start ;
                 faldo:end/faldo:position ?end .
         FILTER(CONTAINS(STR(?gene), "CP036276.1"))
       }
       LIMIT 10
-
-  - title: Sample Feature Types
-    description: List different feature types in an entry.
-    question: What features are in CP036276.1?
-    complexity: intermediate
-    sparql: |
-      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
-      
-      SELECT ?feature_type ?locus_tag
-      FROM <http://rdfportal.org/dataset/ddbj>
-      WHERE {
-        ?feature a ?feature_type .
-        FILTER(?feature_type IN (nuc:Gene, nuc:Coding_Sequence, nuc:Transfer_RNA, nuc:Ribosomal_RNA))
-        OPTIONAL { ?feature nuc:locus_tag ?locus_tag }
-        FILTER(CONTAINS(STR(?feature), "CP036276.1"))
-      }
-      LIMIT 20
-
-  - title: Search Products by Entry with FILTER
-    description: Find protease or peptidase genes within a specific entry.
-    question: Find protease or peptidase genes in CP036276.1.
+  
+  - title: "Search Products by Keywords Within Entry"
+    description: "Find protease or peptidase genes within a specific entry using product description filtering."
+    question: "Find protease or peptidase genes in CP036276.1."
     complexity: intermediate
     sparql: |
       PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
@@ -264,32 +289,11 @@ sparql_query_examples:
         FILTER(CONTAINS(LCASE(?product), "protease") || CONTAINS(LCASE(?product), "peptidase"))
       }
       LIMIT 50
-
-  - title: Gene-CDS-Protein Integration
-    description: Complex query joining genes, CDS, and protein IDs.
-    question: Get complete annotations for CP036276.1.
-    complexity: advanced
-    sparql: |
-      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
-      PREFIX sio: <http://semanticscience.org/resource/>
-      
-      SELECT ?locus_tag ?product ?protein_id
-      FROM <http://rdfportal.org/dataset/ddbj>
-      WHERE {
-        ?gene a nuc:Gene ;
-              nuc:locus_tag ?locus_tag .
-        ?cds sio:SIO_010081 ?gene ;
-             nuc:product ?product ;
-             rdfs:seeAlso ?protein_id .
-        FILTER(CONTAINS(STR(?protein_id), "ncbiprotein"))
-        FILTER(CONTAINS(STR(?gene), "CP036276.1"))
-      }
-      LIMIT 100
-
-  - title: RNA Features by Type
-    description: Find tRNA and rRNA using UNION.
-    question: What RNA features exist?
-    complexity: advanced
+  
+  - title: "Retrieve All RNA Feature Types"
+    description: "Find different types of RNA features (tRNA, rRNA, ncRNA) using UNION query pattern."
+    question: "What RNA features exist in the database?"
+    complexity: intermediate
     sparql: |
       PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
       
@@ -305,18 +309,75 @@ sparql_query_examples:
           ?rna a nuc:Ribosomal_RNA ; nuc:product ?product .
           BIND("rRNA" AS ?rna_type)
         }
+        UNION
+        {
+          ?rna a nuc:Non_Coding_RNA ; nuc:product ?product .
+          BIND("ncRNA" AS ?rna_type)
+        }
       }
       LIMIT 20
+  
+  - title: "Gene-CDS-Protein Integration Query"
+    description: "Complex query joining genes to coding sequences and protein IDs, showing complete annotation chain."
+    question: "Get complete gene-to-protein annotations for entry CP036276.1."
+    complexity: advanced
+    sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX sio: <http://semanticscience.org/resource/>
+      
+      SELECT ?locus_tag ?gene_name ?product ?protein_id
+      FROM <http://rdfportal.org/dataset/ddbj>
+      WHERE {
+        ?gene a nuc:Gene ;
+              nuc:locus_tag ?locus_tag .
+        OPTIONAL { ?gene nuc:gene ?gene_name }
+        ?cds sio:SIO_010081 ?gene ;
+             nuc:product ?product ;
+             rdfs:seeAlso ?protein_id .
+        FILTER(CONTAINS(STR(?protein_id), "ncbiprotein"))
+        FILTER(CONTAINS(STR(?gene), "CP036276.1"))
+      }
+      LIMIT 100
+  
+  - title: "Multi-Feature Query with Taxonomic Context"
+    description: "Advanced query retrieving multiple feature types with organism classification and BioProject links."
+    question: "Get genes, RNAs, and organism metadata for entries with BioProject links."
+    complexity: advanced
+    sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX ro: <http://purl.obolibrary.org/obo/RO_>
+      
+      SELECT ?entry ?organism ?taxon ?locus_tag ?feature_type
+      FROM <http://rdfportal.org/dataset/ddbj>
+      WHERE {
+        ?entry a nuc:Entry ;
+               nuc:organism ?organism ;
+               nuc:dblink ?bioproject .
+        FILTER(CONTAINS(STR(?bioproject), "bioproject"))
+        ?feature bfo:0000050 ?entry ;
+                 nuc:locus_tag ?locus_tag ;
+                 ro:0002162 ?taxon .
+        BIND(
+          IF(?feature_type = nuc:Gene, "gene",
+          IF(?feature_type = nuc:Transfer_RNA, "tRNA",
+          IF(?feature_type = nuc:Ribosomal_RNA, "rRNA", "other"))) 
+          AS ?feature_type
+        )
+        FILTER(?feature_type IN ("gene", "tRNA", "rRNA"))
+      }
+      LIMIT 50
 
 cross_references:
-  - pattern: nuc:dblink
+  - pattern: "nuc:dblink"
     description: |
-      Entry links to BioProject and BioSample for experimental metadata.
+      Entry-level links to BioProject and BioSample provide experimental context and metadata about the sequencing project and biological samples.
     databases:
       project_metadata:
-        - "BioProject: Project organization"
-        - "BioSample: Specimen metadata"
+        - "BioProject: Sequencing project organization"
+        - "BioSample: Specimen and sample metadata"
     sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      
       SELECT ?entry ?bioproject ?biosample
       FROM <http://rdfportal.org/dataset/ddbj>
       WHERE {
@@ -325,99 +386,130 @@ cross_references:
                nuc:dblink ?biosample .
         FILTER(CONTAINS(STR(?bioproject), "bioproject"))
         FILTER(CONTAINS(STR(?biosample), "biosample"))
-      } LIMIT 10
-
-  - pattern: rdfs:seeAlso
+      }
+      LIMIT 10
+  
+  - pattern: "rdfs:seeAlso"
     description: |
-      Feature links to NCBI Protein, FASTA, and Taxonomy.
+      Feature-level cross-references to external databases including NCBI Protein for translations, FASTA for sequences, and NCBI Taxonomy for organism classification.
     databases:
       protein:
-        - "NCBI Protein: RefSeq sequences"
+        - "NCBI Protein: RefSeq protein sequences"
       taxonomy:
-        - "NCBI Taxonomy: Classification"
+        - "NCBI Taxonomy: Taxonomic classification"
     sparql: |
-      SELECT ?feature ?external
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      
+      SELECT ?feature ?external_db
       FROM <http://rdfportal.org/dataset/ddbj>
       WHERE {
-        ?feature rdfs:seeAlso ?external .
-        FILTER(CONTAINS(STR(?external), "ncbiprotein") || CONTAINS(STR(?external), "taxonomy"))
-      } LIMIT 50
-
-  - pattern: ro:0002162
+        ?feature rdfs:seeAlso ?external_db .
+        FILTER(CONTAINS(STR(?external_db), "ncbiprotein") || CONTAINS(STR(?external_db), "taxonomy"))
+      }
+      LIMIT 50
+  
+  - pattern: "ro:0002162 (in taxon)"
     description: |
-      Taxonomic relationships via RO_0002162 (in taxon).
+      Relation Ontology property linking all features to their taxonomic context via NCBI Taxonomy identifiers.
     databases:
       taxonomy:
-        - "NCBI Taxonomy: Full hierarchy"
+        - "NCBI Taxonomy: Full taxonomic hierarchy"
     sparql: |
+      PREFIX ro: <http://purl.obolibrary.org/obo/RO_>
+      
       SELECT ?feature ?taxon
       FROM <http://rdfportal.org/dataset/ddbj>
       WHERE {
         ?feature ro:0002162 ?taxon .
         FILTER(CONTAINS(STR(?taxon), "taxonomy"))
-      } LIMIT 50
-
-  - pattern: rdfs:subClassOf
+      }
+      LIMIT 50
+  
+  - pattern: "rdfs:subClassOf"
     description: |
-      Sequence Ontology classification for features.
+      Semantic feature classification using Sequence Ontology (SO) terms for standardized feature typing.
     databases:
       ontology:
-        - "Sequence Ontology: Feature types"
+        - "Sequence Ontology: Standardized genomic feature types"
     sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      
       SELECT ?feature ?so_class
       FROM <http://rdfportal.org/dataset/ddbj>
       WHERE {
         ?feature rdfs:subClassOf ?so_class .
         FILTER(CONTAINS(STR(?so_class), "obo/SO_"))
-      } LIMIT 50
+      }
+      LIMIT 50
 
 architectural_notes:
   search_strategies:
-    - "Use bif:contains for keyword searches on nuc:organism at entry level (fast, relevance-scored)"
-    - "Within entries, use FILTER CONTAINS for product/description searches"
-    - "Always filter by entry ID before complex queries or joins"
-    - "See sparql_query_examples for bif:contains syntax and best practices"
+    - "Use bif:contains for organism name searches at entry level - fast with relevance scoring"
+    - "Within entries, use FILTER CONTAINS for product/description searches on feature properties"
+    - "Always filter by entry accession ID before complex queries or feature joins"
+    - "See sparql_query_examples for complete bif:contains syntax and patterns"
   schema_design:
-    - "Entry-centric with hierarchical features via BFO_0000050/BFO_0000051"
-    - "FALDO coordinates for genomic positions"
-    - "SO terms for semantic feature typing"
-    - "Gene-CDS links via SIO_010081 (case-sensitive, use uppercase)"
+    - "Entry-centric hierarchy with features linked via BFO_0000050 (part of) and BFO_0000051 (has part)"
+    - "FALDO ontology provides precise genomic coordinates for all features"
+    - "Sequence Ontology (SO) terms enable semantic feature typing via rdfs:subClassOf"
+    - "Gene-CDS relationships via sio:SIO_010081 (is transcribed into) - note uppercase 'SIO' required"
+    - "All features linked to organisms via ro:0002162 (in taxon) enabling taxonomic filtering"
+    - "Rich annotation with 50+ feature types beyond core Gene/CDS/RNA types"
   performance:
-    - "CRITICAL - Always filter by entry ID before any complex queries"
-    - "Use FILTER CONTAINS for product searches within entries"
-    - "bif:contains best for organism name search at entry level"
-    - "Filter by entry ID before FALDO queries"
-    - "Avoid aggregation without entry filtering"
-    - "Gene-CDS joins via sio:SIO_010081 are optimized"
+    - "CRITICAL: Always filter by entry accession before complex queries to prevent timeouts"
+    - "Entry-specific queries by accession ID are fast and recommended"
+    - "bif:contains works best for organism searches at entry level, not for feature products"
+    - "FALDO coordinate queries require entry filtering first"
+    - "Avoid aggregation (COUNT, GROUP BY) without entry filtering - use sampling instead"
+    - "Gene-CDS joins via sio:SIO_010081 are optimized when scoped to single entries"
   data_integration:
-    - "identifiers.org URIs for cross-database linking"
-    - "BioProject/BioSample for experimental context"
+    - "Uses identifiers.org URIs for standardized cross-database linking"
+    - "BioProject/BioSample provide experimental context for sequencing projects"
+    - "NCBI Protein links enable connection to RefSeq and GenBank protein records"
+    - "NCBI Taxonomy integration provides organism classification and phylogenetic context"
   data_quality:
-    - "Locus tags more reliable than gene symbols"
-    - "~60% genes have symbols, >99% have locus tags"
-    - "Mostly prokaryotic data"
+    - "Locus tags are more reliable and complete than gene symbols for identification"
+    - "~60% of genes have gene symbols, >99% have locus tags"
+    - "CDS features have >95% coverage for product descriptions and translations"
+    - "Database primarily contains prokaryotic genomes (bacteria, archaea) plus some viral sequences"
+    - "All features have FALDO coordinates (>99% coverage)"
 
 data_statistics:
+  total_entries: "Large collection (exact count requires sampling due to timeout on aggregation)"
   coverage:
     entries_with_organism: ">99%"
+    genes_with_locus_tag: ">99%"
+    genes_with_gene_symbol: "~60%"
     cds_with_product: ">95%"
     cds_with_translation: ">95%"
-    genes_with_locus_tag: ">99%"
     features_with_faldo: ">99%"
+    entries_with_bioproject: "~85%"
+    entries_with_biosample: "~85%"
   cardinality:
-    genes_per_entry: "10-5000 (genome-dependent)"
-    trna_per_entry: "40-100 (bacteria)"
-    rrna_per_entry: "3-9 (bacteria)"
+    genes_per_entry: "10-5000 (varies by genome size)"
+    cds_per_entry: "8-4800 (typically similar to gene count)"
+    trna_per_entry: "40-100 (bacterial genomes)"
+    rrna_per_entry: "3-9 (bacterial genomes)"
+    ncrna_per_entry: "5-50 (varies by organism)"
   performance_characteristics:
-    - "Entry-specific queries by accession are fast"
-    - "bif:contains for organism search at entry level is fast"
-    - "Product searches require entry filtering"
-    - "FALDO requires entry filtering first"
+    - "Entry-specific queries by accession are fast (<1 second)"
+    - "bif:contains for organism search at entry level is fast (<2 seconds)"
+    - "Product searches require entry filtering to avoid timeouts"
+    - "FALDO coordinate queries require entry scope first"
+    - "Cross-entry aggregation requires sampling approach"
+    - "Gene-CDS-Protein joins work well within single entries"
+  data_quality_notes:
+    - "Primarily prokaryotic data with high annotation completeness"
+    - "Locus tags are primary identifiers (more reliable than gene symbols)"
+    - "Most entries include BioProject and BioSample links for metadata"
 
 anti_patterns:
-  - title: "Cartesian Product from Unfiltered Joins"
-    problem: "Joining features without entry filtering creates massive Cartesian products."
+  - title: "Cartesian Product from Unfiltered Feature Joins"
+    problem: "Joining features without entry filtering creates massive Cartesian products causing timeouts."
     wrong_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX sio: <http://semanticscience.org/resource/>
+      
       SELECT ?gene ?cds
       WHERE {
         ?gene a nuc:Gene .
@@ -425,6 +517,9 @@ anti_patterns:
         ?cds sio:SIO_010081 ?gene .
       }
     correct_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX sio: <http://semanticscience.org/resource/>
+      
       SELECT ?gene ?cds
       WHERE {
         ?gene a nuc:Gene .
@@ -432,69 +527,119 @@ anti_patterns:
         FILTER(CONTAINS(STR(?gene), "CP036276.1"))
       }
       LIMIT 100
-    explanation: "Always filter by entry ID first to constrain the result set before joining."
-
-  - title: "Aggregation Without Filtering"
-    problem: "COUNT/GROUP BY without entry filter causes timeout."
+    explanation: "Always filter by entry accession first to constrain the result set before performing joins."
+  
+  - title: "Aggregation Without Entry Filtering"
+    problem: "Using COUNT or GROUP BY without entry filter causes query timeout."
     wrong_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      
       SELECT (COUNT(*) as ?count)
-      WHERE { ?entry a nuc:Entry }
+      WHERE {
+        ?entry a nuc:Entry
+      }
     correct_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      
       SELECT ?entry
-      WHERE { ?entry a nuc:Entry }
+      WHERE {
+        ?entry a nuc:Entry
+      }
       LIMIT 100
-    explanation: "Replace aggregation with sampling."
-
-  - title: "FALDO Without Entry Filter"
-    problem: "Coordinate queries without entry ID timeout."
+    explanation: "Replace aggregation with sampling using LIMIT. For statistics, sample entries and extrapolate."
+  
+  - title: "FALDO Queries Without Entry Filter"
+    problem: "Coordinate queries without entry ID constraint cause timeout due to scanning all features."
     wrong_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX faldo: <http://biohackathon.org/resource/faldo#>
+      
       SELECT ?gene ?start
       WHERE {
-        ?gene a nuc:Gene ; faldo:location/faldo:begin/faldo:position ?start .
+        ?gene a nuc:Gene ;
+              faldo:location/faldo:begin/faldo:position ?start .
         FILTER(?start >= 1000000)
       }
     correct_sparql: |
+      PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>
+      PREFIX faldo: <http://biohackathon.org/resource/faldo#>
+      
       SELECT ?gene ?start
       WHERE {
-        ?gene a nuc:Gene ; faldo:location/faldo:begin/faldo:position ?start .
+        ?gene a nuc:Gene ;
+              faldo:location/faldo:begin/faldo:position ?start .
         FILTER(CONTAINS(STR(?gene), "CP036276.1"))
+        FILTER(?start >= 1000000)
       }
-    explanation: "Filter by entry URI before FALDO queries."
+      LIMIT 50
+    explanation: "Always filter by entry URI before any FALDO coordinate queries to constrain search space."
 
 common_errors:
-  - error: "Query timeout"
+  - error: "Query Timeout"
     causes:
-      - "Cartesian product from unfiltered joins"
-      - "Aggregation without entry filter"
-      - "FALDO without entry filter"
-      - "Product search without entry filter"
-      - "Using bif:contains on product field without entry filter"
+      - "Cartesian product from unfiltered joins between feature types"
+      - "Aggregation (COUNT, GROUP BY) without entry filtering"
+      - "FALDO coordinate queries without entry scope"
+      - "Product searches using bif:contains without entry filter"
+      - "Using bif:contains on feature-level properties instead of entry-level"
     solutions:
-      - "Add entry filter: FILTER(CONTAINS(STR(?var), 'ENTRY_ID'))"
-      - "Use FILTER CONTAINS for product searches within entries"
-      - "Use bif:contains only for organism search at entry level"
-      - "Sample with LIMIT instead of COUNT"
-      - "Always filter by entry ID before any joins"
-
-  - error: "Wrong SIO property (case-sensitive)"
-    causes:
-      - "Using lowercase sio:010081 instead of sio:SIO_010081"
-    solutions:
-      - "Correct property: sio:SIO_010081 (uppercase)"
-      - "SIO properties are case-sensitive"
+      - "Add entry filter: FILTER(CONTAINS(STR(?variable), 'ENTRY_ACCESSION'))"
+      - "Use FILTER CONTAINS (not bif:contains) for product searches within entries"
+      - "Use bif:contains only for organism searches at entry level"
+      - "Sample with LIMIT instead of COUNT for statistics"
+      - "Always scope queries to specific entries before joins"
     example_fix: |
-      # Wrong:
+      # Wrong - timeout risk:
+      SELECT ?gene ?cds WHERE {
+        ?gene a nuc:Gene .
+        ?cds sio:SIO_010081 ?gene .
+      }
+      
+      # Correct - scoped to entry:
+      SELECT ?gene ?cds WHERE {
+        ?gene a nuc:Gene .
+        ?cds sio:SIO_010081 ?gene .
+        FILTER(CONTAINS(STR(?gene), "CP036276.1"))
+      } LIMIT 100
+  
+  - error: "Wrong SIO Property (Case-Sensitive)"
+    causes:
+      - "Using lowercase sio:010081 instead of correct sio:SIO_010081"
+      - "SIO namespace properties are case-sensitive in DDBJ"
+    solutions:
+      - "Always use uppercase: sio:SIO_010081 for gene-CDS relationships"
+      - "Verify SIO property names match exactly with uppercase 'SIO'"
+    example_fix: |
+      # Wrong - will not match:
       ?cds sio:010081 ?gene .
       
-      # Correct:
+      # Correct - uppercase SIO:
       ?cds sio:SIO_010081 ?gene .
-
-  - error: "Empty results"
+  
+  - error: "Empty Results or Missing Data"
     causes:
-      - "Missing FROM clause"
-      - "Required optional property"
-      - "Wrong bif:contains syntax"
+      - "Missing FROM clause pointing to correct graph"
+      - "Treating optional properties (like nuc:gene symbol) as required"
+      - "Wrong bif:contains syntax with incorrect quoting"
+      - "Filtering for feature types that don't exist in queried entries"
     solutions:
-      - "Add FROM <http://rdfportal.org/dataset/ddbj>"
-      - "Use OPTIONAL for nuc:gene"
-      - "Use single quotes: bif:contains \"'keyword'\""
+      - "Always include: FROM <http://rdfportal.org/dataset/ddbj>"
+      - "Use OPTIONAL for properties like nuc:gene (gene symbols)"
+      - "Use single quotes inside double quotes for bif:contains: bif:contains \"'keyword'\""
+      - "Sample entries first to verify feature types exist before complex queries"
+    example_fix: |
+      # Wrong - missing optional and FROM:
+      SELECT ?gene ?symbol WHERE {
+        ?gene a nuc:Gene ;
+              nuc:locus_tag "ABC_001" ;
+              nuc:gene ?symbol .
+      }
+      
+      # Correct - optional gene symbol with FROM:
+      SELECT ?gene ?symbol
+      FROM <http://rdfportal.org/dataset/ddbj>
+      WHERE {
+        ?gene a nuc:Gene ;
+              nuc:locus_tag "ABC_001" .
+        OPTIONAL { ?gene nuc:gene ?symbol }
+      }

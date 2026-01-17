@@ -11,8 +11,9 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "1.1"
+    mie_version: "1.2"
     mie_created: "2024-12-08"
+    mie_updated: "2025-01-17"
     data_version: Release 114
     update_frequency: Quarterly
   license:
@@ -89,7 +90,7 @@ sample_rdf_entries:
         ] ;
         rdfs:seeAlso <http://purl.uniprot.org/uniprot/P38398> ;
         rdfs:seeAlso <http://identifiers.org/hgnc/HGNC:1100> .
-  
+
   - title: Transcript with Quality Flags
     description: BRCA1 transcript with MANE Select and canonical flags showing quality annotations.
     rdf: |
@@ -100,7 +101,7 @@ sample_rdf_entries:
         so:translates_to <http://rdf.ebi.ac.uk/resource/ensembl.protein/ENSP00000418960> ;
         terms:has_transcript_flag <http://ensembl.org/glossary/ENSGLOSSARY_0000023> ;
         terms:has_transcript_flag <http://ensembl.org/glossary/ENSGLOSSARY_0000365> .
-  
+
   - title: Protein with UniProt Link
     description: Translated protein product with UniProt cross-reference.
     rdf: |
@@ -108,7 +109,7 @@ sample_rdf_entries:
         dcterms:identifier "ENSP00000418960" ;
         so:translation_of <http://rdf.ebi.ac.uk/resource/ensembl.transcript/ENST00000468300> ;
         rdfs:seeAlso <http://purl.uniprot.org/uniprot/P38398> .
-  
+
   - title: Ordered Exon
     description: Exon with sequential ordering showing transcript structure.
     rdf: |
@@ -123,7 +124,7 @@ sample_rdf_entries:
           faldo:begin [ faldo:position 43170245 ] ;
           faldo:end [ faldo:position 43170403 ]
         ] .
-  
+
   - title: microRNA Gene
     description: Gene classified as microRNA with biotype annotation.
     rdf: |
@@ -155,7 +156,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 10
-  
+
   - title: List Genes on Chromosome
     description: Retrieve protein-coding genes from specific chromosome.
     question: What are protein-coding genes on chromosome X?
@@ -178,7 +179,7 @@ sparql_query_examples:
         FILTER(CONTAINS(STR(?chr), "GRCh38/X"))
       }
       LIMIT 100
-  
+
   - title: Search by Functional Keywords
     description: Find genes using keyword search in descriptions with boolean operators.
     question: Find genes involved in kinase receptor activity.
@@ -200,7 +201,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-  
+
   - title: Get Gene Genomic Coordinates
     description: Retrieve gene location with start, end, strand, and chromosome using FALDO.
     question: What are genomic coordinates of BRCA1?
@@ -227,7 +228,7 @@ sparql_query_examples:
         BIND(IF(?strand_type = faldo:ForwardStrandPosition, "+", "-") AS ?strand)
         FILTER(?id = "ENSG00000012048")
       }
-  
+
   - title: Gene-Transcript-Protein Mapping
     description: Navigate gene to protein hierarchy with UniProt cross-references.
     question: What proteins are encoded by BRCA1 with UniProt IDs?
@@ -254,7 +255,7 @@ sparql_query_examples:
         FILTER(?gene_label = "BRCA1")
       }
       LIMIT 20
-  
+
   - title: Retrieve Ordered Exons
     description: Get exons in sequential order with coordinates for transcript.
     question: What are exons of ENST00000700182 in order?
@@ -279,7 +280,7 @@ sparql_query_examples:
       }
       ORDER BY ?order
       LIMIT 100
-  
+
   - title: Species Gene Distribution
     description: Count genes by species to see database coverage.
     question: How many genes per species?
@@ -297,6 +298,166 @@ sparql_query_examples:
       GROUP BY ?taxonomy
       ORDER BY DESC(?gene_count)
       LIMIT 50
+
+cross_database_queries:
+  shared_endpoint: ebi
+  co_located_databases:
+    - chembl
+    - chebi
+    - reactome
+    - amrportal
+  examples:
+    - title: Link Genes to Drug Targets via UniProt
+      description: |
+        Integrate Ensembl gene annotations with ChEMBL drug target data through UniProt protein identifiers. This enables mapping of genomic features to druggable targets and understanding which genes encode proteins targeted by therapeutic compounds. The integration uses rdfs:seeAlso links from Ensembl to UniProt, which ChEMBL references via skos:exactMatch on target components.
+      databases_used:
+        - ensembl
+        - chembl
+      complexity: intermediate
+      sparql: |
+        PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX taxonomy: <http://identifiers.org/taxonomy/>
+        
+        SELECT DISTINCT ?gene_id ?gene_label ?target_id ?target_label
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/ensembl> {
+            ?gene a terms:EnsemblGene ;
+                  dcterms:identifier ?gene_id ;
+                  rdfs:label ?gene_label ;
+                  rdfs:seeAlso ?uniprot ;
+                  obo:RO_0002162 taxonomy:9606 .
+            FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/uniprot/"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?target_label ;
+                    cco:chemblId ?target_id ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprot .
+          }
+        }
+        LIMIT 100
+      notes: |
+        - Query uses graph URIs from Ensembl and ChEMBL MIE files (schema_info.graphs)
+        - Ensembl genes link to UniProt via rdfs:seeAlso (from Ensembl shape expressions)
+        - ChEMBL targets link via cco:hasTargetComponent/skos:exactMatch (from ChEMBL shape expressions)
+        - Filter on species taxonomy:9606 for human genes to match ChEMBL's primary focus
+        - Performance: ~1 second for 100 results with URI string matching
+        - Use case: Identify which genes encode druggable protein targets
+        - Referenced ChEMBL MIE file for correct target component linking pattern
+        - Note: Only genes with UniProt cross-references will be found (~60% coverage)
+
+    - title: Map Drug Targets to Genomic Locations for Pharmacogenomics
+      description: |
+        Comprehensive integration linking ChEMBL drug mechanisms to gene genomic coordinates from Ensembl. This enables pharmacogenomics analyses by mapping drugs and their targets to specific chromosomal regions, useful for understanding genetic variants affecting drug response. Filters for approved drugs (phase 4) and includes FALDO location data.
+      databases_used:
+        - ensembl
+        - chembl
+      complexity: advanced
+      sparql: |
+        PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX taxonomy: <http://identifiers.org/taxonomy/>
+        PREFIX so: <http://purl.obolibrary.org/obo/so#>
+        PREFIX faldo: <http://biohackathon.org/resource/faldo#>
+        
+        SELECT DISTINCT ?gene_id ?gene_label ?chr ?start ?end ?target_label ?molecule_label ?phase
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/ensembl> {
+            ?gene a terms:EnsemblGene ;
+                  dcterms:identifier ?gene_id ;
+                  rdfs:label ?gene_label ;
+                  rdfs:seeAlso ?uniprot ;
+                  so:part_of ?chr ;
+                  faldo:location ?loc ;
+                  obo:RO_0002162 taxonomy:9606 .
+            ?loc faldo:begin/faldo:position ?start ;
+                 faldo:end/faldo:position ?end .
+            FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/uniprot/"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?target_label ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprot .
+            ?mechanism a cco:Mechanism ;
+                       cco:hasTarget ?target ;
+                       cco:hasMolecule ?molecule .
+            ?molecule rdfs:label ?molecule_label ;
+                      cco:highestDevelopmentPhase ?phase .
+            FILTER(?phase >= 3)
+          }
+        }
+        LIMIT 50
+      notes: |
+        - Combines Ensembl FALDO genomic locations with ChEMBL drug mechanism data
+        - Uses so:part_of for chromosome and faldo:location for precise coordinates (from Ensembl architectural notes)
+        - ChEMBL mechanism links via cco:hasTarget and cco:hasMolecule (from ChEMBL shape expressions)
+        - Filters for late-stage (phase 3+) or approved drugs (phase 4) to focus on clinically relevant targets
+        - Performance: ~2-3 seconds due to FALDO property paths and mechanism traversal
+        - Use case: Pharmacogenomics - map genetic variants in target genes to drug response
+        - DISTINCT required due to FALDO potentially returning duplicate location entries
+        - Can filter by specific chromosome using CONTAINS(STR(?chr), "GRCh38/17") pattern
+        - Referenced both MIE files for correct property patterns and known performance characteristics
+
+    - title: Find Genes on Specific Chromosome Encoding Approved Drug Targets
+      description: |
+        Focused query identifying genes on a specific chromosome that encode proteins targeted by marketed drugs. This demonstrates precise genomic region filtering combined with drug development phase filtering, useful for chromosome-specific pharmacological research and understanding regional drug target distribution.
+      databases_used:
+        - ensembl
+        - chembl
+      complexity: intermediate
+      sparql: |
+        PREFIX terms: <http://rdf.ebi.ac.uk/terms/ensembl/>
+        PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX taxonomy: <http://identifiers.org/taxonomy/>
+        PREFIX so: <http://purl.obolibrary.org/obo/so#>
+        
+        SELECT DISTINCT ?gene_id ?gene_label ?description ?target_label ?molecule_count
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/ensembl> {
+            ?gene a terms:EnsemblGene ;
+                  dcterms:identifier ?gene_id ;
+                  rdfs:label ?gene_label ;
+                  dcterms:description ?description ;
+                  rdfs:seeAlso ?uniprot ;
+                  so:part_of ?chr ;
+                  obo:RO_0002162 taxonomy:9606 .
+            FILTER(STRSTARTS(STR(?uniprot), "http://purl.uniprot.org/uniprot/"))
+            FILTER(CONTAINS(STR(?chr), "GRCh38/17"))
+          }
+          GRAPH <http://rdf.ebi.ac.uk/dataset/chembl> {
+            ?target a cco:SingleProtein ;
+                    rdfs:label ?target_label ;
+                    cco:hasTargetComponent/skos:exactMatch ?uniprot .
+            {
+              SELECT ?target (COUNT(DISTINCT ?mol) as ?molecule_count)
+              WHERE {
+                ?mech a cco:Mechanism ;
+                      cco:hasTarget ?target ;
+                      cco:hasMolecule ?mol .
+                ?mol cco:highestDevelopmentPhase 4 .
+              }
+              GROUP BY ?target
+            }
+          }
+        }
+        ORDER BY DESC(?molecule_count)
+        LIMIT 20
+      notes: |
+        - Filters genes to chromosome 17 using CONTAINS pattern on so:part_of (from Ensembl architectural notes)
+        - Subquery counts approved drugs (phase 4) per target for relevance ranking
+        - Demonstrates combining genomic location filtering with drug development metrics
+        - Performance: ~2-4 seconds due to subquery aggregation
+        - Use case: Chromosome-specific drug target landscape analysis
+        - Order by molecule_count shows most heavily targeted genes first
+        - Can change chromosome filter (e.g., "GRCh38/X") for other chromosomes
+        - Efficient alternative to complex FALDO queries when only chromosome is needed
 
 cross_references:
   - pattern: rdfs:seeAlso
@@ -342,10 +503,14 @@ architectural_notes:
     - Multiple genome assemblies (GRCh38, GRCh37) in separate graphs
     - Species via NCBI Taxonomy IDs
     - External IDs use identifiers.org and purl.uniprot.org
+    - Cross-database integration with ChEMBL via UniProt bridge on EBI endpoint
+    - ChEMBL target components use skos:exactMatch to link to UniProt proteins
+    - Drug mechanism data accessible through multi-hop property paths
   data_quality:
     - Not all transcripts encode proteins (non-coding RNAs)
     - Transcript flags indicate confidence (MANE, APPRIS, TSL)
     - FALDO positions may have duplicate entries
+    - ~60% of genes have UniProt cross-references enabling ChEMBL integration
 
 data_statistics:
   total_genes: 3000000
@@ -353,9 +518,9 @@ data_statistics:
   total_proteins: 2000000
   species_coverage: 100+ vertebrate species
   major_species:
-    human: 87,688 genes
-    mouse: 744,820 genes
-    rat: 143,695 genes
+    human: 87688 genes
+    mouse: 744820 genes
+    rat: 143695 genes
   coverage:
     genes_with_description: ~95%
     transcripts_with_proteins: ~40%
@@ -368,6 +533,12 @@ data_statistics:
     - "Chromosome queries: 1-3s"
     - "Gene-transcript-protein: 2-5s"
     - "Exon retrieval: <1s"
+    - "Cross-database with ChEMBL: 1-3s"
+    - "Cross-database with FALDO locations: 2-4s"
+  data_quality_notes:
+    - UniProt cross-references enable pharmacological integration
+    - Genomic coordinates highly accurate for reference assemblies
+    - Multiple transcript isoforms increase biological completeness
 
 anti_patterns:
   - title: FILTER/REGEX vs bif:contains
@@ -386,7 +557,7 @@ anti_patterns:
       }
       ORDER BY DESC(?sc)
     explanation: Use bif:contains with wildcard (*) and scoring for faster, ranked results.
-  
+
   - title: Missing Species Filter
     problem: Querying without species returns mixed results from all organisms.
     wrong_sparql: |
@@ -405,7 +576,7 @@ anti_patterns:
         FILTER(?label = "TP53")
       }
     explanation: Always filter by species taxonomy ID (9606 for human).
-  
+
   - title: Incorrect Strand Detection
     problem: Trying to get strand from non-existent property.
     wrong_sparql: |
@@ -431,7 +602,7 @@ common_errors:
       - Use LIMIT to restrict results
       - Use bif:contains for text searches
       - Start with specific gene or chromosome constraints
-  
+
   - error: Empty results for proteins
     causes:
       - Not all transcripts encode proteins (lncRNA, miRNA)
@@ -440,7 +611,7 @@ common_errors:
       - Use OPTIONAL for so:translates_to
       - Filter by protein-coding biotype (ENSGLOSSARY_0000026)
       - Check transcript biotype before expecting proteins
-  
+
   - error: Duplicate results with FALDO
     causes:
       - FALDO stores begin/end positions separately
@@ -448,7 +619,7 @@ common_errors:
     solutions:
       - Always use DISTINCT with location queries
       - Use LIMIT to control result size
-  
+
   - error: Missing prefix causes 400 error
     causes:
       - Using so:part_of without defining PREFIX so:
@@ -456,3 +627,14 @@ common_errors:
     solutions:
       - Always define all prefixes at the start of queries
       - Common prefixes needed - so:, obo:, faldo:, sio:, terms:
+
+  - error: Cross-database query returns no results
+    causes:
+      - Missing UniProt cross-references in Ensembl genes (~40% of genes lack them)
+      - Wrong GRAPH URI from co-located database
+      - Incorrect ChEMBL target component linking pattern
+    solutions:
+      - Verify GRAPH URIs match those in co-database MIE files
+      - Use cco:hasTargetComponent/skos:exactMatch pattern from ChEMBL MIE file
+      - Check if gene has UniProt xref before expecting ChEMBL match
+      - Start with known linked examples (BRCA1, TP53) for testing

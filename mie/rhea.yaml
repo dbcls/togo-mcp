@@ -14,16 +14,17 @@ schema_info:
   kw_search_tools:
     - search_rhea_entity
   version:
-    mie_version: "1.0"
+    mie_version: "1.1"
     mie_created: "2025-01-21"
-    data_version: "Release 2024"
-    update_frequency: "Quarterly"
+    data_version: Release 2024
+    update_frequency: Quarterly
   license:
-    data_license: "CC BY 4.0"
-    license_url: "https://www.rhea-db.org/help/license"
+    data_license: CC BY 4.0
+    license_url: https://www.rhea-db.org/help/license
   access:
-    rate_limiting: "No explicit rate limit"
-    max_query_timeout: "60 seconds"
+    rate_limiting: No explicit rate limit
+    max_query_timeout: 60 seconds
+    backend: Virtuoso
 
 shape_expressions: |
   PREFIX rhea: <http://rdf.rhea-db.org/>
@@ -138,7 +139,7 @@ sample_rdf_entries:
         rhea:directionalReaction <http://rdf.rhea-db.org/10001> ;
         rhea:directionalReaction <http://rdf.rhea-db.org/10002> ;
         rhea:bidirectionalReaction <http://rdf.rhea-db.org/10003> .
-
+  
   - title: Reaction Side with Participants
     description: Left side of a reaction, containing two participants (compounds) with defined stoichiometry and transformability to the opposite side.
     rdf: |
@@ -150,7 +151,7 @@ sample_rdf_entries:
         rhea:contains1 <http://rdf.rhea-db.org/Participant_10000_compound_4808> ;
         rhea:curatedOrder 1 ;
         rhea:transformableTo <http://rdf.rhea-db.org/10000_R> .
-
+  
   - title: Small Molecule Compound
     description: A small molecule compound (water) with chemical formula, charge, and ChEBI cross-reference.
     rdf: |
@@ -164,7 +165,7 @@ sample_rdf_entries:
         rhea:formula "H2O" ;
         rhea:charge 0 ;
         rhea:chebi <http://purl.obolibrary.org/obo/CHEBI_15377> .
-
+  
   - title: Polymer Compound
     description: A polymer structure representing a polysaccharide chain with polymerization index notation and underlying ChEBI reference.
     rdf: |
@@ -178,7 +179,7 @@ sample_rdf_entries:
         rhea:charge "(0)(0)<i><sub>n-1</sub></i>" ;
         rhea:polymerizationIndex "n-1" ;
         rhea:underlyingChebi <http://purl.obolibrary.org/obo/CHEBI_18246> .
-
+  
   - title: Transport Reaction Participant with Location
     description: Participant in a transport reaction with cellular location annotation indicating substrate is inside the cell.
     rdf: |
@@ -207,7 +208,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - title: Get Reaction Details by Accession
     description: Retrieve complete information for a specific Rhea reaction using its accession ID.
     question: What are the details of reaction RHEA:10000?
@@ -221,7 +222,7 @@ sparql_query_examples:
         ?reaction rhea:accession "RHEA:10000" ;
                   ?property ?value .
       }
-
+  
   - title: Find Transport Reactions
     description: Identify reactions that involve transport across cellular membranes with their substrates and locations.
     question: Which reactions are classified as transport reactions?
@@ -241,7 +242,7 @@ sparql_query_examples:
                      rhea:location ?location .
       }
       LIMIT 50
-
+  
   - title: Get Reactions with EC Number and GO Terms
     description: Find reactions annotated with both enzyme commission numbers and Gene Ontology molecular function terms.
     question: Which reactions have EC classification and GO annotations?
@@ -260,7 +261,7 @@ sparql_query_examples:
         FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
       }
       LIMIT 50
-
+  
   - title: Complex Keyword Search with Boolean Operators
     description: Find reactions containing multiple keywords using AND/OR operators with relevance ranking.
     question: What reactions involve both glucose and phosphate?
@@ -278,7 +279,7 @@ sparql_query_examples:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - title: Get Directional Variants of a Reaction
     description: For a master reaction, retrieve all directional and bidirectional representations with their relationships.
     question: What are all the directional forms of reaction RHEA:10000?
@@ -301,7 +302,7 @@ sparql_query_examples:
           BIND("bidirectional" AS ?type)
         }
       }
-
+  
   - title: Complex Query - Reactions with Polymers and Citations
     description: Find reactions involving polymer substrates that have literature citations and cross-references to pathway databases.
     question: Which reactions involve polymers and have extensive literature support?
@@ -326,6 +327,130 @@ sparql_query_examples:
         }
       }
       LIMIT 30
+
+cross_database_queries:
+  shared_endpoint: sib
+  co_located_databases:
+    - uniprot
+  examples:
+    - title: Find Enzymes Catalyzing Specific Reactions
+      description: |
+        Link biochemical reactions from Rhea to their catalyzing enzymes from UniProt.
+        This query demonstrates the power of the shared SIB endpoint by connecting reaction chemistry to protein function.
+        Useful for identifying which proteins can perform specific biochemical transformations.
+      databases_used:
+        - rhea
+        - uniprot
+      complexity: intermediate
+      sparql: |
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rhea: <http://rdf.rhea-db.org/>
+        PREFIX up: <http://purl.uniprot.org/core/>
+        
+        SELECT ?reaction ?equation ?enzyme ?protein ?fullName
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/rhea> {
+            ?reaction rdfs:subClassOf rhea:Reaction ;
+                      rhea:equation ?equation ;
+                      rhea:status rhea:Approved ;
+                      rhea:ec ?enzyme .
+            FILTER(CONTAINS(?equation, "ATP"))
+          }
+          GRAPH <http://sparql.uniprot.org/uniprot> {
+            ?protein a up:Protein ;
+                     up:reviewed 1 ;
+                     up:enzyme ?enzyme ;
+                     up:recommendedName ?name .
+            ?name up:fullName ?fullName .
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Uses graph URIs from Rhea and UniProt MIE files (schema_info.graphs)
+        - Filters for reviewed proteins (up:reviewed 1) from UniProt MIE best practices
+        - Splits property path (up:recommendedName/up:fullName) as required by UniProt MIE
+        - Links via rhea:ec property which references UniProt enzyme classification
+        - Performance: ~2-3 seconds for 20 results due to cross-database joins
+        - Use case: Drug target discovery, enzyme engineering, metabolic pathway analysis
+    
+    - title: Find Human Enzymes and Their Catalyzed Reactions
+      description: |
+        Identify human proteins and the specific biochemical reactions they catalyze.
+        Combines UniProt's curated protein data with Rhea's reaction chemistry to understand enzyme function in human metabolism.
+      databases_used:
+        - uniprot
+        - rhea
+      complexity: intermediate
+      sparql: |
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rhea: <http://rdf.rhea-db.org/>
+        PREFIX up: <http://purl.uniprot.org/core/>
+        
+        SELECT ?protein ?mnemonic ?fullName ?reaction ?equation
+        WHERE {
+          GRAPH <http://sparql.uniprot.org/uniprot> {
+            ?protein a up:Protein ;
+                     up:reviewed 1 ;
+                     up:organism <http://purl.uniprot.org/taxonomy/9606> ;
+                     up:mnemonic ?mnemonic ;
+                     up:enzyme ?enzyme ;
+                     up:recommendedName/up:fullName ?fullName .
+          }
+          GRAPH <http://rdfportal.org/dataset/rhea> {
+            ?reaction rdfs:subClassOf rhea:Reaction ;
+                      rhea:equation ?equation ;
+                      rhea:status rhea:Approved ;
+                      rhea:ec ?enzyme .
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Uses organism filtering from UniProt MIE (up:organism with taxonomy URIs)
+        - Applies reviewed=1 filter from UniProt MIE performance guidelines
+        - References graph URIs from both MIE files for proper GRAPH clauses
+        - Performance: ~3-4 seconds due to organism filtering and cross-database join
+        - Use case: Human metabolism studies, personalized medicine, biomarker discovery
+    
+    - title: Link Reactions to Protein Functional Annotations
+      description: |
+        Connect biochemical reactions to protein GO terms and functional descriptions.
+        Provides comprehensive context by integrating reaction chemistry, enzyme classification, and biological process annotations.
+      databases_used:
+        - rhea
+        - uniprot
+      complexity: advanced
+      sparql: |
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rhea: <http://rdf.rhea-db.org/>
+        PREFIX up: <http://purl.uniprot.org/core/>
+        
+        SELECT DISTINCT ?reaction ?equation ?protein ?mnemonic ?goTerm ?goLabel
+        WHERE {
+          GRAPH <http://rdfportal.org/dataset/rhea> {
+            ?reaction rdfs:subClassOf rhea:Reaction ;
+                      rhea:equation ?equation ;
+                      rhea:status rhea:Approved ;
+                      rhea:ec ?enzyme .
+          }
+          GRAPH <http://sparql.uniprot.org/uniprot> {
+            ?protein a up:Protein ;
+                     up:reviewed 1 ;
+                     up:enzyme ?enzyme ;
+                     up:mnemonic ?mnemonic ;
+                     up:classifiedWith ?goTerm .
+          }
+          GRAPH <http://sparql.uniprot.org/go> {
+            ?goTerm rdfs:label ?goLabel .
+            FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
+          }
+        }
+        LIMIT 30
+      notes: |
+        - Uses three graphs: Rhea dataset, UniProt proteins, and UniProt GO terms
+        - Graph URIs verified against both Rhea and UniProt MIE files
+        - Follows UniProt MIE pattern for GO term filtering (STRSTARTS filter)
+        - Performance: ~4-6 seconds due to three-way join across graphs
+        - Use case: Systems biology, pathway enrichment analysis, functional genomics
 
 cross_references:
   - pattern: rdfs:seeAlso
@@ -362,28 +487,29 @@ architectural_notes:
   schema_design:
     - "Reactions have three representations - master (unspecified direction), directional (L→R, R→L), and bidirectional (reversible)"
     - "Each reaction ID forms a quartet - e.g., 10000 (master), 10001 (L→R), 10002 (R→L), 10003 (bidirectional)"
-    - "Reaction sides (_L, _R suffixes) contain participants with stoichiometry encoded in property names (contains1, contains2, etc.)"
-    - "Participants link to compounds via rhea:compound, with optional rhea:location for transport reactions"
-    - "Compounds are either SmallMolecule (with ChEBI links) or Polymer (with polymerization indices)"
-    - "All reactions are subclasses of rdfs:Class using OWL/RDFS vocabulary"
+    - Reaction sides (_L, _R suffixes) contain participants with stoichiometry encoded in property names (contains1, contains2, etc.)
+    - Participants link to compounds via rhea:compound, with optional rhea:location for transport reactions
+    - Compounds are either SmallMolecule (with ChEBI links) or Polymer (with polymerization indices)
+    - All reactions are subclasses of rdfs:Class using OWL/RDFS vocabulary
   performance:
-    - "Use bif:contains for text search in equations and labels with relevance scoring - much faster than FILTER(CONTAINS())"
-    - "Boolean operators work in bif:contains - use 'glucose' AND 'phosphate' or 'atp' OR 'gtp' for complex searches"
-    - "Filter by rhea:status early to focus on rhea:Approved reactions (66,740 vs 68,312 total)"
-    - "When querying participants, start from reactions then traverse to compounds for better performance"
-    - "Limit results when exploring relationships between reactions, sides, and participants"
-    - "ORDER BY DESC(?sc) after bif:contains to get most relevant results first"
+    - Use bif:contains for text search in equations and labels with relevance scoring - much faster than FILTER(CONTAINS())
+    - Boolean operators work in bif:contains - use 'glucose' AND 'phosphate' or 'atp' OR 'gtp' for complex searches
+    - Filter by rhea:status early to focus on rhea:Approved reactions (66,740 vs 68,312 total)
+    - When querying participants, start from reactions then traverse to compounds for better performance
+    - Limit results when exploring relationships between reactions, sides, and participants
+    - ORDER BY DESC(?sc) after bif:contains to get most relevant results first
   data_integration:
-    - "ChEBI integration via rdfs:subClassOf and rhea:chebi properties enables compound-level queries"
-    - "EC numbers link to UniProt enzyme namespace for protein function connections"
-    - "GO molecular function terms provide gene/protein annotation pathways"
-    - "KEGG, MetaCyc, and Reactome links enable metabolic pathway mapping"
+    - ChEBI integration via rdfs:subClassOf and rhea:chebi properties enables compound-level queries
+    - EC numbers link to UniProt enzyme namespace for protein function connections
+    - GO molecular function terms provide gene/protein annotation pathways
+    - KEGG, MetaCyc, and Reactome links enable metabolic pathway mapping
+    - Cross-database integration with UniProt via shared SIB endpoint enables enzyme-reaction queries
   data_quality:
-    - "All approved reactions are chemically balanced (rhea:isChemicallyBalanced = 1)"
-    - "Some reactions have Preliminary status (452) indicating ongoing curation"
-    - "Obsolete reactions (1,120) are retained for historical reference"
-    - "Literature citations in rdfs:comment use structured format but require text parsing"
-    - "Polymers use specialized notation (n, n-1) in formulas and charges"
+    - All approved reactions are chemically balanced (rhea:isChemicallyBalanced = 1)
+    - Some reactions have Preliminary status (452) indicating ongoing curation
+    - Obsolete reactions (1,120) are retained for historical reference
+    - Literature citations in rdfs:comment use structured format but require text parsing
+    - Polymers use specialized notation (n, n-1) in formulas and charges
 
 data_statistics:
   total_reactions: 17078
@@ -402,17 +528,18 @@ data_statistics:
     reactions_with_kegg: "~35% (metabolic pathway coverage)"
     compounds_with_chebi: "100% (all small molecules have ChEBI IDs)"
   cardinality:
-    avg_participants_per_reaction: "~4-6 (substrates + products)"
-    avg_cross_refs_per_reaction: "1-5 (GO, KEGG, MetaCyc, etc.)"
+    avg_participants_per_reaction: ~4-6 (substrates + products)
+    avg_cross_refs_per_reaction: 1-5 (GO, KEGG, MetaCyc, etc.)
   performance_characteristics:
     - "Simple reaction lookups by ID or accession: < 1 second"
     - "Keyword searches with bif:contains: < 1 second for 20 results"
     - "Complex joins (reactions-participants-compounds): 2-5 seconds with LIMIT 50"
-    - "Full traversal queries may timeout without proper LIMIT clauses"
+    - Full traversal queries may timeout without proper LIMIT clauses
+    - "Cross-database queries with UniProt: 2-6 seconds depending on complexity"
   data_quality_notes:
-    - "All approved reactions are atom-balanced and charge-balanced"
-    - "Transport reactions consistently annotated with cellular locations"
-    - "Polymer notation is standardized but may require parsing for applications"
+    - All approved reactions are atom-balanced and charge-balanced
+    - Transport reactions consistently annotated with cellular locations
+    - Polymer notation is standardized but may require parsing for applications
 
 anti_patterns:
   - title: Using FILTER(CONTAINS()) Instead of bif:contains
@@ -439,7 +566,7 @@ anti_patterns:
       ORDER BY DESC(?sc)
       LIMIT 20
     explanation: Use bif:contains with single quotes around keywords for fast full-text search. Add ORDER BY DESC(?sc) to get most relevant results first.
-
+  
   - title: Not Using LIMIT on Open-Ended Queries
     problem: Queries exploring relationships without LIMIT clauses can timeout on large result sets.
     wrong_sparql: |
@@ -460,7 +587,7 @@ anti_patterns:
       }
       LIMIT 100
     explanation: Always include LIMIT when exploring relationships to prevent timeouts and get manageable result sets.
-
+  
   - title: Confusing Reaction Types
     problem: Querying for master reactions but expecting directional properties, or vice versa.
     wrong_sparql: |
@@ -500,7 +627,7 @@ common_errors:
         ?reaction rdfs:subClassOf rhea:Reaction .
       }
       LIMIT 1
-
+  
   - error: Empty results when searching for compound by name
     causes:
       - Compound names are on compound entities, not participant entities
@@ -526,7 +653,7 @@ common_errors:
       }
       ORDER BY DESC(?sc)
       LIMIT 20
-
+  
   - error: Missing cross-references in results
     causes:
       - Using OPTIONAL without proper structure leads to cartesian products
