@@ -15,7 +15,7 @@ async def convertId(
     
     Args:
         ids: Comma-separated list of source IDs
-        route: Comma-separated list of datasets (source to target)
+        route: Comma-separated list of datasets (source to target) e.g.: 'ncbigene,uniprot'
         limit: Maximum number of results (max 10000)
         offset: Pagination offset
     
