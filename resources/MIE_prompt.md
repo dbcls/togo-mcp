@@ -267,7 +267,18 @@ WHERE {
 
 **Only perform this if multiple databases share the same endpoint.**
 
-**Step 1: Retrieve MIE files for co-located databases**
+**⚠️⚠️⚠️ CRITICAL: READ ALL CO-LOCATED DATABASE MIE FILES FIRST ⚠️⚠️⚠️**
+
+**DO NOT WRITE A SINGLE LINE OF CROSS-DATABASE QUERY CODE UNTIL YOU HAVE:**
+1. Retrieved ALL co-located database MIE files using `get_MIE_file(co_db_name)`
+2. Extracted graph URIs, entity types, properties, namespaces from each file
+3. Identified linking mechanisms and coverage statistics
+4. Noted anti-patterns and optimization strategies
+
+**STEP 1: ALWAYS Read Co-Located Database MIE Files FIRST**
+
+**MANDATORY BEFORE creating any cross-database queries:**
+
 ```python
 # For each database on the same endpoint
 for co_db in shared_databases:
@@ -281,13 +292,24 @@ for co_db in shared_databases:
             pass
 ```
 
+**⚠️ NEVER skip this step - creating cross-database queries without reading co-located MIE files leads to:**
+- Wrong graph URIs → query failures
+- Wrong namespaces → empty results  
+- Wrong entity types → incorrect joins
+- Wrong property names → broken queries
+- Missing optimization patterns → poor performance
+- Ignoring anti-patterns → repeated mistakes
+
 **Why this matters**: Existing MIE files provide:
-- Correct graph URIs for GRAPH clauses
-- Entity type definitions and class URIs
-- Property patterns and namespaces
+- **Correct graph URIs for GRAPH clauses** (CRITICAL)
+- **Entity type definitions and class URIs** (CRITICAL)
+- **Property patterns and namespaces** (CRITICAL)
 - Known cross-references and linking properties
 - Anti-patterns to avoid
 - **Performance optimization patterns already tested**
+- **Coverage statistics** (understand data availability)
+- **URI patterns** (for conversion strategies)
+- **Linking mechanisms** (schema:hasBacDiveID vs schema:hasMediaLink, etc.)
 
 **Step 2: Identify linking properties**
 ```sparql
@@ -556,7 +578,8 @@ Before finalizing, verify:
 - [ ] Everything concise - no unnecessary content
 
 **Cross-Database Optimization (if applicable):**
-- [ ] Retrieved MIE files for all co-located databases using get_MIE_file()
+- [ ] ⚠️ CRITICAL FIRST STEP: Retrieved MIE files for ALL co-located databases BEFORE writing any queries using get_MIE_file()
+- [ ] Confirmed graph URIs, entity types, and namespaces from retrieved MIE files match what's used in queries
 - [ ] Extracted graph URIs, entity types, and properties from co-database MIE files
 - [ ] Applied explicit GRAPH clause optimization (Strategy 1)
 - [ ] Applied pre-filtering optimization (Strategy 2)
@@ -587,6 +610,8 @@ Before finalizing, verify:
 **❌ Missing Error Guidance**: Not testing what fails → Note failing patterns during testing to document as anti-patterns
 
 **❌ Ignoring Cross-Database Opportunities**: Not exploring shared endpoint databases → Check for co-located databases and linking properties
+
+**❌ NOT Reading Co-Located MIE Files FIRST** (CRITICAL): Creating cross-database queries without reading co-located database MIE files → ALWAYS use get_MIE_file() to retrieve MIE files for ALL co-located databases BEFORE writing any cross-database queries. Extract graph URIs, entity types, properties, namespaces, linking mechanisms, coverage statistics, and optimization patterns from the retrieved files. This prevents wrong URIs, wrong namespaces (e.g., UniProt vs DDBJ for Taxonomy), wrong linking methods (e.g., BacDiveID vs MediaLink for MediaDive), and missing URI conversions
 
 **❌ Unoptimized Cross-Database Queries**: Not applying optimization strategies → Follow 10 optimization strategies for all cross-database queries
 
@@ -711,10 +736,12 @@ sparql: "SELECT ?s ?p ?o WHERE { ?s ?p ?o . } LIMIT 10"
 - Cross-database queries consistently timeout even with optimizations
 - **Performance is poor despite applying all optimization strategies**
 
-**CRITICAL: Reference Co-Located Database MIE Files**
+**⚠️ CRITICAL: ALWAYS Read Co-Located Database MIE Files FIRST ⚠️**
 
-Before creating cross-database query examples:
-1. **Retrieve MIE files** for all co-located databases using `get_MIE_file(co_db_name)`
+**THIS IS NOT OPTIONAL - IT IS MANDATORY:**
+
+Before writing ANY cross-database query code:
+1. **Retrieve MIE files FIRST** for ALL co-located databases using `get_MIE_file(co_db_name)`
 2. **Extract key information** from retrieved MIE files:
    - Graph URIs from `schema_info.graphs`
    - PREFIX definitions from `shape_expressions`
