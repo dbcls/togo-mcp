@@ -26,6 +26,6 @@
     }
   },
   "allowed_tools": ["mcp__*"],
-  "disallowed_tools": ["web_search", "web_fetch"],
+  "disallowed_tools": ["web_search", "web_fetch", "mcp__togomcp__get_MIE_file"],
   "_comment": "This config uses Claude Agent SDK which DOES support MCP servers!"
 }

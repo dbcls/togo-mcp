@@ -1,198 +1,171 @@
 # BacDive Exploration Report
 
 ## Database Overview
-- **Purpose**: Bacterial and archaeal strain metadata database maintained by DSMZ (German Collection of Microorganisms and Cell Cultures)
-- **Scale**: 97,334 strain records with phenotypic and genotypic data
-- **Key data types**: Strains, taxonomy, enzyme activities, culture conditions (temp, pH, medium), sequences (16S, genome), culture collection numbers
+BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,334 strain records with phenotypic and genotypic characterizations.
 
-## Schema Analysis (from MIE file)
+## Schema Analysis
+**Main entity types:**
+- `Strain`: Core records with full taxonomic hierarchy
+- `Enzyme`: Enzyme activities with activity indicators (+/-)
+- `16SSequence`/`GenomeSequence`: Molecular data with accessions
+- `GramStain`/`CellMotility`/`OxygenTolerance`: Phenotypic traits
+- `CultureMedium`/`CultureTemperature`/`CulturePH`: Growth conditions
+- `CultureCollectionNumber`: Repository links
+- `LocationOfOrigin`: Isolation locations
 
-### Main Entity Types
-- `schema:Strain` - Central entity with taxonomic hierarchy (domain→phylum→class→order→family→genus→species)
-- `schema:Enzyme` - Enzyme activity phenotypes with +/- results
-- `schema:GramStain` - Gram staining results
-- `schema:CultureTemperature` - Growth temperature ranges
-- `schema:CultureMedium` - Culture media links (to MediaDive)
-- `schema:16SSequence` / `schema:GenomeSequence` - Sequence data with accessions
-- `schema:CultureCollectionNumber` - Strain repository IDs (DSMZ, JCM, ATCC, etc.)
+**Key properties:**
+- Strain: hasBacDiveID, hasTaxID, hasGenus, hasSpecies, hasFamily, hasOrder, hasClass, hasPhylum, hasDomain, isTypeStrain
+- Links: hasMediaLink (to MediaDive), hasLink (to culture collections)
+- Phenotypes: describesStrain (hub-and-spoke architecture)
 
-### Important Properties
-- `schema:hasBacDiveID` - Unique BacDive identifier
-- `schema:hasTaxID` - NCBI Taxonomy ID (100% coverage)
-- `schema:isTypeStrain` - Boolean type strain indicator
-- `schema:hasTemperatureRangeStart/End` - Growth temperature bounds
-- `schema:hasGramStain` - positive/negative/variable
-- `schema:hasOxygenTolerance` - aerobe/anaerobe/facultative
-- `schema:hasActivity` - Enzyme activity (+/-)
-
-### Query Patterns
-- Must use `FROM <http://rdfportal.org/dataset/bacdive>` graph clause
-- Use `bif:contains` for keyword search with score ranking (Virtuoso)
-- Use `OPTIONAL` for phenotypes (coverage ~40%)
-- Hub-and-spoke architecture: Strain is central, phenotypes link via `schema:describesStrain`
+**Important patterns:**
+- Hub-and-spoke with Strain as central entity
+- Full taxonomic lineage from domain to species
+- bif:contains for keyword search with boolean operators
+- OPTIONAL blocks for incomplete phenotype coverage
 
 ## Search Queries Performed
-
-1. **Query: Top genera by strain count**
-   - Streptomyces: 24,747 strains (25.4% - largest genus)
-   - Bacillus: 3,332 strains
-   - Arthrobacter: 2,045 strains
-   - Streptococcus: 2,001 strains
-   - Escherichia: 1,898 strains
-   - Pseudomonas: 1,879 strains
-
-2. **Query: Domain distribution**
-   - Bacteria: 95,742 strains (98.4%)
-   - Archaea: 1,049 strains (1.1%)
-
-3. **Query: Type strain count**
-   - Type strains: 20,060 (20.6%)
-   - Non-type strains: 77,274 (79.4%)
-
-4. **Query: Gram stain distribution**
-   - Gram-negative: 10,747 strains
-   - Gram-positive: 7,333 strains
-   - Gram-variable: 135 strains
-
-5. **Query: Top enzymes with positive activity**
-   - Alkaline phosphatase: 16,153 positive results
-   - Beta-galactosidase: 13,609 positive
-   - Catalase: 13,129 positive
-   - Leucine arylamidase: 12,735 positive
+N/A - BacDive uses SPARQL keyword search via `bif:contains`
 
 ## SPARQL Queries Tested
 
 ```sparql
-# Query 1: Find hyperthermophiles (growth temp ≥70°C)
-PREFIX schema: <https://purl.dsmz.de/schema/>
-SELECT ?strain ?label ?bacdiveId ?tempStart ?tempEnd
+# Query 1: Top genera by strain count
+SELECT ?genus (COUNT(*) as ?strainCount)
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
-  ?strain a schema:Strain ; rdfs:label ?label ; schema:hasBacDiveID ?bacdiveId .
-  ?temp a schema:CultureTemperature ;
-        schema:describesStrain ?strain ;
-        schema:hasTemperatureRangeStart ?tempStart .
-  FILTER(?tempStart >= 70)
+  ?strain a schema:Strain ;
+          schema:hasGenus ?genus .
 }
-ORDER BY DESC(?tempStart) LIMIT 20
-# Results: 360 strains grow at ≥70°C
-# Top: Pyrococcus kukulkanii (105°C), Pyrolobus fumarii (103°C), Aeropyrum pernix (102°C)
+GROUP BY ?genus
+ORDER BY DESC(?strainCount)
+LIMIT 10
+# Results: Streptomyces (24,747), Bacillus (3,332), Arthrobacter (2,045)
 ```
 
 ```sparql
-# Query 2: Find Thermotoga maritima strain collection numbers
-PREFIX schema: <https://purl.dsmz.de/schema/>
-SELECT ?strain ?label ?ccnLabel
+# Query 2: Gram stain distribution
+SELECT ?gramStain (COUNT(*) as ?count)
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
-  ?strain a schema:Strain ; rdfs:label ?label ; schema:hasSpecies "Thermotoga maritima" .
-  ?ccn a schema:CultureCollectionNumber ; schema:describesStrain ?strain ; rdfs:label ?ccnLabel .
+  ?gs a schema:GramStain ;
+      schema:hasGramStain ?gramStain .
 }
-# Results: BacDive ID 17060, DSM 3109, ATCC 43589, JCM 10099, NBRC 100826
+GROUP BY ?gramStain
+# Results: negative (10,747), positive (7,333), variable (135)
 ```
 
 ```sparql
-# Query 3: Find methanogens (anaerobic archaea)
-PREFIX schema: <https://purl.dsmz.de/schema/>
-SELECT ?strain ?label ?bacdiveId ?oxygenTolerance
+# Query 3: 16S sequence database sources
+SELECT ?seqDB (COUNT(*) as ?seqCount)
 FROM <http://rdfportal.org/dataset/bacdive>
 WHERE {
-  ?strain a schema:Strain ; rdfs:label ?label ; schema:hasBacDiveID ?bacdiveId ; schema:hasGenus "Methanococcus" .
-  ?ot a schema:OxygenTolerance ; schema:describesStrain ?strain ; schema:hasOxygenTolerance ?oxygenTolerance .
+  ?seq a schema:16SSequence ;
+       schema:fromSequenceDB ?seqDB .
 }
-# Results: All Methanococcus strains are strict anaerobes
-# Found: M. aeolicus (7001), M. vannielii (6993), M. maripaludis (6989), M. voltae (6994)
+GROUP BY ?seqDB
+# Results: ena (33,556), nuccore (2,505), empty (396)
 ```
 
 ## Cross-Reference Analysis
 
-**Entity counts with cross-references:**
-- All strains have NCBI Taxonomy IDs (100% coverage)
-- ~60% have culture collection numbers
-- ~35% have 16S rRNA sequences
-- ~20% have MediaDive culture medium links
+**Direct cross-references:**
+- NCBI Taxonomy: 100% of strains via hasTaxID
+- MediaDive: ~34% via BacDiveID (primary method), ~20% via MediaLink (alternative)
+- Culture collections: ~60% have links (DSMZ >90%, JCM ~40%)
+- Sequence databases: ~35% have 16S sequences (ENA ~60%, GenBank ~40%)
 
-**Cross-Database Linkages:**
-- `schema:hasTaxID` → NCBI Taxonomy (co-located on same endpoint)
-- `schema:hasMediaLink` → MediaDive (co-located on same endpoint)
-- `schema:hasSequenceAccession` → ENA/GenBank (external)
-- `schema:hasLink` (CultureCollectionNumber) → DSMZ, JCM, ATCC, KCTC (external)
+**Integration methods:**
+1. BacDiveID integer matching with MediaDive (primary, ~34% coverage for IDs 1-170,041)
+2. MediaLink URI conversion to MediaDive (alternative, ~20% coverage)
+3. TaxID URI conversion to NCBI Taxonomy (100% coverage)
+4. Keyword-based integration with MONDO (no direct links)
 
-**Co-located databases on "primary" endpoint:**
-- BacDive ↔ MediaDive: Culture protocols
-- BacDive ↔ Taxonomy: Phylogenetic context
-- BacDive ↔ MONDO: Disease associations
-- BacDive ↔ MeSH: Medical terminology
+**Shared endpoint:**
+- Part of "primary" endpoint with mediadive, taxonomy, mesh, go, mondo, nando
+- Enables efficient cross-database queries with explicit GRAPH clauses
 
-## Interesting Findings (requiring queries, not from MIE)
+## Interesting Findings
 
-### Biodiversity Statistics
-- **Total strains**: 97,334
-- **Streptomyces dominance**: 24,747 strains (25.4% of all strains) - reflects biotechnology/antibiotic interest
-- **Archaea representation**: 1,049 strains (1.1%) including methanogens and hyperthermophiles
-- **Type strains**: 20,060 (20.6%) - reference strains for species
+**Strain diversity:**
+- Streptomyces dominates with 24,747 strains (25% of database)
+- Bacillus has 3,332 strains - ideal genus for cross-database queries (lower BacDiveIDs)
+- 18,215 strains have Gram stain data (~19% coverage)
 
-### Extremophile Data
-- **Hyperthermophiles** (≥70°C): 360 strains
-- **Highest growth temperature**: Pyrococcus kukulkanii at 105°C (BacDive ID 132578)
-- **Other hyperthermophiles**: Pyrolobus fumarii (103°C), Aeropyrum pernix (102°C)
+**Phenotype coverage:**
+- Gram stain: ~19% of strains
+- 16S sequences: ~35% of strains (36,457 total)
+- Culture collections: ~60% of strains (149,377 records)
+- Enzyme data: ~55% of strains (573,112 enzyme records)
 
-### Phenotype Data
-- **Catalase-positive strains**: 13,129 strains
-- **Most common positive enzyme**: Alkaline phosphatase (16,153 positive results)
-- **Gram-negative predominance**: 10,747 vs 7,333 Gram-positive
+**Sequence data sources:**
+- ENA dominates 16S sequences (33,556 = 92%)
+- NCBI nuccore: 2,505 sequences
+- 396 sequences without database attribution
 
-### Reference Strain Data
-- **Thermotoga maritima**: BacDive ID 17060, DSM 3109 (model thermophile organism)
-- Culture collection numbers: ATCC 43589, JCM 10099, NBRC 100826
+**MediaDive integration specifics:**
+- BacDiveID method (primary): Works for strains with IDs 1-170,041
+- MediaDive has 33,226 strain records with BacDiveIDs (~34% of BacDive)
+- MediaLink method (alternative): ~20% coverage, different data (recipes vs growth conditions)
+- Newer strains (BacDiveID >170,041) not in MediaDive - no growth condition data available
+
+**Query performance:**
+- Simple strain queries complete in <2s
+- bif:contains keyword searches very fast with complex boolean logic
+- Cross-database queries (Tier 1): 1-3s with proper optimization
+- Pre-filtering within GRAPH blocks essential for performance
 
 ## Question Opportunities by Category
 
 ### Precision
-- "What is the BacDive ID for Thermotoga maritima?" → 17060
-- "What is the DSM strain number for Thermotoga maritima?" → DSM 3109
-- "What is the BacDive ID for Pyrococcus kukulkanii?" → 132578
+- ✅ "How many Bacillus strains are in BacDive?"
+- ✅ "What is the most common Gram stain result in BacDive?"
+- ✅ "How many 16S sequences are from ENA?"
 
-### Completeness
-- "How many bacterial strains are in BacDive?" → 97,334
-- "How many archaeal strains are in BacDive?" → 1,049
-- "How many type strains are in BacDive?" → 20,060
-- "How many strains in BacDive can grow at temperatures ≥70°C?" → 360
+### Completeness  
+- ✅ "How many strains have Gram stain data?"
+- ✅ "How many strains have DSMZ culture collection numbers?"
+- ✅ "What percentage of strains have 16S sequence data?"
 
 ### Integration
-- "What are the culture collection numbers for Thermotoga maritima in BacDive?"
-- "Link BacDive strain to its MediaDive culture medium recipe"
-- "What is the NCBI Taxonomy ID for a specific BacDive strain?"
+- ✅ "Find Bacillus strains with MediaDive growth conditions via BacDiveID"
+- ✅ "Link Mycobacterium strains to MONDO tuberculosis diseases via keyword"
+- ✅ "Convert Escherichia coli TaxIDs to NCBI Taxonomy URIs"
 
 ### Currency
-- "What are the most recently added strains to BacDive?" (requires date data if available)
-- Current growth conditions for specific organisms
+- ⚠️ Limited - database focuses on stable phenotypic data, not time-series
 
 ### Specificity
-- "What is the optimal growth temperature for Pyrolobus fumarii?" → 103°C
-- "What is the oxygen tolerance for Methanococcus species?" → strict anaerobes
-- "Which bacteria in BacDive grow at temperatures above 100°C?" → Pyrococcus kukulkanii, Pyrolobus fumarii, Aeropyrum pernix
+- ✅ "How many thermophilic strains are in BacDive?"
+- ✅ "Find anaerobic Gram-positive strains"
+- ✅ "Which strains are designated as type strains?"
 
 ### Structured Query
-- "Find all Gram-negative thermophilic bacteria with catalase activity"
-- "List Streptomyces strains with beta-galactosidase activity"
-- "Which archaea are recorded as strict anaerobes in BacDive?"
+- ✅ "Find motile Gram-negative bacteria with 16S sequences"
+- ✅ "Find Bacillus strains with temperature and pH ranges via MediaDive"
+- ✅ "Which genera have gelatinase enzyme activity?"
 
 ## Notes
 
-### Data Coverage
-- Phenotype coverage varies significantly (~40% Gram stain, ~35% 16S, ~55% enzyme)
-- Type strains have better phenotypic characterization
-- Streptomyces over-represented due to industrial/antibiotic interest
+**Query optimization critical:**
+- Always use FROM clause for single-database queries
+- Use GRAPH clauses (not FROM) for cross-database queries
+- Pre-filter within GRAPH blocks before joins (10-100x speedup)
+- bif:contains as triple pattern with option (score ?sc)
+- Never use ?score as variable name (reserved keyword)
+- Always use OPTIONAL for phenotypes (~40% coverage)
 
-### Best Practices
-- Always specify `FROM <http://rdfportal.org/dataset/bacdive>` graph clause
-- Use `OPTIONAL` for all phenotype properties
-- Use `bif:contains` for keyword search with `option (score ?sc)` for ranking
-- Don't use `?score` as variable name (reserved keyword in Virtuoso)
-- Filter by genus/family before complex phenotype joins
+**MediaDive integration methods:**
+- Primary: BacDiveID integer matching for growth conditions (34% coverage, faster)
+- Alternative: MediaLink URI conversion for media recipes (20% coverage)
+- BacDiveID range limitation: Only 1-170,041 in MediaDive
+- Test with Bacillus genus (lower IDs) not Escherichia (high IDs >130,000)
 
-### Limitations
-- Not all strains have complete phenotypic data
-- MediaDive links available only for ~20% of strains
-- 16S sequences available for ~35% of strains
+**Cross-database quirks:**
+- Taxonomy uses DDBJ namespace (tax:) not UniProt (up:)
+- URI conversion required: TaxID → http://identifiers.org/taxonomy/{ID}
+- MONDO integration keyword-based only (no direct RDF links)
+
+**Performance characteristics:**
+- Single-database: <2s for simple queries, 5-10s for multi-phenotype joins
+- Cross-database: Tier 1 (1-3s) for all optimized methods

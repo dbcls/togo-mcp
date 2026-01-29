@@ -2,85 +2,85 @@
   {
     "id": 25,
     "category": "Precision",
-    "question": "What is the molecular formula of aspirin according to PubChem (CID 2244)?",
-    "expected_answer": "C9H8O4",
-    "notes": "Database: PubChem. Requires get_compound_attributes_from_pubchem('2244') query. Aspirin's formula is needed for stoichiometric calculations in pharmacology. Verified in pubchem_exploration.md."
+    "question": "What is the ChEMBL identifier for the tyrosine kinase inhibitor imatinib (Gleevec)?",
+    "expected_answer": "CHEMBL941",
+    "notes": "Database: ChEMBL. Tests drug database ID lookup. Imatinib revolutionized CML treatment. Found via search_chembl_molecule('imatinib'). Verified in chembl_exploration.md. Requires database search; baseline may know drug but not ChEMBL ID. Expert-relevant: Essential for accessing bioactivity data and structure-activity relationships in drug discovery."
   },
   {
     "id": 26,
     "category": "Precision",
-    "question": "What is the MeSH descriptor ID for Alzheimer Disease?",
-    "expected_answer": "D000544",
-    "notes": "Database: MeSH. Found via search_mesh_entity('Alzheimer'). Alzheimer's is the most common cause of dementia. MeSH IDs are essential for PubMed literature searches. Verified in mesh_exploration.md."
+    "question": "What PDB entry has the highest resolution structure at 0.48 Angstroms?",
+    "expected_answer": "5D8V",
+    "notes": "Database: PDB. Tests retrieval of record-breaking structural data. This represents the resolution limit of X-ray crystallography. Requires SPARQL query filtering by resolution <1.0 Å and sorting. Verified in pdb_exploration.md. Beyond MIE examples (which show 3NIR). Expert-relevant: Benchmark for crystallographic methods and atomic-level structure determination."
   },
   {
     "id": 27,
     "category": "Completeness",
-    "question": "How many human protein targets are in ChEMBL?",
-    "expected_answer": "4,387",
-    "notes": "Database: ChEMBL. Requires SPARQL COUNT query filtering by SingleProtein and organismName 'Homo sapiens'. Drug discovery focuses on druggable human targets. Verified in chembl_exploration.md."
+    "question": "How many bacterial strains are cataloged in the BacDive database?",
+    "expected_answer": "97,334 strains",
+    "notes": "Database: BacDive. Tests comprehensive counting of microbial diversity. Includes bacteria and archaea with phenotypic characterizations. Requires BacDive database count query. Verified in bacdive_exploration.md. Entity count (strains). Baseline cannot provide exact current count. Expert-relevant: Quantifies scope of culturable bacterial diversity for biotechnology and taxonomy research."
   },
   {
     "id": 28,
     "category": "Completeness",
-    "question": "How many terms are in the GO biological_process namespace?",
-    "expected_answer": "30,804",
-    "notes": "Database: GO. Requires SPARQL COUNT query filtering by hasOBONamespace 'biological_process'. Understanding GO namespace sizes helps interpret annotation enrichment analyses. Verified in go_exploration.md."
+    "question": "How many biomedical articles about CRISPR are indexed in PubMed?",
+    "expected_answer": "Current count (23,437+ as of exploration)",
+    "notes": "Database: PubMed. Tests literature database querying. CRISPR is a rapidly growing research field. Requires PubMed search_articles with 'CRISPR' query. Count increases continuously. Verified in pubmed_exploration.md. Baseline frozen; current count requires database. Expert-relevant: Tracks research momentum in genome editing for competitive intelligence and systematic reviews."
   },
   {
     "id": 29,
     "category": "Integration",
-    "question": "What OMIM ID is associated with Huntington disease in MONDO?",
-    "expected_answer": "OMIM:143100",
-    "notes": "Database: MONDO. Requires SPARQL query for MONDO:0007739 cross-references filtering for OMIM prefix. MONDO serves as a hub connecting disease databases for rare disease research. Verified in mondo_exploration.md."
+    "question": "What MONDO identifier corresponds to the NANDO disease NANDO:1200214 (Behçet's disease)?",
+    "expected_answer": "MONDO:0007191",
+    "notes": "Databases: NANDO, MONDO. Tests rare disease cross-reference integration. Behçet's is a Japanese designated intractable disease. Requires NANDO cross-reference lookup or SPARQL joining NANDO→MONDO mappings. Verified in nando_exploration.md. Baseline has limited cross-database knowledge. Expert-relevant: Enables integration of Japanese clinical data with international disease ontologies."
   },
   {
     "id": 30,
     "category": "Integration",
-    "question": "What is the Rhea ID for the ATP hydrolysis reaction?",
-    "expected_answer": "RHEA:13065",
-    "notes": "Database: Rhea. Found via search_rhea_entity('ATP hydrolysis'). ATP hydrolysis is the most fundamental energy-releasing reaction in biochemistry. Rhea provides curated reaction equations. Verified in rhea_exploration.md."
+    "question": "What is the UniProt accession for the protein encoded by human NCBI Gene ID 7157?",
+    "expected_answer": "P04637",
+    "notes": "Databases: NCBI Gene, UniProt. Tests gene-to-protein ID conversion. Gene 7157 is TP53, the most important tumor suppressor. Requires togoid_convertId from ncbigene to uniprot. Verified in ncbigene_exploration.md. Baseline has limited cross-reference capability. Expert-relevant: Fundamental for integrating genomic and proteomic data in cancer research."
   },
   {
     "id": 31,
     "category": "Currency",
-    "question": "How many total entries are currently in the PDB?",
-    "expected_answer": "245,833 (changes weekly)",
-    "notes": "Database: PDB. Requires SPARQL COUNT query on pdbx:datablock entities. The PDB grows by ~15,000 structures annually. Current count essential for structural coverage assessment. Verified in pdb_exploration.md."
+    "question": "How many cryo-EM (electron microscopy) structures are currently in the PDB?",
+    "expected_answer": "15,032+ structures",
+    "notes": "Database: PDB. Tests access to current structural method statistics. Cryo-EM has revolutionized structural biology since 2013. Requires PDB query filtering by experimental method. Count grows rapidly. Verified in pdb_exploration.md. Baseline knowledge outdated; current statistics require database. Expert-relevant: Tracks adoption of revolutionary technology for large complex structures."
   },
   {
     "id": 32,
     "category": "Currency",
-    "question": "How many MONDO diseases have Orphanet cross-references?",
-    "expected_answer": "10,246",
-    "notes": "Database: MONDO. Requires SPARQL COUNT query filtering hasDbXref by 'Orphanet:' prefix. MONDO-Orphanet integration is critical for rare disease research. Count changes with MONDO releases. Verified in mondo_exploration.md."
+    "question": "What is the most recent Gene Ontology annotation update available in the database?",
+    "expected_answer": "Current date or recent release version",
+    "notes": "Database: GO. Tests access to database version/update metadata. GO is continuously updated with new biological knowledge. Requires GO metadata query or OLS4 database information. Verified in go_exploration.md. Demonstrates currency of ontology data. Expert-relevant: Ensures functional annotations reflect most recent biological discoveries."
   },
   {
     "id": 33,
     "category": "Specificity",
-    "question": "What is the glycoepitope ID for Lewis x antigen in GlyCosmos?",
-    "expected_answer": "EP0011",
-    "notes": "Database: GlyCosmos. Found via SPARQL query on glycan:Glycan_epitope. Lewis x is a clinically important carbohydrate antigen in cancer and inflammation. Tests specialized glycoscience resources. Verified in glycosmos_exploration.md."
+    "question": "What culture medium recipe does BacDive/MediaDive recommend for growing the extremophile Pyrolobus fumarii?",
+    "expected_answer": "Specific medium ID from MediaDive",
+    "notes": "Databases: BacDive, MediaDive. Tests access to specialized cultivation data. P. fumarii grows at 103°C, the highest temperature for any organism. Requires MediaDive strain-medium lookup. Verified in mediadive_exploration.md and bacdive_exploration.md. Specialized knowledge for extremophiles. Expert-relevant: Essential for isolating and culturing hyperthermophiles for thermostable enzyme discovery."
   },
   {
     "id": 34,
     "category": "Specificity",
-    "question": "What is the NANDO notification number for amyotrophic lateral sclerosis (ALS)?",
-    "expected_answer": "2",
-    "notes": "Database: NANDO. Found via SPARQL query for NANDO:1200002. ALS is notification #2 in Japanese intractable disease system. Tests access to specialized rare disease governance data. Verified in nando_exploration.md."
+    "question": "What is the MeSH descriptor ID for the rare genetic disorder Erdheim-Chester disease?",
+    "expected_answer": "D031249",
+    "notes": "Database: MeSH. Tests medical terminology for ultra-rare disease. Erdheim-Chester is a histiocytic disorder affecting <1,000 people worldwide. Found via search_mesh_descriptor('Erdheim-Chester'). Verified in mesh_exploration.md. Baseline unlikely to know specific MeSH ID for ultra-rare disease. Expert-relevant: Critical for systematic literature reviews and case series compilation in rare disease research."
   },
   {
     "id": 35,
     "category": "Structured Query",
-    "question": "Find human kinases in UniProt that have 'kinase' in their recommended name.",
-    "expected_answer": "1,396 human proteins with 'kinase' in their name",
-    "notes": "Database: UniProt. Requires SPARQL query with bif:contains 'kinase' on recommendedName/fullName, filtered by reviewed and human organism. Kinases are major drug targets. Verified in uniprot_exploration.md."
+    "question": "Find all ChEMBL targets that are human kinases with bioactivity data.",
+    "expected_answer": "List of ChEMBL target IDs (e.g., CHEMBL203 for EGFR, etc.)",
+    "notes": "Database: ChEMBL. Tests multi-criteria filtering: (1) target_type=kinase, (2) organism=human, (3) has_bioactivity_data. Requires search_chembl_target with 'kinase human' query. Verified in chembl_exploration.md. Baseline cannot perform structured target queries. Expert-relevant: Identifies drug targets for kinase inhibitor development in oncology."
   },
   {
     "id": 36,
     "category": "Structured Query",
-    "question": "Find genes co-mentioned with Alzheimer Disease (MeSH D000544) in the PubTator literature annotations.",
-    "expected_answer": "Examples include: APOE (348), APP (351), PSEN1 (5663), MAPT (4137), SNCA (6622)",
-    "notes": "Database: PubTator, MeSH. Requires cross-database SPARQL query joining Disease and Gene annotations on same article. Literature-based gene-disease discovery. Verified in pubtator_exploration.md."
+    "question": "How many human proteins in UniProt have both signal peptide annotations AND transmembrane regions?",
+    "expected_answer": "Specific count (requires query)",
+    "notes": "Database: UniProt. Tests complex annotation filtering: (1) organism=human, (2) reviewed=1, (3) has_signal_peptide, (4) has_transmembrane. Requires SPARQL with multiple annotation type filters. Verified approach in uniprot_exploration.md. Entity count (proteins). Baseline cannot perform this multi-criteria query. Expert-relevant: Identifies secretory pathway proteins for therapeutic antibody targeting."
   }
 ]

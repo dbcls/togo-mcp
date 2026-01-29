@@ -1,176 +1,168 @@
 question_id,date,category,question_text,baseline_success,baseline_actually_answered,baseline_has_expected,baseline_confidence,baseline_text,baseline_error,baseline_time,baseline_input_tokens,baseline_output_tokens,togomcp_success,togomcp_has_expected,togomcp_confidence,togomcp_text,togomcp_error,togomcp_time,togomcp_input_tokens,togomcp_output_tokens,togomcp_cache_creation_input_tokens,togomcp_cache_read_input_tokens,tools_used,tool_details,value_add,expected_answer,notes
-1,2026-01-22,Precision,What is the UniProt accession ID for SpCas9 (CRISPR-associated endonuclease Cas9) from Streptococcus pyogenes M1 GAS?,True,True,True,1.0,"The UniProt accession ID for SpCas9 (CRISPR-associated protein 9/Cas9) from *Streptococcus pyogenes* M1 GAS is **Q99ZW2**.
+1,2026-01-29,Precision,What is the UniProt accession ID for the CRISPR-associated endonuclease Cas9 from Streptococcus pyogenes serotype M1?,True,True,True,1.0,"The UniProt accession ID for the CRISPR-associated endonuclease Cas9 from Streptococcus pyogenes serotype M1 is **Q99ZW2**.
 
-This is the widely studied Cas9 endonuclease that has become the workhorse of CRISPR genome editing technology. It comes from the *Streptococcus pyogenes* serotype M1 strain, specifically strain SF370 (also known as M1 GAS).",,4.249328136444092,84,124,True,True,1.0,"Perfect! The UniProt accession ID for SpCas9 (CRISPR-associated endonuclease Cas9) from **Streptococcus pyogenes serotype M1** is **Q99ZW2**.
+This is the widely studied Cas9 protein (also known as SpCas9) that has become the most commonly used variant in CRISPR-Cas9 gene editing applications. It comes from the Streptococcus pyogenes strain MGAS5005 (serotype M1).",,4.139670133590698,78,118,True,True,1.0,"The UniProt accession ID for the CRISPR-associated endonuclease Cas9 from Streptococcus pyogenes serotype M1 is **Q99ZW2**.
 
-This entry is specifically annotated as:
-- **Protein name**: CRISPR-associated endonuclease Cas9/Csn1 (EC 3.1.-.-) 
-- **Common names**: SpCas9, SpyCas9
-- **Organism**: Streptococcus pyogenes serotype M1
+This protein is also known as:
+- CRISPR-associated endonuclease Cas9/Csn1 
+- SpCas9 or SpyCas9 (common abbreviations)
+- EC 3.1.-.- (enzyme classification)
 
-This is the widely used Cas9 protein from the M1 GAS (Group A Streptococcus) strain that has become the standard tool for CRISPR-Cas9 genome editing applications.",,21.382292985916138,15,433,27375,53214,"mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity","[{""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""CRISPR-associated endonuclease Cas9 Streptococcus pyogenes M1 GAS"", ""limit"": 10}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""Cas9 Streptococcus pyogenes"", ""limit"": 10}}]",VALUABLE,Q99ZW2,Database: UniProt. Tests exact protein ID lookup for well-characterized CRISPR enzyme. Verified via search_uniprot_entity. This SpCas9 is the most commonly used Cas9 variant in genome editing applications.
-2,2026-01-22,Precision,What is the ChEMBL compound ID for aspirin?,True,True,True,1.0,"The ChEMBL compound ID for aspirin is **CHEMBL25**.
+This is the well-known Cas9 enzyme that has become widely used in genome editing applications.",,12.717868089675903,9,263,26895,26520,mcp__togomcp__search_uniprot_entity,"[{""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""Cas9 Streptococcus pyogenes serotype M1"", ""limit"": 10}}]",VALUABLE,Q99ZW2,"Database: UniProt. Tests precise protein identification. SpCas9 is the most widely used Cas9 variant in genome editing. Found via search_uniprot_entity('SpCas9 Streptococcus pyogenes'). Verified in uniprot_exploration.md. Requires actual search, not in MIE examples. Expert-relevant: Essential for CRISPR research and gene therapy applications."
+2,2026-01-29,Precision,What is the MONDO disease ontology identifier for Fabry disease?,True,True,True,1.0,"The MONDO (Monarch Disease Ontology) identifier for Fabry disease is **MONDO:0010526**.
 
-Aspirin (acetylsalicylic acid) is one of the most well-known compounds in the ChEMBL database and has this relatively low numerical identifier, reflecting its importance as a widely studied drug.",,3.2846519947052,51,69,True,True,1.0,"The ChEMBL compound ID for aspirin is **CHEMBL25**.
+Fabry disease is an X-linked lysosomal storage disorder caused by deficiency of the enzyme alpha-galactosidase A, leading to accumulation of globotriaosylceramide in various tissues.",,4.144452810287476,52,79,True,True,1.0,"The MONDO disease ontology identifier for Fabry disease is **MONDO:0010526**.
 
-This is the primary ChEMBL entry for aspirin (acetylsalicylic acid), which had the highest relevance score (36) in the search results. The other results shown are aspirin derivatives or combination compounds.",,15.160861015319824,9,170,26735,26489,mcp__togomcp__search_chembl_molecule,"[{""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""aspirin"", ""limit"": 5}}]",VALUABLE,CHEMBL25,Database: ChEMBL. Tests basic drug compound identification. Verified via search_chembl_molecule('aspirin'). Aspirin is one of the most well-known drugs with extensive bioactivity data.
-3,2026-01-22,Completeness,How many descendant terms does the Gene Ontology term 'autophagy' (GO:0006914) have?,True,False,True,1.0,"I don't have access to the current Gene Ontology database to give you an exact count of descendant terms for GO:0006914 (autophagy). The number of descendant terms in the Gene Ontology changes over time as the ontology is continuously updated and refined.
+According to the MONDO ontology, Fabry disease (FD) is defined as ""a progressive, inherited, multisystemic lysosomal storage disease characterized by specific neurological, cutaneous, renal, cardiovascular, cochleo-vestibular and cerebrovascular manifestations."" It is classified as a sphingolipidosis and inherited lipid metabolism disorder.",,15.172627925872803,8,216,43194,26494,mcp__ols__searchClasses,"[{""name"": ""mcp__ols__searchClasses"", ""input"": {""query"": ""Fabry disease"", ""ontologyId"": ""mondo""}}]",VALUABLE,MONDO:0010526,Database: MONDO. Tests rare disease identification in ontology databases. Fabry disease is a lysosomal storage disorder (alpha-galactosidase A deficiency). Found via OLS4 searchClasses. Verified in mondo_exploration.md. Requires database lookup; baseline cannot provide specific ontology IDs. Expert-relevant: Critical for orphan drug development and clinical genetics research.
+3,2026-01-29,Completeness,How many reviewed (Swiss-Prot) human proteins are annotated in UniProt?,True,False,True,1.0,"I don't have access to real-time UniProt database statistics, so I cannot provide the current exact number of reviewed (Swiss-Prot) human proteins.
 
-To get the current accurate count of descendant terms for GO:0006914, I would recommend:
+However, based on my training knowledge (with a cutoff in April 2024), the number of reviewed human proteins in UniProt/Swiss-Prot was approximately **20,000-20,400** entries. This number grows slowly over time as new proteins are manually reviewed and added to Swiss-Prot.
 
-1. Visiting the Gene Ontology website (geneontology.org)
-2. Using the AmiGO browser or QuickGO to search for GO:0006914
-3. Looking at the term's page which typically shows the number of child terms and all descendants
+For the most current and accurate count, I'd recommend:
+1. Visiting the UniProt website (uniprot.org)
+2. Using the query: `reviewed:true AND organism_id:9606` (where 9606 is the taxonomy ID for Homo sapiens)
+3. Checking the UniProt release notes, which document the exact numbers for each release
 
-The autophagy term is a fairly broad biological process term, so it likely has numerous descendants covering various types of autophagy (macroautophagy, microautophagy, chaperone-mediated autophagy, etc.) and their regulatory processes, but I cannot provide you with a specific number without accessing the current database.",,7.118369102478027,64,220,True,True,1.0,"Perfect! Based on the results from the Ontology Lookup Service (OLS), the Gene Ontology term **'autophagy' (GO:0006914)** has **25 descendant terms**.
+The Swiss-Prot portion of UniProt grows much more slowly than TrEMBL (unreviewed entries) because each entry undergoes manual curation and review.",,6.362957715988159,57,232,True,True,1.0,"According to the UniProt database, there are **20,435 reviewed (Swiss-Prot) human proteins** currently annotated.
 
-The response indicates:
-- **Total elements**: 25
-- **Total pages**: 2 (with 20 items on page 1 and 5 items on page 2)
+Swiss-Prot is the manually annotated and reviewed section of UniProt, containing high-quality, non-redundant protein sequences with detailed functional annotation. These entries undergo expert curation and are considered the gold standard for protein annotation quality.",,13.33591604232788,9,290,567,52658,mcp__togomcp__run_sparql,"[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""\nPREFIX up: <http://purl.uniprot.org/core/>\nPREFIX taxon: <http://purl.uniprot.org/taxonomy/>\n\nSELECT (COUNT(DISTINCT ?protein) AS ?count)\nWHERE {\n  ?protein a up:Protein ;\n           up:organism taxon:9606 ;\n           up:reviewed true .\n}\n""}}]",CRITICAL,"40,209 reviewed human proteins",Database: UniProt. Tests ability to count high-quality curated entries. Requires COUNT query with reviewed=1 and organism filters. Verified in uniprot_exploration.md via SPARQL COUNT query. Entity count (proteins). Baseline cannot provide exact current counts. Expert-relevant: Establishes scope of expertly curated human proteome for systematic analyses.
+4,2026-01-29,Completeness,How many descendant terms does the Gene Ontology term 'autophagy' (GO:0006914) have?,True,False,True,1.0,"I don't have access to real-time Gene Ontology database information, so I cannot provide you with the current exact number of descendant terms for GO:0006914 (autophagy).
 
-These descendants include various specialized types of autophagy such as:
-- Major subtypes: macroautophagy, microautophagy, chaperone-mediated autophagy
-- Organelle-specific: mitophagy (mitochondria), pexophagy (peroxisomes), reticulophagy (ER), nucleophagy (nucleus)
-- Target-specific: lipophagy (lipid droplets), glycophagy (glycogen), ribophagy (ribosomes), aggrephagy (protein aggregates), xenophagy (pathogens)
-- And other specialized forms",,20.387102842330933,12,510,17233,92448,"mcp__ols__getDescendants, mcp__ols__getDescendants","[{""name"": ""mcp__ols__getDescendants"", ""input"": {""ontologyId"": ""go"", ""classIri"": ""http://purl.obolibrary.org/obo/GO_0006914""}}, {""name"": ""mcp__ols__getDescendants"", ""input"": {""ontologyId"": ""go"", ""classIri"": ""http://purl.obolibrary.org/obo/GO_0006914"", ""pageNum"": 1}}]",CRITICAL,25 descendant terms,"Database: GO (Gene Ontology). Tests ability to navigate ontology hierarchies and count complete sets. Verified using OLS4:getDescendants. Includes macroautophagy, microautophagy, mitophagy, etc."
-4,2026-01-22,Completeness,How many single nucleotide variants (SNVs) are recorded in ClinVar?,True,False,True,1.0,"I don't have access to real-time data about the current number of single nucleotide variants (SNVs) in ClinVar, as this database is continuously updated.
+The number of descendant terms in the Gene Ontology changes over time as the ontology is regularly updated with new terms, refinements, and reorganizations. To get the current accurate count of descendant terms for autophagy (GO:0006914), you would need to:
 
-However, I can tell you that ClinVar contains **millions** of variant records, with SNVs representing the largest category of variants in the database. The last time I had specific information, ClinVar contained several million total variant submissions, with SNVs comprising the majority of these entries.
+1. Visit the Gene Ontology website (geneontology.org)
+2. Use the AmiGO browser or QuickGO
+3. Search for GO:0006914
+4. Check the term details which typically show the number of child and descendant terms
 
-For the most current and accurate count, you would need to:
-1. Visit the ClinVar website directly (ncbi.nlm.nih.gov/clinvar)
-2. Check their statistics page
-3. Or download their latest data release and filter for SNVs (single nucleotide variants)
+As of my training data, autophagy is a well-developed branch of GO with numerous child terms covering different types of autophagy (macroautophagy, microautophagy, chaperone-mediated autophagy, etc.) and related processes, but I cannot give you a specific number without access to the current database.",,5.456760883331299,64,240,True,True,1.0,"The Gene Ontology term 'autophagy' (GO:0006914) has **25 descendant terms**.
 
-The number grows regularly as new submissions are added from clinical laboratories, research groups, and expert panels worldwide.",,5.693554162979126,56,192,True,True,1.0,"Based on the query of the ClinVar RDF database, there are **3,236,823 single nucleotide variants (SNVs)** currently recorded in ClinVar.
+From the results, I can see that these descendants include various types of autophagy processes, such as:
+- **Macroautophagy** (GO:0016236) - with multiple subtypes like mitophagy, pexophagy, xenophagy, lipophagy, glycophagy, aggrephagy, etc.
+- **Microautophagy** (GO:0016237) - including micropexophagy, micromitophagy, microlipophagy, and others
+- **Chaperone-mediated autophagy** (GO:0061684)
+- **Organelle-specific autophagy** such as autophagy of mitochondrion and peroxisome
+- Other specialized types like crinophagy, nucleophagy, reticulophagy, and lysophagy
 
-This count represents only the ""current"" records (excluding deprecated entries) with the variation type classified as ""single nucleotide variant"". This makes SNVs by far the most common type of variant in ClinVar, which aligns with the fact that SNVs are the most prevalent form of genetic variation in the human genome.",,17.333138942718506,15,404,6825,85410,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""clinvar""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\n\nSELECT (COUNT(?variant) as ?count)\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?variant a cvo:VariationArchiveType ;\n           cvo:variation_type \""single nucleotide variant\"" ;\n           cvo:record_status \""current\"" .\n}""}}]",CRITICAL,"3,236,823 SNVs",Database: ClinVar. Tests comprehensive variant counting. Verified via SPARQL query filtering by cvo:variation_type 'single nucleotide variant' and cvo:record_status 'current'. SNVs comprise ~90% of all ClinVar variants.
-5,2026-01-22,Integration,What is the NCBI Gene ID corresponding to UniProt protein P04637?,True,True,True,1.0,"The NCBI Gene ID corresponding to UniProt protein P04637 is **7157**.
+The query returned results paginated across 2 pages (showing 20 items per page initially), with a total of 25 descendant terms.",,14.598973989486694,8,392,13636,52665,mcp__ols__getDescendants,"[{""name"": ""mcp__ols__getDescendants"", ""input"": {""ontologyId"": ""go"", ""classIri"": ""http://purl.obolibrary.org/obo/GO_0006914""}}]",CRITICAL,25 descendant terms,"Database: GO. Tests ontology hierarchy navigation and counting. Requires OLS4 getDescendants query. Includes all subtypes like macroautophagy, microautophagy, etc. Verified in go_exploration.md. Entity count (GO terms). Requires database query, not documented in MIE. Expert-relevant: Essential for understanding the scope of autophagy-related processes in cell biology research."
+5,2026-01-29,Integration,What is the NCBI Gene ID corresponding to UniProt accession P04637?,True,True,True,1.0,"The NCBI Gene ID corresponding to UniProt accession P04637 is **7157**.
 
-UniProt ID P04637 refers to the tumor protein p53 (TP53) in humans, which is one of the most well-studied proteins due to its critical role as a tumor suppressor. The gene encoding this protein is TP53, and its NCBI Gene ID is 7157.",,2.6090598106384277,55,92,True,True,0.5,"The NCBI Gene ID corresponding to UniProt protein **P04637** is **7157**.
+This UniProt accession (P04637) corresponds to the human TP53 gene, which encodes the tumor protein p53, a crucial tumor suppressor protein involved in cell cycle regulation, DNA repair, and apoptosis.",,2.8303542137145996,56,76,True,True,1.0,"The NCBI Gene ID corresponding to UniProt accession **P04637** is **7157**.
 
-This UniProt entry P04637 corresponds to the TP53 gene (tumor protein p53), which is one of the most well-studied genes in human biology, particularly in cancer research.",,13.880098104476929,8,189,476,52648,mcp__togomcp__togoid_convertId,"[{""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P04637"", ""route"": ""uniprot,ncbigene""}}]",VALUABLE,7157 (TP53),"Databases: UniProt, NCBI Gene. Tests cross-database ID conversion. P04637 is human tumor suppressor p53. Verified via togoid_convertId from uniprot to ncbigene."
-6,2026-01-22,Integration,What is the Ensembl gene ID cross-referenced to NCBI Gene ID 672 (BRCA1)?,True,True,True,1.0,"The Ensembl gene ID cross-referenced to NCBI Gene ID 672 (BRCA1) is **ENSG00000012048**.
+This UniProt entry represents the human TP53 (tumor protein p53) gene, which is one of the most well-studied tumor suppressor genes in cancer research.",,11.58378791809082,8,186,478,52657,mcp__togomcp__togoid_convertId,"[{""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P04637"", ""route"": ""uniprot,ncbigene""}}]",VALUABLE,7157,"Databases: UniProt, NCBI Gene. Tests cross-database ID conversion. P04637 is TP53 (tumor protein p53), one of the most important tumor suppressors. Requires togoid_convertId or cross-reference lookup. Verified in uniprot_exploration.md. Requires integration tools; baseline has limited cross-reference knowledge. Expert-relevant: Fundamental for integrating protein data with genomic and clinical information in cancer research."
+6,2026-01-29,Integration,What is the ChEBI identifier for the immunosuppressive drug sirolimus (rapamycin)?,True,True,True,1.0,"The ChEBI identifier for sirolimus (rapamycin) is **CHEBI:9168**.
 
-This is the Ensembl identifier for the BRCA1 gene (Breast Cancer 1, DNA Repair Associated) in humans, which is located on chromosome 17.",,2.9767701625823975,64,78,True,True,1.0,"The Ensembl gene ID cross-referenced to NCBI Gene ID 672 (BRCA1) is **ENSG00000012048**.
+Sirolimus is indeed an immunosuppressive drug that is commonly used to prevent organ transplant rejection and has also found applications in other areas such as drug-eluting stents and treatment of certain conditions.",,2.2874841690063477,60,72,True,True,1.0,"Perfect! The ChEBI identifier for sirolimus (rapamycin) is **CHEBI:9168**.
 
-This is the primary Ensembl identifier for the human BRCA1 gene, which encodes the BRCA1 DNA repair associated protein.",,16.210576057434082,8,204,501,52657,mcp__togomcp__togoid_convertId,"[{""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""672"", ""route"": ""ncbigene,ensembl_gene""}}]",VALUABLE,ENSG00000012048,"Databases: NCBI Gene, Ensembl. Tests cross-database linking. BRCA1 is the breast cancer susceptibility gene. Verified via insdc:dblink property in NCBI Gene SPARQL."
-7,2026-01-22,Currency,How many protein structures related to CRISPR Cas9 are currently in the PDB?,True,False,False,0.2,"I don't have access to real-time data about the current contents of the Protein Data Bank (PDB), so I cannot tell you the exact number of CRISPR-Cas9 related structures currently available.
+Both ""sirolimus"" and ""rapamycin"" map to the same ChEBI identifier, which makes sense as they are synonymous names for the same immunosuppressive drug. The full URI is `http://purl.obolibrary.org/obo/CHEBI_9168`, which corresponds to the CURIE format **CHEBI:9168**.",,24.737875938415527,22,401,30116,71310,"mcp__pubdictionaries__find_ids, mcp__pubdictionaries__list_dictionaries, mcp__pubdictionaries__find_ids","[{""name"": ""mcp__pubdictionaries__find_ids"", ""input"": {""labels"": ""sirolimus, rapamycin"", ""dictionary"": ""ChEBI""}}, {""name"": ""mcp__pubdictionaries__list_dictionaries"", ""input"": {}}, {""name"": ""mcp__pubdictionaries__find_ids"", ""input"": {""labels"": ""sirolimus, rapamycin"", ""dictionary"": ""CHEBI""}}]",VALUABLE,CHEBI:9168,Database: ChEBI. Tests chemical entity identification across naming systems. Sirolimus/rapamycin is a macrolide with immunosuppressive and anti-cancer properties. Found via OLS4 searchClasses in ChEBI ontology. Verified in chebi_exploration.md. Requires database search; baseline may know the drug but not specific ontology ID. Expert-relevant: Essential for drug mechanism studies and repurposing analyses.
+7,2026-01-29,Currency,How many protein structure entries are currently available in the PDB for CRISPR Cas9?,True,False,True,1.0,"I don't have access to real-time data about the current number of protein structure entries in the PDB (Protein Data Bank), as my training knowledge has a cutoff date and the PDB is continuously updated with new structures.
 
-However, I can tell you that as of my training data (which has a cutoff in early 2024), there were hundreds of CRISPR-Cas9 related structures in the PDB, including:
+However, I can tell you that as of my last training data (April 2024), there were **hundreds** of CRISPR-Cas9 related structures in the PDB, including:
 
-- Cas9 nuclease structures from various species (particularly *Streptococcus pyogenes* and *Staphylococcus aureus*)
-- Cas9 in complex with guide RNA
-- Cas9-sgRNA-DNA ternary complexes
-- Various Cas9 variants and engineered forms
-- Cas9 in different conformational states
+- Structures of Cas9 from different species (primarily *Streptococcus pyogenes* and *Staphylococcus aureus*)
+- Cas9 in various functional states (apo, guide RNA-bound, DNA-bound, ternary complexes)
+- Catalytically active and inactive variants
+- Cas9 bound to different inhibitors and other proteins
 
-The number has been steadily growing since the first Cas9 crystal structure was published in 2014, as CRISPR technology remains a very active area of structural biology research.
+The number has been growing rapidly since the first Cas9 structure was deposited around 2014.
 
-To get the current, accurate count, you would need to search the PDB database directly using search terms like ""CRISPR,"" ""Cas9,"" or ""CRISPR-Cas9.""",,6.763600826263428,58,268,True,False,0.2,"Based on my search of the Protein Data Bank (PDB), there are currently **474 protein structures** related to CRISPR Cas9.
+To get the **current exact number**, you would need to:
+1. Visit www.rcsb.org (the PDB website)
+2. Search for ""CRISPR Cas9"" or ""Cas9""
+3. Filter the results as needed
 
-These structures include a wide variety of Cas9 variants and complexes:
+The count likely ranges from 200-400+ entries depending on how broadly you define ""Cas9-related"" structures, but I cannot give you the precise current number without accessing the database directly.",,8.295313119888306,58,309,True,True,1.0,"Based on the search results from the Protein Data Bank (PDB), there are currently **475 protein structure entries** available for CRISPR Cas9.
 
+These structures include a wide variety of Cas9 systems and states:
 - **SpCas9** (Streptococcus pyogenes Cas9) - the most commonly used variant
-- **SpRY-Cas9** - an engineered variant with expanded PAM recognition
+- **SpRY-Cas9** - an engineered variant with altered PAM specificity
 - **FnCas9** (Francisella novicida Cas9)
 - **SaCas9** (Staphylococcus aureus Cas9)
-- **NmeCas9** (Neisseria meningitidis Cas9)
-- **xCas9** - another engineered variant
+- **St1Cas9** (Streptococcus thermophilus Cas9)
 
-The structures capture Cas9 in various functional states:
-- Alone or bound to guide RNA (gRNA/sgRNA)
-- Complexed with target DNA at different stages of cleavage
-- With different PAM sequences
-- Bound to anti-CRISPR proteins
-- Showing various conformational states (open, closed, kinked)
-- With different R-loop sizes (0-18 base pairs)
+The structures capture various functional states including:
+- Cas9 bound to guide RNA (sgRNA/crRNA-tracrRNA)
+- Cas9-RNA-DNA ternary complexes
+- Different R-loop conformations (RNA-DNA hybrid states)
+- PAM recognition states
+- Catalytic and checkpoint states
+- Complexes with anti-CRISPR proteins (AcrII)
+- Cas9 variants engineered for different PAM sequences
 
-This extensive collection of structures has been crucial for understanding the molecular mechanism of CRISPR-Cas9 gene editing and for engineering improved variants with altered PAM specificities and enhanced precision.",,15.930266857147217,9,447,3620,52651,mcp__togomcp__search_pdb_entity,"[{""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""CRISPR Cas9"", ""limit"": 100}}]",CRITICAL,461 structures (may change over time),Database: PDB. Tests access to current structural database counts. Verified via search_pdb_entity('CRISPR Cas9'). This count increases as new structures are deposited.
-8,2026-01-22,Currency,How many SARS-CoV-2 related pathways are in the Reactome database?,True,False,False,0.4,"I don't have access to real-time data from the Reactome database, so I cannot tell you the exact current number of SARS-CoV-2 related pathways.
+This represents a substantial structural database that has been crucial for understanding the mechanism of CRISPR-Cas9 gene editing and for engineering improved variants.",,15.187358856201172,9,437,3636,52659,mcp__togomcp__search_pdb_entity,"[{""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""CRISPR Cas9"", ""limit"": 100}}]",CRITICAL,461 structures,Database: PDB. Tests access to current structural biology data. Requires search_pdb_entity with 'CRISPR Cas9' query. Number may increase as new structures are deposited. Verified in pdb_exploration.md. Baseline knowledge frozen at training cutoff; current count requires database access. Expert-relevant: Guides structure-based drug design and mechanistic studies of genome editing.
+8,2026-01-29,Currency,How many biomedical articles about mRNA vaccines are indexed in PubMed?,True,False,True,0.6,"I don't have access to real-time PubMed data or the ability to query databases, so I cannot provide you with the current number of biomedical articles about mRNA vaccines indexed in PubMed.
 
-However, I can tell you that Reactome, which is a free, open-source, curated database of pathways and reactions in human biology, did add COVID-19/SARS-CoV-2 related content in response to the pandemic. They created pathways covering various aspects of SARS-CoV-2 infection, including:
+However, I can tell you that:
 
-- Viral entry mechanisms (ACE2 receptor binding, TMPRSS2-mediated entry)
-- Viral replication and transcription
-- Host immune responses
-- Viral protein interactions with host proteins
+1. **The number has grown substantially** since 2020-2021 due to the COVID-19 pandemic and the deployment of mRNA vaccines (like Pfizer-BioNTech and Moderna vaccines).
 
-The exact number of pathways would depend on:
-1. When you're checking (as Reactome is regularly updated)
-2. How granularly pathways are divided
-3. Whether you're counting top-level pathways or including all sub-pathways
+2. **Before COVID-19**, there were relatively few publications on mRNA vaccines, as the technology was still largely experimental.
 
-To get the current accurate number, you would need to directly query the Reactome database (www.reactome.org) or use their API to search for SARS-CoV-2 or COVID-19 related pathways.",,7.963503837585449,59,275,True,True,0.6,"Based on the search results from Reactome, I can see there are **17 SARS-CoV-2 specific pathways** in the database:
+3. **As of my training data** (with knowledge up to early 2024), there were likely thousands of articles on this topic, but the exact current count would require a direct PubMed search.
 
-1. SARS-CoV-2 Infection
-2. Replication of the SARS-CoV-2 genome
-3. Transcription of SARS-CoV-2 sgRNAs
-4. SARS-CoV-2 modulates autophagy
-5. Early SARS-CoV-2 Infection Events
-6. Late SARS-CoV-2 Infection Events
-7. SARS-CoV-2 Genome Replication and Transcription
-8. SARS-CoV-2-host interactions
-9. SARS-CoV-2 modulates host translation machinery
-10. Assembly of the SARS-CoV-2 Replication-Transcription Complex (RTC)
-11. SARS-CoV-2 activates/modulates innate and adaptive immune responses
-12. SARS-CoV-2 targets PDZ proteins in cell-cell junction
-13. SARS-CoV-2 targets host intracellular signalling and regulatory pathways
-14. Maturation of spike protein (SARS-CoV-2)
-15. Attachment and Entry (SARS-CoV-2)
-16. Virion Assembly and Release (SARS-CoV-2)
-17. Translation of Replicase and Assembly of the Replication Transcription Complex (SARS-CoV-2)
+To find the current number yourself, you could:
+- Go to PubMed (pubmed.ncbi.nlm.nih.gov)
+- Search for terms like ""mRNA vaccine"" OR ""messenger RNA vaccine""
+- The search results will show you the total count
 
-The search also returned many SARS-CoV-1 related pathways, general SARS-CoV pathways, and various molecular complexes and reactions. The database contains comprehensive molecular-level detail about SARS-CoV-2 infection mechanisms, including viral replication, host cell interactions, immune responses, and protein maturation processes.",,21.878758192062378,9,557,19740,52652,mcp__togomcp__search_reactome_entity,"[{""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""SARS-CoV-2"", ""rows"": 100}}]",CRITICAL,13 pathways including R-HSA-9694516 (SARS-CoV-2 Infection),"Database: Reactome. Tests access to recently added pathway content (post-2020). Verified via SPARQL query filtering bp:displayName for 'SARS-CoV-2'. Includes infection, replication, host interaction pathways."
-9,2026-01-22,Specificity,What is the MeSH descriptor ID for Erdheim-Chester disease?,True,True,True,1.0,"The MeSH descriptor ID for Erdheim-Chester Disease is **D031249**.
+The number continues to grow as research on mRNA vaccine technology, efficacy, safety, and new applications expands.",,6.903375148773193,55,266,True,False,0.0,"There are **17,521 biomedical articles** about mRNA vaccines indexed in PubMed.
 
-This is a rare form of non-Langerhans cell histiocytosis that was added to MeSH vocabulary to help with indexing and retrieval of literature related to this condition.",,3.1308460235595703,53,64,True,False,0.0,"The MeSH descriptor ID for Erdheim-Chester disease is **T459455**.
+This is a substantial body of literature, reflecting the significant research interest in mRNA vaccine technology, particularly accelerated by COVID-19 mRNA vaccines (Pfizer-BioNTech and Moderna), though research in this area predates the pandemic.",,11.592488050460815,8,161,520,52656,mcp__pubmed__search_articles,"[{""name"": ""mcp__pubmed__search_articles"", ""input"": {""query"": ""mRNA vaccines"", ""max_results"": 1}}]",CRITICAL,Current count (verify at query time),Database: PubMed. Tests access to current literature. mRNA vaccines are a rapidly evolving field post-COVID-19. Requires PubMed search_articles with 'mRNA vaccine' query. Count increases continuously with new publications. Verified in pubmed_exploration.md. Baseline frozen at Jan 2025; current literature requires database. Expert-relevant: Tracks research momentum in vaccine technology and identifies emerging trends.
+9,2026-01-29,Specificity,What is the MeSH descriptor ID for Niemann-Pick disease?,True,True,True,1.0,"The MeSH descriptor ID for Niemann-Pick disease is **D009542**.
 
-The full MeSH URI is: http://id.nlm.nih.gov/mesh/T459455",,12.659046173095703,9,151,26645,26491,mcp__togomcp__search_mesh_entity,"[{""name"": ""mcp__togomcp__search_mesh_entity"", ""input"": {""query"": ""Erdheim-Chester disease"", ""limit"": 10}}]",VALUABLE,D031249,Database: MeSH. Tests retrieval of rare disease terminology. Erdheim-Chester is a rare histiocytic disorder. Verified via search_mesh_entity('Erdheim-Chester') and SPARQL lookup.
-10,2026-01-22,Specificity,What is the NANDO identifier for Parkinson's disease in the Japanese rare disease ontology?,True,False,False,0.0,"I don't have specific information about the NANDO identifier for Parkinson's disease in my training knowledge. 
+This descriptor covers Niemann-Pick diseases as a group of inherited lysosomal storage disorders characterized by sphingomyelin accumulation in various organs.",,2.0248818397521973,53,56,True,True,1.0,"The MeSH descriptor IDs for Niemann-Pick disease are:
 
-NANDO (Nanbyo Disease Ontology) is the Japanese rare disease ontology, but I cannot provide the exact identifier for Parkinson's disease within that system with certainty. To find this information, you would need to consult the official NANDO database or documentation directly.
+1. **D009542** - **Niemann-Pick Diseases** (general term covering all types)
+2. **D052536** - Niemann-Pick Disease, Type A
+3. **D052537** - Niemann-Pick Disease, Type B
+4. **D052556** - Niemann-Pick Disease, Type C
 
-It's worth noting that whether Parkinson's disease is even classified as a rare disease in Japan may depend on the specific definition and classification criteria used, as Parkinson's disease is generally considered relatively common compared to many other neurological conditions.",,4.280595302581787,58,141,True,True,1.0,"Perfect! The NANDO identifier for Parkinson's disease in the Japanese rare disease ontology is **NANDO:1200010**.
+The main umbrella term ""Niemann-Pick Diseases"" has the MeSH ID **D009542**, while the specific subtypes (A, B, and C) have their own distinct descriptor IDs.",,13.373620986938477,9,248,605,52654,mcp__togomcp__search_mesh_descriptor,"[{""name"": ""mcp__togomcp__search_mesh_descriptor"", ""input"": {""query"": ""Niemann-Pick disease"", ""limit"": 10}}]",VALUABLE,D009542,Database: MeSH. Tests retrieval of medical terminology for rare lysosomal storage disorder. Found via search_mesh_descriptor('Niemann-Pick'). Verified in mesh_exploration.md. Requires database search; baseline unlikely to know specific MeSH IDs for rare diseases. Expert-relevant: Essential for systematic literature reviews and clinical trial recruitment in rare disease research.
+10,2026-01-29,Specificity,What is the NANDO identifier for Parkinson's disease as designated in the Japanese intractable disease database?,True,False,False,0.0,"I don't have specific information about the NANDO identifier for Parkinson's disease in the Japanese intractable disease database in my training knowledge.
 
-Additional information:
-- **English label**: Parkinson's disease
-- **Japanese label**: パーキンソン病
-- **Notification number**: 6 (officially designated intractable disease by Japanese government)
-- **Alternative labels**: PD, Parkinson disease
-- **MONDO mapping**: MONDO:0005180
-- **External references**: KEGG Disease database and Japanese government health ministry documents
+NANDO (Nanbyo Disease Ontology) is a database system used in Japan for cataloging intractable/rare diseases (nanbyo), but I cannot provide the specific identifier for Parkinson's disease with certainty without access to the actual database or reference materials that contain this information.
 
-The database also contains related conditions like ""Rapid-onset dystonia-parkinsonism"" (NANDO:1200524) and ""Multiple system atrophy, Parkinsonian type"" (NANDO:1200036).",,51.669734954833984,33,1280,12397,174306,"mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX dcterms: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?disease ?label ?altLabel\nWHERE {\n  ?disease a owl:Class .\n  ?disease rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(STR(?label)), \""parkinson\""))\n  OPTIONAL { ?disease obo:IAO_0000118 ?altLabel }\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\n\nSELECT DISTINCT ?disease ?label ?altLabel\nWHERE {\n  ?disease a owl:Class .\n  FILTER(STRSTARTS(STR(?disease), \""http://nanbyodata.jp/ontology/nando#\""))\n  ?disease rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(STR(?label)), \""parkinson\""))\n  OPTIONAL { ?disease obo:IAO_0000118 ?altLabel }\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?disease ?label\nWHERE {\n  ?disease rdfs:label ?label .\n  FILTER(REGEX(STR(?disease), \""nanbyodata\"", \""i\""))\n  FILTER(CONTAINS(LCASE(STR(?label)), \""parkinson\""))\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT ?disease ?label ?identifier\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           rdfs:label ?label ;\n           dct:identifier ?identifier .\n  ?label bif:contains \""'Parkinson*'\"" option (score ?sc) .\n}\nORDER BY DESC(?sc)\nLIMIT 20\n""}}]",CRITICAL,NANDO:1200010,"Database: NANDO. Tests specialized Japanese rare disease ontology access. Verified via SPARQL query on NANDO graph with English label filter. NANDO provides multilingual support (Japanese, English)."
-11,2026-01-22,Structured Query,How many approved biochemical reactions are in the Rhea database?,True,False,True,1.0,"I don't have access to the current exact number of approved biochemical reactions in the Rhea database, as this number changes over time as the database is continuously updated and curated.
+If you need this specific identifier, I would recommend checking the official NANDO database or the Japanese Ministry of Health, Labour and Welfare's resources on intractable diseases.",,3.774833917617798,61,136,True,True,1.0,"Perfect! I found the information you're looking for.
 
-However, I can tell you that Rhea is a comprehensive resource of expert-curated biochemical reactions maintained by the Swiss Institute of Bioinformatics. As of the last information I was trained on, Rhea contained tens of thousands of biochemical reactions (likely in the range of 10,000-15,000+), but the exact current number would need to be verified from the official Rhea database website or their latest release notes.
+**The NANDO identifier for Parkinson's disease is: NANDO:1200010**
 
-For the most accurate and up-to-date count, I'd recommend checking the Rhea database homepage at https://www.rhea-db.org/ where they typically display current statistics about their collection.",,5.428218126296997,51,182,True,True,1.0,"Excellent! The SPARQL query confirms the exact number.
+Additional details:
+- **Notification Number**: 6 (this is the Japanese government's official designation number for this intractable disease)
+- **English Label**: Parkinson's disease
+- **Japanese Label**: パーキンソン病
 
-## Answer
+The query also found two related conditions:
+- **NANDO:1200524** - Rapid-onset dystonia-parkinsonism (Notification #120)
+- **NANDO:1200036** - Multiple system atrophy, Parkinsonian type (Notification #17)
 
-The Rhea database contains **16,685 approved biochemical reactions** (master reactions with unspecified direction).
+NANDO (Nanbyo Data) is the comprehensive ontology for Japanese intractable (rare) diseases maintained by the Japanese government, containing 2,777 disease classes with multilingual labels and cross-references to international disease ontologies.",,30.67960500717163,21,922,16133,121252,"mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nPREFIX nando: <http://nanbyodata.jp/ontology/nando#>\n\nSELECT DISTINCT ?nando_id ?label ?description\nWHERE {\n  ?disease a nando:NANDO_0000001 ;\n           rdfs:label ?label ;\n           dcterms:identifier ?nando_id .\n  OPTIONAL { ?disease dcterms:description ?description }\n  \n  FILTER(CONTAINS(LCASE(STR(?label)), \""parkinson\""))\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dct: <http://purl.org/dc/terms/>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?disease ?identifier ?label ?notif_num\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?disease a owl:Class ;\n           rdfs:label ?label ;\n           dct:identifier ?identifier .\n  OPTIONAL { ?disease nando:hasNotificationNumber ?notif_num }\n  ?label bif:contains \""'Parkinson*'\"" option (score ?sc) .\n  FILTER(LANG(?label) = \""en\"")\n}\nORDER BY DESC(?sc)\nLIMIT 10\n""}}]",CRITICAL,NANDO:1200010,"Database: NANDO. Tests access to specialized Japanese rare disease database. Parkinson's is designated as an intractable disease in Japan. Requires NANDO database query. Verified in nando_exploration.md. Requires specialized database; not in baseline knowledge. Expert-relevant: Critical for Japanese healthcare policy, clinical trial enrollment, and international rare disease data harmonization."
+11,2026-01-29,Structured Query,How many human kinases are annotated in Swiss-Prot (UniProt reviewed entries)?,True,True,True,1.0,"Based on my training knowledge, there are approximately **500-550 human protein kinases** annotated in Swiss-Prot (UniProt reviewed entries).
 
-Additionally, the database includes:
-- **34,156 directional reactions** (representing left-to-right and right-to-left directions)
-- **17,078 bidirectional reactions** (reversible reactions)
+The human kinome is generally considered to contain around 518-538 protein kinases, depending on the specific classification criteria used. This number comes from comprehensive analyses of the human genome, and these kinases are well-characterized in Swiss-Prot due to their important roles in cell signaling, regulation, and their significance as drug targets.
 
-All approved reactions in Rhea are chemically balanced, atom-balanced, and extensively cross-referenced to other databases including ChEBI (for chemical compounds), UniProt (for enzyme classifications), Gene Ontology, KEGG, MetaCyc, and Reactome.",,37.17247724533081,31,1025,36684,143581,"mcp__togomcp__search_rhea_entity, mcp__togomcp__get_sparql_example, mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__search_rhea_entity"", ""input"": {""query"": """", ""limit"": 1}}, {""name"": ""mcp__togomcp__get_sparql_example"", ""input"": {""dbname"": ""rhea""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT (COUNT(?Reaction) AS ?count)\nWHERE {\n    ?Reaction a rdfs:Class ;\n        rhea:status rhea:Approved ;\n        rhea:equation ?equation .\n}""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""rhea""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT (COUNT(DISTINCT ?reaction) AS ?count)\nWHERE {\n  ?reaction rdfs:subClassOf rhea:Reaction ;\n            rhea:status rhea:Approved .\n}""}}]",CRITICAL,"16,685 approved reactions",Database: Rhea. Tests ability to filter by status and count. Verified via SPARQL with rhea:status rhea:Approved filter. Rhea serves as reference for UniProtKB enzyme annotation.
-12,2026-01-22,Structured Query,How many marketed drugs (clinical development phase 4) are in ChEMBL?,True,False,True,1.0,"I don't have access to the specific current count of phase 4 drugs in ChEMBL from my training data. 
+The exact number can vary slightly depending on:
+- The specific release version of UniProt/Swiss-Prot
+- Whether atypical kinases are included
+- Updates to gene annotations and classifications
 
-To find this information, you would need to query the ChEMBL database directly, typically by:
+The most commonly cited figure for the human kinome is around **518 protein kinases**, but I should note that the precise current count in Swiss-Prot may differ slightly from this canonical number based on the latest curation efforts.",,6.460997104644775,58,203,True,True,1.0,"Based on my query of the UniProt RDF database, there are **698 human kinases** annotated in Swiss-Prot (UniProt reviewed entries).
 
-1. Filtering the `molecule_dictionary` table joined with `drug_mechanism` or similar tables
-2. Looking for entries where `max_phase` = 4 (which indicates marketed drugs that have completed phase 4/post-marketing surveillance)
+This count includes all human proteins (organism: *Homo sapiens*, taxonomy ID: 9606) that:
+- Are manually reviewed and curated (Swiss-Prot quality standard)
+- Have ""kinase"" in their recommended protein name
 
-The number changes over time as ChEMBL is regularly updated with new data. The count would be in the range of several thousand compounds, but I cannot provide you with an exact number without querying the actual database.
+The examples I retrieved include well-known kinases such as:
+- cAMP-dependent protein kinase catalytic subunit alpha (KAPCA_HUMAN)
+- Mitogen-activated protein kinase kinase kinase kinase 1 (M4K1_HUMAN)
+- Testis-specific serine/threonine-protein kinase 4 (TSSK4_HUMAN)
 
-If you need the precise current count, you would need to either:
-- Query ChEMBL directly via their web interface
-- Use their SQL database
-- Access it through their API or Python client
+This represents the comprehensive, expert-curated collection of human kinases in the UniProt Swiss-Prot database, which is considered the gold standard for protein annotation quality.",,27.564463138580322,21,828,12365,127872,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""uniprot""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\n\nSELECT (COUNT(DISTINCT ?protein) as ?count)\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed 1 ;\n           up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n           up:recommendedName ?name .\n  ?name up:fullName ?fullName .\n  ?fullName bif:contains \""'kinase'\""\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\n\nSELECT ?protein ?mnemonic ?fullName\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed 1 ;\n           up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n           up:mnemonic ?mnemonic ;\n           up:recommendedName ?name .\n  ?name up:fullName ?fullName .\n  ?fullName bif:contains \""'kinase'\""\n}\nLIMIT 10""}}]",VALUABLE,698 human kinases,"Database: UniProt. Tests complex filtering with multiple criteria: (1) organism=human, (2) reviewed=1, (3) fullName contains 'kinase'. Requires SPARQL query with bif:contains text search. Verified in uniprot_exploration.md. Entity count (proteins). Baseline cannot perform this specific multi-criteria query. Expert-relevant: Quantifies major drug target class; kinases represent ~30% of current drug development efforts."
+12,2026-01-29,Structured Query,What are the direct parent terms of the Gene Ontology term 'macroautophagy' (GO:0016236)?,True,True,True,0.5,"The direct parent terms of the Gene Ontology term 'macroautophagy' (GO:0016236) are:
 
-I apologize that I cannot give you a more specific answer based solely on my training knowledge.",,7.054491758346558,56,220,True,True,1.0,"Based on the ChEMBL database query, there are **3,678 marketed drugs** (clinical development phase 4) in ChEMBL.
+1. **autophagy** (GO:0006914)
 
-In ChEMBL's classification system, phase 4 represents marketed drugs that have been approved and are in post-marketing surveillance. This includes drugs that have successfully completed clinical trials and received regulatory approval for commercial use.",,19.665351152420044,15,379,7663,86244,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT (COUNT(DISTINCT ?molecule) AS ?count)\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?molecule a cco:SmallMolecule ;\n            cco:highestDevelopmentPhase 4 .\n}""}}]",CRITICAL,"3,678 marketed drugs",Database: ChEMBL. Tests structured query with phase filtering. Verified via SPARQL with cco:highestDevelopmentPhase 4 filter. Phase 4 indicates marketed/approved drugs.
+Macroautophagy is a specific type of autophagy where cytoplasmic material is sequestered within double-membrane vesicles called autophagosomes, which then fuse with lysosomes for degradation. It is classified as a subtype of the broader autophagy process in the Gene Ontology hierarchy.",,3.5668790340423584,66,121,True,True,0.5,"Based on my query of the Gene Ontology database, the direct parent term of **macroautophagy** (GO:0016236) is:
+
+- **autophagy** (GO:0006914)
+
+This makes biological sense, as macroautophagy is a specific type of autophagy that proceeds via the formation of an autophagosome. Macroautophagy is the most well-studied form of autophagy and represents one of the main subtypes of the broader autophagy process.",,19.52251100540161,13,438,827,79388,"mcp__ols__fetch, mcp__togomcp__run_sparql","[{""name"": ""mcp__ols__fetch"", ""input"": {""id"": ""go+http://purl.obolibrary.org/obo/GO_0016236""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""go"", ""sparql_query"": ""PREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?parent ?parentLabel\nWHERE {\n  obo:GO_0016236 rdfs:subClassOf ?parent .\n  FILTER(isIRI(?parent))\n  OPTIONAL { ?parent rdfs:label ?parentLabel }\n}\nORDER BY ?parent""}}]",VALUABLE,GO:0006914 (autophagy),Database: GO. Tests ontology relationship navigation. Requires OLS4 getAncestors or hierarchical query to find immediate parent. Verified in go_exploration.md. Requires database query to navigate ontology structure; baseline has limited GO hierarchy knowledge. Expert-relevant: Essential for understanding biological process relationships in systems biology and pathway analysis.
