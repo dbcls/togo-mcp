@@ -349,7 +349,7 @@ async def search_pdb_entity(db: str, query: str, limit: int = 20) -> str:
 
 # DB: MeSH
 @mcp.tool(enabled=True)
-async def search_mesh_entity(query: str, limit: int = 10) -> str:
+async def search_mesh_descriptor(query: str, limit: int = 10) -> str:
     """
     Search for MeSH ID by query.
 
@@ -360,8 +360,8 @@ async def search_mesh_entity(query: str, limit: int = 10) -> str:
     Returns:
         str: A JSON-formatted string containing the search results.
     """
-    toolcall_log("search_mesh_entity")
-    url = "https://id.nlm.nih.gov/mesh/lookup/term"
+    toolcall_log("search_mesh_descriptor")
+    url = "https://id.nlm.nih.gov/mesh/lookup/descriptor"
     params = {"label": query,
               "match": "contains",
               "limit": limit}

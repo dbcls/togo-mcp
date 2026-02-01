@@ -1,4 +1,5 @@
 from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_http_request
 import csv
 from typing import Dict
 import os
@@ -18,7 +19,13 @@ def toolcall_log(funname: str) -> None:
     :param funname: The name of the tool being called.
     :type funname: str
     """
-    logger.info(f"TogoMCP_tool: {funname}")
+    try:
+        request: Request = get_http_request()
+        user_ip = request.headers.get("X-Forwarded-For", None)
+        logger.info(f"TogoMCP_tool: {funname}, IP: {user_ip}")
+    except RuntimeError:
+        # No HTTP request context (e.g., called via MCP)
+        logger.info(f"TogoMCP_tool: {funname}, IP: MCP-call")
     return None
 
 
@@ -75,9 +82,9 @@ ENDPOINT_NAMES = list(ENDPOINT_NAME_TO_URL.keys())
 SPARQL_ENDPOINT_KEYS = list(SPARQL_ENDPOINT.keys())
 
 def resolve_endpoint_url(
-    dbname: str = None,
-    endpoint_name: str = None,
-    endpoint_url: str = None
+    dbname: str,
+    endpoint_name: str,
+    endpoint_url: str
 ) -> str:
     """Resolve the SPARQL endpoint URL from various input options.
 
@@ -118,9 +125,9 @@ def resolve_endpoint_url(
 # Making this a @mcp.tool() becomes an error, so we keep it as a function.
 async def execute_sparql(
     sparql_query: str,
-    dbname: str = None,
-    endpoint_name: str = None,
-    endpoint_url: str = None
+    dbname: str = "",
+    endpoint_name: str = "",
+    endpoint_url: str = ""
 ) -> str:
     """Execute a SPARQL query on RDF Portal.
 

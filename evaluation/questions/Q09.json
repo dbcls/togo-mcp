@@ -1,86 +1,86 @@
 [
   {
     "id": 97,
-    "category": "Precision",
-    "question": "What is the ChEMBL target ID for the Breast cancer type 1 susceptibility protein (BRCA1)?",
-    "expected_answer": "CHEMBL5990",
-    "notes": "Uses ChEMBL database. Verified using search_chembl_target('BRCA1'). Tests drug target identification."
+    "category": "Structured Query",
+    "question": "Find marketed drugs that target both kinases and have mechanism of action data available.",
+    "expected_answer": "Approved kinase inhibitors with DrugMechanism data such as IMATINIB, ERLOTINIB, SORAFENIB",
+    "notes": "COMPLEX QUERY requiring drug-target-mechanism knowledge.\n\nDatabases/Resources: ChEMBL\n\nKnowledge Required:\n- DrugMechanism entity for action type data\n- Target filtering with bif:contains for 'kinase'\n- highestDevelopmentPhase = 4 for marketed\n- Join between molecule, target, and mechanism\n\nWithout proper knowledge: Cannot combine target text search with mechanism data.\n\nVerified in chembl_exploration.md Pattern 5."
   },
   {
     "id": 98,
-    "category": "Precision",
-    "question": "What is the molecular formula of ATP(4-) according to ChEBI?",
-    "expected_answer": "C10H12N5O13P3",
-    "notes": "Uses ChEBI database. Verified via SPARQL query on chebi:formula for CHEBI:30616. Tests specific nucleotide property retrieval."
+    "category": "Structured Query",
+    "question": "What protein assemblies with specific oligomeric states are available in PDB?",
+    "expected_answer": "Tetrameric, hexameric, and other oligomeric protein complexes including various enzymes and regulatory proteins",
+    "notes": "COMPLEX QUERY requiring assembly category knowledge.\n\nDatabases/Resources: PDB\n\nKnowledge Required:\n- pdbx_struct_assembly category for biological assembly info\n- oligomeric_count and oligomeric_details properties\n- struct category for entry identification\n- CONTAINS filter for oligomeric state keyword\n\nWithout proper knowledge: Cannot navigate assembly metadata structure.\n\nVerified in pdb_exploration.md Pattern 7."
   },
   {
     "id": 99,
-    "category": "Completeness",
-    "question": "How many human glycoproteins are annotated in GlyCosmos?",
-    "expected_answer": "16,604 human glycoproteins",
-    "notes": "Uses GlyCosmos database. Verified via SPARQL query filtering by taxonomy:9606. Tests glycoproteomics database coverage."
+    "category": "Integration",
+    "question": "What gene functions are associated with the insulin signaling pathway?",
+    "expected_answer": "GO molecular functions and biological processes related to insulin signaling",
+    "notes": "COMPLEX QUERY requiring pathway-GO integration.\n\nDatabases/Resources: GO, MeSH (or Reactome)\n\nKnowledge Required:\n- bif:contains for 'insulin' keyword matching\n- Cross-database query on primary endpoint\n- Namespace filtering with STR()\n- FROM clause for consistent results\n\nWithout proper knowledge: Cannot cross-reference insulin-related terms effectively.\n\nVerified in go_exploration.md Pattern 4."
   },
   {
     "id": 100,
-    "category": "Completeness",
-    "question": "How many bacterial strains are in BacDive compared to archaeal strains?",
-    "expected_answer": "95,742 bacterial strains vs 1,049 archaeal strains",
-    "notes": "Uses BacDive database. Verified via SPARQL GROUP BY hasDomain query. Tests domain-level microbiology coverage."
+    "category": "Integration",
+    "question": "What is the Gene Ontology term for 'apoptosis'?",
+    "expected_answer": "GO:0006915 (apoptotic process)",
+    "notes": "SIMPLE QUERY - Straightforward ontology lookup.\n\nMethod: OLS4 searchClasses for 'apoptosis' in GO\n\nDemonstrates when basic ontology search tools suffice.\n\nVerified through OLS4 search capabilities."
   },
   {
     "id": 101,
-    "category": "Integration",
-    "question": "What is the MeSH descriptor ID that maps to MedGen concept C0011849 (Diabetes mellitus)?",
-    "expected_answer": "D003920",
-    "notes": "Uses MedGen database. Verified via SPARQL query on external references. Tests medical terminology cross-referencing."
+    "category": "Completeness",
+    "question": "What fraction of PDB structures have associated publication records with PubMed IDs?",
+    "expected_answer": "Approximately 69% (169,057 entries with PubMed citations out of ~245,000 total)",
+    "notes": "COMPLEX QUERY requiring citation coverage calculation.\n\nDatabases/Resources: PDB\n\nKnowledge Required:\n- citation category for publication data\n- pdbx_database_id_PubMed property\n- COUNT for coverage calculation\n- FROM graph clause\n\nWithout proper knowledge: Cannot identify citation coverage correctly.\n\nVerified in pdb_exploration.md Pattern 10."
   },
   {
     "id": 102,
-    "category": "Integration",
-    "question": "What GlyTouCan glycan structures are linked to GlyCosmos glycoproteins?",
-    "expected_answer": "117,571 glycan structures in GlyTouCan",
-    "notes": "Uses GlyCosmos database. Verified via SPARQL COUNT on glytoucan:has_primary_id. Tests glycan structure database integration."
+    "category": "Completeness",
+    "question": "How many UniProt cross-references exist across all PDB structures?",
+    "expected_answer": "352,000+ UniProt references (~1.72 per entry due to multi-chain structures)",
+    "notes": "COMPLEX QUERY requiring cross-reference aggregation.\n\nDatabases/Resources: PDB\n\nKnowledge Required:\n- struct_ref category for cross-references\n- db_name = 'UNP' filter for UniProt\n- COUNT aggregation\n- Understanding of multi-chain structure implications\n\nWithout proper knowledge: Cannot navigate cross-reference structure.\n\nVerified in pdb_exploration.md Pattern 2."
   },
   {
     "id": 103,
-    "category": "Currency",
-    "question": "What is the most recently deposited ribosome structure type in PDB?",
-    "expected_answer": "Over 9,054 ribosome structures total; recent deposits include cryo-EM structures",
-    "notes": "Uses PDB database. Verified via search_pdb_entity('ribosome'). Replaces redundant Reactome human pathway count (already in Q28)."
+    "category": "Specificity",
+    "question": "What gene types are represented in ClinVar's gene database and how do they link to NCBI Gene?",
+    "expected_answer": "Gene types including protein-coding, RNA genes, pseudogenes from NCBI Gene database",
+    "notes": "COMPLEX QUERY requiring gene entity knowledge.\n\nDatabases/Resources: ClinVar, NCBI Gene\n\nKnowledge Required:\n- Cross-database join between ClinVar and NCBI Gene\n- Gene type property from NCBI Gene\n- BIND for URI conversion\n- VALUES pre-filtering for performance\n\nWithout proper knowledge: Cannot access gene type data across databases.\n\nVerified in clinvar_exploration.md Pattern 1."
   },
   {
     "id": 104,
-    "category": "Currency",
-    "question": "How many isolates collected in recent years are documented in AMR Portal?",
-    "expected_answer": "Extensive data available for 2020-2023 collection years",
-    "notes": "Uses AMR Portal database. Verified via SPARQL query on collectionYear. Tests access to recent antimicrobial resistance surveillance."
+    "category": "Specificity",
+    "question": "Is the Rhea reaction RHEA:10000 a transport reaction?",
+    "expected_answer": "No (isTransport = 0 for RHEA:10000)",
+    "notes": "SIMPLE QUERY - Straightforward property lookup.\n\nMethod: Direct lookup of rhea:isTransport property\n\nDemonstrates when basic property lookups suffice.\n\nVerified in rhea_exploration.md simple queries section."
   },
   {
     "id": 105,
-    "category": "Specificity",
-    "question": "What is the neuromuscular disease category in NANDO and how many diseases does it contain?",
-    "expected_answer": "Neuromuscular disease (神経・筋疾患) with 84 diseases",
-    "notes": "Uses NANDO database. Verified via SPARQL GROUP BY category query. Tests Japanese rare disease categorization."
+    "category": "Currency",
+    "question": "What software tools are most commonly used for protein structure determination and refinement?",
+    "expected_answer": "PHENIX, REFMAC for refinement; SHELX, PHASER for phasing; with usage statistics",
+    "notes": "COMPLEX QUERY requiring software classification knowledge.\n\nDatabases/Resources: PDB\n\nKnowledge Required:\n- Software category traversal\n- Classification filter for different stages (refinement, phasing)\n- GROUP BY for usage counting\n- ORDER BY for ranking\n\nWithout proper knowledge: Cannot filter by software classification.\n\nVerified in pdb_exploration.md Pattern 5."
   },
   {
     "id": 106,
-    "category": "Specificity",
-    "question": "What is the R-work value for the highest resolution PDB structure (3NIR)?",
-    "expected_answer": "0.127",
-    "notes": "Uses PDB database. Verified via SPARQL query on refine.ls_R_factor_R_work. R-work indicates refinement quality. Tests detailed structural metadata."
+    "category": "Currency",
+    "question": "What agonist drugs are available for treating metabolic disorders?",
+    "expected_answer": "Agonist drugs for metabolic conditions including GLP-1 receptor agonists for diabetes",
+    "notes": "COMPLEX QUERY requiring mechanism-indication integration.\n\nDatabases/Resources: ChEMBL\n\nKnowledge Required:\n- DrugMechanism entity for action type\n- mechanismActionType = 'AGONIST' filter\n- DrugIndication for metabolic disease filtering\n- Cross-entity joins\n\nWithout proper knowledge: Cannot combine mechanism type with indication data.\n\nVerified in chembl_exploration.md Pattern 5."
   },
   {
     "id": 107,
-    "category": "Structured Query",
-    "question": "Find the penA gene - how many isolates in AMR Portal carry this beta-lactam resistance gene?",
-    "expected_answer": "22,039 isolates carry the penA gene",
-    "notes": "Uses AMR Portal database. Verified via SPARQL query on amrElementSymbol='penA'. Tests antimicrobial resistance gene tracking."
+    "category": "Precision",
+    "question": "What is the activity type distribution for bioactivity measurements in ChEMBL?",
+    "expected_answer": "Potency (4.4M), IC50 (2.8M), GI50 (2.6M), Inhibition (1.5M), Ki (775K)",
+    "notes": "SIMPLE QUERY - Straightforward activity type count.\n\nMethod: GROUP BY on activity type with COUNT\n\nDemonstrates straightforward aggregation queries.\n\nVerified in chembl_exploration.md simple queries section."
   },
   {
     "id": 108,
-    "category": "Structured Query",
-    "question": "How many ChEBI entities have molecular formula data?",
-    "expected_answer": "192,688 entities (86% of total)",
-    "notes": "Uses ChEBI database. Verified via SPARQL COUNT query with chebi:formula filter. Tests chemical data completeness."
+    "category": "Precision",
+    "question": "What is the UniProt ID for the CRISPR-associated protein Cas9 from Streptococcus pyogenes?",
+    "expected_answer": "Q99ZW2",
+    "notes": "SIMPLE QUERY - Straightforward protein lookup.\n\nMethod: search_uniprot_entity('Cas9 Streptococcus pyogenes')\n\nDemonstrates when basic protein search tools suffice.\n\nVerified in example_questions.json question 1."
   }
 ]

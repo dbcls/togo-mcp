@@ -1,186 +1,619 @@
 question_id,date,category,question_text,baseline_success,baseline_actually_answered,baseline_has_expected,baseline_confidence,baseline_text,baseline_error,baseline_time,baseline_input_tokens,baseline_output_tokens,togomcp_success,togomcp_has_expected,togomcp_confidence,togomcp_text,togomcp_error,togomcp_time,togomcp_input_tokens,togomcp_output_tokens,togomcp_cache_creation_input_tokens,togomcp_cache_read_input_tokens,tools_used,tool_details,value_add,expected_answer,notes
-13,2026-01-13,Precision,What is the highest resolution ever achieved for a protein structure in the PDB?,True,True,True,1.0,"Based on my training knowledge, the highest resolution protein structures in the Protein Data Bank (PDB) have achieved resolutions better than 0.50 Å (angstroms).
+13,2026-01-31,Structured Query,Find human proteins annotated as tumor suppressors based on their functional descriptions.,True,True,False,0.4166666666666667,"I can help you identify human proteins annotated as tumor suppressors based on their functional descriptions. Here are some major human tumor suppressor proteins:
 
-Some of the highest resolution structures I'm aware of include:
+## Key Tumor Suppressor Proteins
 
-- **Crambin** - which has been refined to resolutions around **0.48 Å** and even **0.54 Å** in various depositions
-- Several small proteins and peptides have achieved sub-0.60 Å resolution
+### **TP53 (p53)**
+- Known as the ""guardian of the genome""
+- Regulates cell cycle, apoptosis, and DNA repair
+- Most frequently mutated gene in human cancers
 
-These ultra-high resolution structures are typically achieved with:
-- Very small, highly stable proteins
-- Exceptionally well-diffracting crystals
-- Synchrotron radiation sources
-- Cryo-crystallography techniques
+### **RB1 (Retinoblastoma protein)**
+- Controls G1/S cell cycle checkpoint
+- Regulates E2F transcription factors
+- Loss causes retinoblastoma and other cancers
 
-At these resolutions, individual hydrogen atoms can sometimes be directly observed in the electron density maps, and the positions of atoms can be determined with exceptional precision.
+### **PTEN**
+- Phosphatase that antagonizes PI3K/AKT signaling
+- Regulates cell growth, proliferation, and survival
+- Frequently deleted or mutated in various cancers
 
-However, I should note that the exact record-holder may have changed since my training data, as new structures are continuously being deposited to the PDB. The sub-0.50 Å range represents the current frontier for protein crystallography resolution.",,7.7045087814331055,53,247,True,False,0.0,"Based on my searches, I found several ultra-high resolution protein structures. The **highest resolution protein structure** I found is:
+### **APC (Adenomatous Polyposis Coli)**
+- Regulates Wnt/β-catenin signaling pathway
+- Mutations cause familial adenomatous polyposis
+- Commonly mutated in colorectal cancers
 
-**PDB ID: 5E7W** - X-ray Structure of Human Recombinant 2Zn insulin at **0.92 Angstrom (0.92 Å)**
+### **BRCA1 and BRCA2**
+- DNA repair proteins involved in homologous recombination
+- Mutations increase breast and ovarian cancer risk
+- Maintain genomic stability
 
-I also found:
-- **PDB ID: 4UA6** - CTX-M-14 Class A Beta-Lactamase at **0.79 Angstrom (0.79 Å)**
+### **VHL (Von Hippel-Lindau)**
+- Regulates hypoxia-inducible factors (HIFs)
+- Loss causes Von Hippel-Lindau syndrome
+- Associated with renal cell carcinoma
 
-Among these, the **0.79 Å resolution** for the CTX-M-14 beta-lactamase structure appears to be one of the highest resolutions achieved for a protein crystal structure in the PDB from my search results.
+### **NF1 (Neurofibromin 1)**
+- GTPase-activating protein that negatively regulates RAS
+- Mutations cause neurofibromatosis type 1
+- Loss promotes cell proliferation
 
-However, historically, **crambin** (a small plant seed protein) has held records for ultra-high resolution structures. One famous crambin structure (PDB: 3NIR) was solved at approximately **0.54 Angstrom**, which has been cited as one of the highest resolution protein structures ever determined.
+### **CDKN2A (p16INK4a)**
+- CDK inhibitor that regulates cell cycle
+- Frequently inactivated in melanoma and other cancers
 
-These ultra-high resolution structures allow researchers to visualize individual atoms, including hydrogen atoms, and provide exceptional detail about protein structure, bonding, and conformational states. Achieving such high resolution requires exceptionally well-ordered crystals and advanced crystallographic techniques.",,50.726125717163086,35,1469,28928,164978,"mcp__togomcp__run_sparql, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__run_sparql, mcp__togomcp__get_sparql_example","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""\nPREFIX pdbo: <https://rdf.wwpdb.org/schema/pdbx-v50.owl#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?pdb_id ?resolution ?title\nWHERE {\n  ?entry a pdbo:datablock ;\n         pdbo:has_reflnsCategory ?reflns ;\n         pdbo:has_struct_keywordsCategory ?keywords ;\n         pdbo:has_structCategory ?struct .\n  \n  ?entry pdbo:datablockName ?pdb_id .\n  \n  ?reflns pdbo:has_reflns ?reflns_data .\n  ?reflns_data pdbo:reflns.d_resolution_high ?resolution .\n  \n  ?struct pdbo:has_struct ?struct_data .\n  ?struct_data pdbo:struct.title ?title .\n  \n  FILTER(?resolution > 0)\n}\nORDER BY ASC(?resolution)\nLIMIT 10\n""}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""highest resolution 0.5 angstrom"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""0.6 0.7 0.8 angstrom resolution ultra high"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""crambin 0.54 angstrom resolution atomic"", ""limit"": 20}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""\nPREFIX pdbo: <https://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT ?pdb_id ?resolution ?title\nWHERE {\n  ?entry a pdbo:datablock ;\n         pdbo:datablockName ?pdb_id ;\n         pdbo:has_refineCategory ?refine ;\n         pdbo:has_structCategory ?struct .\n  \n  ?refine pdbo:has_refine ?refine_data .\n  ?refine_data pdbo:refine.ls_d_res_high ?resolution .\n  \n  ?struct pdbo:has_struct ?struct_data .\n  ?struct_data pdbo:struct.title ?title .\n  \n  FILTER(?resolution < 1.0 && ?resolution > 0)\n}\nORDER BY ASC(?resolution)\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__get_sparql_example"", ""input"": {""dbname"": ""pdb""}}]",VALUABLE,0.48 Å,Database: PDB. Verified in pdb_exploration.md via SPARQL query filtering by resolution. PDB entries 5D8V and 3NIR achieve 0.48Å resolution. Tests retrieval of structural quality metrics.
-14,2026-01-13,Precision,What is the molecular formula for caffeine according to PubChem?,True,True,False,0.0,"The molecular formula for caffeine according to PubChem is **C₈H₁₀N₄O₂**.
+These proteins typically function by regulating cell division, DNA repair, apoptosis, or signal transduction pathways that control growth.",,9.545126914978027,52,474,True,False,0.4166666666666667,"Excellent! I found **212 human proteins annotated as tumor suppressors** in UniProt. Here's a summary of the findings:
 
-This represents 8 carbon atoms, 10 hydrogen atoms, 4 nitrogen atoms, and 2 oxygen atoms. Caffeine is a naturally occurring stimulant found in coffee, tea, and other plants.",,3.290940046310425,52,80,True,False,0.0,"According to PubChem, the molecular formula for caffeine is **C₈H₁₀N₄O₂**.
+## Human Tumor Suppressor Proteins
 
-Additional information from PubChem:
-- **PubChem CID**: 2519
-- **IUPAC Name**: 1,3,7-trimethylpurine-2,6-dione
-- **Molecular Weight**: 194.19 g/mol
-- **SMILES**: CN1C=NC2=C1C(=O)N(C(=O)N2C)C",,25.144975185394287,15,295,26990,53118,"mcp__togomcp__get_pubchem_compound_id, mcp__togomcp__get_compound_attributes_from_pubchem","[{""name"": ""mcp__togomcp__get_pubchem_compound_id"", ""input"": {""compound_name"": ""caffeine""}}, {""name"": ""mcp__togomcp__get_compound_attributes_from_pubchem"", ""input"": {""pubchem_compound_id"": ""2519""}}]",VALUABLE,C8H10N4O2,Database: PubChem. Verified in pubchem_exploration.md using get_compound_attributes_from_pubchem for CID 2519. Caffeine has MW 194.19. Tests retrieval of molecular properties.
-15,2026-01-13,Completeness,How many reviewed human proteins are in UniProt?,True,False,False,0.0,"I don't have access to the current exact number of reviewed human proteins in UniProt with certainty, as this number changes over time with each UniProt release.
+I searched the UniProt database for human proteins with ""tumor suppressor"" annotations in their functional descriptions and found **212 proteins** total. Here are some notable examples from the results:
 
-However, I can tell you that:
+### Well-Known Tumor Suppressors:
 
-1. **UniProtKB/Swiss-Prot** is the reviewed section of UniProt containing manually annotated and curated protein entries
-2. As of recent releases (2023-2024), there are approximately **20,000-21,000** reviewed human protein entries in Swiss-Prot
+1. **TP53/P53** (P04637) - The famous ""guardian of the genome"" that acts as a transcription factor inducing growth arrest or apoptosis
 
-The exact current number would depend on the specific UniProt release version you're interested in. Each release updates this count as new proteins are reviewed and added, or entries are merged/deprecated.
+2. **WT1** (P19544) - Wilms tumor protein, plays essential role in urogenital development
 
-For the most accurate and up-to-date number, you would need to check the current UniProt release notes or query the UniProt database directly using their website or API with filters for:
-- Organism: Homo sapiens (human)
-- Database: Swiss-Prot (reviewed)",,7.447978973388672,48,221,True,False,0.0,"According to UniProt, there are **20,435 reviewed human proteins**. 
+3. **PRKN/Parkin** (O60260) - E3 ubiquitin ligase involved in mitochondrial quality control
 
-These are proteins in the UniProtKB/Swiss-Prot section, which contains manually annotated and reviewed protein sequences. The query searched for proteins with:
-- Taxonomy ID 9606 (Homo sapiens)
-- Reviewed status set to true
+4. **CHK2** (O96017) - Checkpoint kinase required for cell cycle arrest and DNA repair in response to DNA damage
 
-This represents the high-quality, curated subset of human proteins in UniProt, as opposed to the much larger number of unreviewed entries in UniProtKB/TrEMBL.",,14.890996932983398,9,318,547,52641,mcp__togomcp__run_sparql,"[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""\nPREFIX up: <http://purl.uniprot.org/core/>\nPREFIX taxon: <http://purl.uniprot.org/taxonomy/>\n\nSELECT (COUNT(DISTINCT ?protein) AS ?count)\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed true ;\n           up:organism taxon:9606 .\n}\n""}}]",CRITICAL,"40,209",Database: UniProt. Verified in uniprot_exploration.md via SPARQL COUNT query with up:reviewed 1 and taxonomy/9606 filters. Tests comprehensive protein database coverage.
-16,2026-01-13,Completeness,How many disease classes are defined in the MONDO ontology?,True,False,False,0.0,"I don't have specific information about the exact number of disease classes currently defined in the MONDO (Monarch Disease Ontology) with certainty. 
+5. **FHIT** (P49789) - Bis(5'-adenosyl)-triphosphatase that modulates cell proliferation and survival
 
-The MONDO ontology is a comprehensive disease ontology that integrates multiple disease resources and is continuously being developed and updated. The number of classes changes as new diseases are added and the ontology is refined through ongoing curation efforts.
+### Interesting Categories:
 
-If you need the current exact count, I would recommend checking the official MONDO release notes or querying the ontology directly through their GitHub repository or the Ontology Lookup Service (OLS), which would provide the most up-to-date statistics.",,4.675215005874634,50,137,True,True,1.0,"Based on my queries, I found the answer to your question about MONDO (Monarch Disease Ontology):
+**DNA Repair & Cell Cycle:**
+- CHFR (Q96EP1) - E3 ubiquitin ligase functioning in antephase checkpoint
+- FANCG (O15287) - Fanconi anemia protein involved in DNA cross-link repair
 
-## Number of Disease Classes in MONDO
+**Transcription Factors:**
+- FOXC1 (Q12948) - Forkhead box protein involved in development
+- ZBT7A (O95365) - Zinc finger protein that represses genes involved in cell proliferation
 
-According to the **Ontology Lookup Service (OLS)**, MONDO contains **56,942 total classes**.
+**Signaling & Metabolism:**
+- SDHA (P31040) - Succinate dehydrogenase subunit
+- PHLP2 (Q6ZVD8) - Phosphatase regulating Akt signaling
 
-However, the MIE (Metadata Interoperability Exchange) file for MONDO from RDF Portal reports slightly different statistics:
-- **Total classes: 30,304**
-- **Active diseases: 28,500**
+**Epigenetic Regulators:**
+- ING3 (Q9NXR8) - Component of NuA4 histone acetyltransferase complex
+- SP100 (P23497) - Nuclear autoantigen and PML body constituent
 
-### Why the difference?
+**Proteases & Regulators:**
+- HTRA3 (P83110) - Serine protease that cleaves extracellular matrix proteins
+- SERPINB5/Maspin (P36952) - Non-inhibitory serpin that blocks tumor growth and metastasis
 
-The discrepancy is likely due to:
-1. **Different versions**: OLS may have a more recent version than RDF Portal
-2. **What's counted**: The OLS number (56,942) includes all classes in the ontology hierarchy, including imported upper-level ontology terms from BFO (Basic Formal Ontology) and other foundational ontologies
-3. **MONDO-specific terms**: The RDF Portal number (30,304) likely represents only MONDO-specific disease classes with MONDO IDs
+Would you like me to provide more detailed information about specific tumor suppressors or search for proteins involved in particular cancer-related pathways?",,43.23660111427307,21,1256,32164,148154,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""uniprot""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?protein ?mnemonic ?fullName ?functionComment\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed 1 ;\n           up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n           up:mnemonic ?mnemonic ;\n           up:annotation ?annot .\n  ?annot a up:Function_Annotation ;\n         rdfs:comment ?functionComment .\n  ?functionComment bif:contains \""'tumor suppressor'\""\n  OPTIONAL {\n    ?protein up:recommendedName ?name .\n    ?name up:fullName ?fullName .\n  }\n}\nLIMIT 50""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT (COUNT(DISTINCT ?protein) as ?count)\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed 1 ;\n           up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n           up:annotation ?annot .\n  ?annot a up:Function_Annotation ;\n         rdfs:comment ?functionComment .\n  ?functionComment bif:contains \""'tumor suppressor'\""\n}""}}]",VALUABLE,"List of human tumor suppressor proteins such as P0CG12 (DERPC), Q13227 (GPS2), P04637 (p53)","COMPLEX QUERY requiring text search and annotation knowledge.
 
-### Summary
+Databases/Resources: UniProt
 
-- **All classes (including imports)**: ~56,942 (from OLS)
-- **MONDO-specific disease classes**: ~30,304 (from RDF Portal)
-- **Active (non-deprecated) diseases**: ~28,500
+Knowledge Required:
+- Annotation type filtering (up:Function_Annotation)
+- bif:contains for text search in comments
+- Property path splitting for annotation access
+- up:reviewed 1 and organism filter
 
-MONDO is a comprehensive disease ontology that integrates multiple disease databases (OMIM, Orphanet, DOID, MeSH, ICD, etc.) and covers genetic disorders, infectious diseases, cancers, and rare diseases with rich semantic relationships and cross-references to 35+ external databases.",,32.15882396697998,16,665,60150,133853,"mcp__ols__listOntologies, mcp__ols__searchClasses, mcp__togomcp__get_MIE_file","[{""name"": ""mcp__ols__listOntologies"", ""input"": {""lang"": ""en""}}, {""name"": ""mcp__ols__searchClasses"", ""input"": {""ontologyId"": ""mondo"", ""query"": ""*"", ""pageSize"": 1}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""mondo""}}]",CRITICAL,"30,304",Database: MONDO. Verified in mondo_exploration.md via SPARQL COUNT query. MONDO integrates disease definitions from multiple sources. Tests ontology completeness.
-17,2026-01-13,Integration,What is the NCBI Taxonomy ID for Homo sapiens?,True,True,True,1.0,"The NCBI Taxonomy ID for Homo sapiens is **9606**.
+Without proper knowledge: Unable to locate function annotations or fails due to property path issues with bif:contains.
 
-This is one of the most commonly referenced taxonomy IDs in biological databases and research, as it represents modern humans.",,3.06843900680542,52,44,True,True,1.0,"The **NCBI Taxonomy ID for Homo sapiens is 9606**.
+Verified in uniprot_exploration.md Pattern 5 (Text Search in Functional Annotations)."
+14,2026-01-31,Structured Query,What are the most potent inhibitors of the human epidermal growth factor receptor (EGFR)?,True,True,False,0.375,"The most potent inhibitors of human EGFR fall into several categories:
 
-This is the standard taxonomic identifier used across NCBI databases to represent humans.",,12.993874073028564,9,158,561,52645,mcp__togomcp__ncbi_esearch,"[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""taxonomy"", ""query"": ""Homo sapiens"", ""max_results"": 5}}]",VALUABLE,9606,Database: NCBI Taxonomy. Verified in taxonomy_exploration.md. This is a fundamental organism identifier used across all biological databases. Tests organism taxonomy integration.
-18,2026-01-13,Integration,What MONDO disease ontology ID corresponds to Fabry disease?,True,True,True,1.0,"The MONDO disease ontology ID for Fabry disease is **MONDO:0010526**.
+## **Small Molecule Tyrosine Kinase Inhibitors (TKIs)**
 
-Fabry disease is an X-linked lysosomal storage disorder caused by deficiency of the enzyme alpha-galactosidase A, leading to accumulation of globotriaosylceramide (Gb3) in various tissues.",,3.1746928691864014,51,79,True,True,1.0,"The MONDO disease ontology ID for Fabry disease is **MONDO:0010526**.
+### First-generation (reversible):
+- **Gefitinib** (Iressa) - IC50 ~1-20 nM
+- **Erlotinib** (Tarceva) - IC50 ~2 nM
+- These are selective for EGFR but reversibly bind
 
-According to the ontology, Fabry disease (FD) is defined as ""a progressive, inherited, multisystemic lysosomal storage disease characterized by specific neurological, cutaneous, renal, cardiovascular, cochleo-vestibular and cerebrovascular manifestations.""",,17.610093116760254,8,182,17020,52644,mcp__ols__searchClasses,"[{""name"": ""mcp__ols__searchClasses"", ""input"": {""query"": ""Fabry disease"", ""ontologyId"": ""mondo""}}]",VALUABLE,MONDO:0010526,Database: MONDO. Verified in mondo_exploration.md using OLS4:searchClasses. Fabry disease is a lysosomal storage disorder. Tests disease ontology identification.
-19,2026-01-13,Currency,How many FDA-approved drugs are catalogued in PubChem?,True,False,False,0.0,"I don't have access to the current exact number of FDA-approved drugs catalogued in PubChem with certainty, as this number changes over time as new drugs are approved and the database is updated.
+### Second-generation (irreversible):
+- **Afatinib** (Gilotrif) - IC50 ~0.5 nM - covalently binds to EGFR
+- **Dacomitinib** - IC50 ~0.6 nM
+- These are pan-HER inhibitors (target EGFR, HER2, HER4)
 
-However, I can provide some context: PubChem is a comprehensive chemical database maintained by the National Center for Biotechnology Information (NCBI), and it contains information on millions of chemical compounds. Within PubChem, there is a subset of compounds that are FDA-approved drugs, which historically has numbered in the range of approximately 2,000-3,000 compounds, though this is a rough estimate.
+### Third-generation (irreversible, mutant-selective):
+- **Osimertinib** (Tagrisso) - IC50 ~12-15 nM for mutant EGFR, >200 nM for wild-type
+- Designed to overcome T790M resistance mutation while sparing wild-type EGFR
 
-The exact count at any given time would depend on:
-- How PubChem defines and tags FDA-approved drugs in their system
-- When the database was last updated
-- Whether the count includes biologics, combinations, and different formulations
+## **Monoclonal Antibodies**
 
-For the most current and accurate number, you would need to query PubChem directly or check their official statistics, as this is dynamic information that I cannot provide with certainty from my training data alone.",,6.459672927856445,52,230,True,True,1.0,"Based on the query results from PubChem's RDF database, **17,367 FDA-approved drugs** are catalogued in PubChem.
+- **Cetuximab** (Erbitux) - Kd ~0.2 nM
+- **Panitumumab** (Vectibix) - Kd ~0.05 nM
+- These bind the extracellular domain, preventing ligand binding
 
-This information comes from PubChem's comprehensive database which contains over 119 million compounds in total. The FDA-approved drugs represent a curated subset that have the biological role classification of `vocab:FDAApprovedDrugs` in PubChem's RDF ontology.",,18.34455704689026,15,392,7396,85968,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pubchem""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pubchem"", ""sparql_query"": ""PREFIX vocab: <http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\n\nSELECT (COUNT(DISTINCT ?compound) as ?count)\nWHERE {\n  ?compound a vocab:Compound ;\n            obo:RO_0000087 vocab:FDAApprovedDrugs .\n}\n""}}]",CRITICAL,"17,367",Database: PubChem. Verified in pubchem_exploration.md via SPARQL COUNT query filtering by FDAApprovedDrugs role. Tests access to current drug regulatory status.
-20,2026-01-13,Currency,How many X-ray crystallography structures are in the PDB?,True,False,False,0.0,"I don't have access to real-time data about the current number of X-ray crystallography structures in the Protein Data Bank (PDB), as my training data has a cutoff date and the PDB is continuously updated with new structures.
+## **Potency Considerations**
 
-However, I can tell you that as of my last training data (April 2024), X-ray crystallography structures comprised the vast majority of entries in the PDB - typically around 85-90% of all structures, which would be well over 150,000 structures out of a total that had exceeded 200,000 entries.
+The ""most potent"" depends on context:
+- **Biochemical potency**: Panitumumab and afatinib show the lowest binding constants
+- **Clinical efficacy**: Depends on cancer type, mutation status, and resistance mechanisms
+- **Selectivity**: Third-generation TKIs offer better therapeutic windows
 
-For the current exact number, you would need to check the PDB website (rcsb.org or pdbe.org) directly, where they maintain up-to-date statistics on the number of structures determined by each experimental method (X-ray crystallography, NMR, cryo-EM, etc.).",,5.617534875869751,51,195,True,True,1.0,"Based on the query results from the Protein Data Bank (PDB) RDF database, there are **174,904 X-ray crystallography structures** in the PDB.
+Each class has distinct advantages for different clinical scenarios.",,8.967877864837646,60,457,True,True,0.5625,"Based on the ChEMBL database query results, here are **the most potent inhibitors of human EGFR** (with IC50 or Ki values < 1 nM):
 
-This represents approximately 85% of all structures in the PDB, making X-ray crystallography by far the most common experimental method used for determining protein and other macromolecular structures. The other main methods are cryo-electron microscopy (~7%) and NMR spectroscopy (~7%).",,24.586299180984497,15,435,11427,89963,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pdb""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT (COUNT(DISTINCT ?entry) as ?xray_count)\nFROM <http://rdfportal.org/dataset/pdbj>\nWHERE {\n  ?entry a pdbx:datablock ;\n         pdbx:has_exptlCategory/pdbx:has_exptl ?exptl .\n  ?exptl pdbx:exptl.method \""X-RAY DIFFRACTION\"" .\n}""}}]",CRITICAL,"174,904",Database: PDB. Verified in pdb_exploration.md via SPARQL GROUP BY experimental method. X-ray is the dominant method at ~85% of all structures. Tests current structural database statistics.
-21,2026-01-13,Specificity,What is the BacDive ID for the Thermotoga maritima type strain?,True,True,False,0.0,"The BacDive ID for the Thermotoga maritima type strain (MSB8/DSM 3109) is **131**.
+## Top 10 Most Potent EGFR Inhibitors:
 
-BacDive (Bacterial Diversity Metadatabase) assigns unique numerical IDs to bacterial strains, and ID 131 corresponds to the type strain of Thermotoga maritima, which is one of the well-studied hyperthermophilic bacteria.",,4.3852081298828125,56,93,True,True,1.0,"The **BacDive ID for the Thermotoga maritima type strain is 17060**.
+1. **Osimertinib (CHEMBL3353410)** - IC50 = **0.002 nM**
+   - FDA-approved third-generation EGFR inhibitor
+   - Particularly effective against T790M resistance mutations
 
-This strain (BacDive ID: 17060) is registered as the type strain of *Thermotoga maritima* Stetter and Huber 1986.",,20.232507944107056,15,428,8698,87147,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""bacdive""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""bacdive"", ""sparql_query"": ""PREFIX schema: <https://purl.dsmz.de/schema/>\n\nSELECT ?strain ?bacdiveID ?label ?scientificName\nFROM <http://rdfportal.org/dataset/bacdive>\nWHERE {\n  ?strain a schema:Strain ;\n          rdfs:label ?label ;\n          schema:hasBacDiveID ?bacdiveID ;\n          schema:isTypeStrain true ;\n          schema:hasGenus \""Thermotoga\"" ;\n          schema:hasSpecies \""Thermotoga maritima\"" .\n  OPTIONAL { ?strain rdfs:hasScientificName ?scientificName }\n}\nLIMIT 10""}}]",CRITICAL,17060,Database: BacDive. Verified in bacdive_exploration.md via SPARQL query. T. maritima DSM 3109 is a model hyperthermophile. Tests specialized microbial database access.
-22,2026-01-13,Specificity,What is the GlyCosmos glycoepitope ID for Lewis a antigen?,True,False,False,0.0,"I don't know the specific GlyCosmos glycoepitope ID for Lewis a antigen with certainty. 
+2. **CHEMBL63786** - IC50 = **0.003 nM**
 
-While I'm familiar with Lewis a as an important blood group-related glycan antigen with the structure Galβ1-3(Fucα1-4)GlcNAc, I don't have the specific GlyCosmos database identifier memorized in my training data. 
+3. **CHEMBL53711** - IC50 = **0.006 nM**
 
-To find this information, you would need to search the GlyCosmos database directly (https://glycosmos.org) or consult their glycoepitope database section, where antigens like Lewis a would be catalogued with their respective IDs.",,5.617031812667847,57,151,True,True,1.0,"Perfect! I found it. The GlyCosmos glycoepitope ID for **Lewis a antigen** is **EP0007**.
+4. **CHEMBL35820** - IC50 = **0.006 nM**
 
-The full URI is: `http://www.glycoepitope.jp/epitopes/EP0007`
+5. **CHEMBL29197** - Ki = **0.006 nM**
 
-This query also revealed several related Lewis a variants in the database:
-- EP0008: Sialyl Lewis a
-- EP0009: 3'-Sulfo Lewis a
-- EP0040: Disialyl Lewis a
-- EP0090: Dimeric Lewis a
-- EP0091: Lewis a- Lewis x Hybrid Antigen
-- EP0211: Lewis a (b1-3)Gal",,31.160367012023926,22,743,9147,114259,"mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""glycosmos"", ""sparql_query"": ""\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?epitope ?label ?id\nWHERE {\n  ?epitope a ?type ;\n           rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(?label), \""lewis a\""))\n  OPTIONAL { ?epitope dcterms:identifier ?id }\n}\nLIMIT 10\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""glycosmos""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""glycosmos"", ""sparql_query"": ""\nPREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?epitope ?label\nFROM <http://rdf.glycoinfo.org/glycoepitope>\nWHERE {\n  ?epitope a glycan:Glycan_epitope ;\n    rdfs:label ?label .\n  ?label bif:contains \""'Lewis a'\"" option (score ?sc)\n}\nORDER BY DESC(?sc)\nLIMIT 10\n""}}]",CRITICAL,EP0007,Database: GlyCosmos. Verified in glycosmos_exploration.md via SPARQL query. Lewis antigens are important blood group determinants. Tests specialized glycoscience database access.
-23,2026-01-13,Structured Query,How many biological_process terms are in the Gene Ontology?,True,False,False,0.0,"I don't have access to the exact current count of biological_process terms in the Gene Ontology (GO) with certainty, as this number changes over time as the ontology is continuously updated and curated.
+6. **CHEMBL66031** - IC50 = **0.008 nM**
 
-However, I can tell you that the Gene Ontology's biological_process namespace typically contains tens of thousands of terms. As of my last training data, there were approximately **30,000-33,000 biological_process terms** in GO, but this is an approximation and the actual current number may be different.
+7. **CHEMBL53753** - IC50 = **0.008 nM**
 
-For the most accurate and up-to-date count, you would need to check the official Gene Ontology website (geneontology.org) or download the latest GO release files, which include statistics about the number of terms in each namespace (biological_process, molecular_function, and cellular_component).",,6.0557708740234375,51,182,True,False,0.0,"Based on the search results from the Gene Ontology (GO) through the Ontology Lookup Service (OLS), there are **30,829 biological_process terms** in the Gene Ontology.
+8. **CHEMBL5270693** - IC50 = **0.008 nM**
 
-This count includes the root term ""biological_process"" (GO:0008150) and all of its descendants, which represent all the different biological processes that have been annotated in GO.",,14.260334968566895,8,209,905,52644,mcp__ols__searchClasses,"[{""name"": ""mcp__ols__searchClasses"", ""input"": {""query"": ""biological_process"", ""ontologyId"": ""go"", ""pageSize"": 1}}]",CRITICAL,"30,804",Database: GO. Verified in go_exploration.md via SPARQL COUNT query filtering by hasOBONamespace. Biological_process is the largest GO namespace. Tests structured ontology queries.
-24,2026-01-13,Structured Query,What are the top AMR gene classes by number of genotype features in AMR Portal?,True,False,False,0.2222222222222222,"I don't have access to the specific current statistics from AMR Portal's database showing the exact ranking of AMR gene classes by number of genotype features. 
+9. **Afatinib (CHEMBL1173655)** - IC50 = **0.01 nM**
+   - FDA-approved second-generation irreversible EGFR inhibitor
 
-However, based on general knowledge of antimicrobial resistance databases, the most common and well-represented AMR gene classes typically include:
+10. **Mobocertinib (CHEMBL4650319)** - IC50 = **0.01 nM**
+    - FDA-approved for EGFR exon 20 insertion mutations
 
-1. **Beta-lactamases** - Usually the most numerous, including various subclasses (class A, B, C, D)
-2. **Aminoglycoside resistance genes** - Including acetyltransferases, phosphotransferases, and nucleotidyltransferases
-3. **Tetracycline resistance genes**
-4. **Fluoroquinolone resistance genes**
-5. **Macrolide resistance genes**
-6. **Sulfonamide resistance genes**
-7. **Trimethoprim resistance genes**
+## Other Notable Clinically-Approved EGFR Inhibitors:
 
-To get the accurate, current top AMR gene classes by number of genotype features specifically in AMR Portal, you would need to:
-- Query their database directly
-- Check their statistics or summary pages
-- Use their API or data export features
+- **Neratinib** - IC50 = 0.02 nM
+- **Erlotinib** - IC50 = 0.029-0.059 nM (first-generation)
+- **Lapatinib** - IC50 = 0.06 nM (dual EGFR/HER2 inhibitor)
+- **Poziotinib** - IC50 = 0.061 nM
+- **Canertinib** - IC50 = 0.04 nM
 
-The actual rankings can vary depending on how the database curates and classifies genes, and what organisms are included in their collection.",,7.29088282585144,56,272,True,False,0.3333333333333333,"Perfect! Based on the AMR Portal database, here are the **top AMR gene classes by number of genotype features**:
+## Key Findings:
 
-## Top AMR Gene Classes in AMR Portal
+- **Osimertinib** stands out as the most potent with a remarkable IC50 of 0.002 nM
+- Most ultra-potent inhibitors are second or third-generation compounds designed to overcome resistance
+- Several experimental compounds show picomolar potency (< 0.01 nM)
+- These compounds are primarily used in treating non-small cell lung cancer (NSCLC) with EGFR mutations
 
-| Rank | AMR Gene Class | Number of Genotype Features |
-|------|----------------|----------------------------|
-| 1 | **BETA-LACTAM** | 243,389 |
-| 2 | **AMINOGLYCOSIDE** | 187,430 |
-| 3 | **EFFLUX** | 180,406 |
-| 4 | **TETRACYCLINE** | 89,420 |
-| 5 | **QUINOLONE** | 80,396 |
-| 6 | **SULFONAMIDE** | 63,261 |
-| 7 | **MACROLIDE** | 50,984 |
-| 8 | **FOSFOMYCIN** | 41,716 |
-| 9 | **PHENICOL/QUINOLONE** | 29,342 |
-| 10 | **PHENICOL** | 28,784 |
-| 11 | **TRIMETHOPRIM** | 25,236 |
-| 12 | **LINCOSAMIDE/MACROLIDE/STREPTOGRAMIN** | 24,336 |
-| 13 | **BETA-LACTAM/MACROLIDE/TETRACYCLINE** | 21,999 |
-| 14 | **MACROLIDE/STREPTOGRAMIN** | 21,747 |
-| 15 | **GLYCOPEPTIDE** | 13,405 |
+The ChEMBL database contains extensive bioactivity data for thousands of EGFR inhibitors, making it an excellent resource for drug discovery research.",,48.81486892700195,20,1337,30379,83255,"mcp__togomcp__search_chembl_target, mcp__togomcp__run_sparql, mcp__pubmed__search_articles","[{""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""EGFR human epidermal growth factor receptor"", ""limit"": 5}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""\nPREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?molecule ?molecule_name ?activity_value ?activity_unit ?activity_type\nWHERE {\n  ?assay chembl:hasTarget <http://rdf.ebi.ac.uk/resource/chembl/target/CHEMBL203> .\n  ?activity chembl:hasAssay ?assay .\n  ?activity chembl:hasMolecule ?molecule .\n  ?molecule rdfs:label ?molecule_name .\n  ?activity chembl:standardValue ?activity_value .\n  ?activity chembl:standardUnits ?activity_unit .\n  ?activity chembl:type ?activity_type .\n  ?activity chembl:standardRelation \""=\"" .\n  \n  FILTER(?activity_type IN (\""IC50\"", \""Ki\"", \""Kd\""))\n  FILTER(?activity_unit = \""nM\"")\n  FILTER(?activity_value < 1)\n}\nORDER BY ?activity_value\nLIMIT 50\n""}}, {""name"": ""mcp__pubmed__search_articles"", ""input"": {""query"": ""EGFR inhibitors potent IC50 cancer therapy"", ""max_results"": 10, ""date_from"": ""2020""}}]",CRITICAL,"List of potent EGFR inhibitors with IC50 values, such as TAK-020 (5e-9 nM), OSIMERTINIB (0.002 nM), AFATINIB (0.01 nM), MOBOCERTINIB (0.01 nM)","COMPLEX QUERY requiring ChEMBL data model knowledge.
+
+Databases/Resources: ChEMBL
+
+Knowledge Required:
+- Activity type specification (cco:standardType 'IC50')
+- Unit filtering CRITICAL (cco:standardUnits 'nM') - 97% in nM but mixing units gives wrong comparisons
+- Target ID filtering for EGFR (CHEMBL203)
+- Molecule-Activity-Assay-Target relationship path
+
+Without proper knowledge: Results mix incompatible units making potency comparisons meaningless.
+
+Verified in chembl_exploration.md Pattern 1 (Potent Inhibitor Discovery)."
+15,2026-01-31,Integration,What is the molecular formula of the kinase inhibitor Imatinib according to chemical databases?,True,True,False,0.3333333333333333,"The molecular formula of Imatinib (also known as Imatinib mesylate or Gleevec) is **C29H31N7O** for the free base form.
+
+When referring to the mesylate salt form (Imatinib mesylate), which is the marketed pharmaceutical form, the molecular formula is **C29H31N7O·CH4O3S** or written out as **C30H35N7O4S**.
+
+Imatinib is a tyrosine kinase inhibitor primarily used to treat chronic myeloid leukemia (CML) and gastrointestinal stromal tumors (GIST).",,4.539208889007568,58,152,True,False,0.0,"Perfect! I have the information from PubChem. The ChEMBL SPARQL query didn't return results in the expected format, but the PubChem data is comprehensive.
+
+## Answer
+
+According to chemical databases, the **molecular formula of Imatinib is C₂₉H₃₁N₇O**.
+
+### Additional Information:
+- **PubChem CID**: 5291
+- **ChEMBL ID**: CHEMBL941
+- **Molecular Weight**: 493.6 g/mol
+- **IUPAC Name**: 4-[(4-methylpiperazin-1-yl)methyl]-N-[4-methyl-3-[(4-pyridin-3-ylpyrimidin-2-yl)amino]phenyl]benzamide
+
+Imatinib is indeed a tyrosine kinase inhibitor, commonly known by its brand name Gleevec/Glivec, and is primarily used to treat chronic myeloid leukemia (CML) and gastrointestinal stromal tumors (GIST).",,30.025336027145386,17,708,1569,79570,"mcp__togomcp__search_chembl_molecule, mcp__togomcp__get_pubchem_compound_id, mcp__togomcp__get_compound_attributes_from_pubchem, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""Imatinib"", ""limit"": 5}}, {""name"": ""mcp__togomcp__get_pubchem_compound_id"", ""input"": {""compound_name"": ""imatinib""}}, {""name"": ""mcp__togomcp__get_compound_attributes_from_pubchem"", ""input"": {""pubchem_compound_id"": ""5291""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>\nSELECT ?formula ?smiles ?inchi WHERE {\n  ?molecule chembl:chemblId \""CHEMBL941\"" ;\n            chembl:molecularFormula ?formula .\n  OPTIONAL { ?molecule chembl:smiles ?smiles }\n  OPTIONAL { ?molecule chembl:inchi ?inchi }\n}""}}]",VALUABLE,C29H31N7O (from ChEBI),"COMPLEX QUERY requiring cross-database integration.
+
+Databases/Resources: ChEMBL, ChEBI
+
+Knowledge Required:
+- skos:exactMatch pattern for ChEMBL-ChEBI link
+- Pre-filtering by development phase BEFORE join (2.4M molecules)
+- Explicit GRAPH clauses for EBI endpoint
+- chebi:formula property for molecular formula
+
+Without proper knowledge: Query times out processing 2.4M molecules before filtering.
+
+Verified in chembl_exploration.md Pattern 3 (Cross-Database ChEMBL-ChEBI Integration)."
+16,2026-01-31,Integration,What PubChem compound ID corresponds to the ChEMBL compound CHEMBL941 and how are they linked?,True,False,True,0.5,"I don't have certain information about the specific PubChem compound ID that corresponds to ChEMBL compound CHEMBL941 in my training data.
+
+However, I can explain how ChEMBL and PubChem compounds are generally linked:
+
+**How the databases are linked:**
+
+1. **Cross-references**: Both ChEMBL and PubChem maintain cross-reference mappings between their compound identifiers. ChEMBL records often include PubChem CID (Compound ID) links, and PubChem records similarly reference ChEMBL IDs.
+
+2. **Structure-based matching**: The primary way these compounds are linked is through their chemical structures. Both databases use standardized structure representations (like InChI and InChI Keys) to identify identical or related compounds across different databases.
+
+3. **UniChem**: The European Bioinformatics Institute (EBI) maintains UniChem, a service specifically designed to map chemical structures across different databases, including ChEMBL and PubChem.
+
+To find the specific PubChem CID for CHEMBL941, you would typically:
+- Query the ChEMBL database directly for CHEMBL941's record
+- Use UniChem's cross-reference service
+- Search PubChem using the ChEMBL ID or the compound's structure/name
+
+Without access to current database resources, I cannot provide you with the specific PubChem CID for CHEMBL941.",,8.270049095153809,64,333,True,True,0.8333333333333334,"Excellent! I have found comprehensive information about CHEMBL941 and its PubChem compound ID. Let me provide you with a complete answer.
+
+## Answer
+
+**CHEMBL941** (Imatinib) corresponds to **PubChem Compound ID: 5291**
+
+### How They Are Linked
+
+The connection between ChEMBL and PubChem databases is established through **cross-reference mappings** in the ChEMBL RDF database. Specifically:
+
+1. **Direct Cross-Reference**: ChEMBL compounds link to PubChem using the property `cco:moleculeXref`, which points to the PubChem compound URI:
+   - ChEMBL URI: `http://rdf.ebi.ac.uk/resource/chembl/molecule/CHEMBL941`
+   - PubChem URI: `http://pubchem.ncbi.nlm.nih.gov/compound/5291`
+
+2. **Relationship Type**: According to the TogoID database, the relationship between ChEMBL compounds and PubChem compounds is classified as ""**is nearly equivalent to**"" (bidirectional), meaning they represent the same chemical entity but may have slightly different representations or metadata in each database.
+
+### Additional Cross-References
+
+CHEMBL941 (Imatinib) is also linked to many other databases, including:
+- **ChEBI**: CHEBI:45783 (via `skos:exactMatch`)
+- **DrugBank**: DB00619
+- **HMDB**: HMDB0014757
+- **PDB**: Chemical component STI
+- **ZINC**: ZINC000019632618
+
+This integration enables researchers to seamlessly navigate between different chemical databases and access complementary information about the same compound across multiple resources.",,44.587867736816406,27,1348,31305,190404,"mcp__togomcp__search_chembl_molecule, mcp__togomcp__togoid_convertId, mcp__togomcp__togoid_getAllRelation, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""CHEMBL941"", ""limit"": 5}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""CHEMBL941"", ""route"": ""chembl.compound,pubchem.compound"", ""limit"": 10}}, {""name"": ""mcp__togomcp__togoid_getAllRelation"", ""input"": {}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\nSELECT ?molecule ?label ?xref\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?molecule a cco:SmallMolecule ;\n            rdfs:label ?label ;\n            cco:chemblId \""CHEMBL941\"" ;\n            cco:moleculeXref ?xref .\n  FILTER(STRSTARTS(STR(?xref), \""http://pubchem.ncbi.nlm.nih.gov/compound/\""))\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\nPREFIX skos: <http://www.w3.org/2004/02/skos/core#>\n\nSELECT ?molecule ?label ?chemblId ?xref ?exactMatch\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?molecule a cco:SmallMolecule ;\n            rdfs:label ?label ;\n            cco:chemblId \""CHEMBL941\"" .\n  OPTIONAL { ?molecule cco:moleculeXref ?xref }\n  OPTIONAL { ?molecule skos:exactMatch ?exactMatch }\n}\nLIMIT 50""}}]",CRITICAL,"PubChem CID 5291 (Imatinib), linked via cross-reference properties","COMPLEX QUERY requiring cross-reference knowledge.
+
+Databases/Resources: ChEMBL, PubChem (via TogoID or cross-refs)
+
+Knowledge Required:
+- TogoID route: 'chembl_compound,pubchem_compound'
+- Alternative: cco:moleculeXref cross-reference pattern
+- Understanding of compound identifier relationships
+
+Without proper knowledge: Cannot determine correct mapping route.
+
+Verified in chembl_exploration.md simple queries section (TogoID conversion)."
+17,2026-01-31,Completeness,How many approved biochemical reactions are recorded in the Rhea database?,True,False,True,1.0,"I don't have access to the current exact number of approved biochemical reactions in the Rhea database. The number changes over time as new reactions are added and the database is updated.
+
+As of my last training data, Rhea contained over 10,000 curated biochemical reactions, but I cannot provide you with the precise current count with certainty. For the most accurate and up-to-date number, I would recommend checking the official Rhea database website (https://www.rhea-db.org/) directly, where they typically display current statistics about the database contents.",,4.135341167449951,52,127,True,True,1.0,"Perfect! I found the information in the MIE (Metadata Interoperability Exchange) file for Rhea. According to the database statistics:
+
+**The Rhea database contains 17,078 approved biochemical reactions.**
+
+Here's the breakdown:
+- **Total master reactions (unspecified direction)**: 17,078
+- **Directional reactions**: 34,156 (representing left-to-right and right-to-left forms)
+- **Bidirectional reactions**: 17,078 (reversible forms)
+
+By reaction status:
+- **Approved reactions**: 66,740 (includes all directional variants)
+- **Preliminary reactions**: 452 (under curation)
+- **Obsolete reactions**: 1,120 (retained for historical reference)
+
+Additionally, the database contains:
+- **Small molecule compounds**: 11,763
+- **Polymer structures**: 254
+- **Transport reactions**: 5,984
+
+All approved reactions in Rhea are chemically balanced, atom-balanced, and linked to standard chemical vocabularies like ChEBI, with extensive cross-references to metabolic pathway databases (KEGG, MetaCyc, Reactome) and enzyme classifications (EC numbers).",,20.95828676223755,15,474,12322,79291,"mcp__togomcp__search_rhea_entity, mcp__togomcp__get_MIE_file","[{""name"": ""mcp__togomcp__search_rhea_entity"", ""input"": {""query"": """", ""limit"": 1}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""rhea""}}]",CRITICAL,"16,685 approved reactions","SIMPLE QUERY - Straightforward count with status filter.
+
+Method: Simple SPARQL COUNT with rhea:status rhea:Approved filter
+
+Demonstrates a simple completeness query that doesn't require complex optimization.
+
+Verified in rhea_exploration.md simple queries section."
+18,2026-01-31,Completeness,How many human proteins have autophagy-related Gene Ontology annotations?,True,False,True,0.8333333333333334,"I don't have access to the current exact number of human proteins with autophagy-related Gene Ontology annotations in my training data.
+
+However, I can provide some context:
+
+**Autophagy-related GO terms** include annotations like:
+- GO:0006914 (autophagy)
+- GO:0000045 (autophagosome assembly)
+- GO:0016236 (macroautophagy)
+- GO:0000422 (autophagy of mitochondrion/mitophagy)
+- And various other specific autophagy process terms
+
+The number of annotated proteins varies depending on:
+1. **Evidence codes** - whether you include only experimentally validated annotations or also computational predictions
+2. **Annotation depth** - direct annotations vs. inherited annotations from child terms
+3. **Database version** - GO annotations are continuously updated
+
+As of recent estimates I'm aware of, there are typically **several hundred to over a thousand** human proteins with some form of autophagy-related GO annotation, with core autophagy machinery genes (ATG genes) numbering around 40-50, but many additional proteins involved in regulation, cargo recognition, and related processes.
+
+For the most current and precise number, you would need to query the Gene Ontology database or resources like QuickGO or AmiGO with current data.",,8.854694843292236,53,302,True,True,0.6666666666666666,"Based on my analysis of the UniProt database using Gene Ontology annotations, **331 human proteins** have autophagy-related GO annotations (from the reviewed/Swiss-Prot dataset).
+
+Here's a breakdown of the main autophagy-related GO terms and their associated protein counts:
+
+**Top Autophagy GO Terms:**
+1. **GO:0006914 (autophagy)** - 146 proteins
+2. **GO:0010508 (positive regulation of autophagy)** - 83 proteins
+3. **GO:0010506 (regulation of autophagy)** - 68 proteins
+4. **GO:0010507 (negative regulation of autophagy)** - 58 proteins
+5. **GO:0000422 (autophagy of mitochondrion/mitophagy)** - 12 proteins
+6. **GO:1903146 (regulation of autophagy of mitochondrion)** - 6 proteins
+7. **GO:0061684 (chaperone-mediated autophagy)** - 6 proteins
+
+The annotations span various autophagy processes including:
+- General autophagy and macroautophagy
+- Selective autophagy (mitophagy, chaperone-mediated autophagy)
+- Regulation of autophagy (positive and negative)
+- Specific autophagy pathways responding to cellular stress
+
+**Example proteins include:**
+- UFL1 (E3 UFM1-protein ligase 1)
+- GATA4 (Transcription factor GATA-4)
+- SIR2 (NAD-dependent protein deacetylase sirtuin-2)
+- KDM4A (Lysine-specific demethylase 4A)
+
+Note: This count is based on manually reviewed (Swiss-Prot) entries, which represent high-quality, expert-curated annotations for human proteins.",,69.49362897872925,38,3053,33585,355679,"mcp__ols__search, mcp__ols__fetch, mcp__ols__getDescendants, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__ols__search"", ""input"": {""query"": ""autophagy""}}, {""name"": ""mcp__ols__fetch"", ""input"": {""id"": ""go+http://purl.obolibrary.org/obo/GO_0006914""}}, {""name"": ""mcp__ols__getDescendants"", ""input"": {""ontologyId"": ""go"", ""classIri"": ""http://purl.obolibrary.org/obo/GO_0006914"", ""pageSize"": 500}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""uniprot""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\n\nSELECT (COUNT(DISTINCT ?protein) as ?count)\nWHERE {\n  ?protein a up:Protein ;\n           up:reviewed 1 ;\n           up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n           up:classifiedWith ?goTerm .\n  FILTER(STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0006914\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0160155\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061684\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0030242\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0016237\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0016236\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0000422\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0000426\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0000425\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0140504\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061738\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0034727\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0000424\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0098792\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061816\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061724\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061723\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061709\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0062093\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0044804\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0035973\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0034517\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0000423\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0035695\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0180045\"") ||\n         STRSTARTS(STR(?goTerm), \""http://purl.obolibrary.org/obo/GO_0061734\""))\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT (COUNT(DISTINCT ?protein) as ?count)\nWHERE {\n  GRAPH <http://sparql.uniprot.org/uniprot> {\n    ?protein a up:Protein ;\n             up:reviewed 1 ;\n             up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n             up:classifiedWith ?goTerm .\n  }\n  GRAPH <http://sparql.uniprot.org/go> {\n    ?goTerm rdfs:label ?goLabel .\n    ?goLabel bif:contains \""'autophagy'\""\n  }\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?goTerm ?goLabel (COUNT(DISTINCT ?protein) as ?proteinCount)\nWHERE {\n  GRAPH <http://sparql.uniprot.org/uniprot> {\n    ?protein a up:Protein ;\n             up:reviewed 1 ;\n             up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n             up:classifiedWith ?goTerm .\n  }\n  GRAPH <http://sparql.uniprot.org/go> {\n    ?goTerm rdfs:label ?goLabel .\n    ?goLabel bif:contains \""'autophagy'\""\n  }\n}\nGROUP BY ?goTerm ?goLabel\nORDER BY DESC(?proteinCount)\nLIMIT 20""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?protein ?mnemonic ?fullName\nWHERE {\n  GRAPH <http://sparql.uniprot.org/uniprot> {\n    ?protein a up:Protein ;\n             up:reviewed 1 ;\n             up:organism <http://purl.uniprot.org/taxonomy/9606> ;\n             up:mnemonic ?mnemonic ;\n             up:classifiedWith ?goTerm ;\n             up:recommendedName ?name .\n    ?name up:fullName ?fullName .\n  }\n  GRAPH <http://sparql.uniprot.org/go> {\n    ?goTerm rdfs:label ?goLabel .\n    ?goLabel bif:contains \""'autophagy'\""\n  }\n}\nLIMIT 10""}}]",CRITICAL,146 human proteins with autophagy (GO:0006914) annotations,"COMPLEX QUERY requiring multi-graph knowledge.
+
+Databases/Resources: UniProt, GO (within UniProt endpoint)
+
+Knowledge Required:
+- up:reviewed 1 filter for performance
+- Two graphs: uniprot and go at same endpoint
+- STRSTARTS filter for GO URI identification
+- GO term URI format (http://purl.obolibrary.org/obo/GO_XXXXXXX)
+
+Without proper knowledge: Fails to correctly identify GO terms or times out without reviewed filter.
+
+Verified in uniprot_exploration.md (cross-database integration section)."
+19,2026-01-31,Specificity,What ClinVar variants have conflicting clinical interpretations from different laboratories?,True,False,False,0.2857142857142857,"I can provide information about ClinVar's conflicting interpretation classifications based on my training knowledge.
+
+ClinVar tracks variants where different submitting laboratories have provided different clinical significance interpretations. These are typically flagged with specific categories:
+
+## Common Conflicting Interpretation Patterns:
+
+1. **""Conflicting interpretations of pathogenicity""** - This is the most common designation, where submitters disagree on classification (e.g., one lab calls it pathogenic while another calls it benign or VUS)
+
+2. **Typical conflicts include:**
+   - Pathogenic vs. Likely Pathogenic vs. VUS
+   - Pathogenic vs. Benign
+   - Benign vs. VUS
+   - Likely Benign vs. VUS
+
+## Examples of genes with historically high rates of conflicts:
+- **BRCA1 and BRCA2** - breast/ovarian cancer genes
+- **MSH2, MLH1, MSH6, PMS2** - Lynch syndrome genes
+- **LDLR** - familial hypercholesterolemia
+- **SCN5A** - cardiac arrhythmia gene
+- **KCNQ1, KCNH2** - Long QT syndrome genes
+
+## Why conflicts occur:
+- Different evidence thresholds
+- Access to different patient/family data
+- Different computational predictions
+- Evolving evidence over time
+- Different interpretation of ACMG/AMP guidelines
+
+**Note:** I cannot query the current ClinVar database to give you specific variant IDs or current statistics. For actual variant-level data with conflicts, you would need to search ClinVar directly at ncbi.nlm.nih.gov/clinvar/ using filters for ""conflicting interpretations.""",,9.870668888092041,52,397,True,True,0.8571428571428571,"Excellent! I've found comprehensive information about ClinVar variants with conflicting clinical interpretations. Here's a summary:
+
+## ClinVar Variants with Conflicting Clinical Interpretations
+
+I found **numerous variants** in ClinVar where different laboratories have submitted conflicting interpretations of their pathogenicity. Here are the most notable examples with the highest number of submitters:
+
+### Top 5 Variants with Conflicting Interpretations:
+
+1. **SPG7 c.1529C>T (p.Ala510Val)** - VCV000042016
+   - **64 submitters** with conflicting classifications
+   - Gene: SPG7 (chromosome 16)
+   - Associated with: Hereditary spastic paraplegia type 7, ataxia
+   - Allele frequency: ~0.36% in population databases
+
+2. **APC c.3920T>A (p.Ile1307Lys)** - VCV000000822
+   - **52 submitters** with conflicting classifications  
+   - Gene: APC (chromosome 5)
+   - Associated with: Colorectal cancer, familial adenomatous polyposis
+   - Classification: ""Conflicting classifications of pathogenicity; association; risk factor""
+   - Allele frequency: ~0.12% (more common in Ashkenazi Jewish populations)
+
+3. **POLG c.1760C>T (p.Pro587Leu)** - VCV000013505
+   - **52 submitters** with conflicting classifications
+   - Gene: POLG (chromosome 15)
+   - Associated with: Mitochondrial disorders, progressive external ophthalmoplegia
+   - Allele frequency: ~0.15%
+
+4. **POLG c.752C>T (p.Thr251Ile)** - VCV000013503
+   - **51 submitters** with conflicting classifications
+   - Gene: POLG (chromosome 15)
+   - Associated with: POLG-related mitochondrial disorders
+
+5. **HFE c.187C>G (p.His63Asp)** - VCV000000010
+   - **51 submitters** with conflicting classifications
+   - Gene: HFE (chromosome 6)
+   - Associated with: Hereditary hemochromatosis (iron overload)
+   - Classification: ""Conflicting classifications of pathogenicity; other""
+   - Allele frequency: ~10% (very common variant)
+
+### Additional Notable Examples:
+
+- **BTD c.1270G>C** (50 submitters) - Biotinidase deficiency
+- **CHEK2 c.1427C>T** (50 submitters) - Breast/ovarian cancer predisposition
+- **SERPINA1 c.1096G>A** (45 submitters) - Alpha-1 antitrypsin deficiency
+- **TNFRSF13B c.310T>C** (45 submitters) - Immunodeficiency
+- **CHEK2 c.470T>C** (43 submitters) - Cancer predisposition
+
+### Why Do Conflicting Interpretations Occur?
+
+Conflicts arise due to:
+- **Different evidence levels** - Labs may have access to different functional studies or patient data
+- **Population frequency considerations** - Some variants are common in certain populations but rare in others
+- **Incomplete penetrance** - Not all carriers develop disease
+- **Variant effect complexity** - Effects may depend on genetic background or be context-dependent
+- **Evolving evidence** - As new data emerges, interpretations change but historical submissions remain
+
+ClinVar tracks over **1,366 variants** with the phrase ""conflicting interpretations of pathogenicity"" in their records, making this a significant challenge in clinical genetics that requires expert review and standardized interpretation guidelines (like ACMG/AMP).",,81.51464605331421,41,2844,48283,386419,"mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary, mcp__togomcp__ncbi_esearch, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__ncbi_esummary","[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""clinvar"", ""query"": ""conflicting interpretations of pathogenicity"", ""max_results"": 20}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""clinvar"", ""ids"": [""4531382"", ""2671573"", ""2628599"", ""2181706"", ""1805838""]}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""clinvar"", ""query"": ""conflicting classifications[Review Status]"", ""max_results"": 20}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""clinvar""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\n\nSELECT ?variant ?label ?review_status ?num_submitters\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?variant a cvo:VariationArchiveType ;\n           rdfs:label ?label ;\n           cvo:number_of_submitters ?num_submitters ;\n           cvo:classified_record ?classrec .\n  ?classrec cvo:classifications/cvo:germline_classification/cvo:review_status ?review_status .\n  FILTER(?num_submitters >= 2)\n  FILTER(CONTAINS(LCASE(?review_status), \""conflict\""))\n}\nORDER BY DESC(?num_submitters)\nLIMIT 50""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\n\nSELECT ?variant ?label ?gene ?significance ?review_status ?num_submitters\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?variant a cvo:VariationArchiveType ;\n           rdfs:label ?label ;\n           cvo:number_of_submitters ?num_submitters ;\n           cvo:classified_record ?classrec .\n  ?classrec cvo:classifications ?class ;\n            sio:SIO_000628 ?gene_bn .\n  ?gene_bn cvo:symbol ?gene .\n  ?class cvo:germline_classification ?germ .\n  ?germ cvo:description ?significance ;\n        cvo:review_status ?review_status .\n  FILTER(CONTAINS(LCASE(?review_status), \""conflicting\""))\n  FILTER(?num_submitters >= 10)\n}\nORDER BY DESC(?num_submitters)\nLIMIT 30""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\nPREFIX sio: <http://semanticscience.org/resource/>\n\nSELECT ?variant ?label ?gene ?significance ?review_status ?num_submitters\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?variant a cvo:VariationArchiveType ;\n           rdfs:label ?label ;\n           cvo:number_of_submitters ?num_submitters ;\n           cvo:classified_record ?classrec .\n  ?classrec cvo:classifications ?class ;\n            sio:SIO_000628 ?gene_bn .\n  ?gene_bn cvo:symbol ?gene .\n  ?class cvo:germline_classification ?germ .\n  ?germ cvo:description ?significance ;\n        cvo:review_status ?review_status .\n  FILTER(CONTAINS(LCASE(?review_status), \""conflicting\""))\n  FILTER(?num_submitters >= 10)\n}\nORDER BY DESC(?num_submitters)\nLIMIT 30""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""clinvar"", ""sparql_query"": ""PREFIX cvo: <http://purl.jp/bio/10/clinvar/>\n\nSELECT ?variant ?label ?review_status ?num_submitters ?significance\nFROM <http://rdfportal.org/dataset/clinvar>\nWHERE {\n  ?variant a cvo:VariationArchiveType ;\n           rdfs:label ?label ;\n           cvo:number_of_submitters ?num_submitters ;\n           cvo:classified_record ?classrec .\n  ?classrec cvo:classifications/cvo:germline_classification ?germ .\n  ?germ cvo:description ?significance ;\n        cvo:review_status ?review_status .\n  FILTER(REGEX(?review_status, \""conflicting\"", \""i\""))\n}\nORDER BY DESC(?num_submitters)\nLIMIT 20""}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""clinvar"", ""ids"": [""42016"", ""822"", ""13505"", ""10"", ""128060""]}}]",CRITICAL,"List of variants with conflicting interpretations such as SPG7 c.1529C>T (64 submitters), POLG c.1760C>T (52 submitters), APC c.3920T>A (52 submitters)","COMPLEX QUERY requiring classification filtering knowledge.
+
+Databases/Resources: ClinVar
+
+Knowledge Required:
+- Property path for nested classification structure
+- CONTAINS filter for 'Conflicting' in significance
+- number_of_submitters for evidence strength
+- record_status 'current' filter
+
+Without proper knowledge: Unable to navigate nested classification structure.
+
+Verified in clinvar_exploration.md Pattern 6 (Conflicting Interpretations)."
+20,2026-01-31,Specificity,What is the MeSH term identifier for Niemann-Pick disease?,True,True,False,0.0,"The MeSH (Medical Subject Headings) term identifier for Niemann-Pick disease is **D009542**.
+
+This MeSH term covers Niemann-Pick diseases, which are a group of inherited metabolic disorders characterized by abnormal lipid storage. The MeSH hierarchy includes more specific terms for the different types of Niemann-Pick disease as well.",,3.375680923461914,53,83,True,False,0.0,"The MeSH term identifiers for Niemann-Pick disease are:
+
+- **D009542** - Niemann-Pick Diseases (general term for all types)
+- **D052536** - Niemann-Pick Disease, Type A
+- **D052537** - Niemann-Pick Disease, Type B  
+- **D052556** - Niemann-Pick Disease, Type C
+
+The general MeSH descriptor for all Niemann-Pick diseases is **D009542**. If you're looking for a specific type of Niemann-Pick disease, you would use one of the more specific identifiers (Type A, B, or C).",,14.207769870758057,9,253,605,52654,mcp__togomcp__search_mesh_descriptor,"[{""name"": ""mcp__togomcp__search_mesh_descriptor"", ""input"": {""query"": ""Niemann-Pick disease"", ""limit"": 10}}]",VALUABLE,T028436 or http://id.nlm.nih.gov/mesh/T028436,"SIMPLE QUERY - Straightforward medical terminology lookup.
+
+Method: search_mesh_descriptor('Niemann-Pick disease')
+
+Demonstrates when basic MeSH search tools suffice.
+
+Verified in example_questions.json question 8."
+21,2026-01-31,Currency,What cryo-electron microscopy structures of SARS-CoV-2 spike protein have associated electron density maps?,True,False,True,0.5555555555555556,"I can provide information about cryo-EM structures of SARS-CoV-2 spike protein from my training knowledge, though I cannot query databases directly to give you a current comprehensive list.
+
+Several notable cryo-EM structures of the SARS-CoV-2 spike protein with associated electron density maps include:
+
+## Key Early Structures:
+
+1. **PDB: 6VSB and 6VXX** - Among the first structures solved by Wrapp et al. (2020), showing the spike in the prefusion conformation with one RBD in the ""up"" position. Associated EMDB entries available.
+
+2. **PDB: 6VYB** - Full-length spike protein structure by Walls et al. (2020).
+
+3. **PDB: 6XR8, 6XRA** - Closed (all RBDs down) conformations of the spike.
+
+## Spike-ACE2 Complexes:
+
+4. **PDB: 6M0J** - Spike RBD bound to ACE2 receptor (Lan et al., 2020).
+
+5. **PDB: 7A94, 7A98** - Full spike bound to ACE2.
+
+## Antibody-Bound Structures:
+
+Multiple structures showing spike protein bound to neutralizing antibodies have been deposited with associated EM maps.
+
+## General Information:
+
+- These structures typically have resolutions ranging from ~2.5-4 Å
+- Each PDB entry has corresponding EMDB (Electron Microscopy Data Bank) entries containing the 3D density maps
+- Maps are typically available in MRC/CCP4 format
+
+For a complete and current list, you would need to search the PDB (Protein Data Bank) and EMDB directly, filtering for SARS-CoV-2 spike protein structures solved by cryo-EM.",,11.186129093170166,63,433,True,False,0.4444444444444444,"Perfect! Now I have comprehensive information about SARS-CoV-2 spike protein cryo-EM structures with electron density maps. Let me provide you with a summary.
+
+## SARS-CoV-2 Spike Protein Cryo-EM Structures with Electron Density Maps
+
+I found **614 cryo-electron microscopy structures** of the SARS-CoV-2 spike protein that have associated electron density maps deposited in the **Electron Microscopy Data Bank (EMDB)**.
 
 ### Key Findings:
 
-- **Beta-lactam resistance genes** are by far the most prevalent, accounting for over 243,000 genotype features
-- The top 3 classes (Beta-lactam, Aminoglycoside, and Efflux) together represent over 611,000 features - more than half of all AMR genotype features in the database
-- Several entries represent **multi-drug resistance classes** (combinations like ""PHENICOL/QUINOLONE"" or ""BETA-LACTAM/MACROLIDE/TETRACYCLINE""), indicating genes that confer resistance to multiple antibiotic classes
-- **Efflux pumps** (ranked 3rd) are a major mechanism of resistance, capable of expelling multiple drug types from bacterial cells
+**Total Structures:** 614 PDB entries with EMDB cross-references
 
-The AMR Portal contains approximately 1.16 million total genotype features across all bacterial isolates in the database.",,26.125108003616333,15,929,11489,89761,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?amrClass (COUNT(*) as ?geneCount)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:amrClass ?amrClass .\n}\nGROUP BY ?amrClass\nORDER BY DESC(?geneCount)\nLIMIT 20""}}]",CRITICAL,"BETA-LACTAM (243,389), AMINOGLYCOSIDE (187,430), EFFLUX (180,406)",Database: AMR Portal. Verified in amrportal_exploration.md via SPARQL GROUP BY and COUNT. Tests complex aggregation queries on resistance surveillance data.
+**Coverage includes:**
+- **Wild-type spike protein** in various conformational states (closed, open, RBD-up, RBD-down)
+- **Variants of concern:** Delta, Omicron (BA.1, BA.2), Alpha (B.1.1.7), Beta (B.1.351)
+- **Antibody complexes** with numerous neutralizing antibodies and nanobodies
+- **ACE2 complexes** showing receptor binding
+- **Stabilized variants** with various mutations (HexaPro, 2P, 6P mutations)
+- **Different pH conditions** and processing states (furin-cleaved, uncleaved)
+
+### Sample of Notable Structures:
+
+**Early Structures (2020):**
+- **6VXX** - Closed state spike (EMD-21452)
+- **6VYB** - Open state spike (EMD-21457)
+- **6ZWV** - Spike on intact virions (EMD-11497)
+
+**Variant Structures:**
+- **7FET** - B.1.1.7 (Alpha) variant (EMD-31563)
+- **7VHH** - Delta variant (EMD-31994)
+- **8BGG** - Omicron BA.1 variant (EMD-16030)
+
+**Recent Structures (2022-2023):**
+- **8HCB** - Omicron BA.1 with YB13-292 Fab (EMD-34658)
+- **8GS9** - BA.2 RBD complex (EMD-34226)
+- **7XJ9** - BA.1 with antibody cocktail (EMD-33222)
+
+### How to Access the Data:
+
+1. **PDB entries** can be accessed at: `https://www.rcsb.org/structure/[PDB_ID]`
+2. **Electron density maps (EMDB)** can be downloaded from: `https://www.ebi.ac.uk/emdb/[EMDB_ID]`
+
+For example:
+- PDB: https://www.rcsb.org/structure/6VXX
+- EMDB: https://www.ebi.ac.uk/emdb/EMD-21452
+
+All 614 structures include 3D reconstruction maps that can be visualized and analyzed using software like UCSF Chimera, ChimeraX, or PyMOL.",,65.43861699104309,31,2706,24423,216084,"mcp__togomcp__search_pdb_entity, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""SARS-CoV-2 spike protein cryo-EM"", ""limit"": 50}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pdb""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT DISTINCT ?entry_id ?title ?emdb_code ?resolution\nFROM <http://rdfportal.org/dataset/pdbj>\nWHERE {\n  ?entry a pdbx:datablock .\n  BIND(STRAFTER(str(?entry), \""http://rdf.wwpdb.org/pdb/\"") AS ?entry_id)\n  \n  # Get structure title\n  ?entry pdbx:has_structCategory/pdbx:has_struct ?struct .\n  ?struct pdbx:struct.title ?title .\n  \n  # Filter for SARS-CoV-2 spike protein structures\n  FILTER(CONTAINS(LCASE(?title), \""sars-cov-2\"") && CONTAINS(LCASE(?title), \""spike\""))\n  \n  # Get experimental method - must be cryo-EM\n  ?entry pdbx:has_exptlCategory/pdbx:has_exptl ?exptl .\n  ?exptl pdbx:exptl.method \""ELECTRON MICROSCOPY\"" .\n  \n  # Get EMDB cross-reference\n  ?entry pdbx:has_database_2Category/pdbx:has_database_2 ?db .\n  ?db pdbx:database_2.database_id \""EMDB\"" ;\n      pdbx:database_2.database_code ?emdb_code .\n  \n  # Get resolution if available (optional for EM)\n  OPTIONAL {\n    ?entry pdbx:has_refineCategory/pdbx:has_refine ?refine .\n    ?refine pdbx:refine.ls_d_res_high ?resolution .\n  }\n}\nORDER BY ?entry_id\nLIMIT 100""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT (COUNT(DISTINCT ?entry_id) as ?total_count)\nFROM <http://rdfportal.org/dataset/pdbj>\nWHERE {\n  ?entry a pdbx:datablock .\n  BIND(STRAFTER(str(?entry), \""http://rdf.wwpdb.org/pdb/\"") AS ?entry_id)\n  \n  # Get structure title\n  ?entry pdbx:has_structCategory/pdbx:has_struct ?struct .\n  ?struct pdbx:struct.title ?title .\n  \n  # Filter for SARS-CoV-2 spike protein structures\n  FILTER(CONTAINS(LCASE(?title), \""sars-cov-2\"") && CONTAINS(LCASE(?title), \""spike\""))\n  \n  # Get experimental method - must be cryo-EM\n  ?entry pdbx:has_exptlCategory/pdbx:has_exptl ?exptl .\n  ?exptl pdbx:exptl.method \""ELECTRON MICROSCOPY\"" .\n  \n  # Get EMDB cross-reference (electron density maps)\n  ?entry pdbx:has_database_2Category/pdbx:has_database_2 ?db .\n  ?db pdbx:database_2.database_id \""EMDB\"" ;\n      pdbx:database_2.database_code ?emdb_code .\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""PREFIX pdbx: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT DISTINCT ?entry_id ?title ?emdb_code ?year\nFROM <http://rdfportal.org/dataset/pdbj>\nWHERE {\n  ?entry a pdbx:datablock .\n  BIND(STRAFTER(str(?entry), \""http://rdf.wwpdb.org/pdb/\"") AS ?entry_id)\n  \n  # Get structure title\n  ?entry pdbx:has_structCategory/pdbx:has_struct ?struct .\n  ?struct pdbx:struct.title ?title .\n  \n  # Filter for SARS-CoV-2 spike protein structures\n  FILTER(CONTAINS(LCASE(?title), \""sars-cov-2\"") && CONTAINS(LCASE(?title), \""spike\""))\n  \n  # Get experimental method - must be cryo-EM\n  ?entry pdbx:has_exptlCategory/pdbx:has_exptl ?exptl .\n  ?exptl pdbx:exptl.method \""ELECTRON MICROSCOPY\"" .\n  \n  # Get EMDB cross-reference\n  ?entry pdbx:has_database_2Category/pdbx:has_database_2 ?db .\n  ?db pdbx:database_2.database_id \""EMDB\"" ;\n      pdbx:database_2.database_code ?emdb_code .\n  \n  # Get publication year if available\n  OPTIONAL {\n    ?entry pdbx:has_citationCategory/pdbx:has_citation ?citation .\n    ?citation pdbx:citation.year ?year .\n  }\n}\nORDER BY DESC(?year) DESC(?entry_id)\nLIMIT 50""}}]",CRITICAL,"List of cryo-EM structures with EMDB codes, such as 8A22 → EMD-15100","COMPLEX QUERY requiring cross-database knowledge.
+
+Databases/Resources: PDB, EMDB
+
+Knowledge Required:
+- database_2 category for EMDB cross-references
+- Filter by database_id = 'EMDB'
+- Experimental method filter for ELECTRON MICROSCOPY
+- Keyword filter for SARS-CoV-2 spike
+
+Without proper knowledge: Cannot locate EMDB links or properly filter for cryo-EM structures.
+
+Verified in pdb_exploration.md Pattern 6 (Cryo-EM Structure with EMDB Cross-Reference)."
+22,2026-01-31,Currency,Which Reactome pathways have been associated with CRISPR-Cas9 gene editing mechanisms?,True,False,True,0.75,"I don't have specific information in my training data about Reactome pathways directly associated with CRISPR-Cas9 gene editing mechanisms.
+
+This is likely because:
+
+1. **CRISPR-Cas9 is a bacterial adaptive immune system** - It originated in bacteria and archaea as a defense mechanism against viruses, not as an endogenous human/mammalian pathway.
+
+2. **Reactome focuses on biological pathways** - Reactome is a curated database of biological pathways primarily in humans and model organisms. CRISPR-Cas9 itself is an engineered tool used for research and therapeutic applications rather than a natural biological pathway in these organisms.
+
+3. **Related pathways might include**:
+   - **DNA repair pathways** (like Non-Homologous End Joining - NHEJ, and Homology Directed Repair - HDR) that are activated after CRISPR-Cas9 creates double-strand breaks
+   - **DNA damage response pathways**
+   - Pathways involved in **genome stability**
+
+If you're looking for pathways related to the cellular responses and mechanisms that occur *after* CRISPR-Cas9 introduces DNA breaks, those DNA repair and damage response pathways in Reactome would be most relevant. However, I cannot provide specific Reactome pathway identifiers or detailed associations with certainty from my training knowledge alone.
+
+Would you like me to discuss the DNA repair mechanisms that are commonly exploited in CRISPR-Cas9 gene editing applications?",,8.22296404838562,60,346,True,True,0.625,"Based on my search of the Reactome database, **CRISPR-Cas9 gene editing mechanisms are not currently represented as specific pathways in Reactome**. The searches for ""CRISPR,"" ""Cas9,"" and ""CRISPR-Cas9"" did not return any dedicated CRISPR-related pathways.
+
+However, CRISPR-Cas9 gene editing relies on cellular DNA repair mechanisms that **are** well-documented in Reactome. The most relevant pathways would be:
+
+## Related DNA Repair Pathways:
+
+1. **DNA Double-Strand Break Repair (R-HSA-5693532)** - This is the primary pathway relevant to CRISPR-Cas9, as Cas9 creates double-strand breaks (DSBs) in DNA
+
+2. **DNA Double Strand Break Response (R-HSA-5693606)** - The cellular response to DSBs, which is triggered by CRISPR-Cas9 cutting activity
+
+These pathways are available across multiple species in Reactome (human, mouse, rat, dog, cow, pig, zebrafish, chicken, and others).
+
+## Why This Matters:
+
+When CRISPR-Cas9 cuts DNA at a target site, cells repair the break using one of two main mechanisms:
+- **Non-Homologous End Joining (NHEJ)** - error-prone repair
+- **Homology-Directed Repair (HDR)** - precise repair using a template
+
+Both of these repair mechanisms are part of the DNA Double-Strand Break Repair pathway in Reactome.
+
+So while CRISPR-Cas9 itself isn't catalogued as a Reactome pathway (as it's a research tool rather than an endogenous biological process), the cellular machinery it exploits is well-documented in the DNA repair pathways.",,30.277487754821777,16,800,10178,86321,"mcp__togomcp__search_reactome_entity, mcp__togomcp__search_reactome_entity, mcp__togomcp__search_reactome_entity, mcp__togomcp__search_reactome_entity","[{""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""CRISPR-Cas9 gene editing"", ""rows"": 30}}, {""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""CRISPR Cas9"", ""rows"": 30}}, {""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""Cas9"", ""rows"": 30}}, {""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""DNA repair double strand break"", ""rows"": 30, ""types"": [""Pathway""]}}]",CRITICAL,"Pathways related to DNA repair, homologous recombination, and genome editing processes","SIMPLE QUERY - Straightforward pathway search.
+
+Method: search_reactome_entity('CRISPR Cas9')
+
+Demonstrates when baseline pathway search tools suffice.
+
+Verified through Reactome search capabilities."
+23,2026-01-31,Precision,What is the ChEMBL target ID for the human epidermal growth factor receptor?,True,True,True,1.0,"The ChEMBL target ID for the human epidermal growth factor receptor (EGFR, also known as HER1 or ErbB1) is **CHEMBL203**.
+
+This target is one of the most extensively studied in ChEMBL due to its importance in cancer therapy, particularly in non-small cell lung cancer and other malignancies.",,3.0691821575164795,57,84,True,True,1.0,"Perfect! The ChEMBL target ID for the human epidermal growth factor receptor (EGFR) is **CHEMBL203**. 
+
+This is the single protein target for EGFR in *Homo sapiens* (humans), which is one of the most important drug targets in cancer therapy, particularly for lung cancer and other epithelial cancers.",,29.007789134979248,15,318,27198,53349,"mcp__togomcp__search_chembl_target, mcp__togomcp__search_chembl_target","[{""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""human epidermal growth factor receptor"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""EGFR Homo sapiens"", ""limit"": 5}}]",VALUABLE,CHEMBL203,"SIMPLE QUERY - Straightforward target lookup.
+
+Method: search_chembl_target('EGFR human')
+
+Demonstrates when basic ChEMBL search tools suffice.
+
+Verified in chembl_exploration.md simple queries section."
+24,2026-01-31,Precision,What is the molecular formula of the cancer drug imatinib according to PubChem?,True,True,True,1.0,"The molecular formula of imatinib according to PubChem is **C29H31N7O**.
+
+This formula represents imatinib in its free base form. Note that imatinib is commonly used clinically as imatinib mesylate (the methanesulfonate salt), which has the molecular formula C29H31N7O·CH4O3S (or C30H35N7O4S when combined).",,3.6566803455352783,57,101,True,True,1.0,"According to PubChem, the molecular formula of imatinib is **C29H31N7O**.
+
+This corresponds to:
+- 29 carbon atoms
+- 31 hydrogen atoms
+- 7 nitrogen atoms
+- 1 oxygen atom
+
+The compound has a molecular weight of 493.6 g/mol. Imatinib (PubChem CID: 5291) is indeed a well-known cancer drug, particularly used to treat chronic myeloid leukemia (CML) and gastrointestinal stromal tumors (GIST).",,16.991021156311035,15,300,995,79298,"mcp__togomcp__get_pubchem_compound_id, mcp__togomcp__get_compound_attributes_from_pubchem","[{""name"": ""mcp__togomcp__get_pubchem_compound_id"", ""input"": {""compound_name"": ""imatinib""}}, {""name"": ""mcp__togomcp__get_compound_attributes_from_pubchem"", ""input"": {""pubchem_compound_id"": ""5291""}}]",VALUABLE,C29H31N7O,"SIMPLE QUERY - Straightforward compound property lookup.
+
+Method: get_pubchem_compound_id('imatinib') followed by get_compound_attributes_from_pubchem
+
+Demonstrates when basic compound lookup tools suffice.
+
+Verified in example_questions.json question 9 (similar pattern for imatinib)."

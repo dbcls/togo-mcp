@@ -1,337 +1,927 @@
 question_id,date,category,question_text,baseline_success,baseline_actually_answered,baseline_has_expected,baseline_confidence,baseline_text,baseline_error,baseline_time,baseline_input_tokens,baseline_output_tokens,togomcp_success,togomcp_has_expected,togomcp_confidence,togomcp_text,togomcp_error,togomcp_time,togomcp_input_tokens,togomcp_output_tokens,togomcp_cache_creation_input_tokens,togomcp_cache_read_input_tokens,tools_used,tool_details,value_add,expected_answer,notes
-109,2026-01-13,Precision,What is the molecular formula of water according to ChEBI?,True,True,False,0.0,"According to ChEBI (Chemical Entities of Biological Interest), the molecular formula of water is **H₂O**.
+109,2026-01-31,Structured Query,Find proteins described as membrane receptors in their functional annotations.,True,False,False,0.0,,,2.4366769790649414,49,2,True,True,0.5555555555555556,"I found **proteins with ""membrane receptor"" mentioned in their functional annotations** from UniProt. Here are some interesting examples:
 
-This represents two hydrogen atoms bonded to one oxygen atom, which is the universally recognized chemical formula for water.",,2.641353130340576,50,53,True,True,1.0,"Perfect! According to ChEBI, the molecular formula of water is **H₂O**.
+## Key Findings:
 
-This is the entry for ""water"" (ChEBI:15377), which shows the chemical formula as H2O - indicating 2 hydrogen atoms bonded to 1 oxygen atom.",,27.470513105392456,21,654,7345,112480,"mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chebi"", ""sparql_query"": ""\nPREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX cheminf: <http://semanticscience.org/resource/>\n\nSELECT ?formula ?label\nWHERE {\n  ?entity rdfs:label ?label .\n  FILTER(regex(?label, \""^water$\"", \""i\""))\n  ?entity cheminf:CHEMINF_000042 ?formula .\n}\nLIMIT 10\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chebi""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chebi"", ""sparql_query"": ""\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX chebi: <http://purl.obolibrary.org/obo/chebi/>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\n\nSELECT ?label ?formula\nFROM <http://rdf.ebi.ac.uk/dataset/chebi>\nWHERE {\n  ?entity a owl:Class ;\n          rdfs:label ?label .\n  ?label bif:contains \""'water'\"" option (score ?sc) .\n  OPTIONAL { ?entity chebi:formula ?formula }\n}\nORDER BY DESC(?sc)\nLIMIT 10\n""}}]",CRITICAL,H2O,Database: ChEBI. Verified in chebi_exploration.md. CHEBI:15377 is water with mass 18.015. Tests basic chemical property retrieval.
-110,2026-01-13,Precision,What MeSH disease ID is associated with articles mentioning diabetes in PubTator?,True,False,True,1.0,"I don't have access to real-time PubTator database queries or specific MeSH disease IDs from PubTator's current contents.
+### **1. Signaling & Regulatory Proteins:**
+- **Beta-adducin** (P35612, Q05764, Q5R5V7, Q9QYB8)
+  - Binds to erythrocyte membrane receptor SLC2A1/GLUT1
+  - Links spectrin cytoskeleton to plasma membrane
 
-However, I can tell you that in the MeSH (Medical Subject Headings) system, the most common MeSH terms for diabetes include:
+- **CCN family member 3** (P48745, Q64299, P51609, Q9QZQ5)
+  - Binds to integrins and membrane receptors like NOTCH1
+  - Regulates proliferation, adhesion, migration, and differentiation
+  - Plays roles in angiogenesis, wound healing, and inflammation
 
-- **Diabetes Mellitus** - MeSH ID: **D003920**
-- **Diabetes Mellitus, Type 1** - MeSH ID: **D003922**
-- **Diabetes Mellitus, Type 2** - MeSH ID: **D003924**
+- **Pertussis toxin subunit 1** (P04977)
+  - Uncouples G-alpha GTP-binding proteins from their membrane receptors
+  - Disrupts normal host cellular regulation
 
-PubTator uses MeSH IDs to annotate diseases in biomedical literature. When articles mention ""diabetes,"" they would typically be annotated with D003920 (Diabetes Mellitus) or its more specific subtypes depending on the context.
+### **2. Energy Transduction:**
+- **Protein TonB** (multiple entries including P02929, P25945)
+  - Interacts with outer membrane receptor proteins
+  - Transduces energy from cytoplasmic membrane to outer membrane receptors
+  - Critical for high-affinity uptake of iron compounds, cobalamin, etc.
 
-To get the exact MeSH disease IDs currently associated with diabetes-mentioning articles in PubTator, you would need to query the PubTator database directly through their API or web interface.",,6.653411149978638,56,236,True,True,1.0,"Based on the information I found in the PubTator MIE (Metadata Interoperability Exchange) file, the **MeSH disease ID associated with diabetes in PubTator is D003920**, which represents ""Diabetes Mellitus.""
+### **3. Bacterial Toxins & Growth Inhibition:**
+- **CdiA toxins** (multiple tRNA nucleases and DNases)
+  - Contact-dependent growth inhibition systems
+  - Bind to target cell outer membrane receptors (BamA, OmpC-OmpF, Tsx)
+  - Deliver toxic domains to target bacterial cells
 
-This is clearly documented in the example SPARQL queries provided in the PubTator Central RDF schema, specifically in the query titled ""Find all annotations for a specific disease"" which uses:
+### **4. Transport & Import:**
+- **Outer membrane receptors** (FecA, FpvA-related proteins)
+  - High-affinity iron transport systems
+  - Outer membrane receptors for siderophores and iron complexes
 
-```sparql
-oa:hasBody <http://identifiers.org/mesh/D003920>
-```
+These proteins demonstrate the diversity of membrane receptor functions in cellular communication, nutrient uptake, immune responses, and bacterial competition.",,27.451220989227295,9,782,11297,52650,mcp__togomcp__run_sparql,"[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""\nPREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT DISTINCT ?protein ?proteinLabel ?function\nWHERE {\n  ?protein a up:Protein ;\n           up:annotation ?annotation ;\n           up:recommendedName ?name .\n  \n  ?annotation a up:Function_Annotation ;\n              rdfs:comment ?function .\n  \n  ?name up:fullName ?fullName .\n  \n  FILTER(CONTAINS(LCASE(?function), \""membrane receptor\""))\n  \n  BIND(STR(?fullName) AS ?proteinLabel)\n}\nLIMIT 50\n""}}]",CRITICAL,Human membrane receptor proteins based on function annotation text search,"COMPLEX QUERY requiring annotation text search knowledge.
 
-The MIE file explains that this query ""Retrieves all PubMed articles that mention a specific disease by MeSH ID (D003920 = Diabetes Mellitus).""
+Databases/Resources: UniProt
 
-So the answer is: **MeSH:D003920** (Diabetes Mellitus)
+Knowledge Required:
+- Annotation type filtering (up:Function_Annotation or general annotation)
+- bif:contains for 'membrane receptor' text search
+- Property path splitting CRITICAL (bif:contains incompatible with paths)
+- up:reviewed 1 and organism filter
 
-This MeSH ID is used in PubTator Central to annotate articles that mention diabetes, and you can query for all articles mentioning diabetes by searching for annotations with this identifier.",,34.96858501434326,24,769,8955,121940,"mcp__togomcp__get_MIE_file, mcp__togomcp__search_mesh_entity, mcp__pubdictionaries__find_ids, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pubtator""}}, {""name"": ""mcp__togomcp__search_mesh_entity"", ""input"": {""query"": ""diabetes"", ""limit"": 10}}, {""name"": ""mcp__pubdictionaries__find_ids"", ""input"": {""labels"": ""Diabetes Mellitus"", ""dictionary"": ""MeSH""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pubtator"", ""sparql_query"": ""PREFIX oa: <http://www.w3.org/ns/oa#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\n\nSELECT DISTINCT ?diseaseId\nFROM <http://rdfportal.org/dataset/pubtator_central>\nWHERE {\n  ?ann a oa:Annotation ;\n       dcterms:subject \""Disease\"" ;\n       oa:hasBody ?diseaseId .\n  FILTER(CONTAINS(STR(?diseaseId), \""diabetes\"") || CONTAINS(STR(?diseaseId), \""D003920\""))\n}\nLIMIT 10""}}]",CRITICAL,D003920 (Diabetes Mellitus),Database: PubTator. Verified in pubtator_exploration.md via SPARQL query. PubTator provides text-mined disease annotations from PubMed literature. Tests literature annotation access.
-111,2026-01-13,Completeness,How many organisms in BacDive can grow anaerobically?,True,False,False,0.16666666666666666,"I don't have access to real-time BacDive database statistics or the ability to query the database directly. BacDive (the Bacterial Diversity Metadatabase) contains information about bacterial and archaeal strains, including their growth conditions.
+Without proper knowledge: Query fails with 400 error due to property path issue.
 
-To find out how many organisms in BacDive can grow anaerobically, you would need to:
+Verified in uniprot_exploration.md Pattern 5."
+110,2026-01-31,Structured Query,What NMR structures are available in the PDB and what are their limitations compared to X-ray structures?,True,True,True,0.5555555555555556,"# NMR Structures in the PDB
 
-1. Access the BacDive database directly at https://bacdive.dsmz.de/
-2. Use their search/filter functions to query for strains with anaerobic growth capabilities
-3. Look for entries where oxygen tolerance is listed as ""anaerobe,"" ""facultative anaerobe,"" or similar terms
+## Availability and Scale
 
-The number of such organisms would depend on:
-- When you query the database (as it's regularly updated)
-- How anaerobic growth is defined (strict anaerobes only, or including facultative anaerobes)
-- The completeness of metadata for different strains
+NMR (Nuclear Magnetic Resonance) structures represent a significant but minority portion of the PDB:
+- **~10-15%** of total PDB entries are NMR structures
+- As of recent years, there are **~13,000-15,000 NMR structures** compared to ~150,000+ X-ray structures
+- NMR structures are predominantly of **proteins and nucleic acids**
 
-If you need this specific number, I recommend visiting the BacDive website directly or contacting the DSMZ (German Collection of Microorganisms and Cell Cultures) team that maintains the database.",,7.615447998046875,52,256,True,False,0.3333333333333333,"Based on the BacDive database query, **8,993 organisms** can grow anaerobically.
+## Key Limitations of NMR vs X-ray Structures
 
-This total includes:
-- **5,801** strains classified as ""anaerobe""
-- **224** strains classified as ""obligate anaerobe"" 
-- **4,485** strains classified as ""facultative anaerobe""
+### 1. **Size Constraints**
+- **NMR limitation**: Typically restricted to **<40-50 kDa** for traditional methods
+- Modern techniques (TROSY, deuteration) can extend to ~100 kDa, but this is challenging
+- **X-ray**: Can handle very large complexes (megadalton assemblies)
 
-Note that some strains may have multiple oxygen tolerance entries, which is why I used `COUNT(DISTINCT ?strain)` to avoid counting the same organism multiple times.
+### 2. **Resolution and Precision**
+- **NMR**: No formal resolution; instead characterized by:
+  - Ensemble of structures (typically 10-20 models)
+  - Variable precision in different regions
+  - Backbone often well-defined, side chains can be less precise
+- **X-ray**: Single model with defined resolution (often <2 Å for well-ordered regions)
+
+### 3. **Structural Detail**
+- **NMR**: 
+  - Lower coordinate precision overall
+  - Fewer distance restraints per atom
+  - Surface loops often poorly defined
+- **X-ray**: Can provide atomic-level detail at high resolution
+
+### 4. **Sample Requirements**
+- **NMR**: Requires high concentrations (0.5-2 mM) in solution
+- May not work for proteins prone to aggregation
+- Limited to soluble proteins
+
+### 5. **Membrane Proteins**
+- NMR has historically struggled with membrane proteins (though solid-state NMR is improving)
+- X-ray crystallography has been more successful
+
+## Advantages of NMR Structures
+
+Despite limitations, NMR offers unique advantages:
+- **Solution conditions**: Structures in native-like environments
+- **Dynamics information**: Can capture conformational flexibility
+- **No crystallization needed**: Avoids crystal packing artifacts
+- **Multiple conformations**: Better represents protein ensembles
+
+The choice between methods depends on the biological question and protein characteristics.",,12.921462059020996,60,542,True,True,0.5555555555555556,"Excellent! The search shows there are **21,366 NMR structures** currently available in the PDB. Now let me provide you with a comprehensive overview of NMR structures and their key differences from X-ray crystallography structures.
+
+## NMR Structures in the PDB
+
+As of the current database, there are **over 21,000 NMR structures** deposited in the PDB, representing a significant but smaller portion compared to X-ray structures (which number over 150,000).
+
+## Key Limitations of NMR Structures Compared to X-ray Structures:
+
+### 1. **Size Limitations**
+- **NMR**: Traditionally limited to smaller proteins (<30-40 kDa), though advances with TROSY and deuteration techniques have extended this to ~100 kDa
+- **X-ray**: Can handle very large proteins, complexes, and even entire viruses (no practical upper size limit)
+
+### 2. **Resolution**
+- **NMR**: Resolution is not defined the same way as in crystallography; structures are represented as ensembles of conformers (typically 10-30 models) reflecting data consistency
+- **X-ray**: Provides precise atomic coordinates with defined resolution (often 1.5-3.0 Å or better), with single ""best"" model
+
+### 3. **Structure Precision**
+- **NMR**: Variable precision across the molecule; well-defined secondary structures but often poorly defined loop regions; RMSD values indicate coordinate uncertainty
+- **X-ray**: Generally uniform precision throughout (where electron density is visible); B-factors indicate atomic displacement
+
+### 4. **Sample Requirements**
+- **NMR**: Requires high concentrations (0.5-2 mM), large sample volumes, isotopic labeling (¹⁵N, ¹³C) for larger proteins
+- **X-ray**: Requires crystallization, which can be challenging but needs less material once crystals form
+
+### 5. **Time and Data Collection**
+- **NMR**: Lengthy data collection (days to weeks) and complex data analysis/structure calculation
+- **X-ray**: Faster data collection (minutes to hours with modern synchrotrons), though crystallization can take months
+
+## Advantages of NMR (Why Use It Despite Limitations):
+
+1. **Solution state**: Proteins studied in near-physiological conditions, not constrained by crystal lattice
+2. **Dynamics**: Can observe protein flexibility, conformational changes, and dynamics on multiple timescales
+3. **No crystallization**: Some proteins that won't crystallize can be studied
+4. **Weak interactions**: Better for studying transient complexes and intrinsically disordered proteins
+5. **Functional insights**: Can measure binding kinetics, pKa values, and other functional parameters
+
+The examples from the search show typical NMR applications: small protein domains, membrane proteins in micelles, peptides, DNA/RNA structures, and protein-protein/protein-ligand complexes.
+
+Would you like more specific information about any particular aspect of NMR vs. X-ray crystallography, or details about specific structures?",,26.998347759246826,9,850,1214,52661,mcp__togomcp__search_pdb_entity,"[{""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""NMR"", ""limit"": 20}}]",VALUABLE,"13,902 solution NMR structures; they lack resolution metrics unlike X-ray structures","COMPLEX QUERY requiring method-specific data knowledge.
+
+Databases/Resources: PDB
+
+Knowledge Required:
+- exptl.method = 'SOLUTION NMR' filter
+- OPTIONAL needed for resolution (NMR lacks this)
+- Understanding of method-dependent data availability
+- Comparison requires knowing which fields are method-specific
+
+Without proper knowledge: Queries expecting resolution data fail for NMR structures.
+
+Verified in pdb_exploration.md Pattern 4 and common pitfalls."
+111,2026-01-31,Integration,What human enzymes with known 3D structures are involved in carbohydrate metabolism reactions?,True,True,False,0.3333333333333333,"Based on my training knowledge, here are major human enzymes involved in carbohydrate metabolism with known 3D structures:
+
+## Glycolysis Enzymes
+- **Hexokinase** (multiple isoforms I-IV) - phosphorylates glucose
+- **Phosphoglucose isomerase (PGI)** - converts G6P to F6P
+- **Phosphofructokinase (PFK-1)** - rate-limiting step
+- **Aldolase A** - cleaves F-1,6-BP
+- **Triosephosphate isomerase (TIM)** - interconverts DHAP and G3P
+- **Glyceraldehyde-3-phosphate dehydrogenase (GAPDH)**
+- **Phosphoglycerate kinase (PGK)**
+- **Phosphoglycerate mutase (PGAM)**
+- **Enolase** - produces PEP
+- **Pyruvate kinase (PKM1/PKM2)** - final step
+
+## Gluconeogenesis-Specific Enzymes
+- **Fructose-1,6-bisphosphatase (FBPase)**
+- **Phosphoenolpyruvate carboxykinase (PEPCK)**
+- **Glucose-6-phosphatase catalytic subunit**
+
+## Pentose Phosphate Pathway
+- **Glucose-6-phosphate dehydrogenase (G6PD)**
+- **6-phosphogluconate dehydrogenase**
+- **Transketolase**
+- **Transaldolase**
+
+## Glycogen Metabolism
+- **Glycogen phosphorylase** (muscle, liver, brain isoforms)
+- **Glycogen synthase**
+- **Phosphoglucomutase**
+
+## TCA Cycle (Carbohydrate Oxidation)
+- **Pyruvate dehydrogenase complex** components
+- **Citrate synthase**
+- **Aconitase**
+- **Isocitrate dehydrogenase**
+- **α-Ketoglutarate dehydrogenase complex**
+- **Succinyl-CoA synthetase**
+- **Succinate dehydrogenase**
+- **Fumarase**
+- **Malate dehydrogenase**
+
+## Other Important Enzymes
+- **Lactate dehydrogenase (LDH)**
+- **Pyruvate carboxylase**
+- **Aldose reductase** (polyol pathway)
+
+Most of these structures are available in the Protein Data Bank (PDB), often with multiple structures showing different conformational states, ligand-bound forms, or disease-related mutations.",,11.111603021621704,57,649,True,True,0.5555555555555556,"Now let me compile this comprehensive information into a well-organized response:
+
+Based on my comprehensive search across multiple biological databases (UniProt, PDB, Reactome, and ChEMBL), here are **human enzymes with known 3D structures involved in carbohydrate metabolism reactions**:
+
+## **Glycolysis / Gluconeogenesis**
+
+1. **Hexokinase (HK)** - EC 2.7.1.1
+   - **HK1** (P19367): Brain form - PDB structures include 1EM6, 1HKB, 1HKC, 1QHA, etc.
+   - **HK2** (P52789): Muscle form - PDB: 2NZT, 4QY7, etc.
+   - **HK4/Glucokinase** (P35557): Liver form - PDB: 1V4S, 1V4T, 2QLL, etc.
+   - *Function*: First step of glycolysis, phosphorylates glucose to glucose-6-phosphate
+
+2. **Phosphoglucose Isomerase (PGI)** - EC 5.3.1.9
+   - **PGI** (P06744) - PDB: 1IAT, 1IRI, 1JIQ, 1NUH, 6XUH, 6XUI
+   - *Function*: Converts glucose-6-phosphate to fructose-6-phosphate
+
+3. **Phosphofructokinase (PFK)** - EC 2.7.1.11
+   - **PFK-L** (P17858): Liver type
+   - **PFK-M** (P08237): Muscle type  
+   - **PFK-P** (Q01813): Platelet type
+   - *Function*: Phosphorylates fructose-6-phosphate to fructose-1,6-bisphosphate (rate-limiting step)
+
+4. **Fructose-Bisphosphate Aldolase** - EC 4.1.2.13
+   - **Aldolase A** (P04075): Muscle type - PDB: 1ALD, 2ALD, 4ALD, 5KY6, 6XMH
+   - **Aldolase B** (P05062): Liver type - PDB: 1QO5, 1XDL, 1XDM, 8D44
+   - **Aldolase C** (P09972): Brain type - PDB: 2PSN, 3B97, 5JLZ, 5LAX
+   - *Function*: Splits fructose-1,6-bisphosphate into DHAP and glyceraldehyde-3-phosphate
+
+5. **Triosephosphate Isomerase (TIM)** - EC 5.3.1.1
+   - **TPI1** (P60174) - PDB: 2WZB, 2WZC, 2WZD, 3ZOZ, 4AXX, 4O33
+   - *Function*: Interconverts DHAP and glyceraldehyde-3-phosphate
+
+6. **Glyceraldehyde-3-Phosphate Dehydrogenase (GAPDH)** - EC 1.2.1.12
+   - **GAPDH** (P04406) - PDB: 1U8F, 1ZNQ, 3GPD, 4WNC, 6ADE, 8DNS
+   - *Function*: Oxidizes glyceraldehyde-3-phosphate to 1,3-bisphosphoglycerate
 
-These organisms represent a significant portion of the bacterial and archaeal diversity in BacDive, which contains approximately 97,000 total strain records with oxygen tolerance data available for about 29,050 strains (based on the values shown).",,38.14803194999695,26,1084,9440,157140,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""bacdive""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""bacdive"", ""sparql_query"": ""PREFIX schema: <https://purl.dsmz.de/schema/>\n\nSELECT (COUNT(DISTINCT ?strain) as ?count)\nFROM <http://rdfportal.org/dataset/bacdive>\nWHERE {\n  ?strain a schema:Strain .\n  ?ot a schema:OxygenTolerance ;\n      schema:describesStrain ?strain ;\n      schema:hasOxygenTolerance ?oxygenTolerance .\n  FILTER(CONTAINS(LCASE(?oxygenTolerance), \""anaerobic\""))\n}""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""bacdive"", ""sparql_query"": ""PREFIX schema: <https://purl.dsmz.de/schema/>\n\nSELECT DISTINCT ?oxygenTolerance (COUNT(?strain) as ?count)\nFROM <http://rdfportal.org/dataset/bacdive>\nWHERE {\n  ?strain a schema:Strain .\n  ?ot a schema:OxygenTolerance ;\n      schema:describesStrain ?strain ;\n      schema:hasOxygenTolerance ?oxygenTolerance .\n}\nGROUP BY ?oxygenTolerance\nORDER BY DESC(?count)\nLIMIT 20""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""bacdive"", ""sparql_query"": ""PREFIX schema: <https://purl.dsmz.de/schema/>\n\nSELECT (COUNT(DISTINCT ?strain) as ?total_anaerobic_strains)\nFROM <http://rdfportal.org/dataset/bacdive>\nWHERE {\n  ?strain a schema:Strain .\n  ?ot a schema:OxygenTolerance ;\n      schema:describesStrain ?strain ;\n      schema:hasOxygenTolerance ?oxygenTolerance .\n  FILTER(?oxygenTolerance IN (\""anaerobe\"", \""obligate anaerobe\"", \""facultative anaerobe\""))\n}""}}]",CRITICAL,Substantial portion with hasOxygenTolerance='anaerobe' (verify via SPARQL),Database: BacDive. Verified in bacdive_exploration.md. Anaerobic organisms include many pathogens and extremophiles. Tests phenotype completeness.
-112,2026-01-13,Completeness,How many MGREL relationship records are in MedGen?,True,False,False,0.0,"I don't have access to the current count of MGREL relationship records in MedGen. The number of MGREL records would vary depending on the version and release date of the MedGen database, as it is regularly updated.
+7. **Phosphoglycerate Kinase (PGK)** - EC 2.7.2.3
+   - **PGK1** - PDB: 1HTI, 2VOM, 4BR1, 6C2G, 6NLH, 7T0Q
+   - *Function*: Generates ATP from 1,3-bisphosphoglycerate
 
-MGREL (MedGen Relationships) contains relationships between MedGen concepts, but I cannot provide you with a specific current number without access to the actual database or recent release notes.
-
-To find this information, you would need to:
-1. Check the latest MedGen release notes on NCBI's website
-2. Query the MedGen database directly
-3. Download and examine the MGREL data files from the MedGen FTP site
+8. **Phosphoglycerate Mutase (PGAM)** - EC 5.4.2.11
+   - **PGAM1** (P18669): Brain form - PDB: 1T2F, 7DBJ, 7DBK
+   - **PGAM2** (P15259): Muscle form
+   - *Function*: Converts 3-phosphoglycerate to 2-phosphoglycerate
 
-If you need the current count, I'd recommend checking the official NCBI MedGen documentation or data files.",,5.289769887924194,50,175,True,True,1.0,"Based on the query results, **MedGen contains 1,130,420 MGREL relationship records**.
+9. **Enolase** - EC 4.2.1.11
+   - **Enolase 1 (α-enolase)** (P06733) - PDB: 1TE6, 2AKM, 3UCC, 3UJE
+   - **Enolase 2 (γ-enolase/NSE)** (P09104) - PDB: 1TE6, 7MBH (several structures)
+   - **Enolase 3 (β-enolase)** (P13929) - PDB: 1XFB, 2XSX, 3MOS, 3OOY
+   - *Function*: Converts 2-phosphoglycerate to phosphoenolpyruvate
 
-MGREL entities in MedGen represent relationships between clinical concepts, such as:
-- Hierarchical relationships (isa, inverse_isa)
-- Disease-phenotype associations (has_manifestation, manifestation_of)
-- Gene-disease associations
-- Other medical concept relationships
+10. **Pyruvate Kinase (PK)** - EC 2.7.1.40
+    - **PKLR** (P30613): Liver/RBC form - Multiple PDB structures
+    - *Function*: Final step of glycolysis, generates pyruvate and ATP
 
-Each MGREL record connects two clinical concepts (ConceptID entities) with a specific relationship type (mo:rela), along with source attribution and other metadata.",,22.031130075454712,15,390,9309,87913,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""medgen""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""medgen"", ""sparql_query"": ""PREFIX mo: <http://med2rdf/ontology/medgen#>\n\nSELECT (COUNT(?rel) as ?count)\nFROM <http://rdfportal.org/dataset/medgen>\nWHERE {\n  ?rel a mo:MGREL .\n}\nLIMIT 1""}}]",CRITICAL,"1,130,420",Database: MedGen. Verified in medgen_exploration.md via SPARQL COUNT query. MGREL stores concept-to-concept relationships. Tests medical genetics relationship coverage.
-113,2026-01-13,Integration,What is the HGNC ID for human TP53?,True,True,True,1.0,"The HGNC ID for human TP53 is **HGNC:11998**.
+11. **Lactate Dehydrogenase (LDH)** - EC 1.1.1.27
+    - **LDH-A** (P00338) - PDB: 1I10, 4AJP, 4JNK, 4L4R, 4QO7
+    - **LDH-B** (P07195) - PDB: Multiple structures
+    - *Function*: Converts pyruvate to lactate in anaerobic conditions
 
-TP53 (tumor protein p53) is one of the most well-studied human genes, and this is its official identifier in the HUGO Gene Nomenclature Committee (HGNC) database.",,3.160382032394409,51,71,True,True,1.0,"Perfect! The **HGNC ID for human TP53 is HGNC:11998**.
+12. **Pyruvate Dehydrogenase (PDH)** - EC 1.2.4.1
+    - **PDHA1** (P08559): E1 alpha subunit - PDB: 1NI4, 2OZL, 3EXE
+    - *Function*: Converts pyruvate to acetyl-CoA, linking glycolysis to TCA cycle
 
-To summarize:
-- **Gene Symbol**: TP53
-- **HGNC ID**: HGNC:11998
-- **NCBI Gene ID**: 7157
-- **Full Name**: tumor protein p53
-- **Location**: Chromosome 17p13.1
-- **Function**: This is the famous tumor suppressor gene that encodes the p53 protein, often called ""the guardian of the genome"" due to its critical role in preventing cancer through regulation of cell cycle arrest, apoptosis, DNA repair, and metabolism.",,25.812695741653442,19,573,3337,109046,"mcp__togomcp__search_uniprot_entity, mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary, mcp__togomcp__togoid_convertId","[{""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""TP53 human"", ""limit"": 5}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""TP53 AND human[organism]"", ""max_results"": 5}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""7157""]}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""7157"", ""route"": ""ncbigene,hgnc""}}]",VALUABLE,HGNC:11998,"Database: NCBI Gene, HGNC. Verified in ncbigene_exploration.md. TP53 (gene 7157) encodes the p53 tumor suppressor. Tests gene nomenclature integration."
-114,2026-01-13,Integration,Which genes are mentioned together with Alzheimer Disease (MeSH:D000544) in PubTator annotations?,True,False,False,0.125,"I don't have access to the PubTator database or its annotations in my training data. PubTator is a web-based tool developed by the National Center for Biotechnology Information (NCBI) that provides automatic annotations of biomedical literature with concepts like genes, diseases, mutations, chemicals, and species.
+## **Glycogen Metabolism**
 
-To find which genes are mentioned together with Alzheimer Disease (MeSH:D000544) in PubTatar annotations, you would need to:
+13. **Glycogen Phosphorylase (PYGL/PYGM/PYGB)** - EC 2.4.1.1
+    - **PYGL** (P06737): Liver form - Multiple PDB structures
+    - **PYGM** (P11217): Muscle form - Multiple PDB structures  
+    - **PYGB** (P11216): Brain form - Multiple PDB structures
+    - *Function*: Breaks down glycogen by phosphorolytic cleavage
 
-1. Access PubTator directly at https://www.ncbi.nlm.nih.gov/research/pubtator/
-2. Search for ""Alzheimer Disease"" or use the MeSH ID D000544
-3. Review the gene annotations that appear in the same articles
+14. **Glycogen Branching Enzyme (GBE1)** - EC 2.4.1.18
+    - **GBE1** (Q04446) - PDB: 5CLT, 5CLW, 4BZY
+    - *Function*: Creates α-1,6 branch points in glycogen
 
-Some genes that are commonly associated with Alzheimer's disease in the scientific literature (though I cannot confirm their specific co-occurrence in PubTator) include:
-- APP (Amyloid Precursor Protein)
-- PSEN1 and PSEN2 (Presenilin 1 and 2)
-- APOE (Apolipoprotein E)
-- MAPT (Microtubule Associated Protein Tau)
-- TREM2
-- CLU (Clusterin)
-- CR1 (Complement Receptor 1)
+15. **Glycogen Debranching Enzyme (AGL)** - EC 2.4.1.25, EC 3.2.1.33
+    - **AGL** (P35573) - PDB: 8ZEQ (recent structure)
+    - *Function*: Removes branch points during glycogen breakdown
 
-However, for the specific PubTator annotation data you're asking about, you would need to query that database directly.",,7.199548959732056,63,329,True,False,0.375,"Based on the PubTator annotations, here are the **top 50 genes most frequently mentioned together with Alzheimer Disease (MeSH:D000544)** in scientific literature:
+## **Pentose Phosphate Pathway**
 
-## Top Human Genes Associated with Alzheimer Disease
+16. **Glucose-6-Phosphate Dehydrogenase (G6PD)** - EC 1.1.1.49
+    - **G6PD** (P11413) - Multiple PDB structures
+    - *Function*: First enzyme of pentose phosphate pathway, produces NADPH
 
-| Rank | Gene Symbol | Gene Name | Co-occurrences | Key Role |
-|------|-------------|-----------|----------------|----------|
-| 1 | **APP** | Amyloid beta precursor protein | 80,147 | Central to AD pathology; mutations cause familial AD |
-| 2 | **MAPT** | Microtubule associated protein tau | 54,061 | Forms neurofibrillary tangles; mutations linked to AD |
-| 3 | **APOE** | Apolipoprotein E | 34,825 | APOE4 variant is major genetic risk factor for AD |
-| 4 | **TNF** | Tumor necrosis factor | 30,944 | Pro-inflammatory cytokine; neuroinflammation in AD |
-| 5 | **IL6** | Interleukin 6 | 24,448 | Inflammatory cytokine elevated in AD |
-| 6 | **INS** | Insulin | 21,604 | Metabolic dysfunction linked to AD |
-| 7 | **SNCA** | Synuclein alpha | 19,437 | Component of amyloid plaques in AD |
-| 8 | **IL1B** | Interleukin 1 beta | 19,419 | Inflammatory mediator in AD pathogenesis |
-| 9 | **NFKB1** | Nuclear factor kappa B subunit 1 | 18,287 | Inflammation and immune response regulator |
-| 10 | **AKT1** | AKT serine/threonine kinase 1 | 17,024 | Cell survival and metabolism pathways |
-| 11 | **BDNF** | Brain derived neurotrophic factor | 14,187 | Reduced in AD; supports neuronal survival |
-| 12 | **PSEN1** | Presenilin 1 | 13,449 | Mutations cause familial AD; gamma-secretase component |
-| 13 | **TP53** | Tumor protein p53 | 12,330 | Apoptosis and cell cycle regulation |
-| 14 | **TGFB1** | Transforming growth factor beta 1 | 11,597 | Growth factor; inflammation regulation |
-| 15 | **VEGFA** | Vascular endothelial growth factor A | 11,046 | Angiogenesis; vascular dysfunction in AD |
-| 16 | **CRP** | C-reactive protein | 11,035 | Inflammation biomarker |
-| 17 | **IFNG** | Interferon gamma | 10,997 | Immune response cytokine |
-| 18 | **MTOR** | Mechanistic target of rapamycin kinase | 10,858 | Autophagy and metabolism regulation |
-| 19 | **ACHE** | Acetylcholinesterase | 10,402 | Target of AD drugs; cholinergic dysfunction |
-| 20 | **SOD1** | Superoxide dismutase 1 | 10,061 | Oxidative stress defense |
+17. **Transketolase (TKT)** - EC 2.2.1.1
+    - **TKT** (P29401) - PDB: 1TRK, 3MOS, 4KXU, 4KXV, 4KXW
+    - *Function*: Transfers 2-carbon units in pentose phosphate pathway
 
-## Notable Model Organism Genes
+18. **Transaldolase (TALDO1)** - EC 2.2.1.2
+    - **TALDO1** (P37837) - PDB: 1F05
+    - *Function*: Transfers 3-carbon units in pentose phosphate pathway
 
-Several mouse and rat genes also appear frequently:
-- **App** (mouse, gene:11820) - 32,142 co-occurrences
-- **Tnf** (mouse, gene:21926) - 21,692 co-occurrences  
-- **Psen1** (mouse, gene:19164) - 14,181 co-occurrences
-- **Il1b** (mouse, gene:16176) - 14,181 co-occurrences
-- **Il6** (mouse, gene:16193) - 15,985 co-occurrences
+## **Other Carbohydrate Metabolism Enzymes**
 
-## Key Pathways Represented
+19. **UDP-Glucose 6-Dehydrogenase** - EC 1.1.1.22
+    - **UGDH** (O60701)
+    - *Function*: Produces UDP-glucuronate for glycosaminoglycan synthesis
 
-These genes highlight several major mechanisms in Alzheimer's disease:
+20. **Malic Enzyme** - EC 1.1.1.40
+    - **ME1** (P48163) - PDB: 3WJA (apo form)
+    - *Function*: Converts malate to pyruvate, generates NADPH
 
-1. **Amyloid Processing**: APP, PSEN1, BACE1 - directly involved in amyloid-beta production
-2. **Tau Pathology**: MAPT - forms neurofibrillary tangles
-3. **Genetic Risk**: APOE - strongest genetic risk factor for late-onset AD
-4. **Neuroinflammation**: TNF, IL6, IL1B, IFNG - cytokine-mediated inflammation
-5. **Oxidative Stress**: SOD1 - antioxidant defense
-6. **Metabolic Dysfunction**: INS, MTOR - insulin signaling and metabolism
-7. **Neurotrophic Support**: BDNF - reduced in AD, affects neuronal survival
-8. **Cholinergic System**: ACHE - therapeutic target in AD
+## **Key Pathways Represented:**
+- **Glycolysis**: Complete pathway from glucose to pyruvate
+- **Gluconeogenesis**: Reverse pathway (many same enzymes)
+- **Glycogen metabolism**: Synthesis and breakdown
+- **Pentose Phosphate Pathway**: NADPH production and ribose synthesis
+- **Lactate fermentation**: Anaerobic metabolism
 
-This analysis is based on PubTator Central annotations, which uses text mining to identify gene mentions in PubMed literature, reflecting the research community's focus on these genes in Alzheimer's disease studies.",,63.884336948394775,31,2520,104683,221916,"mcp__togomcp__run_sparql, mcp__togomcp__get_sparql_example, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__ncbi_esummary, mcp__togomcp__ncbi_esummary","[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pubtator"", ""sparql_query"": ""\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX pubtator: <http://pubtator.org/ontology/>\nPREFIX mesh: <http://id.nlm.nih.gov/mesh/>\n\nSELECT DISTINCT ?gene ?geneLabel (COUNT(DISTINCT ?article) AS ?articleCount)\nWHERE {\n  # Articles annotated with Alzheimer Disease (MeSH:D000544)\n  ?article pubtator:hasAnnotation ?diseaseAnnotation .\n  ?diseaseAnnotation pubtator:hasConceptID mesh:D000544 .\n  \n  # Same articles annotated with genes\n  ?article pubtator:hasAnnotation ?geneAnnotation .\n  ?geneAnnotation pubtator:hasConceptType \""Gene\"" .\n  ?geneAnnotation pubtator:hasConceptID ?gene .\n  ?geneAnnotation pubtator:hasConceptName ?geneLabel .\n}\nGROUP BY ?gene ?geneLabel\nORDER BY DESC(?articleCount)\nLIMIT 100\n""}}, {""name"": ""mcp__togomcp__get_sparql_example"", ""input"": {""dbname"": ""pubtator""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pubtator""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pubtator"", ""sparql_query"": ""PREFIX oa: <http://www.w3.org/ns/oa#>\nPREFIX dcterms: <http://purl.org/dc/terms/>\nPREFIX mesh: <http://identifiers.org/mesh/>\n\nSELECT ?geneId (COUNT(DISTINCT ?article) AS ?cooccurrence)\nFROM <http://rdfportal.org/dataset/pubtator_central>\nWHERE {\n  ?geneAnn a oa:Annotation ;\n           dcterms:subject \""Gene\"" ;\n           oa:hasBody ?geneId ;\n           oa:hasTarget ?article .\n  ?diseaseAnn a oa:Annotation ;\n              dcterms:subject \""Disease\"" ;\n              oa:hasBody mesh:D000544 ;\n              oa:hasTarget ?article .\n}\nGROUP BY ?geneId\nORDER BY DESC(?cooccurrence)\nLIMIT 50""}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""351"", ""4137"", ""348"", ""11820"", ""7124"", ""3569"", ""21926"", ""3630"", ""6622"", ""3553"", ""4790"", ""207"", ""16176"", ""16193"", ""627"", ""19164"", ""5663"", ""18033"", ""7157"", ""11651""]}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""7040"", ""14580"", ""7422"", ""1401"", ""11461"", ""3458"", ""2475"", ""43"", ""6647"", ""54226"", ""12064"", ""14433"", ""920"", ""3586"", ""836"", ""5594"", ""2670"", ""2597"", ""23621"", ""24835""]}}]",CRITICAL,"Gene IDs including 11820, 12359 (found in PubMed 16821116 co-occurrence)",Database: PubTator. Verified in pubtator_exploration.md via gene-disease co-occurrence query. Tests literature-based gene-disease associations.
-115,2026-01-13,Currency,How many total entries are in the PDB (all experimental methods)?,True,False,True,1.0,"As of my last training data (April 2024), the Protein Data Bank (PDB) contained approximately **215,000-220,000** total structure entries across all experimental methods.
+These enzymes represent critical control points in cellular energy metabolism and have been extensively studied through X-ray crystallography and other structural methods. The PDB codes provided can be used to access the detailed 3D structural data from the Protein Data Bank.",,146.57311511039734,69,6557,21555,404709,"mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_reactome_entity, mcp__togomcp__run_sparql, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__togoid_convertId, mcp__togomcp__search_chembl_target, mcp__togomcp__search_chembl_target, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__togoid_convertId, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__togoid_convertId, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__search_uniprot_entity, mcp__togomcp__togoid_convertId","[{""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human carbohydrate metabolism enzyme"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""human carbohydrate metabolism enzyme"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_reactome_entity"", ""input"": {""query"": ""carbohydrate metabolism"", ""species"": [""Homo sapiens""], ""rows"": 20}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX PDBo: <http://rcsb.org/pdb/ontology/PDB.owl#>\nPREFIX dc: <http://purl.org/dc/elements/1.1/>\n\nSELECT DISTINCT ?pdb_id ?title ?enzyme_name ?ec_number\nWHERE {\n  ?entity a PDBo:datablock ;\n          dc:title ?title ;\n          PDBo:datablock_id ?pdb_id .\n  \n  ?entity PDBo:has_struct_keywordsCategory ?keywords .\n  ?keywords PDBo:has_struct_keywords ?keyword .\n  ?keyword PDBo:struct_keywords.text ?keyword_text .\n  \n  ?entity PDBo:has_entityCategory ?entityCat .\n  ?entityCat PDBo:has_entity ?entityInfo .\n  ?entityInfo PDBo:entity.pdbx_description ?enzyme_name ;\n              PDBo:entity.pdbx_ec ?ec_number .\n  \n  FILTER(REGEX(?keyword_text, \""carbohydrate|glycol|glucose|glycogen\"", \""i\""))\n  FILTER(REGEX(?enzyme_name, \""human\"", \""i\""))\n}\nLIMIT 30""}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""human hexokinase phosphofructokinase pyruvate kinase enolase"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""human glycogen phosphorylase synthase debranching"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human hexokinase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human phosphofructokinase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human pyruvate kinase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human glucose-6-phosphate dehydrogenase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX taxon: <http://purl.uniprot.org/taxonomy/>\n\nSELECT DISTINCT ?protein ?protein_name ?ec ?pdb\nWHERE {\n  VALUES ?protein { \n    <http://purl.uniprot.org/uniprot/P19367>\n    <http://purl.uniprot.org/uniprot/P52789>\n    <http://purl.uniprot.org/uniprot/P35557>\n    <http://purl.uniprot.org/uniprot/P17858>\n    <http://purl.uniprot.org/uniprot/P08237>\n    <http://purl.uniprot.org/uniprot/P30613>\n    <http://purl.uniprot.org/uniprot/P11413>\n    <http://purl.uniprot.org/uniprot/P06737>\n    <http://purl.uniprot.org/uniprot/P11217>\n    <http://purl.uniprot.org/uniprot/P11216>\n  }\n  ?protein a up:Protein ;\n           up:organism taxon:9606 ;\n           up:recommendedName ?recName .\n  ?recName up:fullName ?fullName .\n  BIND(STR(?fullName) AS ?protein_name)\n  \n  OPTIONAL {\n    ?protein up:enzyme ?enzyme .\n    ?enzyme rdfs:seeAlso ?ec_ref .\n    ?ec_ref a up:EC_Number .\n    BIND(STRAFTER(STR(?ec_ref), \""enzyme/\"") AS ?ec)\n  }\n  \n  OPTIONAL {\n    ?protein rdfs:seeAlso ?pdb_ref .\n    ?pdb_ref a up:PDB_Resource .\n    BIND(STRAFTER(STR(?pdb_ref), \""pdb/\"") AS ?pdb)\n  }\n}\nORDER BY ?protein_name""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""uniprot"", ""sparql_query"": ""PREFIX up: <http://purl.uniprot.org/core/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX taxon: <http://purl.uniprot.org/taxonomy/>\n\nSELECT DISTINCT ?protein ?protein_name ?ec ?pdb\nWHERE {\n  ?protein a up:Protein ;\n           up:organism taxon:9606 ;\n           up:recommendedName ?recName .\n  ?recName up:fullName ?fullName .\n  BIND(STR(?fullName) AS ?protein_name)\n  \n  ?protein up:enzyme ?enzyme .\n  ?enzyme rdfs:seeAlso ?ec_ref .\n  ?ec_ref a up:EC_Number .\n  BIND(STRAFTER(STR(?ec_ref), \""enzyme/\"") AS ?ec)\n  \n  ?protein rdfs:seeAlso ?pdb_ref .\n  ?pdb_ref a up:PDB_Resource .\n  BIND(STRAFTER(STR(?pdb_ref), \""pdb/\"") AS ?pdb)\n  \n  FILTER(REGEX(?protein_name, \""glycogen|hexokinase|phosphofructo|pyruvate kinase|enolase|aldolase|phosphoglucose|transketolase|transaldolase|glucose-6-phosphate dehydrogenase|6-phosphogluconate\"", \""i\""))\n}\nORDER BY ?protein_name\nLIMIT 100""}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P19367,P52789,P35557,P17858,P08237,P30613,P11413,P06737,P11217,P11216"", ""route"": ""uniprot,pdb"", ""limit"": 100}}, {""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""human hexokinase"", ""limit"": 10}}, {""name"": ""mcp__togomcp__search_chembl_target"", ""input"": {""query"": ""human glycogen phosphorylase"", ""limit"": 10}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human aldolase fructose-bisphosphate"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human enolase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human phosphoglucose isomerase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human transketolase transaldolase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human glycogen debranching enzyme branching"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human transketolase"", ""limit"": 3}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human transaldolase"", ""limit"": 3}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human glycogen branching enzyme GBE1"", ""limit"": 3}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human glycogen debranching enzyme AGL"", ""limit"": 3}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P04075,P05062,P09972,P06733,P09104,P13929,P06744,P29401,P37837,Q04446,P35573"", ""route"": ""uniprot,pdb"", ""limit"": 100}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human lactate dehydrogenase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human pyruvate dehydrogenase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human phosphoglycerate kinase mutase"", ""limit"": 5}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P00338,P07195,P04406,P08559,P09104"", ""route"": ""uniprot,pdb"", ""limit"": 100}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human triosephosphate isomerase"", ""limit"": 3}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human phosphoglycerate kinase"", ""limit"": 3}}, {""name"": ""mcp__togomcp__search_uniprot_entity"", ""input"": {""query"": ""human glyceraldehyde-3-phosphate dehydrogenase"", ""limit"": 3}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""P60174,P00558,P04406"", ""route"": ""uniprot,pdb"", ""limit"": 100}}]",CRITICAL,Human enzymes that have PDB structures and catalyze carbohydrate-related Rhea reactions,"COMPLEX QUERY requiring three-database integration.
 
-This total includes structures determined by:
-- X-ray crystallography (~85-90% of entries)
-- NMR spectroscopy (~7-8%)
-- Electron microscopy (cryo-EM) (rapidly growing, ~5-7%)
-- Other methods including neutron diffraction, hybrid methods, and electron crystallography (<1%)
+Databases/Resources: UniProt, Rhea, PDB (via cross-references)
 
-**Important note**: The PDB has been growing steadily, with particularly rapid growth in cryo-EM structures in recent years. The exact current number would be higher than what I've stated, as thousands of new structures are deposited each year. For the most up-to-date count, you would need to check the PDB website directly at rcsb.org or wwpdb.org.",,6.116615056991577,51,207,True,False,0.0,"Based on the PDB RDF database, there are **245,833 total entries** in the Protein Data Bank across all experimental methods.
+Knowledge Required:
+- UniProt-Rhea EC number linkage
+- UniProt PDB cross-references via rdfs:seeAlso
+- bif:contains for 'glucose' or 'carbohydrate' in reactions
+- up:reviewed 1 filter essential
+- Multiple GRAPH clauses
 
-This count includes structures determined by various methods such as X-ray crystallography, NMR spectroscopy, electron microscopy (cryo-EM), and other techniques.",,14.02785873413086,9,296,26738,26489,mcp__togomcp__run_sparql,"[{""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""pdb"", ""sparql_query"": ""\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX PDBo: <http://rdf.wwpdb.org/schema/pdbx-v50.owl#>\n\nSELECT (COUNT(DISTINCT ?entry) AS ?total_entries)\nWHERE {\n  ?entry rdf:type PDBo:datablock .\n}\n""}}]",CRITICAL,"Approximately 204,594",Database: PDB. Verified in pdb_exploration.md. The PDB continues to grow with new structural data. Tests structural database currency.
-116,2026-01-13,Currency,What is the most common evidence type for genotype annotations in AMR Portal?,True,False,False,0.0,"I don't have specific information about the AMR Portal's genotype annotation evidence types in my training data. 
+Without proper knowledge: Cannot combine reaction and structure criteria.
 
-The AMR Portal (likely referring to the NCBI's Antimicrobial Resistance Portal or a similar database) typically uses various evidence types for genotype annotations, which might include:
+Verified in uniprot_exploration.md and rhea_exploration.md integration patterns."
+112,2026-01-31,Integration,What are the child terms of 'autophagy' in Gene Ontology?,True,False,False,0.42857142857142855,"In Gene Ontology, autophagy (GO:0006914) has several child terms that represent more specific types of autophagy. The main child terms include:
 
-- Experimental evidence
-- Sequence similarity
-- Literature references
-- Computational predictions
+1. **Macroautophagy** - The major form involving formation of double-membrane autophagosomes
 
-However, without access to the actual AMR Portal database or its documentation, I cannot definitively tell you which evidence type is most common for genotype annotations. This would require querying the database directly or reviewing their current statistics/documentation.
+2. **Microautophagy** - Direct engulfment of cytoplasmic material by the lysosome/vacuole
 
-If you need this specific information, I'd recommend checking the AMR Portal's documentation or using their query tools to examine the distribution of evidence types in their genotype annotations.",,6.144426107406616,53,171,True,True,1.0,"Perfect! Based on the query results from the AMR Portal RDF database, **HMM (Hidden Markov Model)** is the most common evidence type for genotype annotations in the AMR Portal, with **759,625 occurrences**.
+3. **Chaperone-mediated autophagy** - Selective degradation where chaperone proteins directly transport substrates across lysosomal membranes
 
-This makes sense as HMM-based methods are widely used for identifying and annotating antimicrobial resistance genes in bacterial genomes. The evidence links typically point to NCBI Pathogen Detection annotation where HMM profiles are used to detect AMR genes and their variants based on sequence similarity patterns.
+4. **Late nucleophagy** - Autophagy of nuclear components during late stages
 
-According to the AMR Portal documentation, approximately 65% of genotype features have an evidence type specified, and the vast majority of these are HMM-based annotations.",,25.509623050689697,21,576,11344,116521,"mcp__togomcp__get_sparql_example, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_sparql_example"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?evidenceType (COUNT(*) as ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:evidenceType ?evidenceType .\n}\nGROUP BY ?evidenceType\nORDER BY DESC(?count)""}}]",CRITICAL,HMM (Hidden Markov Model) - 65%,Database: AMR Portal. Verified in amrportal_exploration.md. HMM-based prediction is the primary annotation method. Tests molecular annotation methodology.
-117,2026-01-13,Specificity,What is the product of gene locus Mal52_08030 in DDBJ entry CP036276.1?,True,False,False,0.0,"I don't have specific information about the product of gene locus Mal52_08030 in DDBJ entry CP036276.1 in my training data. To find this information, you would need to:
+5. **Mitophagy** - Selective autophagy of mitochondria
 
-1. Access the DDBJ (DNA Data Bank of Japan) database directly
-2. Search for the accession number CP036276.1
-3. Look up the annotation for locus tag Mal52_08030
+6. **Pexophagy** - Selective autophagy of peroxisomes
 
-This type of specific gene annotation data from particular database entries is typically not included in my training knowledge, as it requires querying specialized biological databases.",,4.803126096725464,64,129,True,True,1.0,"Perfect! I found the information about gene locus Mal52_08030 in DDBJ entry CP036276.1.
+7. **Xenophagy** - Autophagy of intracellular pathogens
 
-## Answer:
+8. **Aggrephagy** - Selective autophagy of protein aggregates
 
-The product of gene locus **Mal52_08030** in DDBJ entry **CP036276.1** is:
+9. **Reticulophagy** - Selective autophagy of endoplasmic reticulum
 
-**ATP-dependent Clp protease ATP-binding subunit ClpX**
+10. **Ribophagy** - Selective autophagy of ribosomes
 
-Additional information:
-- **Gene symbol**: clpX
-- **Protein ID**: QDU42347.1 (NCBI Protein)
-- **Organism**: Symmachiella dynata strain Mal52
+These child terms can be further subdivided into even more specific processes. The exact current list may vary as Gene Ontology is regularly updated with new terms and relationships. For the most current and complete list, you would want to check the official Gene Ontology database directly.",,7.817183017730713,55,342,True,True,0.7142857142857143,"Here are the **child terms (direct descendants) of 'autophagy' (GO:0006914)** in Gene Ontology:
 
-This gene encodes ClpX, which is the ATP-binding component of the Clp protease complex involved in protein degradation and quality control in bacterial cells.",,23.10619020462036,15,634,7772,86147,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""ddbj""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""ddbj"", ""sparql_query"": ""PREFIX nuc: <http://ddbj.nig.ac.jp/ontologies/nucleotide/>\nPREFIX sio: <http://semanticscience.org/resource/>\n\nSELECT ?locus_tag ?gene_symbol ?product ?protein_id\nFROM <http://rdfportal.org/dataset/ddbj>\nWHERE {\n  ?gene a nuc:Gene ;\n        nuc:locus_tag \""Mal52_08030\"" .\n  OPTIONAL { ?gene nuc:gene ?gene_symbol }\n  OPTIONAL {\n    ?cds sio:SIO_010081 ?gene ;\n         nuc:locus_tag \""Mal52_08030\"" ;\n         nuc:product ?product ;\n         rdfs:seeAlso ?protein_id .\n    FILTER(CONTAINS(STR(?protein_id), \""ncbiprotein\""))\n  }\n  FILTER(CONTAINS(STR(?gene), \""CP036276.1\""))\n}""}}]",CRITICAL,ATP-dependent Clp protease ATP-binding subunit ClpX,Database: DDBJ. Verified in ddbj_exploration.md via gene-CDS query. Tests specific gene product annotation in nucleotide database.
-118,2026-01-13,Specificity,What is the blaNDM-1 gene and how many isolates carry it according to AMR Portal?,True,False,True,0.6666666666666666,"I can provide information about the blaNDM-1 gene from my training knowledge, but I cannot access the AMR Portal database to give you current isolate counts.
+## Main Types of Autophagy:
 
-## About blaNDM-1:
+1. **GO:0016236 - Macroautophagy** - Autophagy that proceeds via formation of an autophagosome
+2. **GO:0016237 - Microautophagy** - Direct ingestion of cytosolic components by lysosomal membranes
+3. **GO:0061684 - Chaperone-mediated autophagy** - Chaperones recognize and unfold substrate proteins for lysosomal degradation
 
-**blaNDM-1** (New Delhi Metallo-beta-lactamase-1) is an antibiotic resistance gene that encodes a carbapenemase enzyme. Key characteristics include:
+## Organelle-Specific Autophagy:
 
-1. **Resistance Profile**: It confers resistance to carbapenem antibiotics, which are considered last-resort drugs for treating serious bacterial infections. It also provides resistance to most other beta-lactam antibiotics except aztreonam.
+4. **GO:0000422 - Autophagy of mitochondrion** - Degradation of mitochondria in response to changing conditions
+5. **GO:0030242 - Autophagy of peroxisome** - Degradation of peroxisomes in response to changing nutrient conditions
 
-2. **Mechanism**: It's a metallo-beta-lactamase (Class B beta-lactamase) that requires zinc ions for its catalytic activity and hydrolyzes carbapenem antibiotics.
+## Other Specialized Autophagy:
 
-3. **Mobile Genetic Element**: The gene is typically carried on plasmids, making it easily transferable between different bacterial species through horizontal gene transfer.
-
-4. **Clinical Significance**: NDM-1 is considered a major public health threat because infections caused by NDM-1-producing bacteria are very difficult to treat.
-
-5. **Geographic Distribution**: First identified in 2008 in a patient from New Delhi, India, it has since spread globally.
-
-## Regarding AMR Portal Data:
-
-I cannot access the AMR Portal database or any real-time databases, so I cannot tell you how many isolates currently carry blaNDM-1 in their system. You would need to visit the AMR Portal directly to get current statistics on isolate counts.",,9.206151962280273,61,356,True,True,0.8333333333333334,"Based on the information I've gathered from PubMed and other sources, let me provide you with comprehensive information about blaNDM-1:
-
-## What is the blaNDM-1 gene?
-
-**blaNDM-1** (New Delhi Metallo-β-lactamase-1) is a gene that encodes a carbapenemase enzyme - a type of β-lactamase that can break down carbapenem antibiotics, which are often considered ""last-resort"" antibiotics for treating multidrug-resistant bacterial infections.
-
-### Key Characteristics:
-
-1. **Type**: Metallo-β-lactamase (MBL) - requires metal ions (typically zinc) for its activity
-2. **Resistance Profile**: Confers resistance to nearly all β-lactam antibiotics including:
-   - Carbapenems (meropenem, imipenem, ertapenem)
-   - Cephalosporins
-   - Penicillins
-   - Does NOT hydrolyze aztreonam (a monobactam)
-
-3. **Genetic Mobility**: The gene is typically:
-   - Located on plasmids (mobile genetic elements)
-   - Associated with transposons (Tn125, Tn3)
-   - Can spread between bacteria through horizontal gene transfer
-   - Found on various plasmid types (IncA/C, IncF, IncX3, etc.)
-
-4. **Clinical Significance**: According to PubMed research:
-   - Found in high-risk bacterial clones (e.g., *Klebsiella pneumoniae* ST307, ST258, ST147)
-   - Often co-occurs with other resistance genes (blaOXA-23, blaVIM)
-   - Contributes to multidrug resistance patterns
-   - Associated with nosocomial (hospital-acquired) infections
-
-5. **Geographic Distribution**: Originally identified in New Delhi, India (2008), but now found worldwide
-
-## AMR Portal Data
-
-Unfortunately, I encountered technical difficulties querying the AMR Portal SPARQL endpoint directly to get the exact count of isolates carrying blaNDM-1. The AMR Portal database contains:
-- **1.7 million** phenotypic antimicrobial susceptibility test results
-- **1.1 million** genotypic AMR features from bacterial isolates worldwide
-- Data from ~1.4 million unique BioSamples
-
-The database structure indicates that blaNDM-1 would be recorded as part of the **GenotypeFeature** entities with the field `amr:amrElementSymbol` or `amr:geneSymbol`. The database integrates data from NCBI Pathogen Detection, PATRIC, and CABBAGE sources.
-
-### Recent Research Findings (According to PubMed):
-
-A recent 2026 study in Ecuador ([DOI: 10.1093/jambio/lxag008](https://doi.org/10.1093/jambio/lxag008)) found that blaNDM-1 was one of the predominant carbapenemase genes (along with blaKPC-2 and blaOXA-181) in bloodstream infections.
-
-Another 2026 study in Nepal ([DOI: 10.1186/s12866-025-04692-z](https://doi.org/10.1186/s12866-025-04692-z)) detected blaNDM-1 in **66.7%** of *Acinetobacter baumannii* isolates from cardiac patients, with co-occurrence patterns showing the gene's widespread distribution.
+6. **GO:0160155 - Crinophagy** - Direct fusion of abnormal/excess secretory granules with lysosomes
 
 ---
 
-If you need the specific isolate count from the AMR Portal, I recommend either accessing their web interface directly at https://rdfportal.org or waiting for the SPARQL endpoint to be more responsive for complex queries.",,153.13869619369507,78,3688,20652,551810,"mcp__togomcp__get_sparql_example, mcp__togomcp__list_databases, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__pubmed__search_articles, mcp__pubmed__get_article_metadata, mcp__togomcp__ncbi_esearch","[{""name"": ""mcp__togomcp__get_sparql_example"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__list_databases"", ""input"": {}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX amr: <http://purl.jp/bio/11/amr/>\n\nSELECT (COUNT(DISTINCT ?isolate) AS ?isolate_count)\nWHERE {\n  ?gene a amr:AMR_0000009 ;\n        rdfs:label ?geneName .\n  FILTER(CONTAINS(LCASE(?geneName), \""blandm-1\""))\n  ?isolate amr:BFO_0000051 ?gene .\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX obo: <http://purl.obolibrary.org/obo/>\nPREFIX amr: <http://purl.jp/bio/11/amr/>\n\nSELECT ?geneName (COUNT(DISTINCT ?isolate) AS ?isolate_count)\nWHERE {\n  ?gene a amr:AMR_0000009 ;\n        rdfs:label ?geneName .\n  FILTER(CONTAINS(LCASE(?geneName), \""ndm\""))\n  ?isolate amr:BFO_0000051 ?gene .\n}\nGROUP BY ?geneName\nORDER BY DESC(?isolate_count)\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nSELECT DISTINCT ?type ?label\nWHERE {\n  ?s rdf:type ?type ;\n     rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(?label), \""ndm\""))\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?label\nWHERE {\n  ?s rdfs:label ?label .\n  FILTER(CONTAINS(LCASE(?label), \""ndm-1\""))\n}\nLIMIT 50\n""}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""amrportal""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT (COUNT(DISTINCT ?bioSample) as ?isolate_count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:geneSymbol ?geneSymbol .\n  ?s amr:bioSample ?bioSample .\n  FILTER(CONTAINS(LCASE(?geneSymbol), \""blandm-1\""))\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?geneSymbol ?amrElementSymbol (COUNT(DISTINCT ?bioSample) as ?isolate_count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:geneSymbol ?geneSymbol .\n  ?s amr:amrElementSymbol ?amrElementSymbol .\n  ?s amr:bioSample ?bioSample .\n  FILTER(CONTAINS(LCASE(?geneSymbol), \""ndm-1\"") || CONTAINS(LCASE(?amrElementSymbol), \""ndm-1\""))\n}\nGROUP BY ?geneSymbol ?amrElementSymbol\nORDER BY DESC(?isolate_count)\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?geneSymbol ?amrElementSymbol\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:geneSymbol ?geneSymbol .\n  ?s amr:amrElementSymbol ?amrElementSymbol .\n  ?geneSymbol bif:contains \""'ndm-1'\"" option (score ?sc) .\n}\nORDER BY DESC(?sc)\nLIMIT 10\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT DISTINCT ?amrElementSymbol\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:amrElementSymbol ?amrElementSymbol .\n  FILTER(CONTAINS(?amrElementSymbol, \""NDM\""))\n}\nLIMIT 20\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\n\nSELECT ?amrElementSymbol\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature .\n  ?s amr:amrElementSymbol \""blaNDM-1\"" .\n}\nLIMIT 10\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""amrportal"", ""sparql_query"": ""PREFIX amr: <http://example.org/ebiamr#>\nSELECT (COUNT(*) AS ?count)\nFROM <http://rdfportal.org/dataset/amrportal>\nWHERE {\n  ?s a amr:GenotypeFeature ;\n     amr:amrElementSymbol ?symbol .\n  FILTER(regex(?symbol, \""NDM\"", \""i\""))\n}\n""}}, {""name"": ""mcp__pubmed__search_articles"", ""input"": {""query"": ""blaNDM-1 gene carbapenemase"", ""max_results"": 5}}, {""name"": ""mcp__pubmed__get_article_metadata"", ""input"": {""pmids"": [""41518206"", ""41507808""]}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""NDM-1 carbapenemase"", ""max_results"": 5}}]",CRITICAL,blaNDM-1 is a carbapenemase gene found in 258 carbapenem-resistant isolates,Database: AMR Portal. Verified in amrportal_exploration.md. NDM-1 is a major clinical concern for carbapenem resistance. Tests resistance gene specificity.
-119,2026-01-13,Structured Query,What are the major disease categories in NANDO (direct children of the root)?,True,False,False,0.2857142857142857,"I don't have specific information about NANDO's ontology structure in my training data. NANDO (Nanbyo Data Ontology) is a Japanese rare disease ontology, but I cannot provide you with certainty about what the direct children categories of its root node are.
+These are the **direct children** of autophagy. Note that many of these terms have their own descendants. For example:
+- **Macroautophagy** has 16+ specialized subtypes including mitophagy, pexophagy, xenophagy, lipophagy, ribophagy, etc.
+- **Microautophagy** includes micropexophagy, micromitophagy, and microlipophagy
+- **Autophagy of mitochondrion** includes both mitophagy (macroautophagy-based) and micromitophagy (microautophagy-based)
 
-To get accurate information about NANDO's major disease categories (direct children of the root), you would need to:
-1. Consult the official NANDO documentation or website
-2. Access the ontology file directly (typically in OWL or OBO format)
-3. Use an ontology browser like OLS (Ontology Lookup Service) or BioPortal if NANDO is indexed there
+In total, there are **25 descendant terms** under autophagy in Gene Ontology (including both direct children and more distant descendants).",,25.29854726791382,14,709,18585,80676,"mcp__ols__search, mcp__ols__getDescendants","[{""name"": ""mcp__ols__search"", ""input"": {""query"": ""autophagy""}}, {""name"": ""mcp__ols__getDescendants"", ""input"": {""ontologyId"": ""go"", ""classIri"": ""http://purl.obolibrary.org/obo/GO_0006914"", ""pageSize"": 100}}]",CRITICAL,"Subtypes including macroautophagy (GO:0016236), microautophagy, mitophagy, and others","SIMPLE QUERY - Straightforward ontology navigation.
 
-I apologize that I cannot give you the specific answer you're looking for based solely on my training knowledge.",,5.154966115951538,54,176,True,False,0.42857142857142855,"Based on the MIE file documentation I retrieved, I can provide you with information about NANDO's structure. According to the documentation and examples provided:
+Method: OLS4 getDescendants with direct parent filter
 
-## Major Disease Categories in NANDO (Direct Children of Root)
+Demonstrates when basic ontology tools suffice.
 
-The NANDO ontology has a hierarchical structure with **NANDO:1000001** serving as the main parent class under the root intractable disease concept (NANDO:0000001). 
+Verified in example_questions.json question 4."
+113,2026-01-31,Completeness,How many distinct enzyme classifications (EC numbers) are represented in Rhea and what is their coverage?,True,True,False,0.4444444444444444,"Based on my training knowledge, I can provide information about enzyme classifications in Rhea:
 
-The documentation shows at least these major disease categories that are direct children of NANDO:1000001:
+Rhea is a comprehensive database of biochemical reactions that uses the Enzyme Commission (EC) classification system. Here's what I know about EC number coverage in Rhea:
 
-1. **Neuromuscular disease** (NANDO:1100001)
-   - Japanese: 神経・筋疾患
-   - Mapped to MONDO:0019056
+## EC Number Structure
+EC numbers have a four-level hierarchical classification:
+- EC X.-.-..- (Main class: 1-7)
+- EC X.Y.-..- (Subclass)
+- EC X.Y.Z.- (Sub-subclass)
+- EC X.Y.Z.W (Individual enzyme)
 
-2. **Metabolic disease** (NANDO:1100002)
-   - Japanese: 代謝系疾患
-   - Mapped to MONDO:0004955 and MONDO:0005066
+## Coverage in Rhea
+As of my last training data, Rhea contained:
 
-The documentation indicates that:
-- **Disease categories use NANDO:11xxxxx IDs**
-- **Specific diseases use NANDO:12xxxxx IDs**
-- The hierarchy follows: owl:Thing → Intractable disease (NANDO:0000001) → Designated intractable disease (NANDO:1000001) → Disease categories (NANDO:11xxxxx) → Specific diseases (NANDO:12xxxxx)
+- **Several thousand distinct EC numbers** - Rhea aims to cover all EC-classified reactions
+- **High coverage of characterized enzymes** - particularly those with well-defined reaction mechanisms
+- **All 7 main EC classes**:
+  1. Oxidoreductases
+  2. Transferases
+  3. Hydrolases
+  4. Lyases
+  5. Isomerases
+  6. Ligases
+  7. Translocases (the newest class, added in 2018)
 
-According to the statistical data in the documentation, NANDO contains **2,777 total diseases** organized hierarchically, with the major categories at the 1100000-level serving as the primary organizational structure for classifying Japanese intractable (rare) diseases.
+Rhea's goal is to provide comprehensive coverage of enzyme-catalyzed reactions, and it works closely with the UniProt and EC nomenclature committees to ensure broad representation. The database typically covers **~13,000+ reactions** representing **~7,000+ EC numbers**, though exact numbers vary with updates.
 
-The documentation suggests there are multiple top-level categories beyond just the two examples shown, but the SPARQL endpoint appears to be experiencing connectivity issues preventing me from retrieving the complete list at this moment.",,70.17861199378967,37,1603,37863,211555,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__ols__searchClasses, mcp__ols__searchClasses, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""nando""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\nPREFIX dct: <http://purl.org/dc/terms/>\n\nSELECT ?category ?identifier ?en_label ?ja_label\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?category a owl:Class ;\n            rdfs:subClassOf nando:1000001 ;\n            dct:identifier ?identifier ;\n            rdfs:label ?en_label ;\n            rdfs:label ?ja_label .\n  FILTER(LANG(?en_label) = \""en\"")\n  FILTER(LANG(?ja_label) = \""ja\"" && !REGEX(STR(?ja_label), \""^[\\u3041-\\u3093]+$\""))\n}\nORDER BY ?identifier""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>\n\nSELECT ?category ?label\nWHERE {\n  GRAPH <http://nanbyodata.jp/ontology/nando> {\n    ?category a owl:Class ;\n              rdfs:subClassOf nando:1000001 ;\n              rdfs:label ?label .\n    FILTER(LANG(?label) = \""en\"")\n  }\n}\nORDER BY ?label""}}, {""name"": ""mcp__ols__searchClasses"", ""input"": {""ontologyId"": ""nando"", ""query"": ""NANDO:1000001""}}, {""name"": ""mcp__ols__searchClasses"", ""input"": {""ontologyId"": ""nando"", ""query"": ""disease category"", ""pageSize"": 50}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""nando"", ""sparql_query"": ""PREFIX owl: <http://www.w3.org/2002/07/owl#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?category ?label\nFROM <http://nanbyodata.jp/ontology/nando>\nWHERE {\n  ?category a owl:Class ;\n            rdfs:subClassOf <http://nanbyodata.jp/ontology/NANDO_1000001> ;\n            rdfs:label ?label .\n  FILTER(LANG(?label) = \""en\"")\n}\nORDER BY ?label\nLIMIT 50""}}]",CRITICAL,"Neuromuscular disease (1100001), Metabolic disease (1100002), Immune system disease (1100004), Cardiovascular disease (1100005), and more",Database: NANDO. Verified in nando_exploration.md via hierarchy query. Tests rare disease classification structure.
-120,2026-01-13,Structured Query,What entity types are annotated in PubTator Central?,True,True,False,0.42857142857142855,"Based on my training knowledge, PubTator Central annotates the following main entity types:
+However, I should note that these figures may have changed since my training data was last updated, and I recommend checking the current Rhea website or documentation for the most up-to-date statistics.",,9.42030119895935,58,383,True,True,0.7777777777777778,"Perfect! Now I have comprehensive information about EC number coverage in Rhea. Let me provide you with a detailed answer:
 
-1. **Gene/Protein** - Gene and protein mentions
-2. **Disease** - Disease and condition mentions
-3. **Chemical/Drug** - Chemical compounds and pharmaceutical agents
-4. **Species/Organism** - Taxonomic mentions (often focusing on species)
-5. **Mutation/Variant** - Genetic mutations and variants
-6. **Cell Line** - Cell line mentions
+## EC Number Coverage in Rhea
 
-These annotations are generated using state-of-the-art text mining tools and are normalized to standard identifiers from various databases:
-- Genes are normalized to NCBI Gene IDs
-- Diseases to MESH or OMIM IDs
-- Chemicals to MESH IDs
-- Species to NCBI Taxonomy IDs
-- Mutations using sequence variation nomenclature
+Based on my analysis of the Rhea database, here are the key statistics:
 
-PubTator Central provides these annotations for the entire PubMed database and PMC full-text articles, making it a valuable resource for biomedical text mining and literature curation. The annotations are regularly updated and can be accessed through both a web interface and downloadable datasets.",,7.101141929626465,50,251,True,True,0.5714285714285714,"Based on the MIE file information I retrieved, **PubTator Central annotates the following entity types**:
+### Overall Coverage
 
-## Primary Entity Types
+- **Distinct EC numbers**: **6,073** unique enzyme classifications are represented in Rhea
+- **Reactions with EC annotations**: 7,432 approved reactions out of 16,685 total approved reactions
+- **Coverage percentage**: **44.5%** of approved reactions have EC number annotations
 
-1. **Disease** - Disease and medical condition annotations using MeSH (Medical Subject Headings) identifiers
-2. **Gene** - Gene annotations using NCBI Gene database identifiers
+### Breakdown by EC Class
 
-## Key Details
+The 6,073 EC numbers are distributed across the seven main enzyme classes:
 
-- **Disease annotations**: Link to MeSH terms via `http://identifiers.org/mesh/` URIs (e.g., D056486 for Fecal Incontinence, D003920 for Diabetes Mellitus)
+| EC Class | Description | Distinct EC Numbers | Reactions |
+|----------|-------------|---------------------|-----------|
+| **EC 1** | Oxidoreductases | 1,973 | 2,540 |
+| **EC 2** | Transferases | 1,960 | 2,383 |
+| **EC 3** | Hydrolases | 783 | 979 |
+| **EC 4** | Lyases | 737 | 833 |
+| **EC 5** | Isomerases | 300 | 338 |
+| **EC 6** | Ligases | 237 | 273 |
+| **EC 7** | Translocases | 83 | 88 |
 
-- **Gene annotations**: Link to NCBI Gene IDs via `http://identifiers.org/ncbigene/` URIs (e.g., NCBI Gene 11820, 28964)
+### Key Insights
 
-## Annotation Features
+1. **Comprehensive Coverage**: Rhea has excellent coverage of oxidoreductases (EC 1) and transferases (EC 2), which together represent nearly 65% of all EC numbers in the database.
 
-Each annotation includes:
-- **Entity type** (Disease or Gene)
-- **External identifier** (MeSH ID or NCBI Gene ID)
-- **Target article** (PubMed article reference)
-- **Annotation count** - indicates how many times the entity appears in that specific article
-- **Source attribution** (optional) - can be PubTator3 (automated), ClinVar (curated), or dbSNP
+2. **Translocases**: The newest EC class (EC 7, established in 2018) is represented with 83 distinct entries, showing Rhea's currency with modern enzyme classification.
 
-## Important Notes
+3. **Multiple Reactions per EC**: Some EC numbers are associated with multiple reactions because Rhea captures different reaction variants (e.g., with different cofactors, substrates, or cellular locations).
 
-According to the database documentation:
-- Disease annotations represent the **majority** of annotations in the database
-- Gene annotations have **substantial coverage**
-- Other entity types like **Chemical, Species, and Mutation may have limited or no coverage** in the RDF version
+4. **Unannotated Reactions**: About 55% of approved reactions don't have EC numbers, which may include transport reactions, spontaneous reactions, or reactions awaiting enzyme characterization.
 
-The database contains over 10 million estimated annotations extracted from PubMed literature using advanced text mining and manual curation, enabling literature-based biomedical discovery and gene-disease association analysis.",,24.638622999191284,15,563,10965,82294,"mcp__togomcp__list_databases, mcp__togomcp__get_MIE_file","[{""name"": ""mcp__togomcp__list_databases"", ""input"": {}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""pubtator""}}]",CRITICAL,Disease (linked to MeSH) and Gene (linked to NCBI Gene),Database: PubTator. Verified in pubtator_exploration.md. PubTator uses text mining to extract biomedical entities from literature. Tests understanding of text-mining database structure.
+This makes Rhea one of the most comprehensive repositories for enzyme-catalyzed reactions, with strong integration to the IUBMB enzyme classification system.",,33.161115884780884,21,1448,13346,130029,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""rhea""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT (COUNT(DISTINCT ?ec) as ?distinctEC)\nWHERE {\n  ?reaction rdfs:subClassOf rhea:Reaction ;\n            rhea:status rhea:Approved ;\n            rhea:ec ?ec .\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT (COUNT(DISTINCT ?reaction) as ?reactionsWithEC)\nWHERE {\n  ?reaction rdfs:subClassOf rhea:Reaction ;\n            rhea:status rhea:Approved ;\n            rhea:ec ?ec .\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT (COUNT(DISTINCT ?reaction) as ?totalApprovedReactions)\nWHERE {\n  ?reaction rdfs:subClassOf rhea:Reaction ;\n            rhea:status rhea:Approved .\n}\n""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""rhea"", ""sparql_query"": ""PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX rhea: <http://rdf.rhea-db.org/>\n\nSELECT ?ecClass (COUNT(DISTINCT ?ec) as ?distinctEC) (COUNT(DISTINCT ?reaction) as ?reactionCount)\nWHERE {\n  ?reaction rdfs:subClassOf rhea:Reaction ;\n            rhea:status rhea:Approved ;\n            rhea:ec ?ec .\n  BIND(REPLACE(STR(?ec), \""http://purl.uniprot.org/enzyme/(\\\\d+)\\\\..*\"", \""$1\"") AS ?ecClass)\n}\nGROUP BY ?ecClass\nORDER BY ?ecClass\n""}}]",CRITICAL,"6,073 unique EC numbers across 7,432 reactions (44.5% of approved reactions have EC numbers)","COMPLEX QUERY requiring coverage analysis.
+
+Databases/Resources: Rhea
+
+Knowledge Required:
+- COUNT DISTINCT for unique EC numbers
+- rhea:ec property for enzyme classification
+- Ratio calculation against total approved reactions
+- rhea:status filter for approved
+
+Without proper knowledge: Cannot calculate coverage metrics correctly.
+
+Verified in rhea_exploration.md Dataset Size section."
+114,2026-01-31,Completeness,What is the total count of small molecule compounds in Rhea?,True,False,True,1.0,"I don't have access to the exact current count of small molecule compounds in Rhea from my training data. 
+
+Rhea is a comprehensive database of biochemical reactions that is curated by experts and uses ChEBI (Chemical Entities of Biological Interest) for representing small molecules. The number of small molecule compounds would depend on:
+
+1. The version/release of Rhea you're asking about
+2. Whether you're counting unique ChEBI entities or total compound instances across all reactions
+
+Rhea is continuously updated, so the count changes over time as new reactions and compounds are added. To get the most accurate and current count, you would need to:
+- Check the latest Rhea release notes
+- Query the Rhea database directly
+- Visit the Rhea statistics page on their website
+
+I apologize that I cannot provide you with a specific number with certainty.",,5.643844127655029,51,192,True,True,1.0,"Based on the Rhea MIE (Metadata Interoperability Exchange) file, I can provide you with the exact count:
+
+**The Rhea database contains 11,763 small molecule compounds.**
+
+Additionally, here are some related statistics from the database:
+- **Total reactions**: 17,078 (master reactions)
+- **Directional reactions**: 34,156
+- **Bidirectional reactions**: 17,078
+- **Polymer structures**: 254
+- **Transport reactions**: 5,984
+
+All 11,763 small molecule compounds in Rhea are linked to ChEBI (Chemical Entities of Biological Interest), with 100% coverage for ChEBI IDs. These compounds are chemically annotated and used across the biochemical reactions in the database.",,30.400865077972412,15,389,12335,79302,"mcp__togomcp__search_rhea_entity, mcp__togomcp__get_MIE_file","[{""name"": ""mcp__togomcp__search_rhea_entity"", ""input"": {""query"": """", ""limit"": 1}}, {""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""rhea""}}]",CRITICAL,"11,763 small molecule compounds","SIMPLE QUERY - Straightforward compound count.
+
+Method: COUNT of SmallMolecule entities in Rhea
+
+Demonstrates straightforward completeness queries.
+
+Verified in rhea_exploration.md Dataset Size section."
+115,2026-01-31,Specificity,What drugs have indications for both cancer and cardiovascular conditions?,True,True,True,0.5714285714285714,"Based on my training knowledge, here are some drugs with indications for both cancer and cardiovascular conditions:
+
+## Anticoagulants/Antithrombotics
+
+**Low Molecular Weight Heparins (e.g., Enoxaparin, Dalteparin)**
+- Cancer: Prevention and treatment of venous thromboembolism (VTE) in cancer patients, who have increased clotting risk
+- Cardiovascular: Treatment and prevention of deep vein thrombosis, pulmonary embolism, acute coronary syndromes
+
+**Warfarin**
+- Cancer: VTE treatment in cancer patients
+- Cardiovascular: Atrial fibrillation, mechanical heart valves, VTE prevention
+
+## Beta-Blockers
+
+**Carvedilol**
+- Cancer: May be used to prevent or treat anthracycline-induced cardiotoxicity (chemotherapy-related heart damage)
+- Cardiovascular: Heart failure, hypertension, post-myocardial infarction
+
+## ACE Inhibitors/ARBs
+
+**Enalapril, Lisinopril**
+- Cancer: Prevention of chemotherapy-induced cardiotoxicity (particularly from anthracyclines)
+- Cardiovascular: Hypertension, heart failure, post-MI
+
+## Statins
+
+**Atorvastatin, Simvastatin**
+- Cancer: Some evidence for cancer risk reduction (though not a formal indication in most cases)
+- Cardiovascular: Hyperlipidemia, coronary artery disease prevention
+
+## Other
+
+**Aspirin**
+- Cancer: Colorectal cancer prevention (in certain populations)
+- Cardiovascular: MI prevention, stroke prevention, antiplatelet therapy
+
+The most clinically significant overlap involves anticoagulants for managing thrombotic complications in both conditions.",,9.040244817733765,50,417,True,True,0.7142857142857143,"Perfect! Now I have comprehensive data. Let me summarize the findings:
+
+## Drugs with Indications for Both Cancer and Cardiovascular Conditions
+
+Based on my search of the ChEMBL database, I've found several drugs with documented indications for both cancer and cardiovascular conditions. Here are the most notable ones:
+
+### **Key Drugs with Dual Indications:**
+
+#### 1. **Aspirin** (23 cancer indications, 15 cardiovascular indications)
+- **Cancer indications**: Various cancers including colorectal, breast, lung, prostate, melanoma, leukemia, pancreatic, ovarian cancers
+- **Cardiovascular indications**: Acute coronary syndrome, atherosclerosis, myocardial infarction (both ST-elevation and non-ST-elevation), coronary artery disease, thrombosis, heart failure, hypertension
+- **Clinical relevance**: Used for cancer prevention/treatment and widely used for cardiovascular protection
+
+#### 2. **Metformin** (40 cancer indications, 8 cardiovascular indications)
+- **Cancer indications**: Breast, colorectal, lung, prostate, pancreatic, ovarian, liver, melanoma, various other cancers
+- **Cardiovascular indications**: Heart failure, hypertension, acute coronary syndrome, atherosclerosis, coronary disease
+- **Clinical relevance**: Primarily a diabetes drug, but shows anticancer properties and cardiovascular benefits
+
+#### 3. **Simvastatin** (17 cancer indications, 12 cardiovascular indications)
+- **Cancer indications**: Breast, colorectal, lung, pancreatic, ovarian, prostate, liver cancers, lymphoma
+- **Cardiovascular indications**: Hypercholesterolemia, atherosclerosis, coronary disease, myocardial infarction prevention
+- **Clinical relevance**: Statin with documented anticancer effects
+
+#### 4. **Atorvastatin** (14 cancer indications, 12 cardiovascular indications)
+- Similar profile to simvastatin as another statin with dual effects
+
+#### 5. **Everolimus** (63 cancer indications, 2 cardiovascular indications)
+- **Cancer indications**: Wide range including renal cell carcinoma, breast cancer, neuroendocrine tumors, various other cancers
+- **Cardiovascular indications**: Acute coronary syndrome, coronary restenosis (drug-eluting stents)
+- **Clinical relevance**: mTOR inhibitor used both as anticancer agent and in drug-eluting stents
+
+#### 6. **Sirolimus (Rapamycin)** (39 cancer indications, 4 cardiovascular indications)
+- **Cancer indications**: Multiple cancer types
+- **Cardiovascular indications**: Coronary restenosis, transplant-related cardiovascular issues
+- **Clinical relevance**: Another mTOR inhibitor with dual applications
+
+#### 7. **Sorafenib** (46 cancer indications, 3 cardiovascular indications)
+- **Cancer indications**: Renal cell carcinoma, hepatocellular carcinoma, thyroid cancer, and many others
+- **Cardiovascular indications**: Hypertension management (as a side effect requiring treatment)
+- **Clinical relevance**: Multi-kinase inhibitor used primarily for cancer
+
+### **Other Notable Drugs:**
+- **Cyclophosphamide** (95 cancer indications, 1 cardiovascular indication)
+- **Dexamethasone** (59 cancer indications, 3 cardiovascular indications)
+- **Acetaminophen** (17 cancer indications, 2 cardiovascular indications)
+- **Folic Acid** (18 cancer indications, 7 cardiovascular indications)
+- **Pioglitazone** (14 cancer indications, 5 cardiovascular indications)
+- **Allopurinol** (14 cancer indications, 5 cardiovascular indications)
+
+### **Clinical Significance:**
+
+This overlap illustrates several important concepts:
+
+1. **Drug repurposing**: Many cardiovascular drugs (statins, metformin) show anticancer properties
+2. **Shared pathways**: Cancer and cardiovascular disease share common pathways (inflammation, angiogenesis, metabolic dysregulation)
+3. **Dual therapeutic benefits**: Some drugs like aspirin provide both cancer prevention and cardiovascular protection
+4. **Adverse effect management**: Some cancer drugs (like sorafenib) cause cardiovascular side effects that require treatment",,81.69524884223938,32,3677,33360,230176,"mcp__togomcp__get_MIE_file, mcp__togomcp__search_mesh_descriptor, mcp__togomcp__search_mesh_descriptor, mcp__togomcp__run_sparql, mcp__togomcp__run_sparql, mcp__togomcp__search_chembl_molecule, mcp__togomcp__search_chembl_molecule, mcp__togomcp__search_chembl_molecule, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__search_mesh_descriptor"", ""input"": {""query"": ""neoplasms"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_mesh_descriptor"", ""input"": {""query"": ""cardiovascular diseases"", ""limit"": 5}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?molecule ?moleculeLabel ?cancerIndication ?cvdIndication\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  # Find molecules with cancer indications\n  ?indication1 a cco:DrugIndication ;\n               cco:hasMolecule ?molecule ;\n               cco:hasMeshHeading ?cancerIndication ;\n               cco:hasMesh ?meshCancer .\n  \n  # Find molecules with cardiovascular indications\n  ?indication2 a cco:DrugIndication ;\n               cco:hasMolecule ?molecule ;\n               cco:hasMeshHeading ?cvdIndication ;\n               cco:hasMesh ?meshCVD .\n  \n  ?molecule rdfs:label ?moleculeLabel .\n  \n  # Filter for cancer-related MeSH terms (broad categories)\n  FILTER(\n    CONTAINS(LCASE(?cancerIndication), \""cancer\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""carcinoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""tumor\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""neoplasm\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""leukemia\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""lymphoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""melanoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""sarcoma\"")\n  )\n  \n  # Filter for cardiovascular-related MeSH terms\n  FILTER(\n    CONTAINS(LCASE(?cvdIndication), \""cardiovascular\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""cardiac\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""heart\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""hypertension\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""arrhythmia\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""coronary\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""myocardial\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""vascular\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""thrombosis\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""atherosclerosis\"")\n  )\n}\nORDER BY ?moleculeLabel\nLIMIT 100""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?moleculeLabel (COUNT(DISTINCT ?cancerIndication) as ?cancerCount) (COUNT(DISTINCT ?cvdIndication) as ?cvdCount) ?phase\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  # Find molecules with cancer indications\n  ?indication1 a cco:DrugIndication ;\n               cco:hasMolecule ?molecule ;\n               cco:hasMeshHeading ?cancerIndication .\n  \n  # Find molecules with cardiovascular indications\n  ?indication2 a cco:DrugIndication ;\n               cco:hasMolecule ?molecule ;\n               cco:hasMeshHeading ?cvdIndication .\n  \n  ?molecule rdfs:label ?moleculeLabel ;\n            cco:highestDevelopmentPhase ?phase .\n  \n  # Filter for cancer-related MeSH terms\n  FILTER(\n    CONTAINS(LCASE(?cancerIndication), \""cancer\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""carcinoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""tumor\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""neoplasm\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""leukemia\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""lymphoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""melanoma\"") ||\n    CONTAINS(LCASE(?cancerIndication), \""sarcoma\"")\n  )\n  \n  # Filter for cardiovascular-related MeSH terms\n  FILTER(\n    CONTAINS(LCASE(?cvdIndication), \""cardiovascular\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""cardiac\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""heart\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""hypertension\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""arrhythmia\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""coronary\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""myocardial\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""thrombosis\"") ||\n    CONTAINS(LCASE(?cvdIndication), \""atherosclerosis\"")\n  )\n}\nGROUP BY ?moleculeLabel ?phase\nORDER BY DESC(?phase) DESC(?cancerCount)\nLIMIT 50""}}, {""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""sorafenib"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""everolimus"", ""limit"": 5}}, {""name"": ""mcp__togomcp__search_chembl_molecule"", ""input"": {""query"": ""sirolimus"", ""limit"": 5}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?moleculeLabel ?indication ?meshHeading ?indicationType\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  VALUES ?moleculeName { \""SORAFENIB\"" \""EVEROLIMUS\"" \""SIROLIMUS\"" \""METFORMIN\"" \""ASPIRIN\"" \""SIMVASTATIN\"" }\n  \n  ?molecule a cco:SmallMolecule ;\n            rdfs:label ?moleculeName ;\n            rdfs:label ?moleculeLabel .\n  \n  ?indication a cco:DrugIndication ;\n              cco:hasMolecule ?molecule ;\n              cco:hasMeshHeading ?meshHeading .\n  \n  BIND(\n    IF(\n      CONTAINS(LCASE(?meshHeading), \""cancer\"") ||\n      CONTAINS(LCASE(?meshHeading), \""carcinoma\"") ||\n      CONTAINS(LCASE(?meshHeading), \""tumor\"") ||\n      CONTAINS(LCASE(?meshHeading), \""neoplasm\"") ||\n      CONTAINS(LCASE(?meshHeading), \""leukemia\"") ||\n      CONTAINS(LCASE(?meshHeading), \""lymphoma\"") ||\n      CONTAINS(LCASE(?meshHeading), \""melanoma\"") ||\n      CONTAINS(LCASE(?meshHeading), \""sarcoma\""),\n      \""Cancer\"",\n      IF(\n        CONTAINS(LCASE(?meshHeading), \""cardiovascular\"") ||\n        CONTAINS(LCASE(?meshHeading), \""cardiac\"") ||\n        CONTAINS(LCASE(?meshHeading), \""heart\"") ||\n        CONTAINS(LCASE(?meshHeading), \""hypertension\"") ||\n        CONTAINS(LCASE(?meshHeading), \""arrhythmia\"") ||\n        CONTAINS(LCASE(?meshHeading), \""coronary\"") ||\n        CONTAINS(LCASE(?meshHeading), \""myocardial\"") ||\n        CONTAINS(LCASE(?meshHeading), \""thrombosis\"") ||\n        CONTAINS(LCASE(?meshHeading), \""atherosclerosis\""),\n        \""Cardiovascular\"",\n        \""Other\""\n      )\n    ) as ?indicationType\n  )\n  \n  FILTER(?indicationType != \""Other\"")\n}\nORDER BY ?moleculeLabel ?indicationType ?meshHeading\nLIMIT 200""}}]",VALUABLE,Drugs with dual cancer/cardiovascular indications from ChEMBL,"COMPLEX QUERY requiring multi-indication filtering.
+
+Databases/Resources: ChEMBL
+
+Knowledge Required:
+- DrugIndication entity model
+- Multiple indication filtering per molecule
+- HAVING clause for multi-condition
+- GROUP BY molecule
+
+Without proper knowledge: Cannot identify drugs with multiple indication types.
+
+Verified in chembl_exploration.md (complex filtering patterns)."
+116,2026-01-31,Specificity,What is the full name of the BRCA1 gene in ClinVar?,True,True,True,1.0,"The full name of the BRCA1 gene in ClinVar is **""BRCA1 DNA repair associated""** or **""breast cancer 1, early onset""**.
+
+The gene is commonly referred to as BRCA1 (the official gene symbol), and it encodes a protein involved in DNA repair processes. The gene is located on chromosome 17 (17q21.31) and is well-known for its association with hereditary breast and ovarian cancer syndrome when pathogenic variants are present.",,3.7901837825775146,55,114,True,True,1.0,"Based on the information from the NCBI Gene database (which is linked to ClinVar records), the full name of the BRCA1 gene is:
+
+**BRCA1 DNA repair associated**
+
+Additional information:
+- **Gene Symbol**: BRCA1
+- **Gene ID**: 672
+- **Other names**: The gene is also known as ""breast cancer type 1 susceptibility protein"" or ""breast cancer 1, early onset""
+- **Location**: Chromosome 17q21.31
+- **Function**: This gene encodes a 190 kD nuclear phosphoprotein that plays a crucial role in maintaining genomic stability and acts as a tumor suppressor, involved in DNA repair of double-stranded breaks, transcription, and recombination.
+
+The BRCA1 gene is responsible for approximately 40% of inherited breast cancers and more than 80% of inherited breast and ovarian cancers, which is why it has extensive documentation in ClinVar with over 15,000 variant records.",,29.572121143341064,21,690,4662,136046,"mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary, mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary","[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""clinvar"", ""query"": ""BRCA1[gene]"", ""max_results"": 5}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""clinvar"", ""ids"": [""4686574""]}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""BRCA1 AND human[organism]"", ""max_results"": 1}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""672""]}}]",VALUABLE,BRCA1 DNA repair associated,"SIMPLE QUERY - Straightforward gene property lookup.
+
+Method: ClinVar gene entity lookup for full_name property
+
+Demonstrates when basic property lookups suffice.
+
+Verified in clinvar_exploration.md."
+117,2026-01-31,Currency,What ribosome structures from different species are available and how do they compare?,True,True,True,0.8461538461538461,"# Ribosome Structures Across Species
+
+Ribosome structures have been solved from all three domains of life, revealing both remarkable conservation and interesting differences. Here's an overview:
+
+## **Bacterial Ribosomes (70S)**
+
+**Key structures:**
+- *Thermus thermophilus* - one of the first high-resolution structures
+- *Escherichia coli* - the model organism, multiple states solved
+- *Deinococcus radiodurans* - radiation-resistant bacterium
+
+**Features:**
+- 30S small subunit + 50S large subunit
+- Relatively simpler than eukaryotic ribosomes
+- Lack many eukaryotic expansion segments
+
+## **Archaeal Ribosomes (70S)**
+
+**Examples:**
+- *Haloarcula marismortui* - provided early high-resolution views of the large subunit
+- Share size designation with bacteria but are evolutionarily closer to eukaryotes
+- Contain some ribosomal protein homologs unique to archaea/eukaryotes
+
+## **Eukaryotic Ribosomes (80S)**
+
+**Major structures:**
+- *Saccharomyces cerevisiae* (yeast) - 4.15 MDa
+- *Homo sapiens* (human) - extensively studied, including mitochondrial ribosomes
+- *Trypanosoma* - shows unique features
+- Plant ribosomes (*Triticum aestivum*)
+
+**Features:**
+- 40S small + 60S large subunit
+- Significantly larger due to expansion segments (ES)
+- More ribosomal proteins
+- Greater complexity in regulation
+
+## **Key Comparisons**
+
+### **Size and Complexity:**
+- Bacteria/Archaea: ~2.5 MDa
+- Eukaryotes: ~3.2-4.3 MDa
+- Mitochondrial ribosomes: highly variable, often reduced
+
+### **Conserved Elements:**
+- Catalytic core (peptidyl transferase center) - nearly identical
+- Decoding center - highly conserved
+- Core rRNA structure - ancient and preserved
+
+### **Differences:**
+- **Expansion segments**: Eukaryotes have extensive ES in rRNA
+- **Protein composition**: Eukaryotes have ~80-81 proteins vs ~54 in bacteria
+- **Surface features**: Eukaryotic ribosomes have more elaborate surfaces for regulatory interactions
+- **Exit tunnel**: Generally conserved but with species-specific modifications
+
+### **Functional Implications:**
+- These differences make bacterial ribosomes selective antibiotic targets
+- Eukaryotic ribosomes accommodate more complex regulatory mechanisms
+- Structural variations reflect different cellular environments
+
+The availability of structures from diverse species has been revolutionary for understanding evolution, antibiotic mechanisms, and translation regulation.",,14.356738090515137,53,648,True,True,0.6153846153846154,"Perfect! Now I have comprehensive information about ribosome structures from different species. Let me provide you with a detailed comparison.
+
+## Ribosome Structures Available in the Protein Data Bank (PDB)
+
+The PDB contains **over 9,000 ribosome structures** from diverse species across all domains of life. Here's a comprehensive overview:
+
+---
+
+## **1. Bacterial Ribosomes (70S)**
+
+**724+ structures** available, featuring:
+
+### **Key Model Organisms:**
+- **Escherichia coli** (439 structures)
+  - Classic example: PDB 7QGH - E. coli disome (collided 70S ribosome)
+  - PDB 5KCR, 5KCS - with various antibiotics
+  
+- **Thermus thermophilus** (722 structures)
+  - PDB 4V90 - Complete T. thermophilus ribosome
+  - PDB 4V51 - 70S ribosome with mRNA, tRNA, and paromomycin
+  - Most extensively studied due to thermostability
+
+- **Mycobacterium smegmatis**
+  - PDB 8WIB, 8WHX - with various factors like RafH
+
+- **Other bacteria:**
+  - *Staphylococcus aureus* (PDB 5LI0)
+  - *Enterococcus faecalis* (PDB 6W6P)
+  - *Bacillus subtilis* (PDB 7QH4)
+  - *Deinococcus radiodurans* (PDB 7A0S, 7A0R)
+
+**Structure:** 70S (50S + 30S subunits)
+
+---
+
+## **2. Eukaryotic Cytoplasmic Ribosomes (80S)**
+
+### **Human (Homo sapiens)** - 720 structures
+- **PDB 8QOI** - 1.9 Å resolution structure showing chemical modifications and ions
+- **PDB 6QZP** - High-resolution cryo-EM structure
+- **PDB 4UG0** - Classic structure of human 80S ribosome
+- **PDB 9AZC, 9PBE** - *In situ* structures from actual cells
+
+### **Yeast (Saccharomyces cerevisiae)** - 414 structures
+- **PDB 4V7R** - Complete yeast 80S ribosome
+- **PDB 3J78, 3J77** - Rotated and non-rotated conformations
+- **PDB 6Q8Y** - With Xrn1 nuclease (translation-degradation complex)
+- **PDB 6HHQ, 5OBM** - With various antibiotics
+
+### **Fruit Fly (Drosophila melanogaster)**
+- **PDB 6XU6** - Testis 80S ribosome
+- **PDB 6XU8** - Ovary 80S ribosome
+- Shows tissue-specific variations
+
+### **Fission Yeast (Schizosaccharomyces pombe)**
+- **PDB 9AXV** - Translating ribosome
+- **PDB 9AXT, 9AXU** - Non-translating states
+
+**Structure:** 80S (60S + 40S subunits)
+
+---
+
+## **3. Mitochondrial Ribosomes**
+
+**1,130+ structures** showing highly specialized characteristics:
+
+### **Human Mitochondrial Ribosomes**
+- **PDB 7QI4** - 2.2 Å resolution with tRNAs and mRNA
+- **PDB 7QI5, 7QI6** - Different tRNA states
+- **PDB 7OF5, 7OF7** - Assembly intermediates with MTERF4-NSUN4
+- **PDB 8RRI** - With antibiotic tigecycline
+- **PDB 9CN3** - With antibiotic linezolid
+
+### **Mammalian Mitochondrial Ribosomes**
+- **PDB 4CE4** - Porcine 39S large subunit
+- **PDB 3JD5** - Small subunit structure
+
+### **Plant Mitochondrial Ribosomes**
+- **PDB 6XYW** - Plant mitochondrial ribosome
+- **PDB 9EVS** - Flowering plant mitoribosome with P-site tRNA
+
+**Notable feature:** Much larger than bacterial 70S despite bacterial evolutionary origin
+
+---
+
+## **4. Chloroplast Ribosomes (Plant Organellar)**
+
+**34 structures** available:
+
+### **Plant Cytoplasmic Ribosomes**
+- **PDB 7QIZ** - Complete plant 80S ribosome with methylation sites
+- **PDB 8JIW** - Wheat ribosome showing unique plant features
+- **PDB 8B2L** - General plant 80S ribosome
+
+### **Chloroplast-Specific**
+- **PDB 6ERI** - With hibernation-promoting factor
+- Shows prokaryotic 70S-like structure (reflects endosymbiotic origin)
+
+---
+
+## **Key Comparisons Across Species:**
+
+### **Size & Complexity**
+1. **Bacterial (70S):** ~2.5 MDa, ~3 rRNAs, ~50 proteins
+2. **Eukaryotic cytoplasmic (80S):** ~3-4 MDa, 4 rRNAs, ~80 proteins
+3. **Mitochondrial:** ~2-3 MDa, 2 rRNAs, 80-100+ proteins (more protein-rich)
+4. **Chloroplast (70S-like):** Similar to bacterial, reflecting prokaryotic origin
+
+### **Resolution & Quality**
+- **Best resolution:** Human 80S at 1.9 Å (PDB 8QOI)
+- Bacterial ribosomes: typically 2.5-3.5 Å
+- Recent advances allow sub-2 Å resolution with cryo-EM
+
+### **Functional States Captured**
+- Translation elongation, termination, and recycling
+- Antibiotic-bound structures
+- Assembly intermediates
+- Colliding/stalled ribosomes
+- Tissue-specific variations (*in situ* structures)
+
+### **Evolutionary Insights**
+- Bacterial 70S represents ancestral form
+- Eukaryotic 80S shows expansion segments
+- Mitochondrial ribosomes: highly divergent despite bacterial ancestry
+- Chloroplast ribosomes: retain prokaryotic features
+
+### **Clinical & Research Relevance**
+- Antibiotic binding sites (bacterial vs human differences)
+- Disease-related mutations (mitochondrial)
+- Translation regulation mechanisms
+- Drug development targets
+
+The vast array of structures provides unprecedented insights into ribosome evolution, function, and species-specific adaptations!",,58.79594111442566,23,2511,7413,112844,"mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity, mcp__togomcp__search_pdb_entity","[{""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""ribosome"", ""limit"": 50}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""human 80S ribosome"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""yeast 80S ribosome"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""bacterial 70S ribosome"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""mitochondrial ribosome"", ""limit"": 20}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""Escherichia coli ribosome complete"", ""limit"": 10}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""Thermus thermophilus ribosome"", ""limit"": 10}}, {""name"": ""mcp__togomcp__search_pdb_entity"", ""input"": {""db"": ""pdb"", ""query"": ""plant ribosome chloroplast"", ""limit"": 10}}]",VALUABLE,"Ribosome structures from bacteria, archaea, and eukaryotes including human, yeast, E. coli with varying sizes","COMPLEX QUERY requiring keyword and organism classification.
+
+Databases/Resources: PDB
+
+Knowledge Required:
+- struct_keywords or struct.title for ribosome search
+- Entity source organism data navigation
+- CONTAINS filter for keyword matching
+- GROUP BY for species distribution
+
+Without proper knowledge: Cannot extract and categorize organism information.
+
+Verified in pdb_exploration.md (multi-chain queries)."
+118,2026-01-31,Currency,What are the mechanism action types for drugs in ChEMBL?,True,True,True,0.5555555555555556,"Based on my training knowledge, ChEMBL uses a standardized vocabulary for drug mechanism of action types. The main mechanism action types in ChEMBL include:
+
+1. **AGONIST** - Activates a receptor
+2. **ANTAGONIST** - Blocks a receptor
+3. **PARTIAL AGONIST** - Partially activates a receptor
+4. **INVERSE AGONIST** - Reduces constitutive receptor activity
+5. **ALLOSTERIC MODULATOR** - Modulates receptor activity at a site distinct from the orthosteric site
+6. **POSITIVE ALLOSTERIC MODULATOR** - Enhances receptor response
+7. **NEGATIVE ALLOSTERIC MODULATOR** - Reduces receptor response
+8. **INHIBITOR** - Blocks enzyme or protein activity
+9. **BLOCKER** - Blocks channels or transporters
+10. **OPENER** - Opens ion channels
+11. **ACTIVATOR** - Activates proteins/enzymes
+12. **MODULATOR** - General modulation of activity
+13. **ANTIBODY** - Immunological mechanism
+14. **RELEASING AGENT** - Causes release of endogenous substances
+15. **DEGRADER** - Promotes protein degradation (e.g., PROTACs)
+
+ChEMBL also includes more specific types like:
+- **STABILISER/STABILIZER**
+- **SEQUESTERING AGENT**
+- **CROSS-LINKING AGENT**
+- **DISRUPTING AGENT**
+- **SUBSTRATE**
+
+These mechanism types help classify how approved drugs and clinical candidates interact with their molecular targets. The exact list may have been updated in more recent ChEMBL versions, but these represent the core mechanism action types used in the database.",,8.560693979263306,52,406,True,True,0.6666666666666666,"Perfect! I've retrieved all the mechanism action types for drugs in ChEMBL. Here's a comprehensive summary:
+
+## Mechanism Action Types in ChEMBL
+
+ChEMBL contains **33 distinct mechanism action types** for drugs. Here they are, ranked by frequency:
+
+### Most Common Types (>100 entries):
+1. **INHIBITOR** - 3,506 drugs (most common)
+2. **ANTAGONIST** - 968 drugs
+3. **AGONIST** - 942 drugs
+4. **BINDING AGENT** - 258 drugs
+5. **BLOCKER** - 179 drugs
+6. **MODULATOR** - 108 drugs
+
+### Allosteric Modulators:
+- **POSITIVE ALLOSTERIC MODULATOR** - 82 drugs
+- **NEGATIVE ALLOSTERIC MODULATOR** - 25 drugs
+- **ALLOSTERIC ANTAGONIST** - 1 drug
+
+### Receptor Activity Modulators:
+- **ACTIVATOR** - 71 drugs
+- **PARTIAL AGONIST** - 64 drugs
+- **INVERSE AGONIST** - 15 drugs
+- **POSITIVE MODULATOR** - 37 drugs
+- **NEGATIVE MODULATOR** - 6 drugs
+
+### Enzymatic:
+- **HYDROLYTIC ENZYME** - 76 drugs
+- **PROTEOLYTIC ENZYME** - 7 drugs
+- **OXIDATIVE ENZYME** - 3 drugs
+
+### Chemical Agents:
+- **DISRUPTING AGENT** - 51 drugs
+- **SEQUESTERING AGENT** - 46 drugs
+- **CROSS-LINKING AGENT** - 44 drugs
+- **CHELATING AGENT** - 25 drugs
+- **REDUCING AGENT** - 2 drugs
+
+### Channel/Transporter Related:
+- **OPENER** - 39 drugs
+- **RELEASING AGENT** - 26 drugs
+- **STABILISER** - 22 drugs
+
+### Genetic/Biological:
+- **ANTISENSE INHIBITOR** - 41 drugs
+- **RNAI INHIBITOR** - 22 drugs
+- **EXOGENOUS PROTEIN** - 39 drugs
+- **EXOGENOUS GENE** - 10 drugs
+- **VACCINE ANTIGEN** - 20 drugs
+
+### Protein Degradation:
+- **DEGRADER** - 6 drugs (relatively new mechanism, like PROTACs)
+
+### Other:
+- **SUBSTRATE** - 8 drugs
+- **OTHER** - 38 drugs
+
+The distribution shows that **inhibitors** are by far the most common drug mechanism, representing over 50% of all mechanisms, which reflects the prevalence of enzyme and receptor inhibition strategies in drug development.",,26.94466519355774,15,984,12425,90645,"mcp__togomcp__get_MIE_file, mcp__togomcp__run_sparql","[{""name"": ""mcp__togomcp__get_MIE_file"", ""input"": {""dbname"": ""chembl""}}, {""name"": ""mcp__togomcp__run_sparql"", ""input"": {""dbname"": ""chembl"", ""sparql_query"": ""PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>\n\nSELECT DISTINCT ?mechanismActionType (COUNT(?mechanism) as ?count)\nFROM <http://rdf.ebi.ac.uk/dataset/chembl>\nWHERE {\n  ?mechanism a cco:Mechanism ;\n             cco:mechanismActionType ?mechanismActionType .\n}\nGROUP BY ?mechanismActionType\nORDER BY DESC(?count)""}}]",VALUABLE,"INHIBITOR (3,506), ANTAGONIST (968), AGONIST (942), and other action types","SIMPLE QUERY - Straightforward mechanism type count.
+
+Method: GROUP BY on mechanismActionType with COUNT
+
+Demonstrates straightforward aggregation.
+
+Verified in chembl_exploration.md simple queries section."
+119,2026-01-31,Precision,What is the PubChem compound ID for cetirizine?,True,True,True,1.0,"The PubChem compound ID (CID) for cetirizine is **2678**.
+
+Cetirizine is a second-generation antihistamine commonly used to treat allergic conditions such as hay fever, urticaria (hives), and other allergic reactions.",,2.355403184890747,52,63,True,True,1.0,The PubChem compound ID (CID) for cetirizine is **2678**.,,10.689081907272339,9,114,475,52653,mcp__togomcp__get_pubchem_compound_id,"[{""name"": ""mcp__togomcp__get_pubchem_compound_id"", ""input"": {""compound_name"": ""cetirizine""}}]",VALUABLE,PubChem CID 2678,"SIMPLE QUERY - Straightforward compound lookup.
+
+Method: get_pubchem_compound_id('cetirizine') or togoid conversion
+
+Demonstrates when basic compound tools suffice.
+
+Verified in chembl_exploration.md simple queries section (cross-reference)."
+120,2026-01-31,Precision,What is the HGNC identifier for the BRCA1 gene in ClinVar?,True,False,True,1.0,"I don't have access to the specific HGNC identifier for BRCA1 as it appears in ClinVar records with certainty from my training data.
+
+However, I can tell you that:
+- The HGNC (HUGO Gene Nomenclature Committee) ID for BRCA1 is **HGNC:1100**
+- BRCA1 is located on chromosome 17 (17q21.31)
+- The gene symbol is BRCA1 (BReast CAncer gene 1)
+
+ClinVar records typically include the HGNC ID as part of the gene information when listing variants, and it should be HGNC:1100 for BRCA1 entries. However, since you're asking specifically about how it appears ""in ClinVar,"" I recommend verifying this directly in ClinVar records to ensure the exact format and identifier they use.",,6.024225950241089,58,205,True,True,1.0,"Perfect! The **HGNC identifier for the BRCA1 gene is HGNC:1100**.
+
+To summarize:
+- **Gene**: BRCA1 (BRCA1 DNA repair associated)
+- **NCBI Gene ID**: 672
+- **HGNC ID**: 1100
+- **Chromosome location**: 17q21.31
+
+This gene is associated with numerous ClinVar entries (over 15,000 variants) related to breast and ovarian cancer susceptibility, as BRCA1 is one of the most clinically important genes in hereditary cancer genetics.",,33.26295304298401,25,792,3585,163163,"mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_efetch, mcp__togomcp__ncbi_esearch, mcp__togomcp__ncbi_esummary, mcp__togomcp__togoid_convertId","[{""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""clinvar"", ""query"": ""BRCA1[gene]"", ""max_results"": 5}}, {""name"": ""mcp__togomcp__ncbi_efetch"", ""input"": {""database"": ""clinvar"", ""ids"": [""4686574""], ""rettype"": ""vcv"", ""retmode"": ""xml""}}, {""name"": ""mcp__togomcp__ncbi_esearch"", ""input"": {""database"": ""gene"", ""query"": ""BRCA1[gene] AND human[organism]"", ""max_results"": 1}}, {""name"": ""mcp__togomcp__ncbi_esummary"", ""input"": {""database"": ""gene"", ""ids"": [""672""]}}, {""name"": ""mcp__togomcp__togoid_convertId"", ""input"": {""ids"": ""672"", ""route"": ""ncbigene,hgnc""}}]",CRITICAL,HGNC:1100,"SIMPLE QUERY - Straightforward gene property lookup.
+
+Method: ClinVar gene entity lookup for hgnc_id property
+
+Demonstrates when basic gene property lookups suffice.
+
+Verified in clinvar_exploration.md Pattern 8."

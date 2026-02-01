@@ -1,86 +1,86 @@
 [
   {
     "id": 49,
-    "category": "Precision",
-    "question": "What is the MeSH descriptor ID for Diabetes Mellitus, Type 2?",
-    "expected_answer": "D003924",
-    "notes": "Uses MeSH database. Verified via search_mesh_entity and SPARQL. Type 2 diabetes is a major public health concern. Tests medical vocabulary lookup."
+    "category": "Structured Query",
+    "question": "Find compounds with sub-nanomolar potency against any human protein target.",
+    "expected_answer": "Ultra-potent compounds such as RITTERAZINE B (pChembl 14.92), CEPHALOSTATIN 1 (14.82), and other natural product cytotoxins",
+    "notes": "COMPLEX QUERY requiring pChembl knowledge.\n\nDatabases/Resources: ChEMBL\n\nKnowledge Required:\n- pChembl normalized potency value (pChembl = -log10 of molar IC50/EC50/Ki)\n- pChembl > 9 means sub-nanomolar potency\n- xsd:decimal conversion for numeric comparison\n- Human target filtering\n\nWithout proper knowledge: Cannot interpret pChembl values or filter correctly.\n\nVerified in chembl_exploration.md Pattern 6 (pChembl Normalized Potency Search)."
   },
   {
     "id": 50,
-    "category": "Precision",
-    "question": "What is the Ensembl gene ID for human TP53 (tumor protein p53)?",
-    "expected_answer": "ENSG00000141510",
-    "notes": "Uses Ensembl database. Verified via SPARQL query. TP53 is located on chromosome 17. Tests gene identification - replaces BRCA1 chromosome question to reduce redundancy."
+    "category": "Structured Query",
+    "question": "What biochemical reactions involve both glucose and phosphate?",
+    "expected_answer": "Reactions such as RHEA:16689 (D-glucose 6-phosphate hydrolysis), RHEA:19933 (alpha-D-glucose 1-phosphate hydrolysis)",
+    "notes": "COMPLEX QUERY requiring boolean text search knowledge.\n\nDatabases/Resources: Rhea\n\nKnowledge Required:\n- bif:contains with boolean operators ('glucose' AND 'phosphate')\n- Proper quoting syntax for keywords\n- Score option for relevance ranking\n- rhea:status rhea:Approved filter\n\nWithout proper knowledge: Cannot construct boolean search correctly.\n\nVerified in rhea_exploration.md Pattern 6 (Boolean Text Search)."
   },
   {
     "id": 51,
-    "category": "Completeness",
-    "question": "How many chemical entities are in the ChEBI ontology?",
-    "expected_answer": "223,078 chemical entities",
-    "notes": "Uses ChEBI database. Verified via SPARQL COUNT on owl:Class with CHEBI_ prefix filter. Tests chemical ontology statistics."
+    "category": "Integration",
+    "question": "How many genes are annotated with the autophagy Gene Ontology term?",
+    "expected_answer": "29,615 genes annotated with autophagy (GO:0006914)",
+    "notes": "COMPLEX QUERY requiring TogoID integration knowledge.\n\nDatabases/Resources: GO, NCBI Gene (via TogoID)\n\nKnowledge Required:\n- TogoID relation graph: http://rdfportal.org/dataset/togoid/relation/ncbigene-go\n- togoid:TIO_000004 property for gene-GO links\n- GO term URI format\n- Pre-computed mappings enable fast queries\n\nWithout proper knowledge: Cannot access TogoID relation graphs for gene annotations.\n\nVerified in go_exploration.md Pattern 5 (TogoID Integration for Gene Annotations)."
   },
   {
     "id": 52,
-    "category": "Completeness",
-    "question": "How many small molecules are catalogued in ChEMBL?",
-    "expected_answer": "1,920,809 small molecules",
-    "notes": "Uses ChEMBL database. Verified via SPARQL COUNT on cco:SmallMolecule. Tests drug discovery database statistics."
+    "category": "Integration",
+    "question": "What are the GO annotations for the human TP53 gene?",
+    "expected_answer": "GO terms associated with TP53/p53 including DNA binding, transcription regulation, apoptosis",
+    "notes": "SIMPLE QUERY - Straightforward GO annotation lookup.\n\nMethod: togoid_convertId with gene ID 7157 to GO\n\nDemonstrates when basic ID conversion and mapping tools suffice.\n\nVerified in go_exploration.md simple queries section."
   },
   {
     "id": 53,
-    "category": "Integration",
-    "question": "What PDB structures contain the human BRCA1 protein (UniProt P38398)?",
-    "expected_answer": "Multiple structures including 7LYB, 7JZV, 1T29, and others",
-    "notes": "Uses UniProt and PDB databases. Verified via SPARQL query on rdfs:seeAlso cross-references. Tests protein-structure database linking."
+    "category": "Completeness",
+    "question": "What fraction of Rhea reactions have Gene Ontology molecular function annotations?",
+    "expected_answer": "Approximately 26% (4,436 reactions out of 16,685 have GO links)",
+    "notes": "COMPLEX QUERY requiring cross-reference knowledge.\n\nDatabases/Resources: Rhea\n\nKnowledge Required:\n- rdfs:seeAlso for GO cross-references\n- GO URI pattern filtering (http://purl.obolibrary.org/obo/GO_)\n- COUNT and ratio calculation\n- rhea:status filter\n\nWithout proper knowledge: Cannot identify GO cross-references correctly.\n\nVerified in rhea_exploration.md cross-references section."
   },
   {
     "id": 54,
-    "category": "Integration",
-    "question": "How many PDB entries have UniProt cross-references?",
-    "expected_answer": "189,655 PDB entries have UniProt references (entity count)",
-    "notes": "Uses PDB database. Entity count (unique PDB entries with UniProt), not relationship count (352,092 total refs due to multi-chain structures). Tests understanding of cross-reference statistics."
+    "category": "Completeness",
+    "question": "How many deprecated GO terms exist in the database?",
+    "expected_answer": "11,905 deprecated terms (approximately 25% of total)",
+    "notes": "COMPLEX QUERY requiring deprecation knowledge.\n\nDatabases/Resources: GO\n\nKnowledge Required:\n- owl:deprecated property for deprecated terms\n- FROM clause for consistent results\n- COUNT aggregation\n\nWithout proper knowledge: FROM clause omission causes inconsistent counts.\n\nVerified in go_exploration.md Pattern 2."
   },
   {
     "id": 55,
-    "category": "Currency",
-    "question": "How many COVID-19 vaccine mRNA research articles are indexed in PubMed?",
-    "expected_answer": "Approximately 11,226 articles (or current count)",
-    "notes": "Uses PubMed database. Verified using search_articles tool. This topic emerged in 2020-2021. Tests access to recent biomedical literature."
+    "category": "Specificity",
+    "question": "Find human proteins that have both kinase activity and nuclear localization.",
+    "expected_answer": "Human proteins with both kinase GO function and nuclear GO component annotations",
+    "notes": "COMPLEX QUERY requiring multiple GO annotation filtering.\n\nDatabases/Resources: UniProt, GO\n\nKnowledge Required:\n- Multiple GO annotations on same protein\n- up:classifiedWith for GO links\n- GO URI patterns for function vs component\n- Two graphs required (uniprot and go)\n- up:reviewed 1 filter\n\nWithout proper knowledge: Cannot combine multiple GO criteria correctly.\n\nVerified in uniprot_exploration.md (complex filtering patterns)."
   },
   {
     "id": 56,
-    "category": "Currency",
-    "question": "What is the Reactome pathway ID for the Autophagy process in humans?",
-    "expected_answer": "R-HSA-9612973",
-    "notes": "Uses Reactome database. Verified using search_reactome_entity. Autophagy is a fundamental cellular process. Replaces SARS-CoV-2 pathway question (covered in Q8)."
+    "category": "Specificity",
+    "question": "What are the direct parent terms of 'macroautophagy' in Gene Ontology?",
+    "expected_answer": "GO:0006914 (autophagy) is the direct parent of macroautophagy (GO:0016236)",
+    "notes": "SIMPLE QUERY - Straightforward hierarchy navigation.\n\nMethod: OLS4 getAncestors or fetch for GO:0016236\n\nDemonstrates when basic ontology navigation tools suffice.\n\nVerified in example_questions.json question 10."
   },
   {
     "id": 57,
-    "category": "Specificity",
-    "question": "What is the lowest pH culture medium recorded in MediaDive?",
-    "expected_answer": "ACIDIANUS SP. JP7 MEDIUM with pH 0.8",
-    "notes": "Uses MediaDive database. Verified via SPARQL query on hasMinPH < 2. Tests access to extremophile cultivation data for acidophiles."
+    "category": "Currency",
+    "question": "What hexameric protein complexes have been structurally characterized?",
+    "expected_answer": "Hexameric complexes such as SARS-CoV-2 Spike with ACE2 (7A98), tubulin complexes, and various enzyme oligomers",
+    "notes": "COMPLEX QUERY requiring biological assembly knowledge.\n\nDatabases/Resources: PDB\n\nKnowledge Required:\n- pdbx_struct_assembly category for oligomeric state\n- oligomeric_count and oligomeric_details properties\n- CONTAINS filter for 'hexameric'\n- struct category for title/description\n\nWithout proper knowledge: Cannot locate biological assembly information.\n\nVerified in pdb_exploration.md Pattern 7 (Biological Assembly Query)."
   },
   {
     "id": 58,
-    "category": "Specificity",
-    "question": "What is the NCBI Gene ID for human insulin (INS)?",
-    "expected_answer": "3630",
-    "notes": "Uses NCBI Gene database. Verified using ncbi_esearch and SPARQL. INS is located on chromosome 11p15.5. Tests specific gene identification."
+    "category": "Currency",
+    "question": "Which human kinases have been targeted by drugs in clinical trials?",
+    "expected_answer": "Human kinase targets with clinical-phase drugs, including various receptor tyrosine kinases and serine/threonine kinases",
+    "notes": "COMPLEX QUERY requiring target and development phase knowledge.\n\nDatabases/Resources: ChEMBL\n\nKnowledge Required:\n- bif:contains for 'kinase' target search with relevance scoring\n- highestDevelopmentPhase filter\n- Human organism filter (Homo sapiens)\n- Target entity model\n\nWithout proper knowledge: Cannot efficiently search targets or filter by phase.\n\nVerified in chembl_exploration.md Pattern 2."
   },
   {
     "id": 59,
-    "category": "Structured Query",
-    "question": "How many Reactome entities have UniProt cross-references?",
-    "expected_answer": "204,415 entities",
-    "notes": "Uses Reactome database. Verified via SPARQL query on bp:xref with bp:db='UniProt'. Tests cross-reference statistics in pathway database."
+    "category": "Precision",
+    "question": "What is the clinical significance of the ClinVar variant VCV000017004?",
+    "expected_answer": "Pathogenic - GJB2 c.35del (most cited pathogenic variant with 80 submitters)",
+    "notes": "SIMPLE QUERY - Straightforward variant lookup.\n\nMethod: Direct SPARQL lookup by VCV accession\n\nDemonstrates when basic accession-based queries suffice.\n\nVerified in clinvar_exploration.md simple queries section."
   },
   {
     "id": 60,
-    "category": "Structured Query",
-    "question": "What are the top 3 organisms with the most phenotypic AMR measurements in AMR Portal?",
-    "expected_answer": "Salmonella enterica (443,249), Escherichia coli (364,088), Mycobacterium tuberculosis (330,880)",
-    "notes": "Uses AMR Portal database. Verified via SPARQL GROUP BY organism query. Tests antimicrobial resistance surveillance data aggregation."
+    "category": "Precision",
+    "question": "What EC number is associated with the Rhea reaction RHEA:10000?",
+    "expected_answer": "EC 3.5.1.50 (amidase)",
+    "notes": "SIMPLE QUERY - Straightforward reaction property lookup.\n\nMethod: Direct SPARQL lookup of rhea:ec property for RHEA:10000\n\nDemonstrates when basic property lookups suffice.\n\nVerified in rhea_exploration.md simple queries section."
   }
 ]

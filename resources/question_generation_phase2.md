@@ -1,331 +1,513 @@
-Your task is to create 120 high-quality evaluation questions based on the database exploration you've already completed.
+# TogoMCP Question Generation - Phase 2: Create 120 Questions
+# REVISED VERSION - Natural Language Questions (No Tool/Technology References)
 
-PREREQUISITES:
-Before starting, verify that exploration reports exist at:
-/Users/arkinjo/work/GitHub/togo-mcp/evaluation/exploration/
+## Quick Reference
+- **Goal**: Create 120 evaluation questions, **70%+ requiring deep database knowledge**
+- **Output**: 10 JSON files (Q01.json - Q10.json) with 12 questions each
+- **Format**: JSON array with required fields
+- **Distribution**: 2 questions per category per file (20 total per category)
+- **CRITICAL**: Questions must be phrased NATURALLY - NO technical/tool mentions
+- **Validation**: Run `python validate_questions.py` after generation
 
-If exploration reports don't exist, you must complete the exploration phase first.
+---
 
-SETUP:
-1. Read the database exploration summary:
-   /Users/arkinjo/work/GitHub/togo-mcp/evaluation/exploration/00_SUMMARY.md
+## CRITICAL: Natural Language Question Principle
 
-2. Read the format requirements:
-   * /Users/arkinjo/work/GitHub/togo-mcp/evaluation/scripts/QUESTION_FORMAT.md
-   * /Users/arkinjo/work/GitHub/togo-mcp/evaluation/QUESTION_DESIGN_GUIDE.md
-   * /Users/arkinjo/work/GitHub/togo-mcp/evaluation/scripts/example_questions.json
+⚠️ **Questions Must Sound Like a Researcher Asking** ⚠️
 
-QUESTION REQUIREMENTS:
-- 120 questions total (distributed across 10 files)
-- Each file contains exactly 12 questions with 2 questions from each category:
-  * Precision (exact IDs, sequences, properties)
-  * Completeness (exhaustive lists, counts)
-  * Integration (cross-database linking, ID conversions)
-  * Currency (recent updates, current classifications)
-  * Specificity (niche organisms, rare diseases)
-  * Structured Query (complex filters, multi-step queries)
+The evaluation tests whether TogoMCP can understand and answer natural research questions. Questions should be phrased as a biologist, chemist, or biomedical researcher would naturally ask them.
 
-- Each category should have exactly 20 questions across all files (2 per file × 10 files)
-- ALL databases must be represented across the 120 questions
-- Each question should involve 1-4 databases
-- Questions should require database access to answer correctly
-- Answers should be specific facts verified during exploration
+### What to EXCLUDE from Question Text
 
-BIOLOGICAL RELEVANCE REQUIREMENT:
+**❌ NEVER include these in the question field**:
+- Technology names: "SPARQL", "API", "RDF", "endpoint", "query"
+- Tool names: "togoid", "OLS4", "E-utilities", "MIE file"
+- Implementation terms: "full-text search", "bif:contains", "property path"
+- Database internals: "GRAPH", "URI", "triple", "schema", "ontology lookup"
+- Method references: "convert using...", "search via...", "query the..."
 
-⚠️ **CRITICAL: ALL QUESTIONS MUST BE BIOLOGICALLY RELEVANT** ⚠️
+**✅ Questions should read like**:
+- A researcher asking a colleague
+- A question you'd type into a smart assistant
+- Natural language without implementation hints
 
-Questions should focus on BIOLOGICAL/SCIENTIFIC CONTENT that researchers care about:
+### Examples: Bad vs Good
 
-✅ **ACCEPTABLE QUESTION TOPICS:**
-- Biological entities: proteins, genes, diseases, compounds, organisms
-- Scientific properties: sequences, structures, molecular weights, pathways
-- Research findings: clinical significance, resistance patterns, expression levels
-- Experimental results: IC50 values, resolution, binding affinities
-- Methodology when interpretation-critical: AST methods (affect accuracy), experimental techniques (affect results)
+| ❌ BAD (Contains Technical Terms) | ✅ GOOD (Natural Language) |
+|----------------------------------|---------------------------|
+| "Use SPARQL to find human proteins with autophagy GO annotations" | "Which human proteins are involved in autophagy?" |
+| "Query the Rhea database API for reactions involving ATP" | "What biochemical reactions use ATP as a substrate?" |
+| "Search UniProt using full-text search for proteins described as 'kinase'" | "Find human proteins that function as kinases" |
+| "Convert UniProt P04637 to NCBI Gene ID using togoid" | "What is the NCBI Gene ID for the protein P04637?" |
+| "Execute a cross-database SPARQL join between UniProt and PDB" | "Which human proteins have experimentally determined 3D structures?" |
+| "Query the citations graph in UniProt for TP53 papers" | "What research publications are associated with the TP53 protein entry?" |
+| "Use MIE file performance strategies to count reviewed proteins" | "How many reviewed human kinases are in UniProt?" |
+| "Apply bif:contains to search protein annotation text for 'receptor'" | "Find proteins that are described as membrane receptors" |
+| "Look up GO:0006914 descendants using OLS4 API" | "What are the more specific terms under autophagy in Gene Ontology?" |
+| "Search PubMed using MeSH terms for CRISPR clinical trials" | "What clinical trials are studying CRISPR-based therapies?" |
 
-❌ **UNACCEPTABLE QUESTION TOPICS:**
-- Database versions or release numbers ("What is the current version of Reactome?")
-- Software infrastructure ("What software is most commonly used for refinement?") - UNLESS the methodology directly affects scientific interpretation
-- Administrative metadata ("How many database updates this year?")
-- IT details with no scientific value ("What is the update schedule?")
-- Pure procedural information ("What format does the database use?")
+### Where Technical Details Belong
 
-**BORDERLINE CASES - USE JUDGMENT:**
-- Software/methodology questions: Acceptable ONLY if the method choice affects scientific interpretation
-  Example: ✅ "What laboratory typing method is most common in AMR Portal?" - affects resistance data accuracy
-  Example: ❌ "What software version was used for structure refinement?" - IT metadata, not biological insight
-- Annotation evidence: Acceptable if it affects data quality assessment
-  Example: ✅ "What evidence type is used for AMR gene annotation?" - helps assess prediction confidence
-  Example: ❌ "What database schema version is current?" - pure infrastructure
+**All technical information goes in the `notes` field**:
+- What databases/tools are needed (internal documentation)
+- What knowledge/patterns are required
+- What approach works vs. fails
+- Performance considerations
+- Why this question is complex or simple
 
-**CURRENCY CATEGORY SPECIAL GUIDANCE:**
-Currency questions should test access to RECENT BIOLOGICAL DATA, not database maintenance info:
-- ✅ "What COVID-19 pathways have been added to Reactome recently?"
-- ✅ "How many isolates collected in 2024 are in AMR Portal?"
-- ✅ "What are the most recent CRISPR structures in PDB?"
-- ❌ "What is the current database release number?"
-- ❌ "When was the database last updated?"
+The `notes` field is for evaluators and developers, NOT shown to users.
 
-COUNTING QUESTIONS - ENTITY vs. RELATIONSHIP COUNTS:
+---
 
-⚠️ **CRITICAL: Distinguish Between Entity Counts and Relationship Counts** ⚠️
+## Prerequisites
 
-When databases have cross-references or mappings, there are TWO different counts:
+**Verify exploration is complete**:
+- Check for exploration reports in `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/exploration/`
+- **Required**: All databases must have exploration reports with complex patterns documented
+- If missing, complete Phase 1 (exploration) first using `question_generation_phase1.md`
 
-**Entity Count**: Number of unique entities that HAVE mappings
-- Query uses: `COUNT(DISTINCT ?entity)`
-- Example: "How many NANDO diseases have MONDO mappings?" → 2,150 unique diseases
+**Read these files BEFORE starting**:
+1. `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/exploration/00_SUMMARY.md`
+2. `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/QUESTION_DESIGN_GUIDE.md`
+3. `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/scripts/QUESTION_FORMAT.md`
+4. `/Users/arkinjo/work/GitHub/togo-mcp/evaluation/scripts/example_questions.json`
 
-**Relationship Count**: Total number of mapping relationships
-- Query uses: `COUNT(?target)` (without DISTINCT)
-- Example: "How many total NANDO→MONDO mappings exist?" → 2,341 total mappings
+**Understand the complexity targets**:
+- Total: 85 Complex (70%) + 35 Simple (30%)
+- Structured Query: 18 Complex, 2 Simple (90% Complex)
+- Integration: 16 Complex, 4 Simple (80% Complex)
+- Completeness: 12 Complex, 8 Simple (60% Complex)
+- Specificity: 10 Complex, 10 Simple (50% Complex)
+- Currency: 10 Complex, 10 Simple (50% Complex)
+- Precision: 9 Complex, 11 Simple (45% Complex)
 
-**Why They Differ**: Some entities map to multiple targets
-- Example: NANDO:1200001 maps to BOTH MONDO:0010735 AND MONDO:0016113
-- This counts as: 1 entity with mappings, but 2 total mapping relationships
+---
 
-**Question Formulation Guidelines:**
+## Question Requirements
 
-✅ **CLEAR - Explicitly state what you're counting:**
-- "How many proteins HAVE UniProt→PDB mappings?" (entity count)
-- "How many total protein→structure mapping relationships exist?" (relationship count)
-- "How many diseases map to exactly 2 MONDO IDs?" (structured query on distribution)
+### Distribution
+- **120 questions total** (10 files × 12 questions)
+- **2 questions per category per file** (20 total per category)
+- **ALL databases represented** across 120 questions
+- **85+ questions (70%) require deep database knowledge**
+- **35 questions (30%) are straightforward for contrast**
 
-⚠️ **AMBIGUOUS - Avoid vague phrasing:**
-- "How many UniProt→PDB mappings are there?" (unclear: entities or relationships?)
-- "What is the count of cross-references?" (unclear: which count?)
+### Complexity Classification
 
-**Expected Answer Formatting:**
-- For entity counts: "2,150 diseases have mappings" ✅
-- For relationship counts: "2,341 total mapping relationships" ✅
-- Always clarify in the answer which count you're providing
-- In the notes field, explain if there's a difference and why
+Every question must be classified as either:
 
-**Example Questions:**
+**🔴 COMPLEX (Target: 85 questions / 70%)**
 
-**Completeness Category:**
-- ✅ "How many NANDO diseases have at least one MONDO mapping?" → "2,150 unique diseases"
-- ✅ "How many total NANDO→MONDO mapping relationships exist?" → "2,341 total mappings"
-- ✅ "What percentage of NANDO diseases map to exactly 1 MONDO ID?" → "~92% (1,976/2,150)"
+Questions that require deep knowledge of database structure and relationships:
 
-**Structured Query Category:**
-- ✅ "Find NANDO diseases that map to multiple MONDO IDs" → "174 diseases (157 with 2 mappings + 17 with 3 mappings)"
-- ✅ "Which disease has the most MONDO mappings?" → "17 diseases tie with 3 mappings each"
+1. **Cross-Database Questions** (Target: 25 questions)
+   - Require combining information from multiple databases
+   - Need understanding of how entities relate across databases
+   - Example: "Which human enzymes catalyze reactions that produce glucose?"
 
-**Integration Category:**
-- ✅ "What MONDO IDs does NANDO:1200001 map to?" → "MONDO:0010735 and MONDO:0016113 (2 mappings)"
-- ✅ "Convert NANDO:1200010 to its MONDO equivalent" → "MONDO:0005180"
+2. **Performance-Sensitive Questions** (Target: 20 questions)
+   - Require efficient strategies on large datasets
+   - Need proper filtering and ordering
+   - Example: "How many human proteins have annotations related to DNA repair?"
 
-QUESTION DESIGN CRITERIA:
-Each question MUST satisfy:
+3. **Pattern-Sensitive Questions** (Target: 15 questions)
+   - Have known pitfalls that need to be avoided
+   - Require specific approaches to succeed
+   - Example: "Find proteins whose functional description mentions 'membrane receptor'"
 
-✓ **Biologically Realistic**: Would an actual researcher ask this?
-✓ **Biologically Relevant**: Does it address biological/scientific content, not IT infrastructure?
-✓ **Testable Distinction**: Requires database access, not training knowledge
-✓ **Appropriate Complexity**: Non-trivial but not impossibly broad
-✓ **Clear Success Criteria**: Verifiable correct answer
-✓ **Verifiable Ground Truth**: Confirmed during exploration phase
-✓ **Natural Phrasing**: No mention of "SPARQL" or "MCP tools"
-✓ **Precise Counting**: If asking about cross-references, clearly specify entity vs. relationship count
+4. **Multi-Criteria Questions** (Target: 25 questions)
+   - Combine multiple filtering conditions
+   - Require understanding of data relationships
+   - Example: "Find drug candidates with high potency against EGFR that are in clinical trials"
 
-QUESTION CREATION PROCESS:
-For each question:
+**🟢 SIMPLE (Target: 35 questions / 30% for contrast)**
 
-1. **Reference exploration reports**: Review the exploration report(s) for the database(s) you're using
+Questions answerable with straightforward approaches:
 
-2. **Select a verified finding**: Choose an interesting BIOLOGICAL/SCIENTIFIC finding from the "Question Opportunities" section
+1. **Direct Lookups** (Target: 15 questions)
+   - Single entity searches
+   - Basic property retrieval
+   - Example: "What is the UniProt ID for human BRCA1?"
 
-3. **Check biological relevance**: Ask yourself:
-   - Would a biologist/biomedical researcher care about this answer?
-   - Does this provide scientific insight or just administrative information?
-   - If this is a methodology question, does the methodology choice affect scientific interpretation?
+2. **Standard Queries** (Target: 12 questions)
+   - Well-defined database operations
+   - Documented standard procedures
+   - Example: "What are the child terms of 'autophagy' in Gene Ontology?"
 
-4. **For counting questions involving cross-references**:
-   - Check the exploration report for BOTH entity count AND relationship count
-   - Decide which count you're asking about
-   - Formulate the question to make this clear
-   - Document both counts in the notes field for clarity
+3. **ID Mappings** (Target: 8 questions)
+   - Cross-reference lookups
+   - Standard identifier conversions
+   - Example: "What is the NCBI Gene ID corresponding to UniProt P04637?"
 
-5. **Verify the answer**: Based on the exploration report, confirm:
-   - The entity/concept exists in the database
-   - You know how to query for it (from tested SPARQL queries)
-   - The answer is specific and verifiable
-   - The answer relates to biological/scientific content
-   - If asking about counts, you know WHICH count (entity or relationship)
+---
 
-6. **Formulate naturally**: Write the question as a researcher would ask it
+## Categories with Complexity Targets
 
-7. **Document thoroughly**: In the "notes" field, include:
-   - Which database(s) are involved
-   - Reference to exploration report findings
-   - How the answer was verified
-   - Why this tests database access vs training knowledge
-   - Why this is biologically relevant (if not obvious)
-   - **For cross-reference counts: Clarify whether asking about entity or relationship count**
+Each category should have different complexity ratios:
 
-OUTPUT FORMAT:
+1. **Structured Query** (20 total)
+   - 🔴 Complex: 18 questions (90%)
+   - 🟢 Simple: 2 questions (10%)
+   - *Focus*: Multi-step queries with filtering
 
-⚠️ **CRITICAL - EXACT JSON FORMAT REQUIRED** ⚠️
+2. **Integration** (20 total)
+   - 🔴 Complex: 16 questions (80%)
+   - 🟢 Simple: 4 questions (20%)
+   - *Focus*: Cross-database questions
 
-Each file MUST be a JSON **ARRAY** (not an object), following this EXACT structure:
-```json
-[
-  {
-    "id": 1,
-    "category": "Precision",
-    "question": "What is the UniProt ID for human BRCA1?",
-    "expected_answer": "P38398",
-    "notes": "Uses UniProt database. Verified in uniprot_exploration.md. Tests search_uniprot_entity tool."
-  },
-  {
-    "id": 2,
-    "category": "Completeness",
-    "question": "How many NANDO diseases have MONDO ontology mappings?",
-    "expected_answer": "2,150 unique diseases have mappings (out of 2,777 total NANDO diseases)",
-    "notes": "Uses NANDO database. Verified in nando_exploration.md via SPARQL with COUNT(DISTINCT ?disease). Entity count, not relationship count (2,341 total mapping relationships exist because some diseases map to multiple MONDO IDs). Tests understanding of cross-reference mappings."
-  }
-]
+3. **Completeness** (20 total)
+   - 🔴 Complex: 12 questions (60%)
+   - 🟢 Simple: 8 questions (40%)
+   - *Focus*: Counting and coverage
+
+4. **Specificity** (20 total)
+   - 🔴 Complex: 10 questions (50%)
+   - 🟢 Simple: 10 questions (50%)
+   - *Focus*: Specialized domain queries
+
+5. **Currency** (20 total)
+   - 🔴 Complex: 10 questions (50%)
+   - 🟢 Simple: 10 questions (50%)
+   - *Focus*: Recent/updated data
+
+6. **Precision** (20 total)
+   - 🔴 Complex: 9 questions (45%)
+   - 🟢 Simple: 11 questions (55%)
+   - *Focus*: Exact values and measurements
+
+---
+
+## Question Creation Process
+
+### For Each Question:
+
+1. **Decide complexity first**:
+   - Will this be 🔴 Complex or 🟢 Simple?
+   - Check category targets: Have enough of each type?
+   - For Complex: Which pattern (cross-database, performance, pitfall, multi-criteria)?
+
+2. **Reference exploration report(s)**:
+   - For 🔴 Complex: Read "Complex Query Patterns" section
+   - For 🟢 Simple: Read "Simple Queries" section
+   - Verify finding was actually tested
+
+3. **Write the question in NATURAL LANGUAGE**:
+   
+   **CRITICAL CHECKLIST before writing**:
+   - [ ] Does it sound like a researcher asking a colleague?
+   - [ ] Are there ANY technical terms? (If yes, rephrase)
+   - [ ] Would a biologist understand this without database knowledge?
+   - [ ] Is the biological intent clear?
+   
+   **Good patterns**:
+   - "Which [entities] are involved in [process]?"
+   - "What [properties] does [entity] have?"
+   - "Find [entities] that [biological criterion]"
+   - "How many [entities] have [characteristic]?"
+   - "What is the [identifier type] for [entity]?"
+
+4. **Write detailed technical notes**:
+   
+   **For 🔴 Complex questions**:
+   ```
+   "COMPLEX QUERY - Requires: [database knowledge needed].
+   
+   Technical approach:
+   - Databases involved: [list]
+   - Key relationships: [describe]
+   - Performance considerations: [if any]
+   - Known pitfalls: [if any]
+   
+   Without proper knowledge: [what fails - timeout/error/wrong results].
+   
+   Verified in [exploration report] [pattern reference]."
+   ```
+   
+   **For 🟢 Simple questions**:
+   ```
+   "SIMPLE QUERY - Straightforward [lookup/conversion/search].
+   Demonstrates when basic approaches suffice.
+   Verified in [exploration report]."
+   ```
+
+5. **Verify the answer**:
+   - Answer is specific and verifiable
+   - Answer directly addresses the question asked
+   - Answer was confirmed during exploration
+
+6. **Final natural language check**:
+   - Re-read the question out loud
+   - Does it sound natural?
+   - Would you ask it this way to a knowledgeable colleague?
+
+---
+
+## Content Guidelines
+
+### ✅ GOOD Question Patterns
+
+**Cross-Database Questions** (25 target):
+- ✅ "Which human enzymes catalyze reactions that involve ATP?"
+- ✅ "What drugs target proteins that have 3D structures available?"
+- ✅ "Find genes associated with Alzheimer's disease that have clinical variants"
+
+**Performance-Sensitive Questions** (20 target):
+- ✅ "How many reviewed human proteins have autophagy-related annotations?"
+- ✅ "What human kinases have GO annotations for signal transduction?"
+- ✅ "Count the enzymes in UniProt that are classified under EC 2.7 (transferases)"
+
+**Pattern-Sensitive Questions** (15 target):
+- ✅ "Find proteins whose description mentions 'membrane receptor'"
+- ✅ "What proteins have annotations containing the term 'apoptosis'?"
+- ✅ "Find research publications cited in the UniProt entry for p53"
+
+**Multi-Criteria Questions** (25 target):
+- ✅ "Find ChEMBL compounds with high potency against EGFR that are in clinical trials"
+- ✅ "What pathogenic variants in BRCA1 have strong review evidence?"
+- ✅ "Find human proteins with both kinase activity and nuclear localization"
+
+**Simple Contrast Questions** (35 target):
+- ✅ "What is the UniProt ID for human BRCA1?"
+- ✅ "What is the NCBI Gene ID for protein P04637?"
+- ✅ "What are the child terms of autophagy in Gene Ontology?"
+- ✅ "What is the PubChem compound ID for aspirin?"
+
+### ❌ BAD Question Patterns
+
+**Technical language** (NEVER use):
+- ❌ "Use SPARQL to query UniProt for..."
+- ❌ "Search using the full-text search function for..."
+- ❌ "Convert IDs using togoid..."
+- ❌ "Query the Rhea API for..."
+- ❌ "Look up in the MIE file..."
+- ❌ "Execute a cross-database join..."
+
+**Implementation hints** (NEVER include):
+- ❌ "...using the reviewed protein filter..."
+- ❌ "...via the enzyme EC number relationship..."
+- ❌ "...through the citations graph..."
+- ❌ "...with early filtering for performance..."
+
+**Database jargon** (NEVER include):
+- ❌ "...with GRAPH URI..."
+- ❌ "...using property path..."
+- ❌ "...via RDF triple patterns..."
+- ❌ "...endpoint query..."
+
+---
+
+## Notes Field Format
+
+### For Complex Questions:
+
+**Template**:
+```
+"COMPLEX QUERY requiring deep database knowledge.
+
+Databases/Resources: [List databases involved]
+
+Knowledge Required:
+- [Key insight 1: e.g., how databases connect]
+- [Key insight 2: e.g., performance strategy]
+- [Key insight 3: e.g., pitfall to avoid]
+
+Without proper knowledge: [what fails - timeout/error/wrong approach].
+
+Technical details: [Brief description of correct approach]
+
+Verified in [exploration_report.md] [pattern reference]."
 ```
 
-**FIELD REQUIREMENTS:**
+**Example**:
+```
+"COMPLEX QUERY requiring cross-database knowledge.
 
-**Required Fields (MUST include):**
-- `question` (string, 10-500 characters): The actual question text
+Databases/Resources: UniProt (proteins), Rhea (reactions), ChEBI (compounds)
 
-**Recommended Fields (MUST include all of these):**
-- `id` (integer): Sequential number 1-120 (globally indexed across all files)
-- `category` (string): EXACTLY one of these (case-sensitive):
-  * "Precision"
-  * "Completeness"
-  * "Integration"
-  * "Currency"
-  * "Specificity"
-  * "Structured Query"
-- `expected_answer` (string): The verified correct answer
-  - **For cross-reference counts**: Clarify which count in the answer
-  - Example: "2,150 diseases have mappings" (entity count) OR "2,341 total mappings" (relationship count)
-- `notes` (string): Rationale, databases used, verification method
-  - **For cross-reference counts**: Explain entity vs. relationship count if relevant
-  - Example: "Entity count (2,150), not relationship count (2,341). Some diseases map to multiple IDs."
+Knowledge Required:
+- How proteins link to reactions via enzyme classification
+- Pre-filtering on reviewed proteins (444M total - needs filtering)
+- Compound identification through reaction participants
+- Proper ordering of conditions for performance
 
-**Format Rules:**
-- ✅ Root element MUST be an array `[...]`
-- ❌ Do NOT wrap in object `{"questions": [...]}`
-- ✅ Each question is an object with fields above
-- ✅ Use double quotes for all strings
-- ✅ Include comma after each field except the last
-- ✅ Include comma after each object except the last
-- ✅ Categories must match EXACTLY (case-sensitive)
+Without proper knowledge: Query times out or returns incomplete results
+due to processing entire protein database before filtering.
 
-**Example of INCORRECT format (DO NOT USE):**
+Technical details: Start with reviewed human proteins, then link to 
+reactions, then filter by compound involvement.
+
+Verified in uniprot_exploration.md Pattern 2 and rhea_exploration.md 
+integration section."
+```
+
+### For Simple Questions:
+
+**Template**:
+```
+"SIMPLE QUERY - Straightforward [type: lookup/search/conversion].
+
+Method: [Brief description]
+
+Demonstrates when basic approaches suffice without complex optimization.
+
+Verified in [exploration_report.md] simple queries section."
+```
+
+**Example**:
+```
+"SIMPLE QUERY - Straightforward entity lookup.
+
+Method: Direct search for protein by gene name.
+
+Demonstrates when basic approaches suffice without complex optimization.
+
+Verified in uniprot_exploration.md simple queries section."
+```
+
+---
+
+## File Structure and Distribution
+
+Each file (Q01-Q10) should have:
+
+**Category Distribution**:
+- 2 questions × 6 categories = 12 questions per file
+
+**Complexity Distribution**:
+
+**Files Q01-Q07** (more complex):
+- 🔴 Complex: 9-10 questions per file
+- 🟢 Simple: 2-3 questions per file
+
+**Files Q08-Q10** (more contrast):
+- 🔴 Complex: 6-7 questions per file
+- 🟢 Simple: 5-6 questions per file
+
+---
+
+## Validation Checklist
+
+### Natural Language Check (CRITICAL)
+
+For EVERY question, verify:
+- [ ] No technology names (SPARQL, API, RDF, etc.)
+- [ ] No tool names (togoid, OLS4, MIE, etc.)
+- [ ] No implementation terms (full-text search, property path, etc.)
+- [ ] No database internals (GRAPH, URI, triple, etc.)
+- [ ] No method references (convert using, query via, etc.)
+- [ ] Sounds like natural researcher question
+- [ ] Biological intent is clear
+
+### Complexity Distribution Check
+
+After creating all questions:
+```bash
+# Count Complex markers
+grep -r "COMPLEX QUERY" questions/*.json | wc -l
+# Should be ~85
+
+# Count Simple markers  
+grep -r "SIMPLE QUERY" questions/*.json | wc -l
+# Should be ~35
+```
+
+### Standard Validation
+
+- [ ] All 10 files created (Q01-Q10)
+- [ ] Each file has exactly 12 questions
+- [ ] 120 questions total (IDs 1-120)
+- [ ] Each category has exactly 20 questions
+- [ ] All databases represented
+- [ ] 0 exact duplicates
+- [ ] JSON format correct
+
+---
+
+## Success Criteria
+
+Before finalizing:
+
+**Natural Language Criteria**:
+- ✅ **ALL 120 questions phrased naturally (no technical terms)**
+- ✅ **Questions sound like researcher asking colleague**
+- ✅ **Biological intent clear without implementation hints**
+
+**Complexity Criteria**:
+- ✅ **85+ questions (70%) marked "COMPLEX QUERY"**
+- ✅ **35 questions (30%) marked "SIMPLE QUERY"**
+- ✅ **Category targets met**
+- ✅ **All complexity notes explain what knowledge is needed**
+
+**Standard Criteria**:
+- ✅ All 10 files created
+- ✅ 120 questions total
+- ✅ All categories covered
+- ✅ All databases represented
+- ✅ JSON format valid
+
+---
+
+## Quick Question Creation Checklist
+
+**For EVERY question**:
+
+1. [ ] 🔴 Complex or 🟢 Simple? (Check targets)
+2. [ ] **NATURAL LANGUAGE CHECK**: No technical terms in question?
+3. [ ] Sounds like researcher asking colleague?
+4. [ ] Biological intent clear?
+5. [ ] Notes explain complexity/simplicity?
+6. [ ] Answer verifiable from exploration?
+7. [ ] Answer directly addresses question?
+8. [ ] All 5 JSON fields present?
+
+---
+
+## Example Questions (Final Format)
+
+### Complex Question Example
+
 ```json
 {
-  "questions": [
-    {
-      "id": 1,
-      "question": "..."
-    }
-  ]
+  "id": 15,
+  "category": "Integration",
+  "question": "Which human enzymes catalyze reactions that involve ATP as a substrate or product?",
+  "expected_answer": "[List of UniProt protein IDs with their names and associated Rhea reaction IDs]",
+  "notes": "COMPLEX QUERY requiring cross-database knowledge.\n\nDatabases/Resources: UniProt (proteins/enzymes), Rhea (biochemical reactions), ChEBI (compounds)\n\nKnowledge Required:\n- Protein-to-reaction linkage via enzyme classification\n- Pre-filtering on reviewed proteins essential (444M total)\n- ATP identification in reaction participants\n- Efficient query ordering for performance\n\nWithout proper knowledge: Query times out processing entire protein database.\n\nVerified in uniprot_exploration.md Pattern 2 and rhea_exploration.md integration section."
 }
 ```
 
-**Example of CORRECT format (USE THIS):**
+### Simple Question Example
+
 ```json
-[
-  {
-    "id": 1,
-    "category": "Precision",
-    "question": "...",
-    "expected_answer": "...",
-    "notes": "..."
-  },
-  {
-    "id": 2,
-    "category": "Completeness",
-    "question": "...",
-    "expected_answer": "...",
-    "notes": "..."
-  }
-]
+{
+  "id": 42,
+  "category": "Precision",
+  "question": "What is the UniProt accession number for human tumor protein p53?",
+  "expected_answer": "P04637",
+  "notes": "SIMPLE QUERY - Straightforward entity lookup.\n\nMethod: Direct search for well-known protein.\n\nDemonstrates when basic approaches suffice without complex optimization.\n\nVerified in uniprot_exploration.md simple queries section."
+}
 ```
 
-FILE LOCATIONS:
-Save questions to 10 separate JSON files with EXACTLY 12 questions each:
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q01.json (questions 1-12)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q02.json (questions 13-24)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q03.json (questions 25-36)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q04.json (questions 37-48)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q05.json (questions 49-60)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q06.json (questions 61-72)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q07.json (questions 73-84)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q08.json (questions 85-96)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q09.json (questions 97-108)
-- /Users/arkinjo/work/GitHub/togo-mcp/evaluation/questions/Q10.json (questions 109-120)
+---
 
-WORKFLOW:
-1. Read the exploration summary and understand database coverage plan
-2. Review exploration reports to refresh findings
-3. For each batch of 12 questions (files Q01.json through Q10.json):
-   a. Distribute 2 questions across each of the 6 categories
-   b. Follow the database coverage plan from the summary
-   c. For each question:
-      - Consult relevant exploration report(s)
-      - Select a verified BIOLOGICAL/SCIENTIFIC finding (not IT metadata)
-      - **CHECK: Is this biologically relevant? Would a researcher care?**
-      - **CHECK: If counting cross-references, which count am I asking about?**
-      - Formulate the question naturally (10-500 characters)
-      - Write clear expected answer (specify entity vs. relationship count if relevant)
-      - Write detailed notes referencing the exploration
-      - Assign sequential ID (1-120 globally across all files)
-      - Ensure category name is EXACTLY one of the 6 valid values (case-sensitive)
-   d. Create the JSON file as an ARRAY with 12 question objects
-   e. Verify JSON format is correct (use array, not object wrapper)
-4. After all 10 files are created, verify:
-   - Each file is a valid JSON array starting with `[` and ending with `]`
-   - Each file has exactly 12 questions
-   - Each file has exactly 2 questions from each category
-   - IDs are sequential from 1-120
-   - All category names match exactly: "Precision", "Completeness", "Integration", "Currency", "Specificity", "Structured Query"
-   - All questions have all recommended fields: id, category, question, expected_answer, notes
-   - All databases from the summary are represented
-   - All questions reference findings from exploration reports
-   - **ALL questions are biologically/scientifically relevant (not IT infrastructure)**
-   - **Counting questions about cross-references clearly specify entity vs. relationship count**
+## Important Reminders
 
-VALIDATION CHECKLIST:
-Before finalizing each file, verify:
-- [ ] File is a JSON array `[...]`, NOT an object `{"questions": [...]}`
-- [ ] Contains exactly 12 question objects
-- [ ] Each object has all 5 fields: id, category, question, expected_answer, notes
-- [ ] IDs are sequential integers (e.g., 1-12 for Q01.json, 13-24 for Q02.json)
-- [ ] Categories are exactly: "Precision", "Completeness", "Integration", "Currency", "Specificity", "Structured Query"
-- [ ] Questions are 10-500 characters
-- [ ] Each category appears exactly 2 times
-- [ ] JSON syntax is valid (commas, quotes, brackets)
-- [ ] **ALL questions focus on biological/scientific content, not IT infrastructure**
-- [ ] **NO questions about database versions, software tools (unless interpretation-critical), or administrative metadata**
-- [ ] **Counting questions about cross-references clearly specify which count**
+✅ **DO**:
+- **Write ALL questions in natural language**
+- Phrase questions as a researcher would ask
+- Put ALL technical details in notes field
+- Check every question for technical terms before including
+- Meet complexity distribution targets
+- Verify answers from exploration reports
 
-DUPLICATE DETECTION:
-After creating all questions:
-- [ ] Check for duplicate questions (same concept, different wording)
-- [ ] Check for near-duplicates (essentially asking the same thing)
-- [ ] If duplicates found, replace one with a different biological question from the same database/category
+❌ **DON'T**:
+- **Include ANY technical terms in question text**
+- Mention tools, APIs, databases internals, or methods
+- Give implementation hints in the question
+- Use database-specific jargon
+- Assume the reader knows the underlying technology
+- Rush - quality natural language is essential
 
-IMPORTANT REMINDERS:
-- **BIOLOGICAL RELEVANCE IS MANDATORY**: Every question must address biological/scientific content
-- **EXACT FORMAT REQUIRED**: Follow QUESTION_FORMAT.md precisely
-- **ARRAY FORMAT**: Root element must be array, not object
-- **CASE-SENSITIVE CATEGORIES**: Use exact category names
-- **ALL RECOMMENDED FIELDS**: Include id, category, question, expected_answer, notes for every question
-- **SEQUENTIAL IDs**: Number 1-120 globally across all files
-- Draw ONLY from verified findings in exploration reports
-- Reference specific exploration reports in question notes
-- Ensure natural, realistic phrasing
-- Maintain even distribution across categories and databases
-- **Avoid database versions, release numbers, and pure IT metadata**
-- **Currency questions should test recent biological data, not database maintenance info**
-- **⚠️ CRITICAL: For cross-reference counting questions, distinguish entity counts from relationship counts**
+---
 
-Begin by reading the exploration summary and example_questions.json, then generate the 120 questions across 10 files following the EXACT format specification and ensuring ALL questions are biologically relevant with clear counting semantics.
+**Begin by reading exploration summary, then generate 120 NATURALLY-PHRASED questions. Every question must sound like a researcher asking a colleague - no technical terms allowed in the question field. Technical details belong only in the notes field.**

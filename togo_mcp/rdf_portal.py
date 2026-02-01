@@ -117,16 +117,16 @@ WHERE {{
 )
 async def run_sparql(
     sparql_query: Annotated[str, Field(description="The SPARQL query to execute")],
-    dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION, default=None)] = None,
+    dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION, default="")] = "",
     endpoint_name: Annotated[str, Field(
         description=f"Endpoint name for cross-database queries. One of: {', '.join(ENDPOINT_NAMES)}. "
                     "Use this when querying multiple databases on the same endpoint.",
-        default=None
-    )] = None,
+        default=""
+    )] = "",
     endpoint_url: Annotated[str, Field(
         description="Direct SPARQL endpoint URL. Use this for explicit control over the endpoint.",
-        default=None
-    )] = None
+        default=""
+    )] = ""
 ) -> str:
     """
     Run a SPARQL query on an RDF database.
@@ -344,29 +344,3 @@ def list_databases() -> List[Dict[str, Any]]:
                 })
     return all_schemas_info
 
-@mcp.tool(
-        enabled=True,
-        description="Get an example SPARQL query for a specific RDF database.",
-        name="get_sparql_example"
-)
-def get_sparql_example(
-    dbname: Annotated[str, Field(description=DBNAME_DESCRIPTION)]
-) -> str:
-    """
-    Read the file in SPARQL_EXAMPLES/{dbname}.rq and return the content.
-
-    Args:
-        dbname (str): The name of the database for which to retrieve the SPARQL example.
-
-    Returns:
-        str: The content of the SPARQL example file, or an error message if not found.
-    """
-    toolcall_log("get_sparql_example")
-    example_file = os.path.join(SPARQL_EXAMPLES, f"{dbname}.rq")
-    if not os.path.exists(example_file):
-        return f"Error: The SPARQL example file for '{dbname}' was not found at '{example_file}'."
-    try:
-        with open(example_file, "r", encoding="utf-8") as file:
-            return file.read()
-    except Exception as e:
-        return f"Error reading SPARQL example file for '{dbname}': {e}"
