@@ -1,656 +1,432 @@
-# TogoMCP Usage Guide
+# TogoMCP Usage Guide (Concise)
 
-A comprehensive, step-by-step workflow for answering user questions using TogoMCP tools. **Follow each step carefully—do not skip any step.**
+## Core Principle: Get MIE → Search → Inspect → Use Structured Properties
+
+**Most errors come from using bif:contains before checking the MIE file for structured properties.**
+
+For comprehensive queries ("how many", "find all"), you MUST:
+1. **Get MIE file FIRST**: `get_MIE_file(dbname)` - examine schema for structured predicates
+2. Use search tools (or exploratory SPARQL) to find 10-20 example entities  
+3. Inspect examples to confirm which structured properties exist
+4. Write comprehensive SPARQL using discovered structured properties
+
+**Priority for comprehensive queries:**
+```
+Structured Properties > Annotation Patterns > bif:contains (only if no structured alternative)
+     (BEST)                  (GOOD)              (LAST RESORT - rare)
+```
+
+**⚠️ bif:contains Gate Check:** Before using `bif:contains` in comprehensive queries, confirm you've:
+- ✓ Examined entity Shape in MIE schema
+- ✓ Checked for: classification predicates, external IRIs (taxonomy, MeSH, ontology terms), typed predicates, hierarchies
+- ✓ Inspected example entities to verify what properties exist
+- ✓ Can document: "No structured alternative exists because..."
+
+Only use `bif:contains` when NO structured alternative exists (rare in modern RDF databases).
 
 ---
 
-## Table of Contents
+## Critical Concepts
 
-1. [Quick Reference: Tool Categories](#quick-reference-tool-categories)
-2. [Complete Workflow](#complete-workflow)
-3. [Step 1: Analyze the Query](#step-1-analyze-the-query)
-4. [Step 2: Select the Right Database(s)](#step-2-select-the-right-databases)
-5. [Step 3: Execute Search Tools](#step-3-execute-search-tools)
-6. [Step 4: Use SPARQL for Advanced Queries](#step-4-use-sparql-for-advanced-queries)
-7. [Step 5: Convert and Link IDs](#step-5-convert-and-link-ids)
-8. [Step 6: Retrieve Additional Information](#step-6-retrieve-additional-information)
-9. [Step 7: Synthesize and Present Results](#step-7-synthesize-and-present-results)
-10. [Common Query Patterns](#common-query-patterns)
-11. [Critical Rules and Best Practices](#critical-rules-and-best-practices)
-12. [Troubleshooting](#troubleshooting)
+### ⚠️ Search vs. Comprehensive Queries
 
----
+**Search APIs (Exploratory)**
+- Purpose: Find patterns, examples, cross-references
+- Returns: 10-20 results typically
+- Use for: Understanding data, identifying entities
+- **NOT for**: Definitive answers to comprehensive questions
 
-## Quick Reference: Tool Categories
+**SPARQL (Comprehensive)**
+- Purpose: Validation, complete analysis, definitive answers
+- Returns: All matching entities
+- Use for: Aggregations, existence claims, phylogenetic distribution
+- **Required for**: Yes/no questions, "are there any...", "which organisms..."
 
-### 📋 Discovery Tools
-| Tool | Purpose |
-|------|---------|
-| `list_databases()` | List all 22 available RDF databases with descriptions |
-| `get_sparql_endpoints()` | Get SPARQL endpoint URLs and recommended search tools |
-| `togoid_getAllDataset()` | List all datasets available for ID conversion |
-| `togoid_getDescription()` | Get detailed descriptions of all databases |
-| `ncbi_list_databases()` | List NCBI databases (Gene, Taxonomy, ClinVar, etc.) |
+### Circular Reasoning Trap ⚠️
 
-### 🔍 Search Tools (by Domain)
+**WRONG** - Using search results in SPARQL VALUES:
+```
+1. Search API finds 8 example proteins
+2. Hardcode those IDs: VALUES ?protein { uniprot:P1 uniprot:P2 ... }
+3. Query only those 8 proteins
+→ CIRCULAR: You only checked what you already found!
+```
 
-| Domain | Tool | Usage |
-|--------|------|-------|
-| **Proteins** | `search_uniprot_entity(query, limit)` | Search proteins, functions, diseases |
-| **Chemicals/Drugs** | `search_chembl_molecule(query, limit)` | Search drug-like molecules |
-| | `search_chembl_target(query, limit)` | Search drug targets |
-| | `get_pubchem_compound_id(compound_name)` | Get PubChem Compound ID |
-| | `get_compound_attributes_from_pubchem(id)` | Get compound properties |
-| **Structures** | `search_pdb_entity(db, query, limit)` | Search PDB (db: "pdb", "cc", "prd") |
-| **Pathways** | `search_reactome_entity(query, rows)` | Search pathways and reactions |
-| **Reactions** | `search_rhea_entity(query, limit)` | Search biochemical reactions |
-| **Medical Terms** | `search_mesh_entity(query, limit)` | Search MeSH vocabulary |
-| **Ontologies** | `OLS4:search(query)` | Search all ontologies (GO, MONDO, etc.) |
-| | `OLS4:searchClasses(query, ontologyId)` | Search specific ontology |
-| **NCBI** | `ncbi_esearch(database, query)` | Search Gene, Taxonomy, ClinVar, MedGen, PubMed, PubChem |
-| | `ncbi_esummary(database, ids)` | Get summaries for IDs |
-| | `ncbi_efetch(database, ids, rettype)` | Fetch full records |
-
-### 🔗 ID Conversion Tools (TogoID)
-| Tool | Purpose |
-|------|---------|
-| `togoid_convertId(ids, route)` | Convert IDs between databases (e.g., "uniprot,pdb") |
-| `togoid_countId(ids, source, target)` | Count convertible IDs |
-| `togoid_getDataset(dataset)` | Get dataset configuration (regex, examples) |
-| `togoid_getRelation(source, target)` | Get relationship between databases |
-| `togoid_getAllRelation()` | Get all possible conversion routes |
-
-### 🗄️ SPARQL Tools
-| Tool | Purpose |
-|------|---------|
-| `get_MIE_file(dbname)` | **MANDATORY before SPARQL** - Get schema, examples |
-| `get_sparql_example(dbname)` | Get example SPARQL queries |
-| `get_graph_list(dbname)` | List named graphs in database |
-| `run_sparql(dbname, sparql_query)` | Execute SPARQL query |
-
-### 📚 Ontology Tools (OLS4)
-| Tool | Purpose |
-|------|---------|
-| `OLS4:search(query)` | General ontology search |
-| `OLS4:searchClasses(query, ontologyId)` | Search within specific ontology |
-| `OLS4:fetch(id)` | Get entity details |
-| `OLS4:getAncestors(classIri, ontologyId)` | Get parent terms |
-| `OLS4:getDescendants(classIri, ontologyId)` | Get child terms |
-| `OLS4:listOntologies()` | List all available ontologies |
-
-### 📖 Dictionary Tools (PubDictionaries)
-| Tool | Purpose |
-|------|---------|
-| `PubDictionaries:list_dictionaries()` | List available dictionaries |
-| `PubDictionaries:get_dictionary_description(name)` | Get dictionary info |
-| `PubDictionaries:find_ids(dictionary, labels)` | Find IDs for terms |
-| `PubDictionaries:find_terms(dictionary, ids)` | Find terms for IDs |
-| `PubDictionaries:search(dictionary, labels)` | Search dictionary |
+**CORRECT** - Check MIE schema, then comprehensive search:
+```
+1. Get MIE file → find structured properties in schema
+2. Search API finds examples (identify patterns/synonyms)
+3. Inspect examples to confirm properties
+4. SPARQL searches ALL entities using structured properties
+→ COMPREHENSIVE: Checked everything matching criteria
+```
 
 ---
 
 ## Complete Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  START: User Query                                                  │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 1: Analyze the Query                                         │
-│  • Extract keywords, IDs, entities                                  │
-│  • Identify domain (proteins, chemicals, diseases, etc.)           │
-│  • Determine query type (search, convert, annotate)                │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 2: Select Database(s)                                        │
-│  • Run list_databases() if unsure                                  │
-│  • Check get_sparql_endpoints() for search tools                   │
-│  • Match domain to database(s)                                     │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 3: Execute Search Tools                                      │
-│  ⚠️  ALWAYS TRY SEARCH TOOLS FIRST                                 │
-│  • Use domain-specific search (see table above)                    │
-│  • Try multiple keywords if initial search fails                   │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                    ┌───────────────┴───────────────┐
-                    ▼                               ▼
-            ┌───────────┐                   ┌───────────────┐
-            │ Got IDs?  │───── YES ─────────│  STEP 5: ID   │
-            │           │                   │  Conversion   │
-            └───────────┘                   └───────────────┘
-                    │                               │
-                   NO                               │
-                    │                               │
-                    ▼                               │
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 4: SPARQL (When Search Insufficient)                         │
-│  ⚠️  MANDATORY: Run get_MIE_file(dbname) FIRST                     │
-│  • Use for complex queries, specific annotations                   │
-│  • Always include LIMIT clause                                     │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 6: Retrieve Additional Information                           │
-│  • ncbi_esummary() for detailed metadata                           │
-│  • ncbi_efetch() for full records                                  │
-│  • OLS4:fetch() for ontology details                               │
-└─────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  STEP 7: Synthesize Results                                        │
-│  • Combine data from multiple sources                              │
-│  • Cite databases used                                             │
-│  • Note any limitations or missing data                            │
-└─────────────────────────────────────────────────────────────────────┘
+1. ANALYZE QUERY
+   ├─ Extract keywords, IDs, entities
+   ├─ Identify domain (proteins/chemicals/diseases/etc.)
+   └─ Classify: Comprehensive (yes/no, counts) or Example-based (specific, top-N)?
+
+2. GET MIE FILE (⚠️ MANDATORY FIRST STEP FOR COMPREHENSIVE)
+   ├─ Run: get_MIE_file(dbname)
+   ├─ Examine schema_info and shape_expressions sections
+   ├─ Look for structured predicates in your entity Shape:
+   │  • Classification/Ontology: classification predicates, subClassOf, ontology links
+   │  • External IRIs: taxonomy, MeSH, ChEBI, UniProt, GO term links
+   │  • Typed Predicates: organism, type, status, phase (controlled values)
+   │  • Hierarchies: parent-child relationships, pathways, subclasses
+   └─ Check kw_search_tools section for available search functions
+
+3. EXPLORATORY SEARCH
+   ├─ If search tools listed → Use them (e.g., search_*_entity())
+   ├─ If NO search tools → Use exploratory SPARQL with bif:contains (LIMIT 10-50)
+   └─ COLLECT 10-20 example entity IDs/IRIs
+
+4. INSPECT PROPERTIES (⚠️ MANDATORY - Confirm MIE findings)
+   ├─ Query sample entities: SELECT * WHERE { VALUES ?entity {...} ?entity ?p ?o }
+   ├─ Verify which structured predicates from MIE actually exist in the data
+   └─ DOCUMENT: Which patterns match your query intent
+
+5. COMPREHENSIVE SPARQL (if needed)
+   ├─ 🚨 MANDATORY PRE-QUERY CHECKLIST 🚨
+   │  □ Got MIE file and examined entity Shape?
+   │  □ Checked for classification/ontology predicates in schema?
+   │  □ Checked for external database IRIs in schema?
+   │  □ Checked for typed predicates with controlled vocabularies?
+   │  □ Inspected example entities to confirm available properties?
+   │  □ If using bif:contains: Can document why no structured alternative exists?
+   │
+   ├─ Strategy based on Step 2 & 4:
+   │  • Found structured predicates → Use those (BEST)
+   │  • Found annotation patterns → Filter on annotation type + bif:contains (GOOD)
+   │  • Only text labels → Use bif:contains with ALL synonyms (LAST RESORT)
+   └─ ALWAYS include LIMIT
+
+6. ID CONVERSION & RETRIEVAL
+   └─ Use togoid_* and retrieval tools as needed
 ```
 
 ---
 
-## Step 1: Analyze the Query
+## 🚨 bif:contains GATE CHECK 🚨
 
-### ✅ CHECKLIST - Do Not Skip
+**BEFORE using bif:contains in comprehensive queries, answer ALL:**
 
-- [ ] **Extract keywords**: Identify proteins, genes, diseases, chemicals, species
-- [ ] **Identify IDs**: Look for existing IDs (UniProt: P12345, PDB: 1ABC, etc.)
-- [ ] **Determine domain**: Which biological area? (See table below)
-- [ ] **Clarify intent**: What does the user want to know?
+❓ Have I run `get_MIE_file(dbname)` and examined the entity Shape?  
+❓ Have I checked MIE schema for: Classification/ontology predicates?  
+❓ Have I checked MIE schema for: External database IRIs (taxonomy, MeSH, ChEBI, etc.)?  
+❓ Have I checked MIE schema for: Typed predicates with controlled vocabularies?  
+❓ Have I checked MIE schema for: Hierarchical relationships?  
+❓ Have I used search tools (from kw_search_tools) OR exploratory SPARQL?  
+❓ Have I inspected example entities with SELECT * WHERE { VALUES ... }?  
+❓ Can I document: "No structured alternative exists because..."?
 
-### Domain Classification
+**If you answered NO to any → STOP and complete that step**
 
-| Domain | Keywords to Look For | Primary Databases |
-|--------|---------------------|-------------------|
-| **Proteins** | protein, enzyme, receptor, kinase, sequence | UniProt, PDB, Ensembl |
-| **Genes** | gene, transcript, expression, chromosome | NCBI Gene, Ensembl, GO |
-| **Chemicals/Drugs** | drug, compound, molecule, inhibitor, SMILES | ChEMBL, PubChem, ChEBI |
-| **Diseases** | disease, disorder, syndrome, cancer, condition | MONDO, MeSH, MedGen, ClinVar |
-| **Pathways** | pathway, signaling, metabolism, process | Reactome, GO, KEGG |
-| **Reactions** | reaction, catalysis, enzyme activity | Rhea, Reactome |
-| **Taxonomy** | species, organism, bacteria, human, mouse | NCBI Taxonomy, BacDive |
-| **Structures** | structure, 3D, crystal, cryo-EM, NMR | PDB |
-| **Variants** | mutation, variant, SNP, polymorphism | ClinVar, dbSNP |
-| **Glycans** | glycan, sugar, carbohydrate, glycoprotein | GlyCosmos, GlyTouCan |
-| **Literature** | paper, publication, abstract, citation | PubMed, PubTator |
+**bif:contains is ONLY for truly unstructured text:**
+- Free-form comments (rdfs:comment)
+- Descriptions without controlled vocabulary
+- Abstract/summary fields without typed alternatives
+- **This is RARE in modern RDF databases - most have structured alternatives**
 
 ---
 
-## Step 2: Select the Right Database(s)
-
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **If unsure**: Run `list_databases()` to see all 22 databases
-- [ ] **Check recommended search tools**: Run `get_sparql_endpoints()` 
-- [ ] **For ID conversion**: Run `togoid_getAllDataset()` to see available routes
-
-### Database Quick Reference
-
-| Category | Database | Description | Search Tool |
-|----------|----------|-------------|-------------|
-| **Proteins** | `uniprot` | 444M proteins, functions, diseases | `search_uniprot_entity` |
-| | `pdb` | 204K+ 3D structures | `search_pdb_entity` |
-| | `ensembl` | Genome annotations, 100+ species | SPARQL only |
-| **Chemicals** | `pubchem` | 119M compounds, 1.7M bioassays | `ncbi_esearch` |
-| | `chembl` | 2.4M+ bioactive molecules | `search_chembl_molecule/target` |
-| | `chebi` | 217K+ chemical entities | `OLS4:searchClasses` |
-| **Diseases** | `mondo` | 30K+ disease classes | `OLS4:searchClasses` |
-| | `mesh` | 30K descriptors, 250K chemicals | `search_mesh_entity` |
-| | `medgen` | 233K+ clinical concepts | `ncbi_esearch` |
-| | `clinvar` | 3.5M+ variant records | `ncbi_esearch` |
-| | `nando` | Japanese intractable diseases | `OLS4:searchClasses` |
-| **Pathways** | `reactome` | 22K+ pathways, 30+ species | `search_reactome_entity` |
-| | `go` | 48K+ GO terms | `OLS4:searchClasses` |
-| **Reactions** | `rhea` | 17K+ biochemical reactions | `search_rhea_entity` |
-| **Genes** | `ncbigene` | 57M+ gene entries | `ncbi_esearch` |
-| **Taxonomy** | `taxonomy` | 3M+ organisms | `ncbi_esearch` |
-| **Literature** | `pubmed` | Biomedical literature | `ncbi_esearch` |
-| | `pubtator` | Entity annotations from PubMed | SPARQL only |
-| **Microbiology** | `bacdive` | 97K+ bacterial strains | SPARQL only |
-| | `mediadive` | 3.3K culture media recipes | SPARQL only |
-| | `amrportal` | AMR surveillance data | SPARQL only |
-| **Sequences** | `ddbj` | Nucleotide sequences | SPARQL only |
-| **Glycans** | `glycosmos` | Glycan structures | SPARQL only |
-
----
-
-## Step 3: Execute Search Tools
-
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **ALWAYS try search tools FIRST** - They are often more capable than expected
-- [ ] **Use the correct tool** for your domain (see table below)
-- [ ] **Try multiple keywords** if initial search returns insufficient results
-- [ ] **Adjust limit parameter** (default usually 20, increase if needed)
-
-### Search Tool Decision Matrix
+## Decision Tree: Comprehensive Query Strategy
 
 ```
-What are you searching for?
+Need comprehensive results (count/find all)?
 │
-├─► Proteins/Enzymes ──────────► search_uniprot_entity(query, limit=20)
-│   (includes disease associations!)
-│
-├─► Drugs/Compounds ───────────► search_chembl_molecule(query, limit=20)
-│
-├─► Drug Targets ──────────────► search_chembl_target(query, limit=20)
-│
-├─► 3D Structures ─────────────► search_pdb_entity(db="pdb", query, limit=20)
-│   Small molecules in PDB ────► search_pdb_entity(db="cc", query, limit=20)
-│   Peptides in PDB ───────────► search_pdb_entity(db="prd", query, limit=20)
-│
-├─► Pathways/Processes ────────► search_reactome_entity(query, rows=30)
-│
-├─► Biochemical Reactions ─────► search_rhea_entity(query, limit=100)
-│
-├─► Medical Terms/MeSH ────────► search_mesh_entity(query, limit=10)
-│
-├─► Ontology Terms ────────────► OLS4:search(query)
-│   (GO, MONDO, ChEBI, etc.)    or OLS4:searchClasses(query, ontologyId)
-│
-├─► NCBI Data ─────────────────► ncbi_esearch(database, query)
-│   Genes ─────────────────────► ncbi_esearch("gene", query)
-│   Taxonomy ──────────────────► ncbi_esearch("taxonomy", query)
-│   ClinVar ───────────────────► ncbi_esearch("clinvar", query)
-│   MedGen ────────────────────► ncbi_esearch("medgen", query)
-│   PubMed ────────────────────► ncbi_esearch("pubmed", query)
-│   PubChem Compound ──────────► ncbi_esearch("pccompound", query)
-│
-└─► Chemical by Name ──────────► get_pubchem_compound_id(compound_name)
-                                 → get_compound_attributes_from_pubchem(id)
+1. MIE ANALYSIS PHASE (DO THIS FIRST)
+   ├─ Get MIE file: get_MIE_file(dbname)
+   ├─ Examine entity Shape in schema_info for your entity type
+   ├─ Scan for classification predicates, external IRIs, typed predicates
+   └─ Check kw_search_tools section
+
+2. EXPLORATION PHASE
+   ├─ Use search tools from kw_search_tools (if listed)
+   ├─ OR use exploratory SPARQL if no search tools (LIMIT 10-50)
+   └─ Collect example entity IDs/IRIs
+
+3. INSPECTION PHASE (⚠️ MANDATORY - Confirm MIE findings)
+   ├─ Query: SELECT * WHERE { VALUES ?entity {...examples...} ?entity ?p ?o }
+   ├─ Verify which structured predicates from MIE actually exist
+   └─ Scan for these UNIVERSAL patterns:
+
+   ┌────────────────────┬─────────────────────────────────────────┐
+   │ Pattern Type       │ Examples Across Databases               │
+   ├────────────────────┼─────────────────────────────────────────┤
+   │ Classification/    │ ChEMBL: atcClassification               │
+   │ Ontology Terms     │ UniProt: classifiedWith (keywords)      │
+   │                    │ Any DB: GO terms, enzyme codes          │
+   ├────────────────────┼─────────────────────────────────────────┤
+   │ External Database  │ Taxonomy IRIs (organism)                │
+   │ IRIs               │ MeSH IRIs (diseases)                    │
+   │                    │ ChEBI, UniProt, GO IRIs                 │
+   ├────────────────────┼─────────────────────────────────────────┤
+   │ Typed Predicates   │ ChEMBL: assayType, mechanismActionType  │
+   │ (controlled values)│ PDB: entityType                         │
+   │                    │ UniProt: reviewed (boolean)             │
+   ├────────────────────┼─────────────────────────────────────────┤
+   │ Hierarchies        │ Reactome: pathwayComponent              │
+   │                    │ GO: subClassOf                          │
+   │                    │ ChEBI: has_role                         │
+   └────────────────────┴─────────────────────────────────────────┘
+
+4. COMPREHENSIVE QUERY STRATEGY (Use findings from Steps 1-3)
+   ├─ Found Classification/Ontology terms?
+   │  └─ ✓ Use: ?entity classification_predicate <term_iri>
+   │     Example: ?molecule cco:atcClassification ?atc . FILTER(STRSTARTS(?atc, "J01"))
+   │
+   ├─ Found External Database IRIs?
+   │  └─ ✓ Use: ?entity link_predicate <external_iri>
+   │     Example: ?target cco:taxonomy <http://identifiers.org/taxonomy/9606>
+   │
+   ├─ Found Typed Predicates?
+   │  └─ ✓ Use: ?entity typed_predicate ?value . FILTER(?value = "specific_value")
+   │     Example: ?assay cco:assayType "Binding"
+   │
+   ├─ Found Hierarchies?
+   │  └─ ✓ Use: ?entity parent_predicate+ ?ancestor
+   │     Example: ?term rdfs:subClassOf+ <parent_term>
+   │
+   └─ Only text labels found (after checking MIE + inspecting examples)?
+      └─ ✗ LAST RESORT: ?entity label_predicate ?label . 
+                        ?label bif:contains "'term1' OR 'synonym1' OR 'variant1'"
+         (⚠️ Must document: "No structured properties exist because...")
+         (This is RARE - most databases have structured alternatives)
 ```
-
-### Search Tips
-
-1. **Start broad, then narrow**: Begin with simple terms, add specificity if needed
-2. **Use synonyms**: If "hypertension" doesn't work, try "high blood pressure"
-3. **Include species**: Add "human" or organism name for more relevant results
-4. **Check multiple databases**: Cross-reference results for completeness
 
 ---
 
-## Step 4: Use SPARQL for Advanced Queries
+## Common Patterns
 
-### ⚠️ MANDATORY PREREQUISITE
-
-**BEFORE writing ANY SPARQL query, you MUST:**
-
+### Pattern 1: Comprehensive Query with Classification
 ```python
-# Step 4.1: ALWAYS run this first
-get_MIE_file(dbname)  # Returns schema, RDF patterns, and examples
+# Question: "How many antibiotics in ChEMBL?"
+
+# Step 1: Get MIE file FIRST - check schema
+get_MIE_file("chembl")
+# Examine <MoleculeShape> in schema → Found: cco:atcClassification predicate
+# Check kw_search_tools → Found: search_chembl_molecule
+
+# Step 2: Exploratory search
+results = search_chembl_molecule("antibiotic", limit=20)
+# Get IDs: CHEMBL29, CHEMBL615, ...
+
+# Step 3: Inspect examples to CONFIRM MIE findings
+query = """
+PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+SELECT ?chemblId ?atc WHERE {
+  VALUES ?chemblId { "CHEMBL29" "CHEMBL615" "CHEMBL606111" }
+  ?molecule cco:chemblId ?chemblId .
+  OPTIONAL { ?molecule cco:atcClassification ?atc }
+} LIMIT 50
+"""
+# Confirmed: cco:atcClassification exists! Values like "J01*" for antibacterials
+
+# Step 4: Comprehensive query using structured property from MIE schema
+query = """
+PREFIX cco: <http://rdf.ebi.ac.uk/terms/chembl#>
+SELECT (COUNT(DISTINCT ?molecule) as ?count)
+FROM <http://rdf.ebi.ac.uk/dataset/chembl>
+WHERE {
+  ?molecule cco:atcClassification ?atc .
+  FILTER(STRSTARTS(?atc, "J01"))
+}
+"""
+# Result: 216 antibiotics
 ```
 
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **Run `get_MIE_file(dbname)`** - Contains ShEx schema, RDF examples, SPARQL examples
-- [ ] **Optionally run `get_sparql_example(dbname)`** - Get additional examples
-- [ ] **Check `get_graph_list(dbname)`** if you need specific named graphs
-- [ ] **Include LIMIT clause** - Always limit results (20-100)
-- [ ] **Apply database-specific rules** (see below)
-
-### When to Use SPARQL
-
-| Use Search Tools When... | Use SPARQL When... |
-|--------------------------|-------------------|
-| Looking for entities by name | Need specific annotation types |
-| Simple keyword search | Complex boolean logic (AND, NOT) |
-| Broad exploration | Precise field targeting |
-| Quick results needed | Aggregations (COUNT, GROUP BY) |
-| | Cross-linking within database |
-
-### Critical Database-Specific Rules
-
-| Database | Critical Rule |
-|----------|--------------|
-| **UniProt** | ALWAYS filter `?protein up:reviewed 1` for Swiss-Prot quality |
-| **ChEMBL** | Use `FROM <http://rdf.ebi.ac.uk/dataset/chembl>` |
-| **Full-text search** | Split property paths when using `bif:contains` |
-| **All databases** | ALWAYS use `LIMIT` (start with 20-100) |
-
-### SPARQL Workflow
-
+### Pattern 2: Comprehensive Query with Keywords
 ```python
-# 1. Get the schema and examples (MANDATORY)
-mie_info = get_MIE_file("uniprot")
+# Question: "How many proteins have function X?"
 
-# 2. Optionally get more examples
-examples = get_sparql_example("uniprot")
+# Step 1: Get MIE file - check schema
+get_MIE_file("uniprot")
+# Examine <ProteinShape> → Found: up:classifiedWith predicate for keywords
+# Check kw_search_tools → Found: search_uniprot_entity
 
-# 3. Check named graphs if needed
-graphs = get_graph_list("uniprot")
+# Step 2: Exploratory
+results = search_uniprot_entity("function X", limit=20)
+# Get IDs: P12345, P67890, ...
 
-# 4. Write and execute query
+# Step 3: Inspect to confirm MIE findings
+# Run inspection query → Confirmed: up:classifiedWith exists with keywords:KW-0123
+
+# Step 4: Comprehensive
 query = """
 PREFIX up: <http://purl.uniprot.org/core/>
-SELECT ?protein ?name
+PREFIX keywords: <http://purl.uniprot.org/keywords/>
+
+SELECT (COUNT(DISTINCT ?protein) as ?count)
 WHERE {
-  ?protein a up:Protein ;
-           up:reviewed 1 ;
-           up:recommendedName/up:fullName ?name .
-  FILTER(CONTAINS(LCASE(?name), "kinase"))
+  ?protein up:reviewed 1 ;
+           up:classifiedWith keywords:KW-0123 .
 }
-LIMIT 50
 """
-
-results = run_sparql("uniprot", query)
 ```
 
----
-
-## Step 5: Convert and Link IDs
-
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **Check if conversion route exists**: Use `togoid_getRelation(source, target)`
-- [ ] **Use correct database keys**: e.g., "uniprot", "pdb", "ncbigene"
-- [ ] **Handle missing conversions**: Not all IDs have mappings
-
-### ID Conversion Workflow
-
+### Pattern 3: Database Without Search Tools
 ```python
-# 1. Check available datasets
-all_datasets = togoid_getAllDataset()
+# Question: "How many GO terms relate to apoptosis?"
 
-# 2. Check if route exists between two databases
-relation = togoid_getRelation("uniprot", "pdb")
+# Step 1: Get MIE file - check schema
+get_MIE_file("go")
+# Examine <ClassShape> → Found: rdfs:subClassOf hierarchy predicate
+# Check kw_search_tools → [] (empty - no search tools available)
 
-# 3. Convert IDs
-result = togoid_convertId(
-    ids="P04637,P17612",           # Comma-separated IDs
-    route="uniprot,pdb"            # Source,target
-)
-
-# 4. For multi-hop conversions
-result = togoid_convertId(
-    ids="P04637",
-    route="uniprot,ncbigene,ensembl_gene"  # Chain of databases
-)
-```
-
-### Common Conversion Routes
-
-| From | To | Route |
-|------|-----|-------|
-| UniProt → PDB | `togoid_convertId(ids, "uniprot,pdb")` |
-| UniProt → NCBI Gene | `togoid_convertId(ids, "uniprot,ncbigene")` |
-| UniProt → ChEMBL Target | `togoid_convertId(ids, "uniprot,chembl_target")` |
-| NCBI Gene → Ensembl | `togoid_convertId(ids, "ncbigene,ensembl_gene")` |
-| PDB → UniProt | `togoid_convertId(ids, "pdb,uniprot")` |
-| ChEBI → PubChem | `togoid_convertId(ids, "chebi,pubchem_compound")` |
-
----
-
-## Step 6: Retrieve Additional Information
-
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **After getting IDs**: Fetch detailed information
-- [ ] **Use appropriate fetch tool** for the data type
-- [ ] **Handle missing data gracefully**
-
-### Retrieval Tools
-
-| Data Type | Tool | Usage |
-|-----------|------|-------|
-| **NCBI Records** | `ncbi_esummary(database, ids)` | Get summaries for gene, pubmed, etc. |
-| | `ncbi_efetch(database, ids, rettype)` | Get full records (fasta, gb, xml) |
-| **Ontology Terms** | `OLS4:fetch(id)` | Get term details |
-| | `OLS4:getAncestors(classIri, ontologyId)` | Get parent terms |
-| | `OLS4:getDescendants(classIri, ontologyId)` | Get child terms |
-| **PubChem** | `get_compound_attributes_from_pubchem(id)` | Get compound properties |
-| **Dictionaries** | `PubDictionaries:find_terms(dict, ids)` | Get labels for IDs |
-
-### Example: Complete Information Retrieval
-
-```python
-# 1. Search for a protein
-results = search_uniprot_entity("BRCA1 human", limit=5)
-# → Get UniProt ID: P38398
-
-# 2. Convert to other databases
-pdb_ids = togoid_convertId("P38398", "uniprot,pdb")
-gene_ids = togoid_convertId("P38398", "uniprot,ncbigene")
-
-# 3. Get detailed gene information
-gene_summary = ncbi_esummary("gene", gene_ids)
-
-# 4. Get ontology annotations
-go_terms = OLS4:search("BRCA1")
-```
-
----
-
-## Step 7: Synthesize and Present Results
-
-### ✅ CHECKLIST - Do Not Skip
-
-- [ ] **Combine information** from all sources queried
-- [ ] **Cite databases used** (UniProt, PDB, ChEMBL, etc.)
-- [ ] **Note limitations**: Missing data, incomplete conversions
-- [ ] **Provide IDs and links** for user follow-up
-
-### Response Template
-
-```markdown
-## Summary
-[Brief answer to the user's question]
-
-## Details
-[Organized findings from databases]
-
-## Data Sources
-- UniProt: [IDs used]
-- PDB: [IDs used]
-- [Other databases]
-
-## Notes
-- [Any limitations or caveats]
-- [Suggestions for further exploration]
-```
-
----
-
-## Common Query Patterns
-
-### Pattern 1: Find Proteins Associated with a Disease
-
-```python
-# Step 1: Search UniProt (includes disease associations!)
-proteins = search_uniprot_entity("Alzheimer disease", limit=50)
-
-# Step 2: If more precision needed, use SPARQL
-get_MIE_file("uniprot")  # MANDATORY
+# Step 2: Exploratory SPARQL (no search tool exists)
 query = """
-PREFIX up: <http://purl.uniprot.org/core/>
-SELECT ?protein ?name ?disease
-WHERE {
-  ?protein a up:Protein ;
-           up:reviewed 1 ;
-           up:recommendedName/up:fullName ?name ;
-           up:annotation ?annot .
-  ?annot a up:Disease_Annotation ;
-         rdfs:comment ?disease .
-  FILTER(CONTAINS(LCASE(?disease), "alzheimer"))
-}
-LIMIT 50
+SELECT ?term ?label WHERE {
+  ?term rdfs:label ?label .
+  ?label bif:contains "'apoptosis'"
+} LIMIT 20
 """
-results = run_sparql("uniprot", query)
-```
+# Get IRIs: GO:0006915, GO:0097194, ...
 
-### Pattern 2: Find Drug Targets and Inhibitors
+# Step 3: Inspect to confirm MIE findings
+# Run: SELECT * WHERE { VALUES ?term { <GO:...> } ?term ?p ?o }
+# Confirmed: rdfs:subClassOf hierarchy exists as indicated in MIE schema
 
-```python
-# Step 1: Search for the protein target
-protein = search_uniprot_entity("angiotensin converting enzyme human", limit=5)
-# → UniProt ID: P12821
-
-# Step 2: Convert to ChEMBL target
-chembl_target = togoid_convertId("P12821", "uniprot,chembl_target")
-
-# Step 3: Search for inhibitors in ChEMBL
-inhibitors = search_chembl_molecule("ACE inhibitor", limit=20)
-
-# Step 4: Get compound details from PubChem
-compound_id = get_pubchem_compound_id("lisinopril")
-properties = get_compound_attributes_from_pubchem(compound_id)
-```
-
-### Pattern 3: Find Protein Structure
-
-```python
-# Step 1: Search for protein
-protein = search_uniprot_entity("p53 human", limit=5)
-# → UniProt ID: P04637
-
-# Step 2: Convert to PDB
-pdb_ids = togoid_convertId("P04637", "uniprot,pdb")
-
-# Step 3: Or search PDB directly
-structures = search_pdb_entity(db="pdb", query="p53 tumor suppressor", limit=20)
-```
-
-### Pattern 4: Explore Pathways
-
-```python
-# Step 1: Search Reactome
-pathways = search_reactome_entity("apoptosis", rows=30)
-
-# Step 2: For related reactions
-reactions = search_rhea_entity("caspase", limit=50)
-
-# Step 3: Get GO terms for biological process
-go_terms = OLS4:searchClasses("programmed cell death", ontologyId="go")
-```
-
-### Pattern 5: Cross-Database Integration
-
-```python
-# Goal: From gene name to structures, drugs, and pathways
-
-# 1. Find gene
-gene = ncbi_esearch("gene", "EGFR human")
-# → Gene ID: 1956
-
-# 2. Get UniProt ID
-uniprot_ids = togoid_convertId("1956", "ncbigene,uniprot")
-# → P00533
-
-# 3. Get structures
-pdb_ids = togoid_convertId("P00533", "uniprot,pdb")
-
-# 4. Get drug targets
-chembl_targets = togoid_convertId("P00533", "uniprot,chembl_target")
-
-# 5. Search pathways
-pathways = search_reactome_entity("EGFR signaling", rows=20)
+# Step 4: Comprehensive (use hierarchy)
+query = """
+SELECT (COUNT(?term) as ?count) WHERE {
+  ?term rdfs:subClassOf* <parent_apoptosis_term>
+}
+"""
 ```
 
 ---
 
-## Critical Rules and Best Practices
+## Quick Reference: Tools by Purpose
 
-### ✅ ALWAYS DO
+### Discovery
+- `list_databases()` - List 22 RDF databases
+- `get_sparql_endpoints()` - Get endpoint URLs and search tools
+- `togoid_getAllDataset()` - ID conversion routes
 
-1. **Try search tools first** - They're more capable than you might think
-2. **Run `get_MIE_file()` before SPARQL** - This is mandatory, not optional
-3. **Use `LIMIT` in all SPARQL queries** - Start with 20-100
-4. **Filter UniProt by `up:reviewed 1`** - For Swiss-Prot quality data
-5. **Check conversion routes exist** before calling `togoid_convertId()`
-6. **Cite your data sources** in the final response
-7. **Handle empty results gracefully** - Try alternative keywords
+### Search (Exploratory)
+| Domain | Tool |
+|--------|------|
+| Proteins | `search_uniprot_entity(query, limit=20)` |
+| Drugs/Molecules | `search_chembl_molecule(query, limit=20)` |
+| Drug Targets | `search_chembl_target(query, limit=20)` |
+| 3D Structures | `search_pdb_entity(db, query, limit=20)` |
+| Pathways | `search_reactome_entity(query, rows=30)` |
+| Reactions | `search_rhea_entity(query, limit=100)` |
+| Medical Terms | `search_mesh_descriptor(query, limit=10)` |
+| Ontologies | `OLS4:search(query)` |
+| Chemicals | `get_pubchem_compound_id(name)` |
+| NCBI | `ncbi_esearch(database, query)` |
 
-### ❌ NEVER DO
+### SPARQL (Comprehensive)
+- `get_MIE_file(dbname)` - **MANDATORY** before SPARQL: schema + examples
+- `run_sparql(dbname, query)` - Execute query
+- `get_graph_list(dbname)` - Named graphs
 
-1. **Don't skip to SPARQL** without trying search tools first
-2. **Don't write SPARQL** without reading MIE file first
-3. **Don't assume search tools are limited** - Test them first
-4. **Don't forget `up:reviewed 1`** in UniProt queries (gets TrEMBL noise)
-5. **Don't omit LIMIT** - Can cause timeouts with large datasets
-6. **Don't use `bif:contains` with property paths** - Split them
-7. **Don't assume all IDs convert** - Check conversion availability
+### ID Conversion
+- `togoid_convertId(ids, route)` - Convert IDs
+- `togoid_getRelation(source, target)` - Check if route exists
+
+---
+
+## Database-Specific Rules
+
+| Database | Critical Requirements |
+|----------|---------------------|
+| **UniProt** | ALWAYS: `?protein up:reviewed 1` |
+| **ChEMBL** | ALWAYS: `FROM <http://rdf.ebi.ac.uk/dataset/chembl>` |
+| **All** | ALWAYS: `LIMIT` clause (start 20-1000) |
+
+---
+
+## Common Anti-Patterns
+
+❌ **Skipping MIE File**
+```python
+# WRONG: Skip MIE file, immediately use bif:contains
+query = "SELECT ?mol WHERE { ?label bif:contains 'antibiotic' }"
+# Result: Only 2 molecules (very few have "antibiotic" in label)
+
+# CORRECT: Check MIE file FIRST
+get_MIE_file("chembl")  
+# Found in schema: cco:atcClassification (drug classification codes)
+# Use structured property: FILTER(STRSTARTS(?atc, "J01"))
+# Result: 216 antibiotics found
+```
+
+❌ **Skipping Inspection**
+```python
+# WRONG
+search_chembl_molecule("antibiotic")  # → 645 results
+# Immediately write: WHERE { ?label bif:contains "'antibiotic'" }
+
+# CORRECT
+get_MIE_file("chembl")  # Check schema first
+search_chembl_molecule("antibiotic")  # Get example IDs
+# Inspect IDs → confirm ATC codes exist
+# Use discovered properties → Find 216 antibiotics
+```
+
+❌ **Circular Reasoning**
+```python
+# WRONG
+search results → VALUES ?entity { <found_entities> }
+# You only queried what you already found!
+
+# CORRECT
+MIE schema → search results → inspect → discover property → query ALL entities
+```
+
+---
+
+## Critical Rules Summary
+
+### ✅ ALWAYS
+1. **Get MIE file FIRST**: `get_MIE_file(dbname)` - examine schema before any query
+2. Check entity Shape in schema for structured predicates
+3. Check kw_search_tools section for available search tools
+4. Use search tools (or exploratory SPARQL if none exist) to find examples
+5. **INSPECT examples** to confirm which structured predicates actually exist
+6. Use structured predicates from MIE schema (not bif:contains) when they exist
+7. Include `LIMIT` in all queries
+8. UniProt: add `up:reviewed 1`
+
+### ❌ NEVER
+1. Skip getting MIE file before comprehensive queries
+2. Skip examining entity Shape in MIE schema for structured predicates
+3. Default to `bif:contains` without checking MIE schema + inspecting examples
+4. Use VALUES with search results for comprehensive questions (circular reasoning)
+5. Write comprehensive SPARQL without checking MIE file
+6. Omit `LIMIT` clause
+7. Forget `up:reviewed 1` in UniProt
 
 ---
 
 ## Troubleshooting
 
-### Problem: Search Returns No Results
-
-```
-✓ Check spelling and try synonyms
-✓ Try broader terms
-✓ Remove species filter temporarily
-✓ Try a different database
-✓ Use SPARQL with get_MIE_file() for complex queries
-```
-
-### Problem: SPARQL Query Fails
-
-```
-✓ Did you run get_MIE_file() first? (MANDATORY)
-✓ Check prefix declarations
-✓ Add LIMIT clause
-✓ For UniProt: add up:reviewed 1
-✓ For ChEMBL: add FROM <http://rdf.ebi.ac.uk/dataset/chembl>
-✓ Check property paths - split if using bif:contains
-```
-
-### Problem: ID Conversion Returns Empty
-
-```
-✓ Check if route exists: togoid_getRelation(source, target)
-✓ Verify ID format matches expected pattern
-✓ Try alternative routes (multi-hop conversion)
-✓ Not all IDs have mappings - this is expected
-```
-
-### Problem: Timeout or Slow Query
-
-```
-✓ Reduce LIMIT
-✓ Add more specific filters
-✓ For UniProt: MUST use up:reviewed 1
-✓ Consider using search tools instead
-```
+| Problem | Solution |
+|---------|----------|
+| **Don't know which database** | `list_databases()` |
+| **Search tool exists?** | `get_MIE_file(dbname)` → check `kw_search_tools` section |
+| **No structured properties found** | Verify you checked MIE schema + inspected examples, then document why |
+| **SPARQL timeout** | Reduce LIMIT, add type filters, use `up:reviewed 1` |
+| **Empty results** | Check prefixes, graph URIs, verify property exists in MIE schema |
+| **Incomplete comprehensive results** | Did you skip MIE file? Check if using right predicates |
 
 ---
 
-## Appendix: All Available Databases
+## Key ID Conversion Routes
 
-Run `list_databases()` to see the complete list of 22 databases:
+**Common conversions:**
+- `"uniprot,pdb"` - Protein to structure
+- `"uniprot,ncbigene"` - Protein to gene  
+- `"uniprot,chembl_target"` - Protein to drug target
+- `"ncbigene,ensembl_gene"` - NCBI to Ensembl
+- `"chebi,pubchem_compound"` - ChEBI to PubChem
 
-| Database | Domain | Description |
-|----------|--------|-------------|
-| amrportal | Microbiology | Antimicrobial resistance data |
-| bacdive | Microbiology | Bacterial strain information |
-| chebi | Chemistry | Chemical entities of biological interest |
-| chembl | Chemistry/Drugs | Bioactive molecules, drug data |
-| clinvar | Genetics | Genomic variation and health |
-| ddbj | Sequences | Nucleotide sequence data |
-| ensembl | Genomics | Genome annotations |
-| glycosmos | Glycobiology | Glycan structures |
-| go | Ontology | Gene Ontology terms |
-| medgen | Medicine | Medical genetics concepts |
-| mediadive | Microbiology | Culture media recipes |
-| mesh | Medicine | Medical subject headings |
-| mondo | Diseases | Disease ontology |
-| nando | Diseases | Japanese intractable diseases |
-| ncbigene | Genes | NCBI Gene database |
-| pdb | Structures | Protein 3D structures |
-| pubchem | Chemistry | Chemical compounds |
-| pubmed | Literature | Biomedical publications |
-| pubtator | Literature | Entity annotations from PubMed |
-| reactome | Pathways | Biological pathways |
-| rhea | Reactions | Biochemical reactions |
-| taxonomy | Taxonomy | Organism classification |
-| uniprot | Proteins | Protein sequences and functions |
-
----
-
-**Remember: The goal is to find the best answer efficiently. Start simple, escalate complexity only when needed.**
+Check availability: `togoid_getRelation(source, target)`

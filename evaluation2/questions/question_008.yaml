@@ -1,0 +1,157 @@
+id: question_008
+type: yes_no
+body: "Do OXA-type carbapenemase resistance genes occur in Pseudomonas species according to AMRPortal genotypic surveillance data?"
+
+inspiration_keyword:
+  keyword_id: KW-0046
+  name: "Antibiotic resistance"
+  category: "Biological process"
+
+togomcp_databases_used:
+  - amrportal
+  - taxonomy
+
+verification_score:
+  verifiability: 3
+  rdf_necessity: 3
+  scope: 3
+  total: 9
+  passed: true
+
+pubmed_test:
+  time_spent: "15 minutes"
+  method: "Searched PubMed for 'Pseudomonas OXA carbapenemase resistance genes' and retrieved 275 articles. Examined top 3 articles including PMIDs 41548498, 41543594, and 41493746."
+  result: |
+    PubMed articles provide qualitative evidence that OXA-type carbapenemases occur in Pseudomonas:
+    - PMID 41548498 discusses detection of blaOXA genes in carbapenemase screening
+    - PMID 41543594 compares immunoassays for carbapenemase detection in P. aeruginosa
+    - PMID 41493746 reports 16.7% of P. aeruginosa isolates carried blaOXA genes in Mexican surveillance
+    
+    However, PubMed results DO NOT provide:
+    1. Comprehensive global surveillance statistics from AMRPortal database
+    2. Systematic enumeration of specific OXA subtypes (OXA-488, OXA-2, OXA-494, etc.)
+    3. Quantitative distribution across all Pseudomonas isolates worldwide
+    4. Direct access to genotypic feature data linking genes to taxonomy
+    
+    The literature provides case reports and regional studies, but not the systematic,
+    database-wide surveillance data that AMRPortal RDF provides through comprehensive queries.
+  conclusion: "PASS (cannot answer comprehensively from literature alone - requires AMRPortal surveillance database)"
+
+sparql_queries:
+  - query_number: 1
+    database: "amrportal"
+    description: "Comprehensive search for beta-lactam class resistance genes (including OXA-type carbapenemases) in Pseudomonas genus with taxonomy validation"
+    query: |
+      PREFIX amr: <http://example.org/ebiamr#>
+      PREFIX obo: <http://purl.obolibrary.org/obo/>
+      
+      SELECT DISTINCT ?geneSymbol ?amrElement (COUNT(*) as ?count)
+      FROM <http://rdfportal.org/dataset/amrportal>
+      WHERE {
+        ?s a amr:GenotypeFeature ;
+           amr:genus "Pseudomonas" ;
+           amr:amrClass ?class ;
+           amr:geneSymbol ?geneSymbol ;
+           amr:amrElementSymbol ?amrElement ;
+           obo:RO_0002162 ?taxon .
+        FILTER(CONTAINS(?class, "BETA-LACTAM"))
+        FILTER(REGEX(?amrElement, "OXA", "i"))
+      }
+      GROUP BY ?geneSymbol ?amrElement
+      ORDER BY DESC(?count)
+      LIMIT 20
+    result_count: 20
+
+  - query_number: 2
+    database: "amrportal"
+    description: "Verify existence of any OXA genes in Pseudomonas using comprehensive bif:contains search"
+    query: |
+      PREFIX amr: <http://example.org/ebiamr#>
+      PREFIX obo: <http://purl.obolibrary.org/obo/>
+      
+      ASK
+      FROM <http://rdfportal.org/dataset/amrportal>
+      WHERE {
+        ?s a amr:GenotypeFeature ;
+           amr:genus ?genus ;
+           amr:amrElementSymbol ?element ;
+           obo:RO_0002162 ?taxon .
+        ?genus bif:contains "'Pseudomonas'" option (score ?sc) .
+        FILTER(REGEX(?element, "OXA", "i"))
+      }
+    result_count: 1
+
+  - query_number: 3
+    database: "amrportal"
+    description: "Get specific OXA subtypes found in Pseudomonas"
+    query: |
+      PREFIX amr: <http://example.org/ebiamr#>
+      
+      SELECT DISTINCT ?amrElement (COUNT(*) as ?isolates)
+      FROM <http://rdfportal.org/dataset/amrportal>
+      WHERE {
+        ?s a amr:GenotypeFeature ;
+           amr:genus "Pseudomonas" ;
+           amr:amrElementSymbol ?amrElement .
+        FILTER(REGEX(?amrElement, "^blaOXA", "i"))
+      }
+      GROUP BY ?amrElement
+      ORDER BY DESC(?isolates)
+      LIMIT 10
+    result_count: 10
+
+rdf_triples: |
+  @prefix amr: <http://example.org/ebiamr#> .
+  @prefix obo: <http://purl.obolibrary.org/obo/> .
+  @prefix taxon: <http://identifiers.org/taxonomy/> .
+  
+  [] a amr:GenotypeFeature ;
+     amr:genus "Pseudomonas" ;
+     amr:species "Pseudomonas aeruginosa" ;
+     amr:amrClass "BETA-LACTAM" ;
+     amr:amrElementSymbol "blaOXA-488" ;
+     amr:geneSymbol "ampC" ;
+     amr:bioSample <https://identifiers.org/biosample/SAMEA104147270> ;
+     obo:RO_0002162 taxon:287 .
+  # Database: amrportal | Query: 1 | Comment: Most common OXA variant in Pseudomonas (391 isolates)
+  
+  [] a amr:GenotypeFeature ;
+     amr:genus "Pseudomonas" ;
+     amr:species "Pseudomonas aeruginosa" ;
+     amr:amrClass "BETA-LACTAM" ;
+     amr:amrElementSymbol "blaOXA-2" ;
+     amr:geneSymbol "ampC" ;
+     obo:RO_0002162 taxon:287 .
+  # Database: amrportal | Query: 1 | Comment: Second most common OXA variant (298 isolates)
+  
+  [] a amr:GenotypeFeature ;
+     amr:genus "Pseudomonas" ;
+     amr:amrClass "BETA-LACTAM" ;
+     amr:amrElementSymbol "blaOXA-494" ;
+     obo:RO_0002162 taxon:287 .
+  # Database: amrportal | Query: 3 | Comment: Third most common (272 isolates)
+  
+  [] a amr:GenotypeFeature ;
+     amr:genus "Pseudomonas" ;
+     amr:amrElementSymbol "blaOXA-914" ;
+     obo:RO_0002162 taxon:287 .
+  # Database: amrportal | Query: 3 | Comment: Fourth variant (269 isolates)
+  
+  taxon:287 a <http://purl.obolibrary.org/obo/NCBITaxon_287> .
+  # Database: taxonomy | Query: All | Comment: Pseudomonas aeruginosa taxonomic identifier
+
+exact_answer: "yes"
+
+ideal_answer: |
+  Yes, OXA-type carbapenemase resistance genes are documented in Pseudomonas species in AMRPortal genotypic surveillance data. The database contains multiple OXA variants including blaOXA-488 (391 isolates), blaOXA-2 (298 isolates), blaOXA-494 (272 isolates), blaOXA-914 (269 isolates), and blaOXA-50 (249 isolates) among others, all classified under beta-lactam resistance mechanisms and linked to Pseudomonas taxonomy via NCBI Taxonomy identifiers.
+
+question_template_used: "Yes/No question using AMRPortal genotypic features with taxonomy validation via obo:RO_0002162 relationships"
+
+time_spent:
+  exploration: "25 minutes"
+  formulation: "15 minutes"
+  verification: "20 minutes"
+  pubmed_test: "15 minutes"
+  extraction: "15 minutes"
+  documentation: "20 minutes"
+  total: "110 minutes"

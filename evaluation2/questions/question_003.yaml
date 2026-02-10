@@ -1,0 +1,137 @@
+id: question_003
+type: factoid
+body: "Which human glycoprotein has the most characterized glycosylation sites documented in Glycosmos?"
+
+inspiration_keyword:
+  keyword_id: KW-0325
+  name: "Glycoprotein"
+
+togomcp_databases_used:
+  - Glycosmos
+  - UniProt
+  - PDB
+
+search_apis_used:
+  - tool: search_uniprot_entity
+    query: "P98164"
+    result: "Identified top glycoprotein as Megalin (LRP-2) - EXPLORATORY PHASE to confirm protein identity"
+  - tool: search_pdb_entity
+    query: "megalin LRP-2 P98164"
+    result: "Found 5 PDB structures including recent cryo-EM structures - EXPLORATORY PHASE for additional context"
+
+training_knowledge_test:
+  attempted_answer: "I know that heavily glycosylated proteins include immunoglobulins, mucins, and large receptors involved in endocytosis. Glycosylation is especially abundant on secreted and membrane proteins. However, I don't know which specific protein has the most characterized sites in Glycosmos, nor do I know the exact count of sites for any given protein in the current database."
+  confidence_level: "low"
+  knowledge_sources: "General biochemistry knowledge about protein glycosylation patterns and heavily glycosylated protein families, but no specific database content knowledge"
+  requires_database: true
+  reason: "This question requires systematic querying of Glycosmos to count glycosylation sites per protein and rank them. The answer depends on current database content (Glycosmos has 414,798 total glycosylation sites across 153,178 glycoproteins as of 2024.12 release). The specific count of 1,153 sites for Megalin is not knowledge I possess from training data, and would require aggregation across the glycoprotein graph in Glycosmos."
+  decision: "PASS - proceeded to discovery"
+
+verification_score:
+  biological_insight: 3
+  multi_database: 3
+  verifiability: 3
+  rdf_necessity: 3
+  total: 12
+  passed: true
+  rationale: |
+    Biological insight (3/3): Reveals that Megalin (LRP-2), a large endocytic receptor crucial for kidney function and lipoprotein metabolism, is the most extensively glycosylated human protein characterized to date. The extreme glycosylation (1,153 sites) likely reflects its role as a multi-ligand scavenger receptor requiring extensive post-translational modification for proper function and ligand recognition. This is clinically relevant as Megalin mutations cause Donnai-Barrow syndrome and mutations affecting its glycosylation could impact kidney function.
+    
+    Multi-database integration (3/3): Requires 3-database integration: (1) Glycosmos for comprehensive glycosylation site data across all human glycoproteins, (2) UniProt for protein identity and functional annotation (P98164 = Megalin/LRP-2), (3) PDB for structural context showing 5 structures including recent cryo-EM data. The integration demonstrates how glycosylation databases complement structural and functional protein databases to reveal post-translational modification patterns.
+    
+    Verifiability (3/3): Single, definitive answer with exact count (1,153 sites). Query results are systematically ranked by site count, making verification straightforward. The answer is unambiguous and reproducible through SPARQL aggregation on Glycosmos.
+    
+    RDF necessity (3/3): Impossible to answer without RDF graph queries. Requires: (1) aggregation across 414,798 total glycosylation sites to count per protein, (2) filtering by human taxonomy, (3) ranking by count, (4) cross-referencing to UniProt for protein identification. PubMed literature mentions Megalin glycosylation but provides no systematic enumeration of all sites (only 2 papers found, discussing O-glycosylation patterns but not total site counts).
+
+pubmed_test:
+  passed: true
+  queries_attempted:
+    - "glycosylation sites megalin LRP-2"
+    - "human glycoprotein most glycosylation"
+  pmids_found: ["29559555", "16672230"]
+  conclusion: "PubMed cannot answer this question. Only 2 papers discuss Megalin glycosylation: PMID 29559555 (2018) focuses on specific O-glycosylation sites affecting ligand binding, and PMID 16672230 (2006) discusses O-glycosylation of the hemopexin domain. Neither provides systematic enumeration of all 1,153 characterized sites. Answering this question requires comprehensive database aggregation across Glycosmos's complete glycosylation site dataset (414,798 total sites across all proteins), which is not available from literature review with reasonable effort."
+
+sparql_queries:
+  - query_number: 1
+    database: Glycosmos
+    description: "Count glycosylation sites per human glycoprotein and rank by count"
+    discovery_method: "No search API used - directly queried Glycosmos with SPARQL to aggregate sites across all human glycoproteins"
+    query: |
+      PREFIX glycan: <http://purl.jp/bio/12/glyco/glycan#>
+      PREFIX glycoconjugate: <http://purl.jp/bio/12/glyco/conjugate#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+      SELECT ?protein (COUNT(DISTINCT ?site) as ?siteCount)
+      FROM <http://rdf.glycosmos.org/glycoprotein>
+      WHERE {
+        ?protein a glycan:Glycoprotein ;
+          glycan:has_taxon <http://identifiers.org/taxonomy/9606> ;
+          glycoconjugate:glycosylated_at ?site .
+      }
+      GROUP BY ?protein
+      ORDER BY DESC(?siteCount)
+      LIMIT 20
+    result_count: 20
+    key_findings: "Top result: http://glycosmos.org/glycoprotein/P98164 with 1,153 glycosylation sites. This is dramatically higher than #2 (P07911 with 966 sites) and #3 (P13473 with 938 sites). The query aggregated sites across all human glycoproteins, revealing Megalin as the most extensively characterized glycosylated protein in the database."
+
+  - query_number: 2
+    database: UniProt
+    description: "Identify protein from UniProt accession P98164"
+    discovery_method: "Used search_uniprot_entity('P98164') to retrieve protein name and function"
+    query: |
+      # Via search API: search_uniprot_entity
+      # Input: P98164
+      # Result: Megalin (LRP-2, Low-density lipoprotein receptor-related protein 2)
+      # Organism: Homo sapiens
+      # Function: Multi-ligand endocytic receptor
+    result_count: 1
+    key_findings: "P98164 is Megalin (also known as LRP-2 or gp330), a large (~600 kDa) endocytic receptor expressed primarily in kidney proximal tubules. It mediates uptake of lipoproteins, vitamin-binding proteins, and other ligands. Mutations cause Donnai-Barrow syndrome and Finnish congenital nephrosis. The extensive glycosylation likely plays roles in ligand recognition, protein folding, and stability."
+
+  - query_number: 3
+    database: PDB
+    description: "Find structural data for Megalin to provide additional context"
+    discovery_method: "Used search_pdb_entity to find PDB structures for Megalin/LRP-2"
+    query: |
+      # Via search API: search_pdb_entity
+      # Query: "megalin LRP-2 P98164"
+      # Results: 5 PDB entries
+      # - 2M0P: NMR structure of complement repeat
+      # - 8EM7, 8EM4: Cryo-EM at pH 5.2 and 7.5
+      # - 9CWM, 9I3V: Full-length cryo-EM structures
+    result_count: 5
+    key_findings: "Megalin has 5 PDB structures, including recent cryo-EM structures of the full ectodomain (2023-2024). These structures provide context for understanding how glycosylation might affect the protein's conformation and ligand binding across its 36 ligand-binding repeats spanning ~4500 amino acids."
+
+rdf_triples: |
+  # Discovery: Direct SPARQL aggregation on Glycosmos (Query 1)
+  # Validation: UniProt search API and PDB search API for protein context
+  
+  # Query 1 - Glycosmos glycosylation site count (primary evidence)
+  <http://glycosmos.org/glycoprotein/P98164> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.jp/bio/12/glyco/glycan#Glycoprotein> .
+  # Database: Glycosmos | Query: 1 | Megalin is a Glycoprotein in Glycosmos
+  
+  <http://glycosmos.org/glycoprotein/P98164> <http://purl.jp/bio/12/glyco/glycan#has_taxon> <http://identifiers.org/taxonomy/9606> .
+  # Database: Glycosmos | Query: 1 | Megalin is from Homo sapiens (taxon 9606)
+  
+  <http://glycosmos.org/glycoprotein/P98164> <http://purl.jp/bio/12/glyco/conjugate#glycosylated_at> ?site1 .
+  <http://glycosmos.org/glycoprotein/P98164> <http://purl.jp/bio/12/glyco/conjugate#glycosylated_at> ?site2 .
+  # ... [1,153 total glycosylation sites]
+  # Database: Glycosmos | Query: 1 | P98164 has 1,153 distinct glycosylation sites (aggregated count)
+  
+  # Query 2 - UniProt protein identity (via search API)
+  <http://purl.uniprot.org/uniprot/P98164> <http://www.w3.org/2000/01/rdf-schema#label> "Megalin" .
+  # Database: UniProt | Query: 2 | P98164 is Megalin (LRP-2)
+  
+  <http://purl.uniprot.org/uniprot/P98164> <http://www.w3.org/2000/01/rdf-schema#label> "Low-density lipoprotein receptor-related protein 2" .
+  # Database: UniProt | Query: 2 | Full protein name
+  
+  # Query 3 - PDB structures (via search API - additional context)
+  <http://rdf.wwpdb.org/pdb/2M0P> <http://www.w3.org/2000/01/rdf-schema#label> "Solution structure of the tenth complement type repeat of human megalin" .
+  # Database: PDB | Query: 3 | One of 5 PDB structures available
+  
+  <http://rdf.wwpdb.org/pdb/8EM7> <http://www.w3.org/2000/01/rdf-schema#label> "Cryo-EM structure of LRP2 at pH 5.2" .
+  # Database: PDB | Query: 3 | Recent structural characterization
+
+exact_answer: "Megalin (Low-density lipoprotein receptor-related protein 2, LRP-2, UniProt P98164) with 1,153 characterized glycosylation sites"
+
+ideal_answer: |
+  Megalin (LRP-2, UniProt P98164), a large endocytic receptor primarily expressed in kidney proximal tubules, has the most characterized glycosylation sites of any human glycoprotein in Glycosmos with 1,153 documented sites. This extensive glycosylation substantially exceeds the second-most glycosylated protein (Uromodulin, P07911, with 966 sites) and reflects Megalin's massive ~600 kDa size and its role as a multi-ligand scavenger receptor responsible for reabsorbing lipoproteins, vitamin-binding proteins, albumin, and other filtered proteins from the glomerular filtrate. The heavy glycosylation likely contributes to proper folding of its 36 ligand-binding repeats, modulates ligand recognition across its diverse substrate repertoire, and protects the extracellular domain from proteolysis in the harsh kidney tubular environment. Structural studies including five PDB entries (2M0P, 8EM7, 8EM4, 9CWM, 9I3V) reveal the architecture of this heavily modified receptor, though the dynamic nature of glycan structures makes complete structural characterization of all glycosylation sites challenging. Megalin mutations cause Donnai-Barrow syndrome and Finnish congenital nephrosis, and understanding its glycosylation pattern may provide insights into disease mechanisms and the molecular basis of multi-ligand recognition by this clinically important receptor.

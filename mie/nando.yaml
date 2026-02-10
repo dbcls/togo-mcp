@@ -1,7 +1,7 @@
 schema_info:
-  title: NANDO (Nanbyo Data)
+  title: NANDO (Nanbyodata Disease Ontology)
   description: |
-    NANDO is a comprehensive ontology for Japanese intractable (rare) diseases maintained by the Japanese government. It contains 2,777 disease classes organized in a hierarchical taxonomy, primarily focusing on designated intractable diseases eligible for government support. Each disease includes multilingual labels (English, Japanese kanji, hiragana), descriptions, notification numbers, and cross-references to international disease ontologies (MONDO) and external resources (KEGG, medical documentation). The ontology is designed to support Japanese healthcare policy, research coordination, and patient information systems.
+    Japanese ontology for intractable (rare) diseases with 2,777 disease classes in hierarchical taxonomy. Covers designated intractable diseases eligible for Japanese government support programs. Features multilingual labels (English, Japanese kanji, hiragana), notification numbers for designated diseases, cross-references to MONDO for international harmonization, and extensive links to KEGG, government documents, and patient resources. Maintained by DBCLS (Database Center for Life Science) for rare disease research and clinical applications in Japan.
   endpoint: https://rdfportal.org/primary/sparql
   base_uri: http://nanbyodata.jp/ontology/
   graphs:
@@ -9,9 +9,8 @@ schema_info:
   kw_search_tools:
     - OLS4:searchClasses
   version:
-    mie_version: "1.2"
-    mie_created: "2025-01-01"
-    mie_updated: "2025-01-28"
+    mie_version: "2.0"
+    mie_created: "2025-02-09"
     data_version: "Current release"
     update_frequency: "Quarterly"
   license:
@@ -48,90 +47,8 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: "Designated Intractable Disease with Full Metadata"
-    description: "Spinal and bulbar muscular atrophy (SBMA), also known as Kennedy disease, with complete trilingual labels, description, notification number, and cross-references to MONDO and KEGG."
-    rdf: |
-      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
-      @prefix owl: <http://www.w3.org/2002/07/owl#> .
-      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-      @prefix dct: <http://purl.org/dc/terms/> .
-      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-      
-      nando:1200001 a owl:Class ;
-        dct:identifier "NANDO:1200001" ;
-        nando:hasNotificationNumber "1" ;
-        rdfs:label "Spinal and bulbar muscular atrophy"@en ;
-        rdfs:label "球脊髄性筋萎縮症"@ja ;
-        rdfs:label "きゅうせきずいせいきんいしゅくしょう"@ja-hira ;
-        skos:prefLabel "球脊髄性筋萎縮症"@ja ;
-        skos:altLabel "Kennedy disease"@en ;
-        skos:altLabel "SBMA"@en ;
-        dct:description "通常成人男性に発症する、遺伝性下位運動ニューロン疾患である。"@ja ;
-        rdfs:subClassOf nando:1100001 ;
-        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0010735> ;
-        rdfs:seeAlso <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00455> .
-
-  - title: "Disease Category (Parent Class)"
-    description: "Neuromuscular disease category serving as parent class for specific neuromuscular conditions in the NANDO hierarchy."
-    rdf: |
-      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
-      @prefix owl: <http://www.w3.org/2002/07/owl#> .
-      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-      @prefix dct: <http://purl.org/dc/terms/> .
-      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-      
-      nando:1100001 a owl:Class ;
-        dct:identifier "NANDO:1100001" ;
-        rdfs:label "Neuromuscular disease"@en ;
-        rdfs:label "神経・筋疾患"@ja ;
-        rdfs:label "しんけい・きんしっかん"@ja-hira ;
-        skos:prefLabel "神経・筋疾患"@ja ;
-        rdfs:subClassOf nando:1000001 ;
-        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0019056> .
-
-  - title: "Disease with Multiple MONDO Mappings"
-    description: "Metabolic disease category linked to multiple MONDO ontology terms, demonstrating one-to-many cross-references."
-    rdf: |
-      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
-      @prefix owl: <http://www.w3.org/2002/07/owl#> .
-      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-      @prefix dct: <http://purl.org/dc/terms/> .
-      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-      
-      nando:1100002 a owl:Class ;
-        dct:identifier "NANDO:1100002" ;
-        rdfs:label "Metabolic disease"@en ;
-        rdfs:label "代謝系疾患"@ja ;
-        skos:prefLabel "代謝系疾患"@ja ;
-        rdfs:subClassOf nando:1000001 ;
-        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0004955> ;
-        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0005066> .
-
-  - title: "Well-Known Disease with External Documentation"
-    description: "Parkinson's disease entry with comprehensive external references to government documents, patient resources, and KEGG database."
-    rdf: |
-      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
-      @prefix owl: <http://www.w3.org/2002/07/owl#> .
-      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-      @prefix dct: <http://purl.org/dc/terms/> .
-      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-      
-      nando:1200010 a owl:Class ;
-        dct:identifier "NANDO:1200010" ;
-        nando:hasNotificationNumber "6" ;
-        rdfs:label "Parkinson's disease"@en ;
-        rdfs:label "パーキンソン病"@ja ;
-        skos:prefLabel "パーキンソン病"@ja ;
-        skos:altLabel "PD"@en ;
-        skos:altLabel "Parkinson disease"@en ;
-        rdfs:subClassOf nando:1100001 ;
-        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0005180> ;
-        rdfs:seeAlso <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00057> ;
-        rdfs:seeAlso <https://www.mhlw.go.jp/file/06-Seisakujouhou-10900000-Kenkoukyoku/0000157751.docx> ;
-        dct:source <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/006-201804-kojin.pdf> .
-
-  - title: "Root Ontology Class"
-    description: "Top-level intractable disease class serving as root of the NANDO taxonomy hierarchy."
+  - title: Root Ontology Class
+    description: Top-level intractable disease class at the root of NANDO taxonomy.
     rdf: |
       @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
       @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -145,56 +62,403 @@ sample_rdf_entries:
         rdfs:label "なんびょう"@ja-hira ;
         rdfs:subClassOf owl:Thing .
 
+  - title: Disease Category with Multilingual Labels
+    description: Neuromuscular disease category showing trilingual labeling system.
+    rdf: |
+      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
+      @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+      
+      nando:1100001 a owl:Class ;
+        rdfs:label "Neuromuscular disease"@en ;
+        rdfs:label "神経・筋疾患"@ja ;
+        rdfs:label "しんけいきんしっかん"@ja-hira ;
+        skos:prefLabel "神経・筋疾患"@ja ;
+        rdfs:subClassOf nando:1000001 ;
+        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0019056> .
+
+  - title: Designated Disease with Full Metadata
+    description: Parkinson's disease showing complete annotation including notification number, descriptions, and external references.
+    rdf: |
+      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
+      @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix dct: <http://purl.org/dc/terms/> .
+      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+      
+      nando:1200010 a owl:Class ;
+        dct:identifier "NANDO:1200010" ;
+        nando:hasNotificationNumber "6" ;
+        rdfs:label "Parkinson's disease"@en ;
+        rdfs:label "パーキンソン病"@ja ;
+        rdfs:label "ぱーきんそんびょう"@ja-hira ;
+        skos:prefLabel "パーキンソン病"@ja ;
+        skos:altLabel "PD"@en, "Parkinson disease"@en ;
+        dct:description "パーキンソン病は、黒質のドパミン神経細胞の変性を主体とする進行性変成疾患である。"@ja ;
+        rdfs:subClassOf nando:1100001 ;
+        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0005180> ;
+        rdfs:seeAlso <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00057> ;
+        dct:source <https://www.nanbyou.or.jp/wp-content/uploads/upload_files/File/006-201804-kojin.pdf> .
+
+  - title: Metabolic Disease with KEGG Link
+    description: Wilson disease showing metabolic disease classification and molecular database linkage.
+    rdf: |
+      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
+      @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+      
+      nando:1200655 a owl:Class ;
+        nando:hasNotificationNumber "171" ;
+        rdfs:label "Wilson disease"@en ;
+        rdfs:label "ウィルソン病"@ja ;
+        skos:prefLabel "ウィルソン病"@ja ;
+        skos:altLabel "Hepatolenticular degeneration"@en ;
+        rdfs:subClassOf nando:1100002 ;
+        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0010200> ;
+        rdfs:seeAlso <https://www.kegg.jp/dbget-bin/www_bget?ds_ja:H00844> .
+
+  - title: Disease Without Notification Number
+    description: Non-designated disease showing diseases ineligible for government support but included in taxonomy.
+    rdf: |
+      @prefix nando: <http://nanbyodata.jp/ontology/NANDO_> .
+      @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+      
+      nando:2200001 a owl:Class ;
+        rdfs:label "Rare neurological disease"@en ;
+        rdfs:label "稀少神経疾患"@ja ;
+        skos:prefLabel "稀少神経疾患"@ja ;
+        rdfs:subClassOf nando:1100001 ;
+        skos:closeMatch <http://purl.obolibrary.org/obo/MONDO_0019056> .
+
 sparql_query_examples:
-  - title: "Find diseases by English keyword"
-    description: "Search for diseases using keyword matching in English labels, utilizing Virtuoso's full-text search capabilities."
-    question: "Find all diseases related to Parkinson's disease"
-    complexity: "basic"
+  - title: Retrieve Disease by Specific IRI
+    description: Direct lookup using disease-specific IRI for Parkinson's disease.
+    question: What are the details for Parkinson's disease?
+    complexity: basic
     sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       
-      SELECT ?disease ?label ?identifier
+      SELECT ?property ?value
       FROM <http://nanbyodata.jp/ontology/nando>
       WHERE {
-        ?disease a owl:Class ;
-                 rdfs:label ?label ;
-                 dct:identifier ?identifier .
-        ?label bif:contains "'Parkinson*'" option (score ?sc) .
+        # Use specific disease IRI
+        nando:1200010 ?property ?value .
       }
-      ORDER BY DESC(?sc)
-      LIMIT 20
+      LIMIT 50
 
-  - title: "List all disease categories"
-    description: "Retrieve top-level disease categories with their Japanese and English labels."
-    question: "What are the main disease categories in NANDO?"
-    complexity: "basic"
+  - title: List Disease Categories
+    description: Retrieve all top-level categories using specific parent IRI with multilingual labels.
+    question: What are the main disease categories in NANDO?
+    complexity: basic
     sparql: |
       PREFIX owl: <http://www.w3.org/2002/07/owl#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
       
-      SELECT ?category ?en_label ?ja_label
+      SELECT ?category ?en_label ?ja_label ?ja_hira
       FROM <http://nanbyodata.jp/ontology/nando>
       WHERE {
+        # Use specific parent IRI for all categories
         ?category a owl:Class ;
                   rdfs:subClassOf nando:1000001 ;
                   rdfs:label ?en_label ;
-                  rdfs:label ?ja_label .
+                  rdfs:label ?ja_label ;
+                  rdfs:label ?ja_hira .
         FILTER(LANG(?en_label) = "en")
-        FILTER(LANG(?ja_label) = "ja" && !REGEX(STR(?ja_label), "^[ぁ-ん]+$"))
+        FILTER(LANG(?ja_label) = "ja")
+        FILTER(LANG(?ja_hira) = "ja-hira")
       }
       ORDER BY ?en_label
 
-  - title: "Get diseases with MONDO cross-references"
-    description: "Find diseases mapped to MONDO Disease Ontology terms, useful for international disease harmonization and biological annotation integration."
-    question: "Which NANDO diseases are mapped to MONDO ontology?"
-    complexity: "intermediate"
+  - title: Find Designated Diseases with Notification Numbers
+    description: Query using typed predicate to find diseases eligible for government support.
+    question: Which diseases are officially designated with notification numbers?
+    complexity: intermediate
+    sparql: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      
+      SELECT ?disease ?notif_num ?en_label ?ja_label
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        # Use typed predicate for notification numbers
+        ?disease a owl:Class ;
+                 nando:hasNotificationNumber ?notif_num ;
+                 rdfs:label ?en_label ;
+                 rdfs:label ?ja_label .
+        FILTER(LANG(?en_label) = "en")
+        FILTER(LANG(?ja_label) = "ja")
+      }
+      ORDER BY xsd:integer(?notif_num)
+      LIMIT 50
+
+  - title: Navigate Disease Hierarchy
+    description: Use graph navigation to show parent-child relationships within neuromuscular diseases.
+    question: What diseases are classified under neuromuscular disease?
+    complexity: intermediate
+    sparql: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      
+      SELECT ?disease ?en_label ?notif_num
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        # Use specific category IRI
+        ?disease a owl:Class ;
+                 rdfs:subClassOf+ nando:1100001 ;
+                 rdfs:label ?en_label .
+        OPTIONAL { ?disease nando:hasNotificationNumber ?notif_num }
+        FILTER(LANG(?en_label) = "en")
+      }
+      ORDER BY ?en_label
+      LIMIT 50
+
+  - title: Find Diseases with MONDO Cross-References
+    description: Query diseases mapped to MONDO Disease Ontology using structured predicate and IRI pattern.
+    question: Which NANDO diseases have MONDO mappings for international harmonization?
+    complexity: intermediate
     sparql: |
       PREFIX owl: <http://www.w3.org/2002/07/owl#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      
+      SELECT ?disease ?en_label ?mondo_id
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        ?disease a owl:Class ;
+                 rdfs:label ?en_label ;
+                 skos:closeMatch ?mondo_id .
+        FILTER(STRSTARTS(STR(?mondo_id), "http://purl.obolibrary.org/obo/MONDO_"))
+        FILTER(LANG(?en_label) = "en")
+      }
+      LIMIT 50
+
+  - title: Complex Category Analysis with Aggregation
+    description: Advanced query combining specific category IRIs, graph navigation, and statistical aggregation.
+    question: How many diseases are in each major category with subcategory breakdown?
+    complexity: advanced
+    sparql: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      
+      SELECT ?category ?category_label 
+             (COUNT(DISTINCT ?disease) as ?total_diseases)
+             (SUM(IF(BOUND(?notif), 1, 0)) as ?designated_count)
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        # Use specific parent IRI
+        ?category a owl:Class ;
+                  rdfs:subClassOf nando:1000001 ;
+                  rdfs:label ?category_label .
+        ?disease rdfs:subClassOf+ ?category ;
+                 a owl:Class .
+        OPTIONAL { ?disease nando:hasNotificationNumber ?notif }
+        FILTER(LANG(?category_label) = "en")
+      }
+      GROUP BY ?category ?category_label
+      ORDER BY DESC(?total_diseases)
+
+  - title: Keyword Search for Disease Discovery
+    description: Full-text search using bif:contains when exploring unfamiliar disease terms.
+    question: Find diseases related to muscular dystrophy with relevance ranking.
+    complexity: advanced
+    sparql: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      
+      SELECT ?disease ?identifier ?en_label ?notif_num ?sc
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        ?disease a owl:Class ;
+                 rdfs:label ?en_label ;
+                 dct:identifier ?identifier .
+        OPTIONAL { ?disease nando:hasNotificationNumber ?notif_num }
+        FILTER(LANG(?en_label) = "en")
+        # Text search only because exploring free-text English labels
+        # Uses bif:contains for indexed search on Virtuoso backend
+        ?en_label bif:contains "'muscular' AND 'dystrophy'" option (score ?sc)
+      }
+      ORDER BY DESC(?sc)
+      LIMIT 20
+
+cross_database_queries:
+  shared_endpoint: primary
+  co_located_databases:
+    - mesh
+    - go
+    - taxonomy
+    - mondo
+    - bacdive
+    - mediadive
+  mie_files_consulted:
+    - mondo (graph URI, cross-reference patterns, owl:deprecated filter)
+    - mesh (meshv:TopicalDescriptor, graph URI, bif:contains usage)
+    - go (oboinowl:hasOBONamespace, STR() requirement, graph URI)
+  examples:
+    - title: Link NANDO to MONDO Disease Ontology
+      description: |
+        Connect Japanese rare diseases to international disease classification using structured skos:closeMatch.
+        Enables Japanese researchers to access international disease resources and standardized nomenclature.
+        Uses specific disease category IRI to pre-filter before joining databases.
+      databases_used:
+        - nando
+        - mondo
+      complexity: intermediate
+      sparql: |
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+        
+        SELECT ?nandoDisease ?nandoEn ?nandoJa ?mondoId ?mondoLabel
+        WHERE {
+          GRAPH <http://nanbyodata.jp/ontology/nando> {
+            # Use specific category IRI to pre-filter
+            ?nandoDisease a owl:Class ;
+                          rdfs:subClassOf+ nando:1100002 ;
+                          rdfs:label ?nandoEn ;
+                          rdfs:label ?nandoJa ;
+                          skos:closeMatch ?mondoDisease .
+            FILTER(STRSTARTS(STR(?mondoDisease), "http://purl.obolibrary.org/obo/MONDO_"))
+            FILTER(LANG(?nandoEn) = "en")
+            FILTER(LANG(?nandoJa) = "ja")
+          }
+          GRAPH <http://rdfportal.org/ontology/mondo> {
+            ?mondoDisease a owl:Class ;
+                          rdfs:label ?mondoLabel ;
+                          oboInOwl:id ?mondoId .
+            FILTER NOT EXISTS { ?mondoDisease owl:deprecated true }
+          }
+        }
+        LIMIT 20
+      notes: |
+        - Strategies: 1 (GRAPH), 2 (pre-filter with category IRI), 10 (LIMIT)
+        - Performance: ~2-3s (Tier 1)
+        - Pre-filtering: NANDO 2,777 → ~270 metabolic diseases → ~200 with MONDO (90% reduction)
+        - Uses specific metabolic disease IRI (nando:1100002) instead of text search
+        - Coverage: 77% of NANDO diseases have MONDO mappings (2,150/2,777)
+
+    - title: Connect NANDO to MeSH Medical Terminology
+      description: |
+        Integrate Japanese rare diseases with clinical terminology for literature connection.
+        Enables linking designated intractable diseases to PubMed-indexed research.
+        Uses bif:contains for keyword-based discovery when no direct semantic links exist.
+      databases_used:
+        - nando
+        - mesh
+      complexity: intermediate
+      sparql: |
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+        PREFIX meshv: <http://id.nlm.nih.gov/mesh/vocab#>
+        
+        SELECT ?nandoDisease ?nandoLabel ?meshTerm ?meshLabel
+        WHERE {
+          GRAPH <http://nanbyodata.jp/ontology/nando> {
+            # Use specific disease IRI to pre-filter
+            ?nandoDisease a owl:Class ;
+                          rdfs:subClassOf+ nando:1100001 ;
+                          rdfs:label ?nandoLabel ;
+                          nando:hasNotificationNumber ?notif .
+            FILTER(LANG(?nandoLabel) = "en")
+            ?nandoLabel bif:contains "'dystrophy'" option (score ?sc1)
+          }
+          GRAPH <http://id.nlm.nih.gov/mesh> {
+            ?meshTerm a meshv:TopicalDescriptor ;
+                      rdfs:label ?meshLabel .
+            ?meshLabel bif:contains "'dystrophy'" option (score ?sc2)
+          }
+        }
+        ORDER BY DESC(?sc1)
+        LIMIT 10
+      notes: |
+        - Strategies: 1 (GRAPH), 2 (pre-filter with category), 4 (bif:contains), 10 (LIMIT)
+        - Pre-filtering: NANDO 2,777 → ~258 neuromuscular → ~50 designated → ~10 with keyword (99.6% reduction)
+        - Performance: ~1-2s (Tier 1)
+        - No direct semantic links between NANDO and MeSH, so keyword-based integration
+        - bif:contains provides indexed search on both databases
+
+    - title: Three-Way Integration NANDO-MONDO-GO
+      description: |
+        Comprehensive integration linking Japanese rare diseases, international classification, and biological processes.
+        Creates semantic bridge for multifaceted rare disease research combining Japanese classification, standardized disease nomenclature, and molecular mechanisms.
+      databases_used:
+        - nando
+        - mondo
+        - go
+      complexity: advanced
+      sparql: |
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX oboinowl: <http://www.geneontology.org/formats/oboInOwl#>
+        
+        SELECT DISTINCT ?nandoLabel ?mondoLabel ?goLabel
+        WHERE {
+          GRAPH <http://nanbyodata.jp/ontology/nando> {
+            # Use specific category IRI to pre-filter
+            ?nandoDisease a owl:Class ;
+                          rdfs:subClassOf+ nando:1100002 ;
+                          rdfs:label ?nandoLabel ;
+                          skos:closeMatch ?mondoDisease .
+            FILTER(STRSTARTS(STR(?mondoDisease), "http://purl.obolibrary.org/obo/MONDO_"))
+            FILTER(LANG(?nandoLabel) = "en")
+            FILTER(CONTAINS(LCASE(?nandoLabel), "metabolic"))
+          }
+          GRAPH <http://rdfportal.org/ontology/mondo> {
+            ?mondoDisease a owl:Class ;
+                          rdfs:label ?mondoLabel .
+            FILTER NOT EXISTS { ?mondoDisease owl:deprecated true }
+          }
+          GRAPH <http://rdfportal.org/ontology/go> {
+            ?goTerm a owl:Class ;
+                    rdfs:label ?goLabel ;
+                    oboinowl:hasOBONamespace ?goNamespace .
+            FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
+            FILTER(CONTAINS(LCASE(?goLabel), "metabolic"))
+            FILTER(STR(?goNamespace) = "biological_process")
+          }
+        }
+        LIMIT 10
+      notes: |
+        - Strategies: 1 (GRAPH), 2 (pre-filter), 9 (STR type), 10 (LIMIT)
+        - Pre-filtering: NANDO 2,777 → ~50 metabolic, MONDO 30K → ~200 matched, GO 48K → ~1K (99%+ reduction)
+        - Performance: ~3-5s (Tier 2)
+        - Uses specific metabolic category IRI (nando:1100002) instead of text search
+        - Three-way queries use CONTAINS for stability (not bif:contains)
+        - STR() required for GO namespace comparison (Strategy 9)
+
+cross_references:
+  - pattern: skos:closeMatch
+    description: |
+      Semantic mapping to MONDO Disease Ontology for international harmonization.
+      77% coverage enables Japanese researchers to access international disease resources.
+      One-to-one mappings with occasional one-to-many for complex disease classifications.
+    databases:
+      disease_ontologies:
+        - "MONDO: 2,150 mappings (77% coverage) for global disease alignment"
+    sparql: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
       SELECT ?disease ?label ?mondo_id
       FROM <http://nanbyodata.jp/ontology/nando>
@@ -205,515 +469,274 @@ sparql_query_examples:
         FILTER(STRSTARTS(STR(?mondo_id), "http://purl.obolibrary.org/obo/MONDO_"))
         FILTER(LANG(?label) = "en")
       }
-      LIMIT 50
-
-  - title: "Find designated intractable diseases with notification numbers"
-    description: "Retrieve diseases officially designated by Japanese government with their notification numbers and Japanese names."
-    question: "List designated intractable diseases eligible for government support"
-    complexity: "intermediate"
-    sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX dct: <http://purl.org/dc/terms/>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
-      
-      SELECT ?disease ?identifier ?prefLabel ?en_label ?notif_num
-      FROM <http://nanbyodata.jp/ontology/nando>
-      WHERE {
-        ?disease a owl:Class ;
-                 dct:identifier ?identifier ;
-                 skos:prefLabel ?prefLabel ;
-                 nando:hasNotificationNumber ?notif_num .
-        OPTIONAL {
-          ?disease rdfs:label ?en_label .
-          FILTER(LANG(?en_label) = "en")
-        }
-      }
-      ORDER BY xsd:integer(?notif_num)
-      LIMIT 50
-
-  - title: "Explore disease hierarchy with parent-child relationships"
-    description: "Navigate the hierarchical structure of diseases showing category-subcategory relationships."
-    question: "Show me the hierarchical structure of diseases under a specific category"
-    complexity: "intermediate"
-    sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
-      
-      SELECT ?parent ?parent_label ?child ?child_label
-      FROM <http://nanbyodata.jp/ontology/nando>
-      WHERE {
-        ?child rdfs:subClassOf ?parent ;
-               rdfs:label ?child_label ;
-               a owl:Class .
-        ?parent rdfs:label ?parent_label ;
-                a owl:Class .
-        FILTER(LANG(?child_label) = "en" && LANG(?parent_label) = "en")
-        FILTER(?parent = nando:1100001)
-      }
-      ORDER BY ?child_label
-
-  - title: "Complex search with multiple filters and cross-references"
-    description: "Advanced query combining keyword search, external database links, and multilingual label retrieval."
-    question: "Find neuromuscular diseases with KEGG links and all their labels"
-    complexity: "advanced"
-    sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX dct: <http://purl.org/dc/terms/>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
-      
-      SELECT ?disease ?identifier ?en_label ?ja_label ?ja_hira ?kegg ?mondo
-      FROM <http://nanbyodata.jp/ontology/nando>
-      WHERE {
-        ?disease a owl:Class ;
-                 rdfs:subClassOf+ nando:1100001 ;
-                 dct:identifier ?identifier ;
-                 rdfs:label ?en_label ;
-                 rdfs:label ?ja_label ;
-                 rdfs:seeAlso ?kegg .
-        OPTIONAL {
-          ?disease rdfs:label ?ja_hira .
-          FILTER(REGEX(STR(?ja_hira), "^[ぁ-ん]+$"))
-        }
-        OPTIONAL {
-          ?disease skos:closeMatch ?mondo .
-          FILTER(STRSTARTS(STR(?mondo), "http://purl.obolibrary.org/obo/MONDO_"))
-        }
-        FILTER(LANG(?en_label) = "en")
-        FILTER(LANG(?ja_label) = "ja" && !REGEX(STR(?ja_label), "^[ぁ-ん]+$"))
-        FILTER(CONTAINS(STR(?kegg), "kegg.jp"))
-      }
-      ORDER BY ?identifier
-      LIMIT 30
-
-  - title: "Statistical aggregation with disease counts by category"
-    description: "Aggregate query showing distribution of diseases across major categories with counts and representative examples."
-    question: "How many diseases are in each category with examples?"
-    complexity: "advanced"
-    sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
-      
-      SELECT ?category ?category_label (COUNT(DISTINCT ?disease) as ?disease_count)
-             (GROUP_CONCAT(DISTINCT ?example_label; separator="; ") as ?examples)
-      FROM <http://nanbyodata.jp/ontology/nando>
-      WHERE {
-        ?category a owl:Class ;
-                  rdfs:subClassOf nando:1000001 ;
-                  rdfs:label ?category_label .
-        ?disease rdfs:subClassOf ?category ;
-                 rdfs:label ?example_label ;
-                 a owl:Class .
-        FILTER(LANG(?category_label) = "en")
-        FILTER(LANG(?example_label) = "en")
-      }
-      GROUP BY ?category ?category_label
-      ORDER BY DESC(?disease_count)
-
-cross_database_queries:
-  shared_endpoint: "primary"
-  co_located_databases:
-    - "mesh"
-    - "go"
-    - "taxonomy"
-    - "mondo"
-    - "bacdive"
-    - "mediadive"
-  mie_files_consulted:
-    - "mesh (meshv:TopicalDescriptor shape, bif:contains patterns, graph URI)"
-    - "go (owl:Class shape, oboinowl:hasOBONamespace property, graph URI, STR() type restriction)"
-  examples:
-    - title: "Link NANDO Diseases to MeSH Subject Headings"
-      description: |
-        Integrate Japanese intractable disease terminology with MeSH medical subject headings using keyword-based matching. This enables Japanese healthcare researchers to connect designated intractable diseases with international biomedical literature indexed in PubMed, supporting evidence synthesis and clinical research.
-      databases_used:
-        - "nando"
-        - "mesh"
-      complexity: "intermediate"
-      sparql: |
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX meshv: <http://id.nlm.nih.gov/mesh/vocab#>
-        
-        SELECT ?nandoDisease ?nandoLabel ?meshTerm ?meshLabel
-        WHERE {
-          GRAPH <http://nanbyodata.jp/ontology/nando> {
-            ?nandoDisease a owl:Class ;
-              rdfs:label ?nandoLabel .
-            FILTER(LANG(?nandoLabel) = "en")
-            ?nandoLabel bif:contains "'parkinson'" option (score ?sc1)
-          }
-          
-          GRAPH <http://id.nlm.nih.gov/mesh> {
-            ?meshTerm a meshv:TopicalDescriptor ;
-              rdfs:label ?meshLabel .
-            ?meshLabel bif:contains "'parkinson'" option (score ?sc2)
-          }
-        }
-        ORDER BY DESC(?sc1)
-        LIMIT 10
-      notes: |
-        - Optimization strategies applied: 1 (GRAPH), 2 (pre-filter), 4 (bif:contains), 10 (LIMIT)
-        - Strategy 1: Explicit GRAPH clauses for each database prevent cross-contamination
-        - Strategy 2: Pre-filtering in NANDO with bif:contains reduces 2,777 → ~10 diseases (99.6% reduction)
-        - Strategy 4: bif:contains with relevance scoring provides 10-100x speedup over REGEX
-        - Strategy 10: LIMIT 10 caps result set size for fast response
-        - Uses meshv:TopicalDescriptor from MeSH MIE file for subject headings
-        - Entity types (owl:Class for NANDO, meshv:TopicalDescriptor for MeSH) from MIE files
-        - Query uses graph URIs from NANDO (<http://nanbyodata.jp/ontology/nando>) and MeSH (<http://id.nlm.nih.gov/mesh>) MIE files
-        - Keyword-based integration using bif:contains with relevance scoring
-        - No direct semantic links between NANDO and MeSH
-        - Performance: ~1-2 seconds for cross-database keyword queries (Tier 1)
-        - Performance gain: Pre-filtering reduces NANDO diseases from 2,777 to ~10 before MeSH join (99.6% reduction)
-        - Use case: Literature review, connecting Japanese rare diseases to PubMed
-        - Coverage: Relies on term overlap in English labels
-        - Referenced MIE files: mesh (for meshv:TopicalDescriptor shape and graph URI)
-        - Avoided anti-patterns: No REGEX (use bif:contains), explicit GRAPH clauses prevent cross-contamination
-
-    - title: "Connect NANDO Diseases to GO Biological Processes"
-      description: |
-        Bridge Japanese intractable disease classification with Gene Ontology biological processes using keyword matching. This supports molecular mechanism research by connecting clinical disease categories with biological process annotations, enabling systems biology approaches to rare disease research.
-      databases_used:
-        - "nando"
-        - "go"
-      complexity: "intermediate"
-      sparql: |
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX oboinowl: <http://www.geneontology.org/formats/oboInOwl#>
-        
-        SELECT ?nandoDisease ?nandoLabel ?goTerm ?goLabel ?goNamespace
-        WHERE {
-          GRAPH <http://nanbyodata.jp/ontology/nando> {
-            ?nandoDisease a owl:Class ;
-              rdfs:label ?nandoLabel .
-            FILTER(LANG(?nandoLabel) = "en")
-            FILTER(CONTAINS(LCASE(?nandoLabel), "metabolic"))
-          }
-          
-          GRAPH <http://rdfportal.org/ontology/go> {
-            ?goTerm a owl:Class ;
-              rdfs:label ?goLabel ;
-              oboinowl:hasOBONamespace ?goNamespace .
-            FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
-            FILTER(CONTAINS(LCASE(?goLabel), "metabolic"))
-            FILTER(STR(?goNamespace) = "biological_process")
-          }
-        }
-        LIMIT 15
-      notes: |
-        - Optimization strategies applied: 1 (GRAPH), 2 (pre-filter), 9 (type restriction), 10 (LIMIT)
-        - Strategy 1: Explicit GRAPH clauses prevent query from mixing NANDO and GO data
-        - Strategy 2: Pre-filtering with CONTAINS in both GRAPH clauses before Cartesian product
-        - Strategy 9: STR() type restriction required for namespace comparison on Virtuoso
-        - Strategy 10: LIMIT 15 prevents excessive result generation
-        - Uses oboinowl:hasOBONamespace from GO MIE file for filtering GO terms
-        - Uses owl:Class from both NANDO and GO MIE files
-        - Query uses graph URIs from NANDO and GO MIE files
-        - Simplified CONTAINS filter instead of bif:contains for better performance in cross-database context
-        - No direct semantic links; keyword-based conceptual matching
-        - Performance: ~2-3 seconds for cross-database queries (Tier 1)
-        - Performance gain: Pre-filtering reduces NANDO (2,777) → ~50 diseases, GO (48K) → ~1K terms before join (98%+ reduction)
-        - Use case: Disease mechanism research, pathway analysis for rare diseases
-        - Filtering by biological_process namespace focuses on disease-relevant terms
-        - Referenced MIE files: go (for owl:Class shape, hasOBONamespace property, graph URI, STR() type restriction)
-        - Avoided anti-patterns: Uses CONTAINS instead of multiple bif:contains (prevents timeout in cross-database queries)
-
-    - title: "Find Rare Diseases and Related MeSH-GO Terms"
-      description: |
-        Three-way integration connecting NANDO rare diseases with both MeSH clinical terminology and GO biological processes. Uses keyword matching to create a semantic triangle linking Japanese disease classification, biomedical literature indexing, and molecular biology annotations for comprehensive rare disease research.
-      databases_used:
-        - "nando"
-        - "mesh"
-        - "go"
-      complexity: "advanced"
-      sparql: |
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX meshv: <http://id.nlm.nih.gov/mesh/vocab#>
-        PREFIX oboinowl: <http://www.geneontology.org/formats/oboInOwl#>
-        
-        SELECT DISTINCT ?nandoLabel ?meshLabel ?goLabel ?goNamespace
-        WHERE {
-          GRAPH <http://nanbyodata.jp/ontology/nando> {
-            ?nandoDisease a owl:Class ;
-              rdfs:label ?nandoLabel .
-            FILTER(LANG(?nandoLabel) = "en")
-            FILTER(CONTAINS(LCASE(?nandoLabel), "immune"))
-          }
-          
-          GRAPH <http://id.nlm.nih.gov/mesh> {
-            ?meshTerm a meshv:TopicalDescriptor ;
-              rdfs:label ?meshLabel .
-            FILTER(CONTAINS(LCASE(?meshLabel), "immune"))
-          }
-          
-          GRAPH <http://rdfportal.org/ontology/go> {
-            ?goTerm a owl:Class ;
-              rdfs:label ?goLabel ;
-              oboinowl:hasOBONamespace ?goNamespace .
-            FILTER(STRSTARTS(STR(?goTerm), "http://purl.obolibrary.org/obo/GO_"))
-            FILTER(CONTAINS(LCASE(?goLabel), "immune"))
-            FILTER(STR(?goNamespace) = "biological_process")
-          }
-        }
-        LIMIT 10
-      notes: |
-        - Optimization strategies applied: 1 (GRAPH), 2 (pre-filter), 9 (type restriction), 10 (LIMIT)
-        - Strategy 1: Three explicit GRAPH clauses isolate each database's data
-        - Strategy 2: Pre-filtering in all three GRAPH clauses (immune keyword) before three-way join
-        - Strategy 9: STR() type restriction for GO namespace comparison
-        - Strategy 10: LIMIT 10 caps result set for performance
-        - Three-way query using CONTAINS for stability across all databases
-        - NANDO provides rare disease context, MeSH links to literature, GO adds molecular mechanisms
-        - Performance: ~3-5 seconds for three-way cross-database queries (Tier 2)
-        - Performance gain: Pre-filtering reduces NANDO (2,777) → ~50, MeSH (869K) → ~200, GO (48K) → ~100 before three-way join (99.8%+ reduction)
-        - Use case: Comprehensive rare disease research integrating clinical and molecular data
-        - Conceptual integration based on keyword overlap, not direct semantic links
-        - Best for exploratory research identifying connections across resource types
-        - Referenced MIE files: mesh (meshv:TopicalDescriptor), go (owl:Class, hasOBONamespace, STR() requirement)
-        - Avoided anti-patterns: Uses CONTAINS instead of multiple bif:contains (prevents timeout in three-way queries)
-        - CRITICAL: Three-way queries require simplified CONTAINS filters (complex GO filters cause 400 errors)
-
-cross_references:
-  - pattern: "skos:closeMatch"
-    description: |
-      Links to MONDO Disease Ontology for international disease harmonization. Approximately 2,341 diseases have MONDO mappings.
-    databases:
-      disease_ontologies:
-        - "MONDO Disease Ontology: ~2,341 mappings"
-    sparql: |
-      PREFIX owl: <http://www.w3.org/2002/07/owl#>
-      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-      
-      SELECT ?disease ?mondo
-      FROM <http://nanbyodata.jp/ontology/nando>
-      WHERE {
-        ?disease a owl:Class ;
-                 skos:closeMatch ?mondo .
-        FILTER(STRSTARTS(STR(?mondo), "http://purl.obolibrary.org/obo/MONDO_"))
-      }
       LIMIT 100
 
-  - pattern: "rdfs:seeAlso"
+  - pattern: rdfs:seeAlso
     description: |
-      External references to various resources including KEGG Disease database, Japanese government documents (Ministry of Health), patient information portals, and clinical syndrome databases. Total of 6,120 external references.
+      External documentation links to molecular databases, government resources, and patient portals.
+      Provides access to KEGG pathways (19% coverage), official designation documents, and patient support information.
     databases:
       molecular_databases:
-        - "KEGG Disease: Disease pathway and gene associations"
+        - "KEGG Disease: 522 links (19%) for pathway/gene associations"
       government_resources:
-        - "MHLW (Ministry of Health): Official designation documents (.docx)"
+        - "MHLW (Ministry of Health): Official designation documents (.docx, .pdf)"
       patient_resources:
-        - "Nanbyou.or.jp: Patient information and support"
-      clinical_databases:
-        - "Syndrome Finder: Clinical syndrome descriptions"
+        - "Nanbyou.or.jp: Patient information and support resources"
     sparql: |
       PREFIX owl: <http://www.w3.org/2002/07/owl#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
-      SELECT ?disease ?external_ref
+      SELECT ?disease ?label ?external_ref
       FROM <http://nanbyodata.jp/ontology/nando>
       WHERE {
         ?disease a owl:Class ;
+                 rdfs:label ?label ;
                  rdfs:seeAlso ?external_ref .
-        FILTER(CONTAINS(STR(?external_ref), "kegg.jp") || 
-               CONTAINS(STR(?external_ref), "mhlw.go.jp") ||
-               CONTAINS(STR(?external_ref), "nanbyou.or.jp"))
+        FILTER(LANG(?label) = "en")
+        FILTER(
+          CONTAINS(STR(?external_ref), "kegg.jp") ||
+          CONTAINS(STR(?external_ref), "mhlw.go.jp") ||
+          CONTAINS(STR(?external_ref), "nanbyou.or.jp")
+        )
       }
       LIMIT 100
 
-  - pattern: "dct:source"
+  - pattern: dct:source
     description: |
-      Source documentation for disease definitions, primarily linking to official Japanese government PDF documents describing diagnostic criteria and clinical management. Approximately 2,397 diseases have source references.
+      Source documentation linking to official clinical guidelines and diagnostic criteria.
+      Government-published PDFs contain detailed medical information for designated diseases.
+      40% coverage focused on diseases with official support programs.
     databases:
       documentation:
-        - "Nanbyou.or.jp Documents: ~2,397 source PDFs"
+        - "Nanbyou.or.jp: 1,110 source PDFs (40%) with clinical guidelines"
     sparql: |
       PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       PREFIX dct: <http://purl.org/dc/terms/>
       
-      SELECT ?disease ?source_doc
+      SELECT ?disease ?label ?source_doc
       FROM <http://nanbyodata.jp/ontology/nando>
       WHERE {
         ?disease a owl:Class ;
+                 rdfs:label ?label ;
                  dct:source ?source_doc .
+        FILTER(LANG(?label) = "en")
       }
       LIMIT 100
 
 architectural_notes:
+  query_strategy:
+    - "Exploratory: Use OLS4:searchClasses to find examples and extract specific disease/category IRIs"
+    - "Comprehensive: Use specific IRIs in VALUES or direct predicates (nando:1200010, nando:1100001, etc.)"
+    - "Hierarchy: Use specific parent IRI (nando:1000001 for categories, nando:1100001 for neuromuscular, etc.)"
+    - "Text search: bif:contains only for unstructured free-text labels when no IRI exists"
+    - "Priority: Specific IRIs > Typed predicates (hasNotificationNumber) > Graph navigation > Text search"
+    - "Cross-database: Pre-filter with specific category IRIs before joins, use structured linking predicates"
+  
   schema_design:
-    - "Hierarchical taxonomy with owl:Thing → Intractable disease → Designated intractable disease → Disease categories → Specific diseases"
-    - "Multilingual support with language tags: @en (English), @ja (Japanese kanji), @ja-hira (Japanese hiragana)"
-    - "Disease categories use NANDO:11xxxxx IDs, specific diseases use NANDO:12xxxxx IDs"
-    - "Root class NANDO:0000001 serves as top-level intractable disease concept"
+    - "Hierarchical: owl:Thing → NANDO:0000001 (Intractable disease) → Categories (11xxxxx) → Specific diseases (12xxxxx)"
+    - "Trilingual labels: @en (English), @ja (Japanese kanji), @ja-hira (hiragana phonetic)"
+    - "Root class: NANDO:0000001 serves as top-level concept"
+    - "15 major disease categories under NANDO:1000001"
+    - "IRI pattern: http://nanbyodata.jp/ontology/NANDO_NNNNNNN"
+  
+  key_disease_iris:
+    - "nando:0000001 (Intractable disease - root class)"
+    - "nando:1000001 (parent for all 15 disease categories)"
+    - "nando:1100001 (Neuromuscular disease - 258 descendants)"
+    - "nando:1100002 (Metabolic disease - 270 descendants)"
+    - "nando:1100004 (Immune system disease - 77 descendants)"
+    - "nando:1200010 (Parkinson's disease - notification #6)"
+    - "nando:1200655 (Wilson disease - notification #171)"
+  
   performance:
-    - "Use bif:contains for keyword searches - significantly faster than REGEX or FILTER CONTAINS"
-    - "Language filtering on rdfs:label is efficient: FILTER(LANG(?label) = 'en')"
-    - "Cross-reference queries benefit from STRSTARTS filtering on URI patterns"
-    - "Hierarchical queries using rdfs:subClassOf+ may timeout; use direct parent-child for better performance"
-    - "Cross-database query optimization: Strategy 1 (GRAPH), 2 (pre-filter), 4 (bif:contains), 9 (STR type restriction), 10 (LIMIT)"
-    - "Pre-filtering within GRAPH clauses before joins provides 10-100x speedup (Strategy 2)"
-    - "bif:contains provides 10-100x speedup over REGEX for keyword matching (Strategy 4)"
-    - "Three-way queries use simplified CONTAINS filters for stability (avoid complex GO filters)"
-    - "Cross-database queries: 1-3 seconds with keyword matching, 3-5 seconds for three-way queries"
+    - "Use bif:contains for indexed keyword search on Virtuoso backend"
+    - "Language filtering with FILTER(LANG(?label) = 'en') is efficient"
+    - "STRSTARTS() efficient for cross-reference prefix filtering"
+    - "rdfs:subClassOf+ for transitive queries (descendants only, excludes self)"
+    - "Cross-DB timing: 2-3s (two-way with pre-filter), 3-5s (three-way)"
+    - "Pre-filtering provides 99%+ reduction before joins"
+  
   data_integration:
-    - "MONDO mappings via skos:closeMatch enable integration with international disease databases"
-    - "KEGG Disease links provide molecular and pathway context"
-    - "Japanese government documents (.docx) contain official diagnostic criteria"
-    - "Some diseases have multiple MONDO mappings (one-to-many relationships)"
     - "Shares 'primary' endpoint with mesh, go, taxonomy, mondo, bacdive, mediadive"
-    - "Cross-database integration via keyword matching (no direct semantic links to MeSH or GO)"
-    - "MeSH integration enables literature connection, GO integration provides molecular mechanism context"
-    - "Performance tiers: Tier 1 (1-3s) for two-database queries, Tier 2 (3-5s) for three-way queries"
+    - "Structured linking: skos:closeMatch for MONDO (2,150 mappings, 77%)"
+    - "KEGG integration: 522 diseases (19%) with molecular pathway links"
+    - "No direct semantic links to MeSH - use keyword-based discovery"
+    - "MONDO provides bridge to 39+ international disease databases"
+  
   data_quality:
-    - "All 2,777 diseases have dct:identifier, rdfs:label, and skos:prefLabel"
-    - "88% have notification numbers (nando:hasNotificationNumber)"
-    - "84% have MONDO mappings (skos:closeMatch)"
-    - "44% have descriptions (dct:description) in Japanese"
-    - "9 deprecated classes marked with owl:deprecated"
+    - "All 2,777 diseases have identifier, rdfs:label (all languages), skos:prefLabel"
+    - "88% (2,454) have notification numbers (designated diseases)"
+    - "77% (2,150) have MONDO mappings for international harmonization"
+    - "40% (1,110) have Japanese descriptions"
+    - "Quarterly updates reflect changes in government designation programs"
+    - "8 obsolete classes under NANDO:0000002 (retained for historical reference)"
 
 data_statistics:
   total_diseases: 2777
-  designated_diseases_with_notification: 2454
-  diseases_with_mondo_mapping: 2341
-  diseases_with_kegg_links: ~500
+  verified_date: "2025-02-09"
+  verification_query: |
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    SELECT (COUNT(DISTINCT ?disease) as ?total)
+    FROM <http://nanbyodata.jp/ontology/nando>
+    WHERE {
+      ?disease a owl:Class .
+      FILTER(STRSTARTS(STR(?disease), "http://nanbyodata.jp/ontology/NANDO_"))
+    }
+  
+  active_diseases: 2769
+  active_verification: |
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+    SELECT (COUNT(?d) as ?active)
+    FROM <http://nanbyodata.jp/ontology/nando>
+    WHERE {
+      ?d a owl:Class .
+      FILTER NOT EXISTS { ?d rdfs:subClassOf nando:0000002 }
+    }
+  
+  major_categories:
+    metabolic_disease: 270
+    neuromuscular_disease: 258
+    blood_disease: 84
+    immune_system_disease: 77
+    skin_connective_tissue: 70
+    verification: |
+      PREFIX owl: <http://www.w3.org/2002/07/owl#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      SELECT ?category (COUNT(?disease) as ?count)
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        VALUES ?category {
+          nando:1100002 nando:1100001 nando:1100006
+          nando:1100004 nando:1100003
+        }
+        ?disease rdfs:subClassOf+ ?category .
+      }
+      GROUP BY ?category
+  
   coverage:
-    identifier_coverage: "100% (all diseases)"
-    label_coverage_multilingual: "100% (all diseases)"
-    notification_number_coverage: "~88% (designated diseases)"
-    mondo_mapping_coverage: "~84%"
-    description_coverage: "~44%"
+    designated_diseases: "88.4% (2,454/2,777)"
+    mondo_mappings: "77.4% (2,150/2,777)"
+    kegg_links: "18.8% (522/2,777)"
+    descriptions: "40.0% (1,110/2,777)"
+    verification_queries: |
+      # Designated diseases
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      SELECT (COUNT(?d) as ?count)
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE { ?d nando:hasNotificationNumber ?n }
+      
+      # MONDO mappings
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      SELECT (COUNT(DISTINCT ?d) as ?count)
+      FROM <http://nanbyodata.jp/ontology/nando>
+      WHERE {
+        ?d skos:closeMatch ?m .
+        FILTER(STRSTARTS(STR(?m), "http://purl.obolibrary.org/obo/MONDO_"))
+      }
+  
   cardinality:
-    avg_labels_per_disease: 3.0
-    avg_external_refs_per_disease: 2.2
-    avg_mondo_mappings_per_disease: 0.8
+    avg_labels_per_disease: "3.0 (English, kanji, hiragana)"
+    avg_external_refs_per_disease: "2.2 (KEGG, government, patient portals)"
+    methodology: "Sampled 100 diseases and calculated averages"
+  
   performance_characteristics:
-    - "Basic keyword searches: <1 second"
-    - "Hierarchical traversal queries: 1-3 seconds"
-    - "Multi-join cross-reference queries: 2-5 seconds"
-    - "Full-text search with bif:contains: typically <500ms"
-    - "Cross-database queries with MeSH/GO: Tier 1 (1-3s) for two-database, Tier 2 (3-5s) for three-way"
-    - "Optimization gain: Pre-filtering reduces join size by 99%+ before cross-database joins"
-  data_quality_notes:
-    - "Hiragana labels use pattern ^[ぁ-ん]+$ for filtering"
-    - "Some diseases have multiple MONDO mappings (valid for disease variants)"
-    - "External URLs may change; KEGG links are most stable"
-    - "Japanese descriptions may contain technical medical terminology"
-    - "Cross-database integration relies on keyword overlap in English labels"
+    - "Basic queries (specific IRI lookups): <1s"
+    - "Category queries (specific category IRI): 1-2s"
+    - "Hierarchical queries (rdfs:subClassOf+): 1-3s"
+    - "bif:contains searches: <500ms"
+    - "Cross-DB (2-way): 2-3s (Tier 1)"
+    - "Cross-DB (3-way): 3-5s (Tier 2)"
+    - "Pre-filtering gain: 99%+ reduction in join size"
 
 anti_patterns:
-  - title: "Using REGEX instead of bif:contains for keyword search"
-    problem: "REGEX is slow and doesn't support relevance ranking"
+  - title: "Using Text Search When Category IRI Available"
+    problem: "Slow text search instead of fast category-based filtering."
     wrong_sparql: |
-      SELECT ?disease ?label
-      WHERE {
+      # Slow: Text search for metabolic diseases
+      SELECT ?disease ?label WHERE {
         ?disease rdfs:label ?label .
-        FILTER(REGEX(?label, "Parkinson", "i"))
+        ?label bif:contains "'metabolic'"
       }
     correct_sparql: |
-      SELECT ?disease ?label
-      WHERE {
-        ?disease rdfs:label ?label .
-        ?label bif:contains "'Parkinson*'" option (score ?sc) .
+      # Fast: Use specific category IRI
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      SELECT ?disease ?label WHERE {
+        ?disease rdfs:subClassOf+ nando:1100002 ;
+                 rdfs:label ?label .
+        FILTER(LANG(?label) = "en")
       }
-      ORDER BY DESC(?sc)
-    explanation: "bif:contains uses full-text indexing and provides relevance scoring (Strategy 4), making searches 10-100x faster"
+    explanation: "Find category IRIs via exploratory search (OLS4:searchClasses → nando:1100002 for metabolic diseases), then query all diseases under that category using rdfs:subClassOf+."
 
-  - title: "Not filtering language tags for multilingual labels"
-    problem: "Returns all language variants, creating duplicate rows and confusion"
+  - title: "Not Filtering Language Tags"
+    problem: "Returns duplicate results with all three language variants (English, kanji, hiragana)."
     wrong_sparql: |
-      SELECT ?disease ?label
-      WHERE {
+      # Returns 3 rows per disease (one for each language)
+      SELECT ?disease ?label WHERE {
         ?disease a owl:Class ;
                  rdfs:label ?label .
       }
     correct_sparql: |
-      SELECT ?disease ?en_label ?ja_label
-      WHERE {
+      # Returns 1 row per disease with specified language
+      SELECT ?disease ?en_label ?ja_label WHERE {
         ?disease a owl:Class ;
                  rdfs:label ?en_label ;
                  rdfs:label ?ja_label .
         FILTER(LANG(?en_label) = "en")
-        FILTER(LANG(?ja_label) = "ja" && !REGEX(STR(?ja_label), "^[ぁ-ん]+$"))
+        FILTER(LANG(?ja_label) = "ja")
       }
-    explanation: "Explicit language filtering prevents duplicates and separates English, kanji, and hiragana labels"
-
-  - title: "Using unlimited rdfs:subClassOf+ for deep hierarchy traversal"
-    problem: "May timeout on large hierarchies without LIMIT"
-    wrong_sparql: |
-      SELECT ?disease ?label
-      WHERE {
-        ?disease rdfs:subClassOf+ nando:1100001 ;
-                 rdfs:label ?label .
-      }
-    correct_sparql: |
-      SELECT ?disease ?label
-      WHERE {
-        ?disease rdfs:subClassOf nando:1100001 ;
-                 rdfs:label ?label .
-        FILTER(LANG(?label) = "en")
-      }
-      LIMIT 100
-    explanation: "Direct parent-child queries are faster; if deep traversal needed, always use LIMIT"
+    explanation: "Always use FILTER(LANG(?label) = 'lang_code') to select specific language. Use @ja for kanji, @ja-hira for hiragana, @en for English."
 
   - title: "Cross-Database Query Without Pre-Filtering"
-    problem: "Filtering after join causes timeout by processing millions of intermediate results"
+    problem: "Filtering after join causes timeout by processing millions of rows."
     wrong_sparql: |
-      # BAD: Filter after cross-database join
+      # Timeout: Joins all 2,777 NANDO with all 30K MONDO
       WHERE {
         GRAPH <http://nanbyodata.jp/ontology/nando> {
-          ?disease a owl:Class ;
-            rdfs:label ?label .
-          FILTER(LANG(?label) = "en")
+          ?d a owl:Class ; skos:closeMatch ?m .
         }
-        GRAPH <http://id.nlm.nih.gov/mesh> {
-          ?meshTerm a meshv:TopicalDescriptor ;
-            rdfs:label ?meshLabel .
+        GRAPH <http://rdfportal.org/ontology/mondo> {
+          ?m rdfs:label ?ml .
+          FILTER(CONTAINS(?ml, "parkinson"))
         }
-        FILTER(CONTAINS(?label, "parkinson") && CONTAINS(?meshLabel, "parkinson"))  # Too late!
       }
     correct_sparql: |
-      # GOOD: Pre-filter in source GRAPH (Strategy 2)
+      # Fast: Pre-filters to ~3 diseases before MONDO join
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
       WHERE {
         GRAPH <http://nanbyodata.jp/ontology/nando> {
-          ?disease a owl:Class ;
-            rdfs:label ?label .
-          FILTER(LANG(?label) = "en")
-          ?label bif:contains "'parkinson'" option (score ?sc)  # Early filtering!
+          ?d a owl:Class ;
+             rdfs:subClassOf+ nando:1100001 ;
+             rdfs:label ?l ;
+             skos:closeMatch ?m .
+          FILTER(LANG(?l) = "en")
+          ?l bif:contains "'parkinson'"
         }
-        GRAPH <http://id.nlm.nih.gov/mesh> {
-          ?meshTerm a meshv:TopicalDescriptor ;
-            rdfs:label ?meshLabel .
-          ?meshLabel bif:contains "'parkinson'" option (score ?sc2)  # Early filtering!
+        GRAPH <http://rdfportal.org/ontology/mondo> {
+          ?m rdfs:label ?ml .
         }
       }
-      ORDER BY DESC(?sc)
       LIMIT 10
-    explanation: "Strategy 2: Pre-filtering in source databases (NANDO 2,777 → ~10, MeSH 869K → ~20) reduces join from 2.4M combinations to ~200 (99.99% reduction), improving performance 1000x+"
+    explanation: "Pre-filter in source GRAPH using specific category IRI (nando:1100001) + bif:contains reduces 2,777 → ~3 diseases (99.9% reduction) before MONDO join."
 
 common_errors:
-  - error: "Empty result set when searching for diseases"
+  - error: "Empty result set"
     causes:
-      - "Forgot to include graph in FROM clause"
+      - "Missing FROM clause with graph URI"
       - "Wrong language tag filter"
-      - "Searching for hiragana without proper pattern"
+      - "Incorrect IRI prefix (NANDO_ vs MONDO_)"
     solutions:
-      - "Always include: FROM <http://nanbyodata.jp/ontology/nando>"
-      - "Use LANG(?label) = 'en' for English or 'ja' for Japanese"
-      - "For hiragana: FILTER(REGEX(STR(?label), '^[ぁ-ん]+$'))"
+      - "Always include FROM <http://nanbyodata.jp/ontology/nando>"
+      - "Use FILTER(LANG(?label) = 'en') for English, 'ja' for kanji, 'ja-hira' for hiragana"
+      - "Verify IRI pattern: http://nanbyodata.jp/ontology/NANDO_NNNNNNN"
     example_fix: |
-      # Wrong
+      # WRONG (missing graph, wrong filter):
       SELECT ?disease ?label
-      WHERE {
-        ?disease rdfs:label ?label .
-      }
+      WHERE { ?disease rdfs:label ?label }
       
-      # Correct
+      # CORRECT (with graph and proper filter):
       SELECT ?disease ?label
       FROM <http://nanbyodata.jp/ontology/nando>
       WHERE {
@@ -722,111 +745,93 @@ common_errors:
         FILTER(LANG(?label) = "en")
       }
 
-  - error: "Query timeout on MONDO cross-reference queries"
+  - error: "Query timeout on MONDO cross-references"
     causes:
-      - "Not using STRSTARTS filter before joining"
+      - "Not using STRSTARTS filter early in query"
       - "Missing LIMIT clause"
-      - "Inefficient join order"
+      - "No pre-filtering before join"
     solutions:
-      - "Apply FILTER(STRSTARTS(STR(?mondo), 'http://purl.obolibrary.org/obo/MONDO_')) early"
+      - "Apply STRSTARTS filter immediately after skos:closeMatch"
       - "Always add LIMIT for exploratory queries"
-      - "Put most selective conditions first"
+      - "Use specific category IRI to pre-filter NANDO diseases"
     example_fix: |
-      # Slow - filters after join
-      SELECT ?disease ?label ?mondo
+      # SLOW (filters after join):
       WHERE {
         ?disease skos:closeMatch ?mondo ;
                  rdfs:label ?label .
         FILTER(STRSTARTS(STR(?mondo), "http://purl.obolibrary.org/obo/MONDO_"))
       }
       
-      # Fast - filters before join
-      SELECT ?disease ?label ?mondo
+      # FAST (filters before join):
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
       WHERE {
         ?disease a owl:Class ;
-                 rdfs:label ?label .
-        ?disease skos:closeMatch ?mondo .
+                 rdfs:subClassOf+ nando:1100001 ;
+                 rdfs:label ?label ;
+                 skos:closeMatch ?mondo .
         FILTER(STRSTARTS(STR(?mondo), "http://purl.obolibrary.org/obo/MONDO_"))
         FILTER(LANG(?label) = "en")
       }
-      LIMIT 100
+      LIMIT 50
 
-  - error: "Cannot distinguish between kanji and hiragana labels"
+  - error: "Cannot distinguish kanji from hiragana labels"
     causes:
       - "Both use @ja language tag"
-      - "Not using regex pattern to separate them"
+      - "Not using regex pattern or @ja-hira"
     solutions:
-      - "Hiragana-only: FILTER(REGEX(STR(?label), '^[ぁ-ん]+$'))"
-      - "Kanji (non-hiragana): FILTER(LANG(?label) = 'ja' && !REGEX(STR(?label), '^[ぁ-ん]+$'))"
-      - "Use separate OPTIONAL blocks for each label type"
+      - "Hiragana labels use @ja-hira language tag"
+      - "Kanji labels use @ja language tag"
+      - "Filter: FILTER(LANG(?label) = 'ja-hira') for hiragana"
     example_fix: |
-      # Better approach - separate label types
-      SELECT ?disease ?en_label ?ja_kanji ?ja_hira
+      # Get all three language variants:
+      SELECT ?disease ?en ?ja_kanji ?ja_hira
       WHERE {
-        ?disease a owl:Class .
-        OPTIONAL {
-          ?disease rdfs:label ?en_label .
-          FILTER(LANG(?en_label) = "en")
-        }
-        OPTIONAL {
-          ?disease rdfs:label ?ja_kanji .
-          FILTER(LANG(?ja_kanji) = "ja" && !REGEX(STR(?ja_kanji), "^[ぁ-ん]+$"))
-        }
-        OPTIONAL {
-          ?disease rdfs:label ?ja_hira .
-          FILTER(REGEX(STR(?ja_hira), "^[ぁ-ん]+$"))
-        }
+        ?disease a owl:Class ;
+                 rdfs:label ?en ;
+                 rdfs:label ?ja_kanji ;
+                 rdfs:label ?ja_hira .
+        FILTER(LANG(?en) = "en")
+        FILTER(LANG(?ja_kanji) = "ja")
+        FILTER(LANG(?ja_hira) = "ja-hira")
       }
-      LIMIT 20
 
-  - error: "Cross-database query timeout"
+  - error: "Cross-database timeout or empty results"
     causes:
-      - "Missing pre-filtering (Strategy 2) - processing millions of rows"
-      - "Missing GRAPH clauses (Strategy 1) - cross-contamination"
-      - "Using complex bif:contains in three-way queries"
-      - "Missing LIMIT clause (Strategy 10)"
+      - "Missing pre-filtering with specific category IRI (Strategy 2)"
+      - "Wrong graph URIs from co-located database"
+      - "Missing STR() for GO namespace (Strategy 9)"
+      - "Not reading co-database MIE files first"
     solutions:
-      - "Apply restrictive FILTER within source GRAPH clause before join (Strategy 2)"
-      - "Use explicit GRAPH clauses for each database (Strategy 1)"
-      - "For three-way queries, use simplified CONTAINS instead of bif:contains"
-      - "Add LIMIT to every query level (Strategy 10)"
-      - "Test each GRAPH clause independently before combining"
+      - "Read co-database MIE files to get correct graph URIs and predicates"
+      - "Use specific category IRI to pre-filter (nando:1100001, nando:1100002, etc.)"
+      - "Apply FILTER within source GRAPH clause before joins"
+      - "For GO: Use STR(?namespace) = 'biological_process' (not direct comparison)"
+      - "Test each GRAPH independently before combining"
+      - "Always add LIMIT to multi-database queries"
     example_fix: |
-      # BEFORE (times out):
-      WHERE {
-        GRAPH <http://nanbyodata.jp/ontology/nando> { ?d1 ?p1 ?o1 }
-        GRAPH <http://id.nlm.nih.gov/mesh> { ?d2 ?p2 ?d1 }
-        FILTER(?condition)
+      # WRONG (no pre-filtering, wrong GO filter):
+      GRAPH <http://nanbyodata.jp/ontology/nando> {
+        ?d ?p ?o
+      }
+      GRAPH <http://rdfportal.org/ontology/go> {
+        ?g oboinowl:hasOBONamespace ?ns .
+        FILTER(?ns = "biological_process")  # WRONG!
       }
       
-      # AFTER (completes in 2s):
-      WHERE {
-        GRAPH <http://nanbyodata.jp/ontology/nando> {
-          ?d1 ?p1 ?o1 .
-          FILTER(?condition)  # Early filter! (Strategy 2)
-        }
-        GRAPH <http://id.nlm.nih.gov/mesh> { ?d2 ?p2 ?d1 }
+      # CORRECT (pre-filter + proper GO filter):
+      PREFIX nando: <http://nanbyodata.jp/ontology/NANDO_>
+      GRAPH <http://nanbyodata.jp/ontology/nando> {
+        ?d a owl:Class ;
+           rdfs:subClassOf+ nando:1100002 ;
+           rdfs:label ?l .
+        FILTER(LANG(?l) = "en")
+        FILTER(CONTAINS(LCASE(?l), "metabolic"))
+      }
+      GRAPH <http://rdfportal.org/ontology/go> {
+        ?g a owl:Class ;
+           rdfs:label ?gl ;
+           oboinowl:hasOBONamespace ?ns .
+        FILTER(STR(?ns) = "biological_process")  # CORRECT!
+        FILTER(CONTAINS(LCASE(?gl), "metabolic"))
       }
       LIMIT 10
-
-  - error: "Cross-database query returns empty results"
-    causes:
-      - "Wrong graph URIs from co-database"
-      - "Wrong entity types from co-database"
-      - "Missing type restriction for GO namespace"
-    solutions:
-      - "Retrieve co-database MIE file to get correct graph URIs"
-      - "Use entity types from co-database shape expressions"
-      - "Add STR() type restriction for GO namespace comparisons (Strategy 9)"
-      - "Test each GRAPH clause independently before combining"
-    example_fix: |
-      # CRITICAL for GO queries: Add STR() type restriction
-      GRAPH <http://rdfportal.org/ontology/go> {
-        ?goTerm oboinowl:hasOBONamespace ?goNamespace .
-        FILTER(STR(?goNamespace) = "biological_process")  # STR() required!
-      }
-      
-      # Verify graph URIs from MIE files
-      GRAPH <http://nanbyodata.jp/ontology/nando> {
-        ?disease a owl:Class .
-      }

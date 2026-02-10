@@ -1,11 +1,12 @@
 schema_info:
   title: BacDive - The Bacterial Diversity Metadatabase
   description: |
-    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, physiology, cultivation conditions, and molecular data. Contains 97,000+ strain records with phenotypic and genotypic characterizations.
-    
-    Major entities include Strains (core records with full taxonomic hierarchy), Enzymes (enzyme activities), CultureConditions (media, temperature, pH), Sequences (16S rRNA, genomes), CultureCollectionNumbers (strain repository links), and GeographicOrigin (isolation locations).
-    
-    Cross-referenced to NCBI Taxonomy, culture collections (DSMZ, JCM, KCTC), sequence databases (ENA, GenBank), and MediaDive for culture media recipes. Part of the "primary" endpoint with mediadive, taxonomy, mesh, go, mondo, and nando databases enabling powerful cross-database queries.
+    BacDive provides standardized bacterial and archaeal strain information covering taxonomy, morphology, 
+    physiology, cultivation conditions, and molecular data with 97,000+ strain records. Major entities: 
+    Strains (core records with full taxonomic hierarchy), Enzymes (enzyme activities), CultureConditions 
+    (media, temperature, pH), Sequences (16S rRNA, genomes), CultureCollectionNumbers (strain repository 
+    links), and GeographicOrigin (isolation locations). Cross-referenced to NCBI Taxonomy, culture collections 
+    (DSMZ, JCM, KCTC), sequence databases (ENA, GenBank), and MediaDive for culture media recipes.
   endpoint: https://rdfportal.org/primary/sparql
   base_uri: https://purl.dsmz.de/
   graphs:
@@ -13,17 +14,17 @@ schema_info:
   kw_search_tools:
     - sparql
   version:
-    mie_version: "2.1"
-    mie_created: "2025-01-26"
-    data_version: BacDive 2024
-    update_frequency: Quarterly
+    mie_version: "3.0"
+    mie_created: "2025-02-09"
+    data_version: "BacDive 2024"
+    update_frequency: "Quarterly"
   license:
-    data_license: CC BY 4.0
-    license_url: https://bacdive.dsmz.de/about
+    data_license: "CC BY 4.0"
+    license_url: "https://bacdive.dsmz.de/about"
   access:
-    rate_limiting: 100 queries/min
-    max_query_timeout: 60 seconds
-    backend: Virtuoso
+    rate_limiting: "100 queries/min"
+    max_query_timeout: "60 seconds"
+    backend: "Virtuoso"
 
 shape_expressions: |
   PREFIX schema: <https://purl.dsmz.de/schema/>
@@ -43,7 +44,7 @@ shape_expressions: |
     schema:hasPhylum xsd:string ;
     schema:hasDomain xsd:string ;
     schema:hasDesignation xsd:string ? ;
-    schema:isTypeStrain xsd:boolean ;
+    schema:isTypeStrain xsd:integer ;
     dct:description xsd:string
   }
   
@@ -71,6 +72,14 @@ shape_expressions: |
     a [ schema:OxygenTolerance schema:MicrobialPhenotype schema:Phenotype ] ;
     schema:describesStrain @<StrainShape> ;
     schema:hasOxygenTolerance xsd:string
+  }
+  
+  <PathogenicityShape> {
+    a [ schema:Pathogenicity schema:ConceptualEntity ] ;
+    schema:describesStrain @<StrainShape> ;
+    schema:isHumanPathogen xsd:string ;
+    schema:isAnimalPathogen xsd:string ;
+    schema:isPlantPathogen xsd:string
   }
   
   <CultureMediumShape> {
@@ -134,9 +143,13 @@ shape_expressions: |
   }
 
 sample_rdf_entries:
-  - title: Strain with Complete Taxonomic Hierarchy
-    description: Core strain entry with full taxonomic classification from domain to species.
+  - title: "Strain with Complete Taxonomic Hierarchy"
+    description: "Core strain entry with full taxonomic classification from domain to species."
     rdf: |
+      @prefix strain: <https://purl.dsmz.de/bacdive/strain/> .
+      @prefix schema: <https://purl.dsmz.de/schema/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      
       strain:1 a schema:Strain ;
         rdfs:label "Acetobacter aceti 1" ;
         rdfs:hasScientificName "Acetobacter aceti (Pasteur 1864) Beijerinck 1898" ;
@@ -149,19 +162,29 @@ sample_rdf_entries:
         schema:hasClass "Alphaproteobacteria" ;
         schema:hasPhylum "Proteobacteria" ;
         schema:hasDomain "Bacteria" ;
-        schema:isTypeStrain true .
+        schema:isTypeStrain 1 .
   
-  - title: Enzyme Activity Phenotype
-    description: Enzyme with positive activity linked to strain record.
+  - title: "Enzyme Activity Phenotype"
+    description: "Enzyme with positive activity linked to strain."
     rdf: |
+      @prefix enzyme: <https://purl.dsmz.de/bacdive/enzyme/> .
+      @prefix schema: <https://purl.dsmz.de/schema/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix strain: <https://purl.dsmz.de/bacdive/strain/> .
+      
       enzyme:10 a schema:Enzyme, schema:Protein, schema:GeneProduct ;
         rdfs:label "gelatinase" ;
         schema:describesStrain strain:1290 ;
         schema:hasActivity "+" .
   
-  - title: 16S rRNA Sequence with External Accession
-    description: Ribosomal RNA sequence with ENA database accession.
+  - title: "16S rRNA Sequence with External Accession"
+    description: "Ribosomal RNA sequence with ENA database accession."
     rdf: |
+      @prefix sequence_16S: <https://purl.dsmz.de/bacdive/sequence_16S/> .
+      @prefix schema: <https://purl.dsmz.de/schema/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix strain: <https://purl.dsmz.de/bacdive/strain/> .
+      
       sequence_16S:JN000316 a schema:16SSequence, schema:NucleotideSequence ;
         rdfs:label "Compostimonas suwonensis 16S rRNA gene" ;
         schema:describesStrain strain:7514 ;
@@ -169,17 +192,27 @@ sample_rdf_entries:
         schema:hasSequenceAccession "JN000316" ;
         schema:hasSequenceLength 1422 .
   
-  - title: Culture Collection with Institutional Link
-    description: External culture collection identifier with DSMZ URL.
+  - title: "Pathogenicity Information"
+    description: "Structured pathogenicity classification for human, animal, and plant hosts."
     rdf: |
-      culture_collection_number:2749 a schema:CultureCollectionNumber, schema:StrainNumber ;
-        rdfs:label "DSM 30652" ;
-        schema:describesStrain strain:XXX ;
-        schema:hasLink <https://www.dsmz.de/collection/catalogue/details/culture/DSM-30652> .
+      @prefix patho: <https://purl.dsmz.de/bacdive/pathogenicity/> .
+      @prefix schema: <https://purl.dsmz.de/schema/> .
+      @prefix strain: <https://purl.dsmz.de/bacdive/strain/> .
+      
+      patho:5313 a schema:Pathogenicity, schema:ConceptualEntity ;
+        schema:describesStrain strain:5313 ;
+        schema:isHumanPathogen "yes" ;
+        schema:isAnimalPathogen "yes" ;
+        schema:isPlantPathogen "unknown" .
   
-  - title: Geographic Isolation Location
-    description: Origin location with country name and GPS coordinates.
+  - title: "Geographic Isolation Location"
+    description: "Origin location with country and GPS coordinates."
     rdf: |
+      @prefix location: <https://purl.dsmz.de/bacdive/location/> .
+      @prefix schema: <https://purl.dsmz.de/schema/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix strain: <https://purl.dsmz.de/bacdive/strain/> .
+      
       location:12345 a schema:LocationOfOrigin, schema:IsolationSource ;
         rdfs:label "Japan" ;
         schema:describesStrain strain:7514 ;
@@ -188,94 +221,90 @@ sample_rdf_entries:
         schema:hasLongitude 126.9780 .
 
 sparql_query_examples:
-  - title: Search Strains with bif:contains
-    description: Demonstrate full-text keyword search using bif:contains with boolean operators.
-    question: Find Escherichia coli strains.
+  - title: "Specific Phyla Using VALUES"
+    description: "Use VALUES with specific phylum values for targeted taxonomic queries."
+    question: "Find strains from Proteobacteria or Actinobacteria?"
     complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
-      SELECT ?strain ?label ?sc
+      # Use VALUES with controlled vocabulary values (specific phyla)
+      SELECT ?strainLabel ?genus ?phylum
       FROM <http://rdfportal.org/dataset/bacdive>
       WHERE {
+        VALUES ?phylum { "Proteobacteria" "Actinobacteria" }
+        
         ?strain a schema:Strain ;
-                rdfs:label ?label .
-        ?label bif:contains "'escherichia' AND 'coli'" option (score ?sc) .
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus ;
+                schema:hasPhylum ?phylum .
       }
-      ORDER BY DESC(?sc)
       LIMIT 100
   
-  - title: Complex Boolean Keyword Search
-    description: Search descriptions using AND/NOT operators for precise filtering.
-    question: Find aerobic Gram-negative bacteria excluding plant pathogens.
+  - title: "Specific Oxygen Requirements Using VALUES"
+    description: "Use VALUES with controlled oxygen tolerance terms."
+    question: "Find obligate aerobes or obligate anaerobes?"
     complexity: basic
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
-      PREFIX dct: <http://purl.org/dc/terms/>
       
-      SELECT ?strain ?description ?sc
+      # Use VALUES with specific controlled vocabulary values
+      SELECT ?strainLabel ?genus ?oxygenTolerance
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        VALUES ?oxygenTolerance { "obligate aerobe" "obligate anaerobe" }
+        
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus .
+        
+        ?ot a schema:OxygenTolerance ;
+            schema:describesStrain ?strain ;
+            schema:hasOxygenTolerance ?oxygenTolerance .
+      }
+      LIMIT 100
+  
+  - title: "Human Pathogens Using Typed Predicate"
+    description: "Use structured pathogenicity predicate for clinical relevance."
+    question: "Which strains are confirmed human pathogens?"
+    complexity: intermediate
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      # Use typed predicate for structured pathogenicity data
+      SELECT ?strainLabel ?genus ?species ?gramStain
       FROM <http://rdfportal.org/dataset/bacdive>
       WHERE {
         ?strain a schema:Strain ;
-                dct:description ?description .
-        ?description bif:contains "'aerobic' AND 'gram-negative' AND NOT 'plant'" option (score ?sc) .
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus ;
+                schema:hasSpecies ?species .
+        
+        ?patho a schema:Pathogenicity ;
+               schema:describesStrain ?strain ;
+               schema:isHumanPathogen "yes" .
+        
+        OPTIONAL {
+          ?gs a schema:GramStain ;
+              schema:describesStrain ?strain ;
+              schema:hasGramStain ?gramStain .
+        }
       }
-      ORDER BY DESC(?sc)
       LIMIT 50
   
-  - title: Strains with 16S Sequences
-    description: Retrieve strains having 16S rRNA sequence data with accessions.
-    question: Which strains have 16S sequences available?
+  - title: "Strains by Phylum with Phenotypes"
+    description: "Navigate taxonomy using typed predicates with multiple phenotype attributes."
+    question: "Find Proteobacteria strains with Gram stain and oxygen tolerance data."
     complexity: intermediate
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
-      SELECT ?strain ?strainLabel ?accession ?length
+      SELECT ?strainLabel ?gramStain ?oxygenTolerance
       FROM <http://rdfportal.org/dataset/bacdive>
       WHERE {
         ?strain a schema:Strain ;
-                rdfs:label ?strainLabel .
-        ?seq a schema:16SSequence ;
-             schema:describesStrain ?strain ;
-             schema:hasSequenceAccession ?accession ;
-             schema:hasSequenceLength ?length .
-      }
-      LIMIT 100
-  
-  - title: Positive Enzyme Activities
-    description: Query strains showing positive enzyme test results.
-    question: What enzymes show positive activity in strains?
-    complexity: intermediate
-    sparql: |
-      PREFIX schema: <https://purl.dsmz.de/schema/>
-      
-      SELECT ?strainLabel ?enzymeLabel ?activity
-      FROM <http://rdfportal.org/dataset/bacdive>
-      WHERE {
-        ?strain a schema:Strain ;
-                rdfs:label ?strainLabel .
-        ?enzyme a schema:Enzyme ;
-                schema:describesStrain ?strain ;
-                rdfs:label ?enzymeLabel ;
-                schema:hasActivity ?activity .
-        FILTER(?activity = "+")
-      }
-      LIMIT 100
-  
-  - title: Keyword Search with Phenotypes
-    description: Combine full-text search with structured phenotype data retrieval.
-    question: Find thermophilic bacteria with Gram stain and temperature data.
-    complexity: intermediate
-    sparql: |
-      PREFIX schema: <https://purl.dsmz.de/schema/>
-      PREFIX dct: <http://purl.org/dc/terms/>
-      
-      SELECT ?strain ?description ?gramStain ?tempStart ?tempEnd ?sc
-      FROM <http://rdfportal.org/dataset/bacdive>
-      WHERE {
-        ?strain a schema:Strain ;
-                dct:description ?description .
-        ?description bif:contains "'thermophilic'" option (score ?sc) .
+                rdfs:label ?strainLabel ;
+                schema:hasPhylum "Proteobacteria" .
         
         OPTIONAL {
           ?gs a schema:GramStain ;
@@ -283,35 +312,78 @@ sparql_query_examples:
               schema:hasGramStain ?gramStain .
         }
         OPTIONAL {
-          ?temp a schema:CultureTemperature ;
-                schema:describesStrain ?strain ;
-                schema:hasTemperatureRangeStart ?tempStart ;
-                schema:hasTemperatureRangeEnd ?tempEnd .
+          ?ot a schema:OxygenTolerance ;
+              schema:describesStrain ?strain ;
+              schema:hasOxygenTolerance ?oxygenTolerance .
         }
       }
-      ORDER BY DESC(?sc)
-      LIMIT 50
+      LIMIT 100
   
-  - title: Complete Growth Conditions Profile
-    description: Aggregate culture medium, temperature, and pH requirements.
-    question: What are the complete growth conditions for Bacillus strains?
+  - title: "Enzyme Classification by EC Number"
+    description: "Use EC number typed predicate for functional classification."
+    question: "Find strains with catalase activity (EC 1.11.1.6)."
+    complexity: intermediate
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      # Use typed predicate for EC number
+      SELECT ?strainLabel ?enzymeLabel ?genus ?species
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus ;
+                schema:hasSpecies ?species .
+        
+        ?enzyme a schema:Enzyme ;
+                rdfs:label ?enzymeLabel ;
+                schema:describesStrain ?strain ;
+                schema:hasECNumber "1.11.1.6" .
+      }
+      LIMIT 100
+  
+  - title: "Multi-Phenotype Gram-Positive Aerobes"
+    description: "Advanced multi-filter query combining multiple typed predicates."
+    question: "Find Gram-positive, obligate aerobe strains from Actinobacteria."
     complexity: advanced
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
-      SELECT ?label ?medium ?tempStart ?tempEnd ?phStart ?phEnd
+      SELECT ?strainLabel ?genus ?species
       FROM <http://rdfportal.org/dataset/bacdive>
       WHERE {
         ?strain a schema:Strain ;
-                rdfs:label ?label ;
-                schema:hasGenus ?genus .
-        FILTER(CONTAINS(LCASE(?genus), "bacillus"))
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus ;
+                schema:hasSpecies ?species ;
+                schema:hasPhylum "Actinobacteria" .
         
-        OPTIONAL {
-          ?m a schema:CultureMedium ;
-             schema:describesStrain ?strain ;
-             rdfs:label ?medium .
-        }
+        ?gs a schema:GramStain ;
+            schema:describesStrain ?strain ;
+            schema:hasGramStain "positive" .
+        
+        ?ot a schema:OxygenTolerance ;
+            schema:describesStrain ?strain ;
+            schema:hasOxygenTolerance "obligate aerobe" .
+      }
+      LIMIT 50
+  
+  - title: "Type Strains with Complex Growth Requirements"
+    description: "Combine taxonomic, phenotypic, and culture condition filters for comprehensive strain characterization."
+    question: "Find type strains from Firmicutes with specific growth conditions?"
+    complexity: advanced
+    sparql: |
+      PREFIX schema: <https://purl.dsmz.de/schema/>
+      
+      SELECT ?strainLabel ?genus ?tempStart ?tempEnd ?phStart ?phEnd ?gramStain
+      FROM <http://rdfportal.org/dataset/bacdive>
+      WHERE {
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel ;
+                schema:hasGenus ?genus ;
+                schema:hasPhylum "Firmicutes" ;
+                schema:isTypeStrain 1 .
+        
         OPTIONAL {
           ?temp a schema:CultureTemperature ;
                 schema:describesStrain ?strain ;
@@ -324,37 +396,12 @@ sparql_query_examples:
               schema:hasPHRangeStart ?phStart ;
               schema:hasPHRangeEnd ?phEnd .
         }
-      }
-      LIMIT 50
-  
-  - title: Multi-Phenotype with Complex Keywords
-    description: Advanced boolean search combined with multiple phenotypic attributes.
-    question: Find human pathogens with complete phenotypic profiles.
-    complexity: advanced
-    sparql: |
-      PREFIX schema: <https://purl.dsmz.de/schema/>
-      PREFIX dct: <http://purl.org/dc/terms/>
-      
-      SELECT ?label ?description ?gramStain ?isMotile ?sc
-      FROM <http://rdfportal.org/dataset/bacdive>
-      WHERE {
-        ?strain a schema:Strain ;
-                rdfs:label ?label ;
-                dct:description ?description .
-        ?description bif:contains "('pathogen' OR 'pathogenic') AND NOT 'plant'" option (score ?sc) .
-        
         OPTIONAL {
           ?gs a schema:GramStain ;
               schema:describesStrain ?strain ;
               schema:hasGramStain ?gramStain .
         }
-        OPTIONAL {
-          ?cm a schema:CellMotility ;
-              schema:describesStrain ?strain ;
-              schema:isMotile ?isMotile .
-        }
       }
-      ORDER BY DESC(?sc)
       LIMIT 50
 
 cross_database_queries:
@@ -367,15 +414,14 @@ cross_database_queries:
     - mondo
     - nando
   mie_files_consulted:
-    - mediadive (graph URI, schema properties, URI patterns, BacDiveID coverage)
-    - taxonomy (graph URI, DDBJ namespace, taxon properties, URI pattern)
-    - mondo (graph URI, disease class structure, bif:contains patterns)
+    - mediadive
+    - taxonomy
+    - mondo
   examples:
-    - title: Media Recipes via BacDiveID Linking (Primary Method)
+    - title: "Media Recipes via BacDiveID Linking"
       description: |
-        Link BacDive strains to MediaDive using shared BacDiveID integers for direct strain-to-growth-condition mapping. This is the primary integration method, working for ~34% of BacDive strains (those with BacDiveID < 170,041 that have MediaDive records).
-        
-        MediaDive contains 33,226 strain records with BacDiveIDs (73% of MediaDive's 45,685 strains). This method retrieves actual growth conditions (temperature, pH, oxygen) and culture media used for successful strain cultivation, along with complete ingredient lists and chemical cross-references.
+        Link BacDive strains to MediaDive using shared BacDiveID integers for strain-to-growth-condition 
+        mapping (primary integration method working for ~34% of strains with BacDiveID 1-170,041).
       databases_used:
         - bacdive
         - mediadive
@@ -408,19 +454,15 @@ cross_database_queries:
         }
         LIMIT 10
       notes: |
-        - Strategies: 1(GRAPH), 2(genus pre-filter), 7(OPTIONAL), 10(LIMIT)
-        - Direct integer matching on schema:hasBacDiveID (no URI conversion needed)
-        - Coverage: ~34% of BacDive strains (33,226 MediaDive records / 97,334 BacDive strains)
-        - Works for strains with BacDiveID 1-170,041 (MediaDive's range)
+        - Strategies: 1, 2, 7, 10
+        - Direct integer matching on schema:hasBacDiveID
+        - Coverage: ~34% of BacDive strains (BacDiveID 1-170,041)
         - Performance: ~2-3s (Tier 1)
-        - Use case: Retrieve verified growth conditions from actual cultivation records
-        - Referenced MediaDive MIE file for GrowthCondition structure and coverage statistics
     
-    - title: Media Ingredients via MediaLink URI Conversion (Alternative Method)
+    - title: "Media Ingredients via MediaLink URI Conversion"
       description: |
-        Alternative integration using URI conversion from BacDive's culture medium web links to MediaDive RDF URIs. This method works for ~20% of BacDive strains that have MediaDive links in their culture medium records, retrieving hierarchical ingredient composition with concentrations and ChEBI cross-references.
-        
-        Demonstrates Strategy 5 (URI Conversion) when databases use different URI patterns for the same resources. BacDive stores web URLs while MediaDive uses RDF URIs.
+        Alternative integration using URI conversion from BacDive culture medium web links to MediaDive 
+        RDF URIs (works for ~20% of strains with MediaDive links).
       databases_used:
         - bacdive
         - mediadive
@@ -460,17 +502,15 @@ cross_database_queries:
         ORDER BY ?strainLabel ?mediumLabel DESC(?gPerL)
         LIMIT 20
       notes: |
-        - Strategies: 1(GRAPH), 2(genus pre-filter), 5(URI conversion), 7(OPTIONAL), 10(LIMIT)
-        - URI conversion: https://mediadive.dsmz.de/medium/ID → https://purl.dsmz.de/mediadive/medium/ID
-        - Coverage: ~20% of BacDive strains have MediaDive links
-        - Accesses media recipes without growth conditions (different data than BacDiveID method)
+        - Strategies: 1, 2, 5, 7, 10
+        - URI conversion: https://mediadive.dsmz.de/medium/{ID} → https://purl.dsmz.de/mediadive/medium/{ID}
+        - Coverage: ~20% of BacDive strains
         - Performance: ~2-3s (Tier 1)
-        - Use case: Get standardized media formulations and ingredient chemical IDs
-        - Referenced MediaDive MIE file for MediumComposition and Ingredient structure
     
-    - title: Strains with Taxonomic Context from NCBI Taxonomy
+    - title: "Strains with Taxonomic Context"
       description: |
-        Integrate BacDive strains with NCBI Taxonomy using URI conversion (Strategy 5) to transform TaxID integers into Taxonomy URIs following identifiers.org pattern. Provides complete phylogenetic context with scientific names, taxonomic ranks, and common names.
+        Integrate BacDive strains with NCBI Taxonomy using URI conversion to transform TaxID integers 
+        into Taxonomy URIs.
       databases_used:
         - bacdive
         - taxonomy
@@ -487,6 +527,7 @@ cross_database_queries:
                     rdfs:label ?strainLabel ;
                     schema:hasTaxID ?taxID ;
                     schema:hasGenus "Bacillus" .
+            FILTER(datatype(?taxID) = xsd:integer)
           }
           
           BIND(URI(CONCAT("http://identifiers.org/taxonomy/", STR(?taxID))) AS ?taxonURI)
@@ -500,60 +541,22 @@ cross_database_queries:
         }
         LIMIT 10
       notes: |
-        - Strategies: 1(GRAPH), 2(genus pre-filter), 5(URI conversion), 7(OPTIONAL), 10(LIMIT)
-        - URI conversion: TaxID integer → http://identifiers.org/taxonomy/{ID}
-        - CRITICAL: Uses DDBJ namespace (tax:) not UniProt (up:)
-        - Coverage: 100% of BacDive strains have NCBI Taxonomy IDs
+        - Strategies: 1, 2, 5, 7, 10
+        - URI conversion: TaxID → http://identifiers.org/taxonomy/{ID}
+        - Uses DDBJ namespace (tax:) not UniProt (up:)
+        - Coverage: 100% of strains with numeric TaxID
         - Performance: ~1-2s (Tier 1)
-        - Use case: Phylogenetic analysis, taxonomic verification
-        - Referenced Taxonomy MIE file for DDBJ namespace and property names
-    
-    - title: Disease-Associated Strains via MONDO
-      description: |
-        Keyword-based integration between pathogenic strains and disease ontology using bif:contains (Strategy 4). No direct RDF links exist, so uses full-text matching to correlate bacterial genera with disease terminology.
-      databases_used:
-        - bacdive
-        - mondo
-      complexity: intermediate
-      sparql: |
-        PREFIX schema: <https://purl.dsmz.de/schema/>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        
-        SELECT DISTINCT ?strainLabel ?genus ?diseaseLabel
-        WHERE {
-          GRAPH <http://rdfportal.org/dataset/bacdive> {
-            ?strain a schema:Strain ;
-                    rdfs:label ?strainLabel ;
-                    schema:hasGenus ?genus .
-            FILTER(?genus = "Mycobacterium")
-          }
-          
-          GRAPH <http://rdfportal.org/ontology/mondo> {
-            ?disease a owl:Class ;
-                     rdfs:label ?diseaseLabel .
-            ?diseaseLabel bif:contains "'tuberculosis'" option (score ?sc2)
-            FILTER(STRSTARTS(STR(?disease), "http://purl.obolibrary.org/obo/MONDO_"))
-          }
-        }
-        LIMIT 10
-      notes: |
-        - Strategies: 1(GRAPH), 2(genus pre-filter), 4(bif:contains), 10(LIMIT)
-        - Keyword-based integration: No direct RDF links between databases
-        - Performance: ~2-3s (Tier 1)
-        - Use case: Pathogen-disease mapping, infectious disease research
-        - Referenced MONDO MIE file for owl:Class structure and URI patterns
 
 cross_references:
   - pattern: schema:hasLink
     description: |
-      Culture collection links through CultureCollectionNumber entities connecting to institutional databases like DSMZ, JCM, KCTC, and CCUG.
+      Culture collection links through CultureCollectionNumber entities to institutional databases.
     databases:
       collections:
-        - DSMZ (>90%)
-        - JCM (~40%)
-        - KCTC (~30%)
-        - CCUG (~25%)
+        - "DSMZ: >90% coverage"
+        - "JCM: ~40%"
+        - "KCTC: ~30%"
+        - "CCUG: ~25%"
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -569,10 +572,10 @@ cross_references:
   
   - pattern: schema:hasTaxID
     description: |
-      NCBI Taxonomy IDs on all strain and sequence entities enabling standardized taxonomic classification and cross-database integration with taxonomy ontology on the same endpoint.
+      NCBI Taxonomy IDs on all strain and sequence entities enabling standardized taxonomic classification.
     databases:
       taxonomy:
-        - NCBI Taxonomy (100% of strains)
+        - "NCBI Taxonomy: 100% of strains"
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -587,11 +590,11 @@ cross_references:
   
   - pattern: schema:hasSequenceAccession
     description: |
-      Sequence accessions from ENA/NCBI databases with source indicator, covering 16S rRNA and genome sequences.
+      Sequence accessions from ENA/NCBI databases with source indicator.
     databases:
       sequence:
-        - ENA (~60% of 16S sequences)
-        - NCBI GenBank (~40% of genomes)
+        - "ENA: ~60% of 16S sequences"
+        - "NCBI GenBank: ~40% of genomes"
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -606,11 +609,11 @@ cross_references:
   
   - pattern: schema:hasMediaLink
     description: |
-      Links to MediaDive and other media databases for detailed culture medium recipes and preparation protocols. Enables cross-database queries with MediaDive on the same endpoint using URI conversion (alternative to BacDiveID linking).
+      Links to MediaDive and other media databases for culture medium recipes.
     databases:
       media:
-        - MediaDive (~20% have MediaLinks, ~34% have BacDiveID overlap)
-        - CIP Media (~10%)
+        - "MediaDive: ~20% MediaLinks, ~34% BacDiveID overlap"
+        - "CIP Media: ~10%"
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -626,10 +629,10 @@ cross_references:
   
   - pattern: schema:hasBacDiveID
     description: |
-      BacDive IDs enable direct linking to MediaDive strain records and growth conditions. Primary integration method for MediaDive cross-database queries (works for ~34% of BacDive strains that have corresponding MediaDive records).
+      BacDive IDs enable direct linking to MediaDive strain records (primary integration method for ~34% of strains).
     databases:
       culture_media:
-        - MediaDive (34% of BacDive strains have MediaDive records via BacDiveID)
+        - "MediaDive: 34% of BacDive strains (BacDiveID 1-170,041)"
     sparql: |
       PREFIX schema: <https://purl.dsmz.de/schema/>
       
@@ -642,95 +645,138 @@ cross_references:
       } LIMIT 50
 
 architectural_notes:
+  query_strategy:
+    - "Exploratory: Use SPARQL directly to sample data and discover controlled vocabulary values"
+    - "Comprehensive: Use typed predicates (hasGramStain, hasOxygenTolerance, hasPhylum, isTypeStrain, isHumanPathogen) over text search"
+    - "VALUES: Use with controlled vocabulary values (phyla, oxygen tolerance, Gram stain) for efficient multi-value queries"
+    - "Structured filters: Prefer hasGramStain='positive', hasOxygenTolerance='obligate aerobe', isHumanPathogen='yes' over CONTAINS"
+    - "Text search: Only for unstructured dct:description field via bif:contains (Virtuoso indexed)"
+    - "Priority: Typed predicates with VALUES > Typed predicates > Class filtering > Graph navigation > bif:contains"
+    - "Boolean filtering: Direct comparison (=, !=) for typed values; use 1 for true, 0 for false"
+  
   schema_design:
-    - Hub-and-spoke architecture with Strain as central entity
-    - Phenotypes and conditions connect via schema:describesStrain property
-    - Multiple inheritance for entity types (e.g., Enzyme is also Protein and GeneProduct)
-    - Full taxonomic lineage embedded in Strain entities from domain to species
+    - "Hub-and-spoke with Strain as central entity"
+    - "Phenotypes connect via schema:describesStrain (FROM phenotype TO strain)"
+    - "Multiple inheritance (e.g., Enzyme is Protein and GeneProduct)"
+    - "Full taxonomic lineage stored redundantly in Strain entities"
+    - "Controlled vocabularies: Gram stain (positive/negative/variable), oxygen tolerance (specific terms), pathogenicity (yes/no/unknown)"
+    - "Boolean values stored as integers: 1 (true), 0 (false)"
+  
   performance:
-    - Use bif:contains for keyword search with boolean operators (AND, OR, NOT, parentheses)
-    - bif:contains must be triple pattern with option (score ?var) for relevance scoring
-    - Never use ?score as variable name - it conflicts with the score keyword
-    - Genus/species text filters using CONTAINS or FILTER are efficient
-    - Use OPTIONAL blocks for phenotypes since coverage is incomplete (~40%)
-    - Always include LIMIT to prevent query timeouts on large result sets
-    - Single-database queries - Always specify FROM <http://rdfportal.org/dataset/bacdive>
-    - Cross-database queries - Use GRAPH clauses without FROM for endpoint-level queries
-    - Cross-database query optimization - Use explicit GRAPH clauses (Strategy 1)
-    - Pre-filter within GRAPH blocks before joins (Strategy 2) - 10-100x speedup
-    - Use URI conversion when linking to MediaDive media or Taxonomy (Strategy 5)
-    - Direct integer matching on BacDiveID when linking to MediaDive strains (no conversion needed)
+    - "Use typed predicates with direct equality: hasGramStain = 'positive' (fast)"
+    - "Use VALUES for multiple controlled values: VALUES ?phylum { 'Proteobacteria' 'Actinobacteria' }"
+    - "Use bif:contains only for unstructured text with option (score ?sc)"
+    - "Never use ?score as variable (reserved keyword)"
+    - "Use OPTIONAL for phenotypes (~40% coverage for most phenotypes)"
+    - "Always include LIMIT to prevent timeouts"
+    - "Single-DB: Specify FROM <http://rdfportal.org/dataset/bacdive>"
+    - "Cross-DB: Use GRAPH clauses, not FROM"
+    - "Pre-filter within GRAPH before joins (Strategy 2)"
+  
   data_integration:
-    - NCBI Taxonomy IDs (schema:hasTaxID) enable joins to taxonomy ontology via URI conversion (100% coverage)
-    - Culture collection numbers link to strain repositories (DSMZ, JCM, KCTC)
-    - Sequence accessions (schema:hasSequenceAccession) connect to ENA/GenBank
-    - MediaDive integration - TWO methods available
-    - Method 1 (Primary) - BacDiveID integer matching for growth conditions (~34% coverage, BacDiveID 1-170,041)
-    - Method 2 (Alternative) - MediaLink URI conversion for media recipes (~20% coverage)
-    - Shared "primary" endpoint with mediadive, taxonomy, mesh, go, mondo, nando
-    - Expected performance - Tier 1 (1-3s) for all optimized cross-database queries
+    - "NCBI Taxonomy IDs via URI conversion (100% coverage with numeric TaxIDs)"
+    - "Culture collection numbers to repositories"
+    - "Sequence accessions to ENA/GenBank"
+    - "MediaDive: BacDiveID integer matching (34%) or MediaLink URI conversion (20%)"
+    - "Shared primary endpoint with mediadive, taxonomy, mesh, go, mondo, nando"
+  
   data_quality:
-    - Phenotype coverage varies - ~40% Gram stain, ~35% 16S sequences, ~55% enzyme data
-    - Type strains generally have more complete phenotypic characterization
-    - Use OPTIONAL clauses for all phenotypes to avoid excluding strains with missing data
-    - MediaDive integration coverage - 34% via BacDiveID (strains 1-170,041), 20% via MediaLink
-    - MediaDive BacDiveID range limitation - only covers IDs 1-170,041 (newer strains excluded)
+    - "Phenotype coverage: ~40% Gram stain, ~35% 16S, ~55% enzyme, ~2% pathogenicity"
+    - "Type strains have more complete data"
+    - "Use OPTIONAL to avoid excluding missing data"
+    - "MediaDive BacDiveID only covers 1-170,041"
+    - "TaxID may have non-numeric values ('species', 'strain') - filter with datatype check"
+    - "Pathogenicity values: 'yes' (confirmed), 'unknown' (not tested), rarely 'no'"
 
 data_statistics:
   total_strains: 97334
+  verified_date: "2025-02-09"
+  verification_query: |
+    SELECT (COUNT(DISTINCT ?strain) as ?count)
+    FROM <http://rdfportal.org/dataset/bacdive>
+    WHERE { ?strain a <https://purl.dsmz.de/schema/Strain> }
+  
   total_enzymes: 573112
-  total_16s_sequences: 87045
-  total_culture_collections: 149377
-  total_references: 123819
+  enzymes_verification_query: |
+    SELECT (COUNT(DISTINCT ?enzyme) as ?count)
+    FROM <http://rdfportal.org/dataset/bacdive>
+    WHERE { ?enzyme a <https://purl.dsmz.de/schema/Enzyme> }
+  
+  human_pathogens: 1518
+  human_pathogens_verification_query: |
+    SELECT (COUNT(DISTINCT ?strain) as ?count)
+    FROM <http://rdfportal.org/dataset/bacdive>
+    WHERE {
+      ?strain a <https://purl.dsmz.de/schema/Strain> .
+      ?patho a <https://purl.dsmz.de/schema/Pathogenicity> ;
+             <https://purl.dsmz.de/schema/describesStrain> ?strain ;
+             <https://purl.dsmz.de/schema/isHumanPathogen> "yes" .
+    }
+  
   coverage:
-    strains_with_gram_stain: ~40%
-    strains_with_16s_sequence: ~35%
-    strains_with_culture_collections: ~60%
-    strains_with_enzyme_data: ~55%
-    strains_with_mediadive_links: ~20%
-    strains_with_mediadive_bacdiveid_overlap: ~34%
-    strains_with_taxonomy_ids: 100%
+    strains_with_gram_stain: "~40%"
+    strains_with_16s_sequence: "~35%"
+    strains_with_enzyme_data: "~55%"
+    strains_with_pathogenicity_data: "~2%"
+    strains_with_mediadive_bacdiveid: "~34%"
+    mediadive_note: "MediaDive has 33,226 records (73% of 45,685) with BacDiveID 1-170,041"
+    strains_with_taxonomy_ids: "100%"
+  
   cardinality:
     avg_enzymes_per_strain: 5.9
     avg_culture_collections_per_strain: 1.5
+  
   performance_characteristics:
-    - "Simple strain queries (<5 properties) complete in <2s"
-    - "bif:contains keyword searches are very fast with complex boolean logic"
-    - "Multi-join phenotype queries (3+ optional blocks) may take 5-10s"
-    - "Cross-database queries: Tier 1 (1-3s) - All optimized methods (MediaDive via BacDiveID or MediaLink, Taxonomy, MONDO)"
-    - "BacDiveID integer matching faster than URI conversion (no string processing)"
-    - "URI conversion (Strategy 5) enables efficient cross-database joins when URI patterns differ"
-    - "Pre-filtering (Strategy 2) reduces intermediate results before cross-database joins"
-  data_quality_notes:
-    - All strains have taxonomic IDs but phenotype completeness varies significantly
-    - Type strains have higher data completeness across all phenotype categories
-    - MediaDive integration - BacDiveID method (primary) covers ~34% of strains (IDs 1-170,041)
-    - MediaDive integration - MediaLink method (alternative) covers ~20% of strains
-    - MediaDive BacDiveID coverage gap - newer strains (IDs >170,041) not in MediaDive
-    - Taxonomy integration requires URI conversion from TaxID integers to identifiers.org URIs
-    - 16S sequences favor well-characterized strains from major collections
-    - Recent isolates may have limited phenotypic characterization
+    - "Simple typed predicate queries: <1s"
+    - "Multi-filter typed predicate queries: 2-5s"
+    - "VALUES with controlled vocabulary: 1-3s"
+    - "bif:contains: 2-5s with boolean logic"
+    - "Multi-join phenotype queries: 5-10s"
+    - "Cross-DB queries: Tier 1 (1-3s)"
+  
+  staleness_warning: "Updated quarterly; statistics verified 2025-02-09"
 
 anti_patterns:
-  - title: bif:contains in FILTER
-    problem: bif:contains must be used as triple pattern, not inside FILTER clause.
+  - title: "Text Search When Typed Predicate Exists"
+    problem: "Using bif:contains or FILTER(CONTAINS()) when structured property available."
     wrong_sparql: |
+      # Slow: Text search for pathogenicity
       SELECT ?strain ?description
       WHERE {
         ?strain dct:description ?description .
-        FILTER(bif:contains(?description, "'thermophilic'"))
+        ?description bif:contains "'pathogen'"
       }
     correct_sparql: |
-      SELECT ?strain ?description ?sc
+      # Fast: Use typed predicate
+      SELECT ?strain ?strainLabel
       WHERE {
-        ?strain dct:description ?description .
-        ?description bif:contains "'thermophilic'" option (score ?sc) .
+        ?strain a schema:Strain ;
+                rdfs:label ?strainLabel .
+        ?patho schema:describesStrain ?strain ;
+               schema:isHumanPathogen "yes" .
       }
-      ORDER BY DESC(?sc)
-    explanation: Use as triple pattern (?var bif:contains 'keywords') with single-quoted keywords and option (score ?var) for relevance.
+    explanation: "BacDive has structured pathogenicity data with isHumanPathogen, isAnimalPathogen, isPlantPathogen predicates. Use these typed predicates instead of text search on descriptions."
   
-  - title: Using Reserved Variable ?score
-    problem: Variable name ?score conflicts with the score keyword in bif:contains.
+  - title: "Inefficient Multiple OR Filters"
+    problem: "Using multiple FILTER conditions when VALUES available."
+    wrong_sparql: |
+      # Slow: Multiple OR filters
+      SELECT ?strain ?phylum
+      WHERE {
+        ?strain schema:hasPhylum ?phylum .
+        FILTER(?phylum = "Proteobacteria" || ?phylum = "Actinobacteria" || ?phylum = "Firmicutes")
+      }
+    correct_sparql: |
+      # Fast: Use VALUES
+      SELECT ?strain ?phylum
+      WHERE {
+        VALUES ?phylum { "Proteobacteria" "Actinobacteria" "Firmicutes" }
+        ?strain schema:hasPhylum ?phylum .
+      }
+    explanation: "VALUES is more efficient than multiple FILTER OR conditions for controlled vocabulary values."
+  
+  - title: "Reserved Variable ?score"
+    problem: "Variable name conflicts with score keyword in bif:contains."
     wrong_sparql: |
       SELECT ?strain ?score
       WHERE {
@@ -743,130 +789,37 @@ anti_patterns:
         ?strain rdfs:label ?label .
         ?label bif:contains "'escherichia'" option (score ?sc) .
       }
-    explanation: Never use ?score as variable name - use ?sc, ?relevance, or any other non-reserved name.
-  
-  - title: Required Phenotypes Excluding Data
-    problem: Requiring phenotypes without OPTIONAL excludes strains with missing phenotypic data.
-    wrong_sparql: |
-      SELECT ?strain ?gramStain ?motile
-      WHERE {
-        ?strain a schema:Strain .
-        ?gs schema:describesStrain ?strain ;
-            schema:hasGramStain ?gramStain .
-        ?cm schema:describesStrain ?strain ;
-            schema:isMotile ?motile .
-      }
-    correct_sparql: |
-      SELECT ?strain ?gramStain ?motile
-      WHERE {
-        ?strain a schema:Strain .
-        OPTIONAL {
-          ?gs schema:describesStrain ?strain ;
-              schema:hasGramStain ?gramStain .
-        }
-        OPTIONAL {
-          ?cm schema:describesStrain ?strain ;
-              schema:isMotile ?motile .
-        }
-      }
-    explanation: Use OPTIONAL for all phenotypes since coverage is incomplete (~40% for most phenotypes).
-  
-  - title: Wrong MediaDive Integration Method
-    problem: Using MediaLink URI conversion when BacDiveID would be more appropriate (or vice versa).
-    wrong_sparql: |
-      # Using URI conversion when strain has BacDiveID
-      WHERE {
-        GRAPH <bacdive> {
-          ?strain schema:hasBacDiveID 1172 ;
-                  schema:hasMediaLink ?link .
-          BIND(REPLACE(STR(?link), ...) AS ?id)
-        }
-      }
-    correct_sparql: |
-      # Use BacDiveID directly for growth conditions
-      WHERE {
-        GRAPH <bacdive> {
-          ?strain schema:hasBacDiveID ?bacDiveID .
-          FILTER(?bacDiveID = 1172)
-        }
-        GRAPH <mediadive> {
-          ?mediaDiveStrain schema:hasBacDiveID ?bacDiveID .
-          ?growth schema:relatedToStrain ?mediaDiveStrain .
-        }
-      }
-    explanation: "Use BacDiveID integer matching (primary method) for growth conditions and strain data. Use MediaLink URI conversion (alternative method) when accessing media recipes without strain context. BacDiveID method: ~34% coverage, direct integer matching. MediaLink method: ~20% coverage, requires URI conversion."
+    explanation: "Never use ?score as a variable name - use ?sc or other non-reserved names."
 
 common_errors:
-  - error: 400 Bad Request with bif:contains
+  - error: "Empty results with phenotypes"
     causes:
-      - Using bif:contains inside FILTER instead of as triple pattern
-      - Using ?score as variable name (reserved keyword)
-      - Missing single quotes around keywords
-      - Incorrect boolean syntax
+      - "Assuming complete phenotypic data"
+      - "Missing OPTIONAL clauses"
+      - "Pathogenicity coverage is only ~2%"
     solutions:
-      - "Use as triple: ?var bif:contains \"'keyword'\" option (score ?sc)"
-      - Never use ?score - use ?sc or other non-reserved names
-      - "Always wrap keywords in single quotes: 'keyword'"
-      - "Boolean syntax: \"'keyword1' AND 'keyword2'\", \"'keyword1' OR 'keyword2'\", \"NOT 'keyword'\""
+      - "Always use OPTIONAL for phenotypes"
+      - "Coverage: ~40% Gram, ~35% 16S, ~55% enzyme, ~2% pathogenicity"
+      - "Use FILTER(BOUND(?var)) to require specific data"
+      - "For pathogenicity: expect low hit rates, most strains lack this data"
   
-  - error: Empty results with phenotypes
+  - error: "Slow query performance"
     causes:
-      - Assuming all strains have complete phenotypic data
-      - Missing OPTIONAL clauses for phenotype properties
+      - "Using text search when typed predicates available"
+      - "Missing critical filters"
+      - "Not using VALUES for multiple controlled values"
     solutions:
-      - Always use OPTIONAL for phenotype properties (Gram stain, motility, enzymes, etc.)
-      - Check coverage statistics - ~40% Gram stain, ~35% 16S, ~55% enzyme data
-      - Use FILTER(BOUND(?var)) to explicitly require specific data when needed
+      - "Use typed predicates: hasGramStain, hasOxygenTolerance, hasPhylum, isHumanPathogen"
+      - "Use VALUES for multiple controlled vocabulary values"
+      - "Filter by specific values: hasGramStain = 'positive'"
+      - "Add entity type filters: a schema:GramStain"
+      - "Use bif:contains only for dct:description"
   
-  - error: Query timeout
+  - error: "Boolean value mismatch"
     causes:
-      - Joining many phenotypes without LIMIT
-      - Querying all strains without filters
-      - Missing FROM clause causing cross-graph queries
-      - Cross-database queries without proper filtering
-      - Using FROM clause instead of GRAPH in cross-database queries
+      - "Using true/false instead of 1/0"
+      - "Not recognizing integer representation"
     solutions:
-      - Always add LIMIT to prevent processing entire database
-      - Use bif:contains to filter by keywords before joining phenotypes
-      - Filter by genus/family using CONTAINS(LCASE(?genus), 'name') to reduce scope
-      - Query phenotypes separately rather than joining all at once
-      - "Single-database: Always specify FROM <http://rdfportal.org/dataset/bacdive>"
-      - "Cross-database: Use GRAPH clauses instead of FROM"
-      - For cross-database queries, filter within each GRAPH clause before joining
-  
-  - error: Empty MediaDive cross-database results
-    causes:
-      - Using wrong integration method (MediaLink URI conversion vs BacDiveID matching)
-      - Querying strains with BacDiveID >170,041 (outside MediaDive range)
-      - Wrong URI pattern in MediaLink conversion
-      - Wrong graph URIs
-    solutions:
-      - "Primary method: Use BacDiveID integer matching for growth conditions (34% coverage)"
-      - "Alternative method: Use MediaLink URI conversion for media recipes (20% coverage)"
-      - BacDiveID range check - MediaDive only has IDs 1-170,041
-      - "MediaLink pattern: https://mediadive.dsmz.de/medium/{ID} → https://purl.dsmz.de/mediadive/medium/{ID}"
-      - Test with Bacillus genus (has lower BacDiveIDs) instead of Escherichia (high IDs >130,000)
-      - Test each GRAPH clause independently before combining
-    example_fix: |
-      # BacDiveID method (primary):
-      GRAPH <bacdive> {
-        ?strain schema:hasBacDiveID ?bacDiveID ;
-                schema:hasGenus "Bacillus" .  # Lower IDs
-      }
-      GRAPH <mediadive> {
-        ?mediaDiveStrain schema:hasBacDiveID ?bacDiveID .
-        ?growth schema:relatedToStrain ?mediaDiveStrain .
-      }
-      
-      # MediaLink method (alternative):
-      BIND(REPLACE(STR(?mediaLink), "^https://mediadive\\.dsmz\\.de/medium/", "") AS ?id)
-      BIND(URI(CONCAT("https://purl.dsmz.de/mediadive/medium/", ?id)) AS ?uri)
-  
-  - error: Empty Taxonomy cross-database results
-    causes:
-      - Wrong namespace for Taxonomy (using UniProt namespace instead of DDBJ)
-      - Missing URI conversion for TaxID integers
-    solutions:
-      - "Taxonomy: Use DDBJ namespace (tax:) not UniProt (up:)"
-      - "Taxonomy: Convert TaxID to URI with BIND(URI(CONCAT('http://identifiers.org/taxonomy/', STR(?taxID))))"
-      - Retrieve Taxonomy MIE file to verify correct graph URIs and namespaces
+      - "Use isTypeStrain = 1 (not true)"
+      - "Use isTypeStrain = 0 (not false)"
+      - "Boolean values stored as integers in BacDive"
